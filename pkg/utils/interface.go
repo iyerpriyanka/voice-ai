@@ -331,6 +331,19 @@ func (m Option) GetBool(key string) (bool, error) {
 	}
 }
 
+// ToStringMap converts the Option to a map[string]string, excluding sensitive
+// keys (rapida.credential_id). Suitable for inclusion in event/metric data.
+func (m Option) ToStringMap() map[string]string {
+	result := make(map[string]string, len(m))
+	for k, v := range m {
+		if k == "rapida.credential_id" {
+			continue
+		}
+		result[k] = fmt.Sprintf("%v", v)
+	}
+	return result
+}
+
 func NormalizeInterface(argument map[string]interface{}) map[string]interface{} {
 	normalized := make(map[string]interface{})
 	for key, value := range argument {

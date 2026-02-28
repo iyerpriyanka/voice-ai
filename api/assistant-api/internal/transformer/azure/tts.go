@@ -10,6 +10,7 @@ import (
 	"context"
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/Microsoft/cognitive-services-speech-sdk-go/audio"
 	"github.com/Microsoft/cognitive-services-speech-sdk-go/common"
@@ -122,6 +123,14 @@ func (azure *azureTextToSpeech) Initialize() (err error) {
 	azure.client.Synthesizing(azure.OnSpeech)
 	azure.client.SynthesisCompleted(azure.OnComplete)
 	azure.client.SynthesisCanceled(azure.OnCancel)
+	azure.onPacket(internal_type.ConversationEventPacket{
+		Name: "tts",
+		Data: map[string]string{
+			"type":     "initialized",
+			"provider": azure.Name(),
+		},
+		Time: time.Now(),
+	})
 	return nil
 }
 
@@ -143,6 +152,11 @@ func (azure *azureTextToSpeech) Transform(ctx context.Context, in internal_type.
 	case internal_type.InterruptionPacket:
 		if currentCtx != "" {
 			<-cl.StopSpeakingAsync()
+			azure.onPacket(internal_type.ConversationEventPacket{
+				Name: "tts",
+				Data: map[string]string{"type": "interrupted"},
+				Time: time.Now(),
+			})
 		}
 		return nil
 	case internal_type.LLMResponseDeltaPacket:
@@ -150,6 +164,14 @@ func (azure *azureTextToSpeech) Transform(ctx context.Context, in internal_type.
 		if res.Error != nil {
 			return res.Error
 		}
+		azure.onPacket(internal_type.ConversationEventPacket{
+			Name: "tts",
+			Data: map[string]string{
+				"type": "speaking",
+				"text": input.Text,
+			},
+			Time: time.Now(),
+		})
 		return nil
 	case internal_type.LLMResponseDonePacket:
 		return nil
@@ -168,11 +190,7 @@ func (azCallback *azureTextToSpeech) OnSpeech(event speech.SpeechSynthesisEventA
 	azCallback.mu.Lock()
 	ctxId := azCallback.contextId
 	azCallback.mu.Unlock()
-
-	azCallback.onPacket(internal_type.TextToSpeechAudioPacket{
-		ContextID:  ctxId,
-		AudioChunk: event.Result.AudioData,
-	})
+	azCallback.onPacket(internal_type.TextToSpeechAudioPacket{ContextID: ctxId, AudioChunk: event.Result.AudioData})
 }
 
 func (azCallback *azureTextToSpeech) OnComplete(event speech.SpeechSynthesisEventArgs) {
@@ -180,10 +198,14 @@ func (azCallback *azureTextToSpeech) OnComplete(event speech.SpeechSynthesisEven
 	azCallback.mu.Lock()
 	ctxId := azCallback.contextId
 	azCallback.mu.Unlock()
-
-	azCallback.onPacket(internal_type.TextToSpeechEndPacket{
-		ContextID: ctxId,
-	})
+	azCallback.onPacket(
+		internal_type.TextToSpeechEndPacket{ContextID: ctxId},
+		internal_type.ConversationEventPacket{
+			Name: "tts",
+			Data: map[string]string{"type": "completed"},
+			Time: time.Now(),
+		},
+	)
 }
 
 func (azCallback *azureTextToSpeech) OnCancel(event speech.SpeechSynthesisEventArgs) {

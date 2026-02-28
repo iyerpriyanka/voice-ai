@@ -8,11 +8,11 @@ package adapter_internal
 import (
 	"context"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/rapidaai/api/assistant-api/config"
-	internal_adapter_request_customizers "github.com/rapidaai/api/assistant-api/internal/adapters/customizers"
 	"github.com/rapidaai/protos"
 
 	internal_assistant_telemetry "github.com/rapidaai/api/assistant-api/internal/telemetry/assistant"
@@ -44,6 +44,38 @@ import (
 	"github.com/rapidaai/pkg/utils"
 )
 
+// =============================================================================
+// InteractionState — conversation turn state machine
+// =============================================================================
+
+// InteractionState tracks the current LLM/TTS generation turn state.
+type InteractionState int
+
+const (
+	Unknown     InteractionState = 1
+	Interrupt   InteractionState = 6
+	Interrupted InteractionState = 7
+	LLMGenerating InteractionState = 8
+	LLMGenerated  InteractionState = 5
+)
+
+func (s InteractionState) String() string {
+	switch s {
+	case Unknown:
+		return "Unknown"
+	case LLMGenerated:
+		return "LLMGenerated"
+	case Interrupt:
+		return "Interrupt"
+	case Interrupted:
+		return "Interrupted"
+	case LLMGenerating:
+		return "LLMGenerating"
+	default:
+		return "InvalidState"
+	}
+}
+
 type genericRequestor struct {
 	logger   commons.Logger
 	config   *config.AssistantConfig
@@ -72,8 +104,11 @@ type genericRequestor struct {
 	vaultClient       web_client.VaultClient
 	deploymentClient  endpoint_client.DeploymentServiceClient
 
-	// io related
-	messaging internal_adapter_request_customizers.Messaging
+	// interaction state — inline replacement for the former Messaging wrapper
+	msgMu            sync.RWMutex
+	contextID        string
+	interactionState InteractionState
+	msgMode          type_enums.MessageMode
 
 	// listening
 	speechToTextTransformer internal_type.SpeechToTextTransformer
@@ -107,6 +142,11 @@ type genericRequestor struct {
 	idleTimeoutDeadline time.Time // when the current idle timer is set to fire
 	idleTimeoutCount    uint64
 	maxSessionTimer     *time.Timer
+
+	// packet dispatcher channels — critical preempts normal, normal preempts low
+	criticalCh chan packetEnvelope // interrupts and directives        (cap 16)
+	normalCh   chan packetEnvelope // audio, STT, LLM, TTS pipeline    (cap 256)
+	lowCh      chan packetEnvelope // recording, metrics, persistence   (cap 512)
 }
 
 func NewGenericRequestor(
@@ -147,7 +187,9 @@ func NewGenericRequestor(
 			}
 			return internal_assistant_telemetry.NewInMemoryTracer(logger)
 		}(),
-		messaging:         internal_adapter_request_customizers.NewMessaging(logger),
+		contextID:        uuid.NewString(),
+		interactionState: Unknown,
+		msgMode:          type_enums.TextMode,
 		assistantExecutor: internal_agent_executor_llm.NewAssistantExecutor(logger),
 
 		//
@@ -155,6 +197,11 @@ func NewGenericRequestor(
 		metadata:  make(map[string]interface{}),
 		args:      make(map[string]interface{}),
 		options:   make(map[string]interface{}),
+
+		// dispatcher channels
+		criticalCh: make(chan packetEnvelope, 16),
+		normalCh:   make(chan packetEnvelope, 256),
+		lowCh:      make(chan packetEnvelope, 512),
 	}
 }
 
@@ -283,5 +330,50 @@ func (gr *genericRequestor) CreateConversationRecording(ctx context.Context, use
 		gr.logger.Errorf("unable to create recording for the conversation id %d with error : %v", err)
 		return err
 	}
+	return nil
+}
+
+// =============================================================================
+// Interaction state methods — inline replacement for the former Messaging wrapper
+// =============================================================================
+
+// GetID returns the current interaction context UUID.
+// Rotates to a new UUID each time an Interrupted transition fires.
+func (r *genericRequestor) GetID() string {
+	r.msgMu.RLock()
+	defer r.msgMu.RUnlock()
+	return r.contextID
+}
+
+// GetMode returns the current stream mode (text or audio).
+func (r *genericRequestor) GetMode() type_enums.MessageMode {
+	return r.msgMode
+}
+
+// SwitchMode sets the stream mode.
+func (r *genericRequestor) SwitchMode(mm type_enums.MessageMode) {
+	r.msgMu.Lock()
+	defer r.msgMu.Unlock()
+	r.msgMode = mm
+}
+
+// Transition advances the interaction state machine.
+func (r *genericRequestor) Transition(newState InteractionState) error {
+	r.msgMu.Lock()
+	defer r.msgMu.Unlock()
+	switch newState {
+	case Unknown:
+		return fmt.Errorf("Transition: invalid transition: cannot transition to Unknown state")
+	case Interrupt:
+		if r.interactionState == Interrupted || r.interactionState == Interrupt {
+			return fmt.Errorf("Transition: invalid transition: agent can't interrupt multiple times")
+		}
+	case Interrupted:
+		if r.interactionState == Interrupted {
+			return fmt.Errorf("Transition: invalid transition: agent can't interrupted multiple times")
+		}
+		r.contextID = uuid.NewString()
+	}
+	r.interactionState = newState
 	return nil
 }

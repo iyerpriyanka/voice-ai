@@ -14,6 +14,7 @@ import (
 	"io"
 	"net/http"
 	"sync"
+	"time"
 
 	"github.com/gorilla/websocket"
 	deepgram_internal "github.com/rapidaai/api/assistant-api/internal/transformer/deepgram/internal"
@@ -78,6 +79,14 @@ func (t *deepgramTTS) Initialize() error {
 	t.mu.Unlock()
 
 	go t.textToSpeechCallback(conn, t.ctx)
+	t.onPacket(internal_type.ConversationEventPacket{
+		Name: "tts",
+		Data: map[string]string{
+			"type":     "initialized",
+			"provider": t.Name(),
+		},
+		Time: time.Now(),
+	})
 	return nil
 }
 
@@ -119,13 +128,20 @@ func (t *deepgramTTS) textToSpeechCallback(conn *websocket.Conn, ctx context.Con
 
 			switch envelope.Type {
 			case "Metadata":
-				// ignoreing metadata for now
 				continue
 
 			case "Flushed":
-				t.onPacket(internal_type.TextToSpeechEndPacket{
-					ContextID: t.contextId,
-				})
+				now := time.Now()
+				t.onPacket(
+					internal_type.TextToSpeechEndPacket{ContextID: t.contextId},
+					internal_type.ConversationEventPacket{
+						Name:      "tts",
+						Data: map[string]string{
+							"type": "completed",
+						},
+						Time: now,
+					},
+				)
 				continue
 
 			case "Cleared":
@@ -159,16 +175,29 @@ func (t *deepgramTTS) Transform(ctx context.Context, in internal_type.LLMPacket)
 			_ = conn.WriteJSON(map[string]interface{}{
 				"type": "Clear",
 			})
+			t.onPacket(internal_type.ConversationEventPacket{
+				Name:      "tts",
+				Data:      map[string]string{"type": "interrupted"},
+				Time:      time.Now(),
+			})
 		}
 		return nil
 	case internal_type.LLMResponseDeltaPacket:
+		normalized := t.normalizer.Normalize(ctx, input.Text)
 		if err := conn.WriteJSON(map[string]interface{}{
 			"type": "Speak",
-			"text": t.normalizer.Normalize(ctx, input.Text),
+			"text": normalized,
 		}); err != nil {
 			t.logger.Errorf("deepgram-tts: failed to send Speak message %v", err)
 		}
-
+		t.onPacket(internal_type.ConversationEventPacket{
+			Name:      "tts",
+			Data: map[string]string{
+				"type": "speaking",
+				"text": normalized,
+			},
+			Time: time.Now(),
+		})
 		return nil
 	case internal_type.LLMResponseDonePacket:
 		if err := conn.WriteJSON(map[string]string{"type": "Flush"}); err != nil {

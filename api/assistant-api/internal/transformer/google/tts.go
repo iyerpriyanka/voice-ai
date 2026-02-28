@@ -11,6 +11,7 @@ import (
 	"io"
 	"strings"
 	"sync"
+	"time"
 
 	texttospeech "cloud.google.com/go/texttospeech/apiv1"
 	"cloud.google.com/go/texttospeech/apiv1/texttospeechpb"
@@ -107,6 +108,14 @@ func (google *googleTextToSpeech) Initialize() error {
 	// Pass the current context ID to the callback
 	go google.textToSpeechCallback(stream, google.ctx, currentContextId)
 	google.logger.Debugf("google-tts: connection established")
+	google.onPacket(internal_type.ConversationEventPacket{
+		Name: "tts",
+		Data: map[string]string{
+			"type":     "initialized",
+			"provider": google.Name(),
+		},
+		Time: time.Now(),
+	})
 	return nil
 }
 
@@ -126,6 +135,11 @@ func (google *googleTextToSpeech) Transform(ctx context.Context, in internal_typ
 	switch input := in.(type) {
 	case internal_type.InterruptionPacket:
 		if currentCtx != "" {
+			google.onPacket(internal_type.ConversationEventPacket{
+				Name: "tts",
+				Data: map[string]string{"type": "interrupted"},
+				Time: time.Now(),
+			})
 			if err := google.Initialize(); err != nil {
 				return fmt.Errorf("failed to reinitialize stream on context change: %w", err)
 			}
@@ -146,6 +160,14 @@ func (google *googleTextToSpeech) Transform(ctx context.Context, in internal_typ
 			google.logger.Errorf("google-tts: failed to synthesize text: %v", err)
 			return fmt.Errorf("failed to synthesize text: %w", err)
 		}
+		google.onPacket(internal_type.ConversationEventPacket{
+			Name: "tts",
+			Data: map[string]string{
+				"type": "speaking",
+				"text": input.Text,
+			},
+			Time: time.Now(),
+		})
 		return nil
 	case internal_type.LLMResponseDonePacket:
 		return nil
@@ -167,6 +189,20 @@ func (g *googleTextToSpeech) textToSpeechCallback(streamClient texttospeechpb.Te
 			if err != nil {
 				if err == io.EOF {
 					g.logger.Infof("google-tts: stream ended (EOF)")
+					g.mu.Lock()
+					effectiveCtx := g.contextId
+					if effectiveCtx == "" {
+						effectiveCtx = initialContextId
+					}
+					g.mu.Unlock()
+					g.onPacket(
+						internal_type.TextToSpeechEndPacket{ContextID: effectiveCtx},
+						internal_type.ConversationEventPacket{
+							Name: "tts",
+							Data: map[string]string{"type": "completed"},
+							Time: time.Now(),
+						},
+					)
 					return
 				}
 				if strings.Contains(err.Error(), "Stream aborted due to long duration elapsed without input sent") {
@@ -201,10 +237,8 @@ func (g *googleTextToSpeech) textToSpeechCallback(streamClient texttospeechpb.Te
 				effectiveContextId = initialContextId
 			}
 
-			if err := g.onPacket(internal_type.TextToSpeechAudioPacket{
-				ContextID:  effectiveContextId,
-				AudioChunk: resp.GetAudioContent(),
-			}); err != nil {
+			audioContent := resp.GetAudioContent()
+			if err := g.onPacket(internal_type.TextToSpeechAudioPacket{ContextID: effectiveContextId, AudioChunk: audioContent}); err != nil {
 				g.logger.Errorf("google-tts: failed to send packet: %v", err)
 			}
 		}

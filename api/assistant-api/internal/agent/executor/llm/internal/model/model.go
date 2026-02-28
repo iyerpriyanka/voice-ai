@@ -122,7 +122,15 @@ func (executor *modelAssistantExecutor) Initialize(ctx context.Context, communic
 		}
 	})
 
-	executor.logger.Benchmark("DefaultAssistantExecutor.Init", time.Since(start))
+	llmData := communication.Assistant().AssistantProviderModel.GetOptions().ToStringMap()
+	llmData["type"] = "llm_initialized"
+	llmData["provider"] = communication.Assistant().AssistantProviderModel.ModelProviderName
+	llmData["init_ms"] = fmt.Sprintf("%d", time.Since(start).Milliseconds())
+	communication.OnPacket(ctx, internal_type.ConversationEventPacket{
+		Name: "session",
+		Data: llmData,
+		Time: time.Now(),
+	})
 	return nil
 }
 
@@ -212,10 +220,19 @@ func (executor *modelAssistantExecutor) handleResponse(ctx context.Context, comm
 	metrics := resp.GetMetrics()
 	// Handle error responses
 	if !resp.GetSuccess() && resp.GetError() != nil {
-		communication.OnPacket(ctx, internal_type.LLMErrorPacket{
-			ContextID: resp.GetRequestId(),
-			Error:     errors.New(resp.GetError().GetErrorMessage()),
-		})
+		errMsg := resp.GetError().GetErrorMessage()
+		communication.OnPacket(ctx,
+			internal_type.LLMErrorPacket{
+				ContextID: resp.GetRequestId(),
+				Error:     errors.New(errMsg),
+			},
+			internal_type.ConversationEventPacket{
+				ContextID: resp.GetRequestId(),
+				Name:      "llm",
+				Data:      map[string]string{"type": "error", "error": errMsg},
+				Time:      time.Now(),
+			},
+		)
 		return
 	}
 	//
@@ -226,15 +243,33 @@ func (executor *modelAssistantExecutor) handleResponse(ctx context.Context, comm
 	// Check if this is the final message (has metrics)
 	if len(metrics) > 0 {
 		executor.history = append(executor.history, output)
-		communication.OnPacket(ctx, internal_type.LLMResponseDonePacket{
-			ContextID: resp.GetRequestId(),
-			Text:      strings.Join(output.GetAssistant().GetContents(), ""),
-		})
+		responseText := strings.Join(output.GetAssistant().GetContents(), "")
+		now := time.Now()
+		communication.OnPacket(ctx,
+			internal_type.LLMResponseDonePacket{
+				ContextID: resp.GetRequestId(),
+				Text:      responseText,
+			},
+			internal_type.ConversationEventPacket{
+				ContextID: resp.GetRequestId(),
+				Name:      "llm",
+				Data: map[string]string{
+					"type":                "completed",
+					"response_char_count": fmt.Sprintf("%d", len(responseText)),
+					"finish_reason":       "stop",
+				},
+				Time: now,
+			},
+			internal_type.MessageMetricPacket{
+				ContextID: resp.GetRequestId(),
+				Metrics:   metrics,
+			},
+		)
+
 		if len(output.GetAssistant().GetToolCalls()) > 0 {
 			executor.executeToolCalls(ctx, communication, resp.GetRequestId(), output, executor.history)
 		}
 		return
-
 	}
 	if len(output.GetAssistant().GetContents()) > 0 {
 		communication.OnPacket(ctx, internal_type.LLMResponseDeltaPacket{
@@ -311,6 +346,17 @@ func (executor *modelAssistantExecutor) Execute(ctx context.Context, communicati
 // handleUserTextPacket processes user text input
 func (executor *modelAssistantExecutor) handleUserTextPacket(ctx context.Context, communication internal_type.Communication, packet internal_type.UserTextPacket,
 ) error {
+	communication.OnPacket(ctx, internal_type.ConversationEventPacket{
+		ContextID: packet.ContextID,
+		Name:      "llm",
+		Data: map[string]string{
+			"type":             "executing",
+			"script":           packet.Text,
+			"input_char_count": fmt.Sprintf("%d", len(packet.Text)),
+			"history_count":    fmt.Sprintf("%d", len(executor.history)),
+		},
+		Time: time.Now(),
+	})
 	return executor.chat(ctx, communication, packet.ContextID, &protos.Message{Role: "user", Message: &protos.Message_User{User: &protos.UserMessage{Content: packet.Text}}}, executor.history...)
 }
 

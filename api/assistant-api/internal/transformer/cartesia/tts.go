@@ -12,6 +12,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/gorilla/websocket"
 	cartesia_internal "github.com/rapidaai/api/assistant-api/internal/transformer/cartesia/internal"
@@ -65,7 +66,14 @@ func (ct *cartesiaTTS) Initialize() error {
 	ct.mu.Unlock()
 
 	go ct.textToSpeechCallback(ct.connection, ct.ctx)
-	ct.logger.Debugf("cartesia-stt: connection established")
+	ct.onPacket(internal_type.ConversationEventPacket{
+		Name: "tts",
+		Data: map[string]string{
+			"type":     "initialized",
+			"provider": ct.Name(),
+		},
+		Time: time.Now(),
+	})
 	return nil
 }
 
@@ -86,9 +94,14 @@ func (cst *cartesiaTTS) textToSpeechCallback(conn *websocket.Conn, ctx context.C
 				continue
 			}
 			if payload.Done {
-				_ = cst.onPacket(internal_type.TextToSpeechEndPacket{
-					ContextID: payload.ContextID,
-				})
+				_ = cst.onPacket(
+					internal_type.TextToSpeechEndPacket{ContextID: payload.ContextID},
+					internal_type.ConversationEventPacket{
+						Name: "tts",
+						Data: map[string]string{"type": "completed"},
+						Time: time.Now(),
+					},
+				)
 				continue
 			}
 			if payload.Data == "" {
@@ -99,10 +112,7 @@ func (cst *cartesiaTTS) textToSpeechCallback(conn *websocket.Conn, ctx context.C
 				cst.logger.Error("cartesia-tts: failed to decode audio payload error: %v", err)
 				continue
 			}
-			_ = cst.onPacket(internal_type.TextToSpeechAudioPacket{
-				ContextID:  payload.ContextID,
-				AudioChunk: decoded,
-			})
+			_ = cst.onPacket(internal_type.TextToSpeechAudioPacket{ContextID: payload.ContextID, AudioChunk: decoded})
 		}
 	}
 }
@@ -132,6 +142,11 @@ func (ct *cartesiaTTS) Transform(ctx context.Context, in internal_type.LLMPacket
 				"context_id": currentCtx,
 				"cancel":     true,
 			})
+			ct.onPacket(internal_type.ConversationEventPacket{
+				Name: "tts",
+				Data: map[string]string{"type": "interrupted"},
+				Time: time.Now(),
+			})
 		}
 		return nil
 	case internal_type.LLMResponseDeltaPacket:
@@ -139,13 +154,21 @@ func (ct *cartesiaTTS) Transform(ctx context.Context, in internal_type.LLMPacket
 		if err := conn.WriteJSON(message); err != nil {
 			return err
 		}
+		ct.onPacket(internal_type.ConversationEventPacket{
+			Name: "tts",
+			Data: map[string]string{
+				"type": "speaking",
+				"text": input.Text,
+			},
+			Time: time.Now(),
+		})
 	case internal_type.LLMResponseDonePacket:
 		message := ct.GetTextToSpeechInput("", map[string]interface{}{"continue": false, "flush": true, "context_id": ct.contextId})
 		if err := conn.WriteJSON(message); err != nil {
 			return err
 		}
 	default:
-		return fmt.Errorf("azure-tts: unsupported input type %T", in)
+		return fmt.Errorf("cartesia-tts: unsupported input type %T", in)
 	}
 	return nil
 

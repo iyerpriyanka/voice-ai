@@ -7,6 +7,7 @@ package internal_type
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/rapidaai/protos"
 )
@@ -404,6 +405,124 @@ func (f SpeechToTextPacket) ContextId() string {
 	return f.ContextID
 }
 
+// =============================================================================
+// Pre-processing Packets
+// =============================================================================
+
+// DenoiseAudioPacket carries raw user audio to be denoised before entering the pipeline.
+type DenoiseAudioPacket struct {
+	ContextID string
+	Audio     []byte
+}
+
+func (f DenoiseAudioPacket) ContextId() string { return f.ContextID }
+
+// DenoisedAudioPacket carries the result of the denoiser stage.
+// The denoiser pushes this via onPacket instead of returning bytes to the caller.
+// On error the denoiser falls back to the original audio with NoiseReduced=false.
+type DenoisedAudioPacket struct {
+	ContextID    string
+	Audio        []byte
+	Confidence   float64
+	NoiseReduced bool
+}
+
+func (f DenoisedAudioPacket) ContextId() string { return f.ContextID }
+
+// VadAudioPacket carries a processed audio chunk to submit to the VAD processor.
+type VadAudioPacket struct {
+	ContextID string
+	Audio     []byte
+}
+
+func (f VadAudioPacket) ContextId() string { return f.ContextID }
+
+// =============================================================================
+// LLM Execution Packet
+// =============================================================================
+
+// ExecuteLLMPacket triggers the LLM pipeline with the user's final transcript.
+type ExecuteLLMPacket struct {
+	ContextID string
+	Input     string
+}
+
+func (f ExecuteLLMPacket) ContextId() string { return f.ContextID }
+
+// =============================================================================
+// TTS Packet
+// =============================================================================
+
+// SpeakTextPacket routes text into the TTS pipeline or directly to the client.
+// IsFinal=true signals a flush (end of generation); IsFinal=false is a streaming delta.
+type SpeakTextPacket struct {
+	ContextID string
+	Text      string
+	IsFinal   bool
+}
+
+func (f SpeakTextPacket) ContextId() string { return f.ContextID }
+
+// =============================================================================
+// Interrupt Packets
+// =============================================================================
+
+// InterruptTTSPacket signals the TTS transformer to stop current playback.
+type InterruptTTSPacket struct {
+	ContextID string
+	StartAt   float64
+	EndAt     float64
+}
+
+func (f InterruptTTSPacket) ContextId() string { return f.ContextID }
+
+// InterruptLLMPacket signals the LLM executor to cancel current generation.
+type InterruptLLMPacket struct {
+	ContextID string
+}
+
+func (f InterruptLLMPacket) ContextId() string { return f.ContextID }
+
+// =============================================================================
+// Recording Packets
+// =============================================================================
+
+// RecordUserAudioPacket carries a user audio chunk to be written to the recorder.
+type RecordUserAudioPacket struct {
+	ContextID string
+	Audio     []byte
+}
+
+func (f RecordUserAudioPacket) ContextId() string { return f.ContextID }
+
+// RecordAssistantAudioPacket carries an assistant audio chunk to the recorder.
+// When Truncate is true, the recorder trims buffered assistant audio at the current
+// wall-clock position, mirroring the streamer's ClearOutputBuffer on interruption.
+type RecordAssistantAudioPacket struct {
+	ContextID string
+	Audio     []byte
+	Truncate  bool
+}
+
+func (f RecordAssistantAudioPacket) ContextId() string { return f.ContextID }
+
+// =============================================================================
+// Persistence Packet
+// =============================================================================
+
+// SaveMessagePacket persists a conversation message to the database and appends
+// it to the in-memory history. It implements MessagePacket so it can be passed
+// directly to onCreateMessage.
+type SaveMessagePacket struct {
+	ContextID   string
+	MessageRole string
+	Text        string
+}
+
+func (f SaveMessagePacket) ContextId() string { return f.ContextID }
+func (f SaveMessagePacket) Role() string      { return f.MessageRole }
+func (f SaveMessagePacket) Content() string   { return f.Text }
+
 //
 
 // KnowledgeRetrieveOption contains options for knowledge retrieval operations
@@ -421,3 +540,29 @@ type KnowledgeContextResult struct {
 	Content    string                 `json:"content"`
 	Score      float64                `json:"score"`
 }
+
+// =============================================================================
+// Observability Packets
+// =============================================================================
+
+// ConversationEventPacket carries a named pipeline event for the debugger.
+// Each component emits these alongside its existing packets; they flow through
+// lowCh so they never compete with STT/LLM/TTS audio.
+type ConversationEventPacket struct {
+	// ContextID identifies the interaction turn. May be empty when emitted by
+	// components that don't hold the session context (e.g. STT callbacks);
+	// handleConversationEvent fills it from r.GetID() in that case.
+	ContextID string
+
+	// EventName is the component name: "stt", "tts", "llm", "vad", "eos",
+	// "knowledge", "session", "behavior", "denoise", "audio", "tool", etc.
+	Name string
+
+	// Data carries event-specific key/value pairs. Always includes "type".
+	Data map[string]string
+
+	// OccurredAt is the wall-clock time the event was raised.
+	Time time.Time
+}
+
+func (f ConversationEventPacket) ContextId() string { return f.ContextID }

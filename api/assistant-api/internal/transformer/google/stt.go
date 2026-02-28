@@ -10,6 +10,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"strings"
 	"sync"
 	"time"
 
@@ -34,6 +35,9 @@ type googleSpeechToText struct {
 	// context management
 	ctx       context.Context
 	ctxCancel context.CancelFunc
+
+	// observability: time when speech started
+	startedAt time.Time
 }
 
 // Name implements internal_transformer.SpeechToTextTransformer.
@@ -103,6 +107,11 @@ func (g *googleSpeechToText) speechToTextCallback(stram speechpb.Speech_Streamin
 					return
 				}
 				g.logger.Errorf("google-stt: recv error: %v", err)
+				g.onPacket(internal_type.ConversationEventPacket{
+					Name: "stt",
+					Data: map[string]string{"type": "error", "error": err.Error()},
+					Time: time.Now(),
+				})
 				return
 			}
 			if resp == nil {
@@ -116,28 +125,89 @@ func (g *googleSpeechToText) speechToTextCallback(stram speechpb.Speech_Streamin
 				}
 				alt := result.Alternatives[0]
 				if g.onPacket != nil && len(alt.GetTranscript()) > 0 {
+					confStr := fmt.Sprintf("%.4f", float64(alt.GetConfidence()))
+					transcript := alt.GetTranscript()
+
+					g.mu.Lock()
+					if g.startedAt.IsZero() {
+						g.startedAt = time.Now()
+					}
+					g.mu.Unlock()
+
 					if v, err := g.mdlOpts.GetFloat64("listen.threshold"); err == nil {
 						if alt.GetConfidence() < float32(v) {
 							g.onPacket(
 								internal_type.SpeechToTextPacket{
-									Script:     alt.GetTranscript(),
+									Script:     transcript,
 									Confidence: float64(alt.GetConfidence()),
 									Language:   result.GetLanguageCode(),
 									Interim:    true,
+								},
+								internal_type.ConversationEventPacket{
+									Name: "stt",
+									Data: map[string]string{
+										"type":       "interim",
+										"script":     transcript,
+										"confidence": confStr,
+									},
+									Time: time.Now(),
 								},
 							)
 							continue
 						}
 					}
-					g.onPacket(
-						internal_type.InterruptionPacket{Source: internal_type.InterruptionSourceWord},
-						internal_type.SpeechToTextPacket{
-							Script:     alt.GetTranscript(),
-							Confidence: float64(alt.GetConfidence()),
-							Language:   result.GetLanguageCode(),
-							Interim:    !result.GetIsFinal(),
-						},
-					)
+					if result.GetIsFinal() {
+						now := time.Now()
+						var latencyMs int64
+						g.mu.Lock()
+						if !g.startedAt.IsZero() {
+							latencyMs = now.Sub(g.startedAt).Milliseconds()
+						}
+						g.mu.Unlock()
+						g.onPacket(
+							internal_type.InterruptionPacket{Source: internal_type.InterruptionSourceWord},
+							internal_type.SpeechToTextPacket{
+								Script:     transcript,
+								Confidence: float64(alt.GetConfidence()),
+								Language:   result.GetLanguageCode(),
+								Interim:    false,
+							},
+							internal_type.ConversationEventPacket{
+								Name: "stt",
+								Data: map[string]string{
+									"type":       "completed",
+									"script":     transcript,
+									"confidence": confStr,
+									"language":   result.GetLanguageCode(),
+									"word_count": fmt.Sprintf("%d", len(strings.Fields(transcript))),
+									"char_count": fmt.Sprintf("%d", len(transcript)),
+								},
+								Time: now,
+							},
+							internal_type.MessageMetricPacket{
+								Metrics: []*protos.Metric{{Name: "stt_latency_ms", Value: fmt.Sprintf("%d", latencyMs)}},
+							},
+						)
+					} else {
+						g.onPacket(
+							internal_type.InterruptionPacket{Source: internal_type.InterruptionSourceWord},
+							internal_type.SpeechToTextPacket{
+								Script:     transcript,
+								Confidence: float64(alt.GetConfidence()),
+								Language:   result.GetLanguageCode(),
+								Interim:    true,
+							},
+							internal_type.ConversationEventPacket{
+								Name: "stt",
+								Data: map[string]string{
+									"type":       "interim",
+									"script":     transcript,
+									"confidence": confStr,
+								},
+								Time: time.Now(),
+							},
+						)
+					}
 				}
 			}
 
@@ -173,6 +243,15 @@ func (google *googleSpeechToText) Initialize() error {
 	// Launch callback listener
 	go google.speechToTextCallback(stream, google.ctx)
 	google.logger.Debugf("google-stt: connection established")
+
+	google.onPacket(internal_type.ConversationEventPacket{
+		Name: "stt",
+		Data: map[string]string{
+			"type":     "initialized",
+			"provider": google.Name(),
+		},
+		Time: time.Now(),
+	})
 	return nil
 }
 

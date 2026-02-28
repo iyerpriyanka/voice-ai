@@ -12,6 +12,7 @@ package adapter_internal
 
 import (
 	"context"
+	"fmt"
 	"sync"
 	"time"
 
@@ -19,6 +20,7 @@ import (
 	internal_assistant_entity "github.com/rapidaai/api/assistant-api/internal/entity/assistants"
 	internal_conversation_entity "github.com/rapidaai/api/assistant-api/internal/entity/conversations"
 	internal_telemetry "github.com/rapidaai/api/assistant-api/internal/telemetry"
+	internal_type "github.com/rapidaai/api/assistant-api/internal/type"
 	"github.com/rapidaai/pkg/types"
 	type_enums "github.com/rapidaai/pkg/types/enums"
 	"github.com/rapidaai/pkg/utils"
@@ -95,6 +97,13 @@ func (r *genericRequestor) Disconnect(ctx context.Context) {
 	})
 	waitGroup.Wait()
 
+	// Emit disconnected event before closing resources
+	r.OnPacket(ctx, internal_type.ConversationEventPacket{
+		Name: "session",
+		Data: map[string]string{"type": "disconnected", "total_messages": fmt.Sprintf("%d", len(r.GetHistories()))},
+		Time: time.Now(),
+	})
+
 	// Phase 2: Trigger end-of-conversation hooks
 	r.OnEndConversation(ctx)
 
@@ -114,49 +123,27 @@ func (r *genericRequestor) Disconnect(ctx context.Context) {
 }
 
 // Connect establishes a new assistant session or resumes an existing one.
-//
-// This method serves as the primary entry point for initiating assistant
-// conversations. Based on the provided configuration, it either creates
-// a new session or resumes an existing conversation.
-//
-// Parameters:
-//   - ctx: Context for cancellation and deadline propagation
-//   - auth: Authentication principal containing user/organization credentials
-//   - config: Conversation configuration including assistant details and audio settings
-//
-// Returns:
-//   - error: nil on success, or an error describing the failure reason
-//
-// The method performs the following steps:
-//  1. Validates and creates the request customizer
-//  2. Sets authentication context
-//  3. Retrieves the assistant configuration
-//  4. Routes to either new session creation or session resumption
-//
-// Example:
-//
-//	err := requestor.Connect(ctx, auth, "user-123", &protos.ConversationConfiguration{
-//	    Assistant: &protos.AssistantDefinition{AssistantId: 1},
-//	})
 func (r *genericRequestor) Connect(
 	ctx context.Context,
 	auth types.SimplePrinciple,
 	config *protos.ConversationInitialization,
 ) error {
+	// Start the packet dispatcher before any OnPacket calls can happen.
+	// Uses the session ctx so the dispatcher goroutine exits when the
+	// session ends (streamer context cancelled).
+	go r.runDispatcher(ctx)
+
 	ctx, span, _ := r.Tracer().StartSpan(ctx, utils.AssistantConnectStage)
 	defer span.EndSpan(ctx, utils.AssistantConnectStage)
 
-	// Set authentication context
 	r.SetAuth(auth)
 
-	// Retrieve assistant configuration
 	assistant, err := r.GetAssistant(ctx, auth, config.Assistant.AssistantId, config.Assistant.Version)
 	if err != nil {
 		r.logger.Errorf("failed to retrieve assistant configuration: %+v", err)
 		return err
 	}
 
-	// Route to appropriate session handler based on conversation ID presence
 	if conversationID := config.GetAssistantConversationId(); conversationID > 0 {
 		span.AddAttributes(ctx, internal_telemetry.KV{K: "conversation_initiation", V: internal_telemetry.StringValue("resume")}, internal_telemetry.KV{K: "conversation_id", V: internal_telemetry.IntValue(conversationID)})
 		return r.resumeSession(ctx, config, assistant)
@@ -167,10 +154,6 @@ func (r *genericRequestor) Connect(
 }
 
 // persistRecording saves the audio recording asynchronously.
-//
-// This method runs in a background goroutine to avoid blocking the
-// disconnect flow. Any errors are logged but do not affect the
-// disconnection process.
 func (r *genericRequestor) persistRecording(ctx context.Context) {
 	if r.recorder != nil {
 		utils.Go(ctx, func() {
@@ -184,7 +167,6 @@ func (r *genericRequestor) persistRecording(ctx context.Context) {
 			}
 		})
 	}
-
 }
 
 // exportTelemetry exports conversation telemetry data for analytics and monitoring.
@@ -221,7 +203,7 @@ func (r *genericRequestor) stopTimers() {
 // Connect Helpers
 // =============================================================================
 
-// resumeSession delegates to OnResumeSession with extracted configuration values.
+// resumeSession resumes an existing conversation session.
 func (r *genericRequestor) resumeSession(
 	ctx context.Context,
 	config *protos.ConversationInitialization,
@@ -230,13 +212,23 @@ func (r *genericRequestor) resumeSession(
 	ctx, span, _ := r.Tracer().StartSpan(ctx, utils.AssistantResumeConverstaionStage)
 	defer span.EndSpan(ctx, utils.AssistantResumeConverstaionStage)
 
-	// Resume existing conversation
 	conversation, err := r.ResumeConversation(ctx, assistant, config)
 	if err != nil {
 		r.logger.Errorf("failed to resume conversation: %+v", err)
 		return err
 	}
-	// Initialize critical components concurrently
+
+	r.OnPacket(ctx, internal_type.ConversationEventPacket{
+		Name: "session",
+		Data: map[string]string{
+			"type":          "resumed",
+			"source":        fmt.Sprintf("%v", r.source),
+			"identifier":    r.identifier(config),
+			"message_count": fmt.Sprintf("%d", len(r.GetHistories())),
+		},
+		Time: time.Now(),
+	})
+
 	errGroup, _ := errgroup.WithContext(ctx)
 
 	errGroup.Go(func() error {
@@ -254,74 +246,40 @@ func (r *genericRequestor) resumeSession(
 		return nil
 	})
 
-	// tts is important and speed up the first message
 	errGroup.Go(func() error {
 		switch config.StreamMode {
 		case protos.StreamMode_STREAM_MODE_TEXT:
-			r.messaging.SwitchMode(type_enums.TextMode)
+			r.SwitchMode(type_enums.TextMode)
 		case protos.StreamMode_STREAM_MODE_AUDIO:
 			r.initializeTextToSpeech(ctx)
-			r.messaging.SwitchMode(type_enums.AudioMode)
+			r.SwitchMode(type_enums.AudioMode)
 		}
 		return nil
 	})
 
-	utils.Go(ctx, func() {
+	errGroup.Go(func() error {
 		switch config.StreamMode {
 		case protos.StreamMode_STREAM_MODE_AUDIO:
-			r.initializeSpeechToText(ctx)
+			if err := r.initializeSpeechToText(ctx); err != nil {
+				r.logger.Errorf("failed to initialize speech-to-text: %v", err)
+				return err
+			}
 		}
+		return nil
 	})
 
-	// Start non-critical background tasks (not a new session)
+	r.initSessionBackground(ctx, false)
 
-	// Initialize audio recorder when both input and output are configured
-	utils.Go(ctx, func() {
-		rc, err := internal_audio_recorder.GetRecorder(r.logger)
-		if err != nil {
-			r.logger.Tracef(ctx, "failed to initialize audio recorder: %+v", err)
-			return
-		}
-
-		r.recorder = rc
-		r.recorder.Start()
-	})
-
-	// Establish speech-to-text listener connection
-	utils.Go(ctx, func() {
-		if err := r.initializeEndOfSpeech(ctx); err != nil {
-			r.logger.Tracef(ctx, "failed to initialize input: %+v", err)
-		}
-	})
-
-	// Update conversation status metric
-	utils.Go(ctx, func() {
-		r.onAddMetrics(ctx, &protos.Metric{
-			Name:        type_enums.STATUS.String(),
-			Value:       type_enums.RECORD_IN_PROGRESS.String(),
-			Description: "Conversation is currently in progress",
-		})
-	})
-
-	// Store client information from gRPC context
-	utils.Go(ctx, func() {
-		r.storeClientInformation(ctx)
-	})
-
-	// Trigger begin conversation hooks for new sessions only
-	utils.Go(ctx, func() {
-		if err := r.OnResumeConversation(ctx); err != nil {
-			r.logger.Errorf("failed to execute resume conversation hooks: %v", err)
-		}
-	})
-
-	err = errGroup.Wait()
+	if err = errGroup.Wait(); err != nil {
+		r.notifyInitializationError(ctx, conversation.Id, err)
+		return err
+	}
 	r.notifyConfiguration(ctx, config, conversation, assistant)
 	r.initializeBehavior(ctx)
-	return err
+	return nil
 }
 
-// createSession delegates to OnCreateSession with extracted configuration values.
+// createSession creates a new conversation session.
 func (r *genericRequestor) createSession(
 	ctx context.Context,
 	config *protos.ConversationInitialization,
@@ -330,7 +288,6 @@ func (r *genericRequestor) createSession(
 	ctx, span, _ := r.Tracer().StartSpan(ctx, utils.AssistantCreateConversationStage)
 	defer span.EndSpan(ctx, utils.AssistantCreateConversationStage)
 
-	//
 	conversation, err := r.BeginConversation(
 		ctx,
 		assistant,
@@ -342,10 +299,19 @@ func (r *genericRequestor) createSession(
 		return err
 	}
 
-	// Initialize critical components concurrently
+	r.OnPacket(ctx, internal_type.ConversationEventPacket{
+		Name: "session",
+		Data: map[string]string{
+			"type":       "connected",
+			"source":     fmt.Sprintf("%v", r.source),
+			"is_new":     "true",
+			"identifier": r.identifier(config),
+		},
+		Time: time.Now(),
+	})
+
 	errGroup, _ := errgroup.WithContext(ctx)
 
-	// blocking initialization of assistant executor to ensure it's ready before processing any input or output
 	errGroup.Go(func() error {
 		if err := r.assistantExecutor.Initialize(ctx, r, config); err != nil {
 			r.logger.Tracef(ctx, "failed to initialize executor: %+v", err)
@@ -357,15 +323,14 @@ func (r *genericRequestor) createSession(
 	errGroup.Go(func() error {
 		switch config.StreamMode {
 		case protos.StreamMode_STREAM_MODE_TEXT:
-			r.messaging.SwitchMode(type_enums.TextMode)
+			r.SwitchMode(type_enums.TextMode)
 		case protos.StreamMode_STREAM_MODE_AUDIO:
 			r.initializeTextToSpeech(ctx)
-			r.messaging.SwitchMode(type_enums.AudioMode)
+			r.SwitchMode(type_enums.AudioMode)
 		}
 		return nil
 	})
 
-	// blocking initialization of assistant executor to ensure it's ready before processing any input or output
 	errGroup.Go(func() error {
 		if err := r.initializeTextAggregator(ctx); err != nil {
 			r.logger.Errorf("unable to initialize sentence assembler with error %v", err)
@@ -373,15 +338,31 @@ func (r *genericRequestor) createSession(
 		return nil
 	})
 
-	utils.Go(ctx, func() {
+	errGroup.Go(func() error {
 		switch config.StreamMode {
 		case protos.StreamMode_STREAM_MODE_AUDIO:
-			r.initializeSpeechToText(ctx)
+			if err := r.initializeSpeechToText(ctx); err != nil {
+				r.logger.Errorf("failed to initialize speech-to-text: %v", err)
+				return err
+			}
 		}
+		return nil
 	})
 
-	// Start non-critical background tasks
-	// Initialize audio recorder when both input and output are configured
+	r.initSessionBackground(ctx, true)
+
+	if err = errGroup.Wait(); err != nil {
+		r.notifyInitializationError(ctx, conversation.Id, err)
+		return err
+	}
+	r.notifyConfiguration(ctx, config, conversation, assistant)
+	r.initializeBehavior(ctx)
+	return nil
+}
+
+// initSessionBackground launches non-critical background tasks common to both
+// new and resumed sessions. isNew distinguishes which lifecycle hook to fire.
+func (r *genericRequestor) initSessionBackground(ctx context.Context, isNew bool) {
 	utils.Go(ctx, func() {
 		rc, err := internal_audio_recorder.GetRecorder(r.logger)
 		if err != nil {
@@ -390,17 +371,19 @@ func (r *genericRequestor) createSession(
 		}
 		r.recorder = rc
 		r.recorder.Start()
-
+		r.OnPacket(ctx, internal_type.ConversationEventPacket{
+			Name: "session",
+			Data: map[string]string{"type": "recording_started"},
+			Time: time.Now(),
+		})
 	})
 
 	utils.Go(ctx, func() {
 		if err := r.initializeEndOfSpeech(ctx); err != nil {
 			r.logger.Tracef(ctx, "failed to initialize input: %+v", err)
 		}
-
 	})
 
-	// Update conversation status metric
 	utils.Go(ctx, func() {
 		r.onAddMetrics(ctx, &protos.Metric{
 			Name:        type_enums.STATUS.String(),
@@ -409,27 +392,26 @@ func (r *genericRequestor) createSession(
 		})
 	})
 
-	// Store client information from gRPC context
 	utils.Go(ctx, func() {
 		r.storeClientInformation(ctx)
 	})
 
-	// Trigger begin conversation hooks for new sessions only
-	utils.Go(ctx, func() {
-		if err := r.OnBeginConversation(ctx); err != nil {
-			r.logger.Errorf("failed to execute begin conversation hooks: %+v", err)
-		}
-	})
-	err = errGroup.Wait()
-	r.notifyConfiguration(ctx, config, conversation, assistant)
-	r.initializeBehavior(ctx)
-	return err
+	if isNew {
+		utils.Go(ctx, func() {
+			if err := r.OnBeginConversation(ctx); err != nil {
+				r.logger.Errorf("failed to execute begin conversation hooks: %+v", err)
+			}
+		})
+	} else {
+		utils.Go(ctx, func() {
+			if err := r.OnResumeConversation(ctx); err != nil {
+				r.logger.Errorf("failed to execute resume conversation hooks: %v", err)
+			}
+		})
+	}
 }
 
 // notifyConfiguration sends the initial conversation configuration to the client.
-//
-// This notification includes the conversation ID and assistant details,
-// allowing the client to track the session.
 func (r *genericRequestor) notifyConfiguration(
 	ctx context.Context,
 	config *protos.ConversationInitialization,
@@ -451,6 +433,17 @@ func (r *genericRequestor) notifyConfiguration(
 	}); err != nil {
 		r.logger.Errorf("failed to send configuration notification: %v", err)
 	}
+}
+
+// notifyInitializationError sends a ConversationError to the client when a core
+// system (STT, TTS, executor) fails to initialize. The client receives a
+// structured error message before the session is torn down, rather than a
+// silent gRPC status error.
+func (r *genericRequestor) notifyInitializationError(ctx context.Context, conversationId uint64, initErr error) {
+	_ = r.Notify(ctx, &protos.ConversationError{
+		AssistantConversationId: conversationId,
+		Message:                 fmt.Sprintf("session initialization failed: %v", initErr),
+	})
 }
 
 // storeClientInformation extracts client metadata from the gRPC context

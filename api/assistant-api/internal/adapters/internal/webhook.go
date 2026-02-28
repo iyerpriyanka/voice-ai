@@ -78,8 +78,9 @@ func (md *genericRequestor) OnEndConversation(ctx context.Context) error {
 	})
 	return nil
 }
+
 func (hk *genericRequestor) Analysis(ctx context.Context, endpointId uint64, endpointVersion string, arguments map[string]interface{}) (map[string]interface{}, error) {
-	ivk, err := hk.analyze(
+	ivk, err := hk.invokeEndpoint(
 		ctx,
 		&protos.EndpointDefinition{
 			EndpointId: endpointId,
@@ -118,7 +119,7 @@ func (md *genericRequestor) Webhook(ctx context.Context, event string, arguments
 		retryStatusCodes := webhook.GetRetryStatusCode()
 
 		for retryCount <= maxRetryCount {
-			res, err = md.webhook(ctx,
+			res, err = md.executeWebhook(ctx,
 				webhook.GetTimeoutSecond(),
 				webhook.GetUrl(),
 				webhook.GetMethod(),
@@ -250,7 +251,8 @@ func (md *genericRequestor) Parse(event utils.AssistantWebhookEvent, mapping map
 	return arguments
 }
 
-func (ae *genericRequestor) analyze(ctx context.Context, endpointDef *protos.EndpointDefinition, arguments, metadata, opts map[string]interface{}) (*protos.InvokeResponse, error) {
+// invokeEndpoint calls a configured endpoint via the deployment client.
+func (ae *genericRequestor) invokeEndpoint(ctx context.Context, endpointDef *protos.EndpointDefinition, arguments, metadata, opts map[string]interface{}) (*protos.InvokeResponse, error) {
 	inputBuilder := endpoint_client_builders.NewInputInvokeBuilder(ae.logger)
 	return ae.DeploymentCaller().Invoke(
 		ctx,
@@ -264,7 +266,8 @@ func (ae *genericRequestor) analyze(ctx context.Context, endpointDef *protos.End
 	)
 }
 
-func (aw *genericRequestor) webhook(ctx context.Context, timeout uint32, baseUrl string, method string, headers map[string]string, body map[string]interface{}) (*rest.APIResponse, error) {
+// executeWebhook performs the actual HTTP request for a webhook call.
+func (aw *genericRequestor) executeWebhook(ctx context.Context, timeout uint32, baseUrl string, method string, headers map[string]string, body map[string]interface{}) (*rest.APIResponse, error) {
 	client := rest.NewRestClientWithConfig(baseUrl, headers, timeout)
 	switch method {
 	case "POST":

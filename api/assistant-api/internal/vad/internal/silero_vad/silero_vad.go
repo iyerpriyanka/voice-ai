@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"sync"
+	"time"
 
 	internal_audio "github.com/rapidaai/api/assistant-api/internal/audio"
 	internal_audio_resampler "github.com/rapidaai/api/assistant-api/internal/audio/resampler"
@@ -85,6 +86,8 @@ func NewSileroVAD(
 	onPacket func(ctx context.Context, pkt ...internal_type.Packet) error,
 	options utils.Option,
 ) (internal_type.Vad, error) {
+	start := time.Now()
+
 	// Initialize detector
 	detector, err := createDetector(options)
 	if err != nil {
@@ -111,6 +114,16 @@ func NewSileroVAD(
 
 	// Start lifecycle manager for automatic cleanup
 	svad.startLifecycleManager(ctx)
+
+	_ = onPacket(ctx, internal_type.ConversationEventPacket{
+		Name: "vad",
+		Data: map[string]string{
+			"type":     "initialized",
+			"provider": vadName,
+			"init_ms":  fmt.Sprintf("%d", time.Since(start).Milliseconds()),
+		},
+		Time: time.Now(),
+	})
 
 	return svad, nil
 }
@@ -311,9 +324,20 @@ func (s *SileroVAD) notifyActivity(ctx context.Context, segments []speech.Segmen
 		}
 	}
 
-	s.onPacket(ctx, internal_type.InterruptionPacket{
-		Source:  internal_type.InterruptionSourceVad,
-		StartAt: minStart,
-		EndAt:   maxEnd,
-	})
+	s.onPacket(ctx,
+		internal_type.InterruptionPacket{
+			Source:  internal_type.InterruptionSourceVad,
+			StartAt: minStart,
+			EndAt:   maxEnd,
+		},
+		internal_type.ConversationEventPacket{
+			Name: "vad",
+			Data: map[string]string{
+				"type":          "detected",
+				"start_at":      fmt.Sprintf("%f", minStart),
+				"end_at":        fmt.Sprintf("%f", maxEnd),
+				"segment_count": fmt.Sprintf("%d", len(segments)),
+			},
+		},
+	)
 }

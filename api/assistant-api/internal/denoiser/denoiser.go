@@ -24,13 +24,13 @@ const (
 	DenoiserOptionsKeyProvider                    = "microphone.denoising.provider"
 )
 
-// logger, audioConfig, opts
-func GetDenoiser(ctx context.Context, logger commons.Logger, inCfg *protos.AudioConfig, options utils.Option) (internal_type.Denoiser, error) {
+// logger, audioConfig, onPacket, opts
+func GetDenoiser(ctx context.Context, logger commons.Logger, inCfg *protos.AudioConfig, onPacket func(context.Context, ...internal_type.Packet) error, options utils.Option) (internal_type.Denoiser, error) {
 	provider, _ := options.GetString(DenoiserOptionsKeyProvider)
 	switch DenoiserIdentifier(provider) {
 	case KRISP:
-		return internal_denoiser_krisp.NewKrispDenoiser(ctx, logger, inCfg, options)
+		return internal_denoiser_krisp.NewKrispDenoiser(ctx, logger, inCfg, onPacket, options)
 	default:
-		return internal_denoiser_rnnoise.NewRnnoiseDenoiser(ctx, logger, inCfg, options)
+		return internal_denoiser_rnnoise.NewRnnoiseDenoiser(ctx, logger, inCfg, onPacket, options)
 	}
 }

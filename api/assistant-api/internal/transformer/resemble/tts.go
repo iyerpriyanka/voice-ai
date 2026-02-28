@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"net/http"
 	"sync"
+	"time"
 
 	"github.com/gorilla/websocket"
 	internal_type "github.com/rapidaai/api/assistant-api/internal/type"
@@ -76,6 +77,14 @@ func (rt *resembleTTS) Initialize() error {
 
 	rt.logger.Debugf("resemble-tts: connection established")
 	go rt.textToSpeechCallback(conn, rt.ctx)
+	rt.onPacket(internal_type.ConversationEventPacket{
+		Name: "tts",
+		Data: map[string]string{
+			"type":     "initialized",
+			"provider": rt.Name(),
+		},
+		Time: time.Now(),
+	})
 	return nil
 }
 
@@ -118,7 +127,14 @@ func (rt *resembleTTS) textToSpeechCallback(conn *websocket.Conn, ctx context.Co
 			rt.mu.Lock()
 			contextId := rt.contextId
 			rt.mu.Unlock()
-			rt.onPacket(internal_type.TextToSpeechEndPacket{ContextID: contextId})
+			rt.onPacket(
+				internal_type.TextToSpeechEndPacket{ContextID: contextId},
+				internal_type.ConversationEventPacket{
+					Name: "tts",
+					Data: map[string]string{"type": "completed"},
+					Time: time.Now(),
+				},
+			)
 			return
 
 		case "audio":
@@ -134,7 +150,6 @@ func (rt *resembleTTS) textToSpeechCallback(conn *websocket.Conn, ctx context.Co
 				continue
 			}
 
-			// Get contextId safely under lock
 			rt.mu.Lock()
 			contextId := rt.contextId
 			rt.mu.Unlock()
@@ -160,17 +175,33 @@ func (rt *resembleTTS) Transform(ctx context.Context, in internal_type.LLMPacket
 	}
 
 	switch input := in.(type) {
+	case internal_type.InterruptionPacket:
+		if currentCtx != "" {
+			rt.onPacket(internal_type.ConversationEventPacket{
+				Name: "tts",
+				Data: map[string]string{"type": "interrupted"},
+				Time: time.Now(),
+			})
+		}
+		return nil
 	case internal_type.LLMResponseDeltaPacket:
 		if err := connection.WriteJSON(rt.GetTextToSpeechRequest(currentCtx, input.Text)); err != nil {
 			rt.logger.Errorf("resemble-tts: error while writing request to websocket: %v", err)
 			return err
 		}
-
+		rt.onPacket(internal_type.ConversationEventPacket{
+			Name: "tts",
+			Data: map[string]string{
+				"type": "speaking",
+				"text": input.Text,
+			},
+			Time: time.Now(),
+		})
 		return nil
 	case internal_type.LLMResponseDonePacket:
 		return nil
 	default:
-		return fmt.Errorf("deepgram-tts: unsupported input type %T", in)
+		return fmt.Errorf("resemble-tts: unsupported input type %T", in)
 	}
 }
 

@@ -7,6 +7,8 @@ package internal_denoiser_rnnoise
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	internal_audio_resampler "github.com/rapidaai/api/assistant-api/internal/audio/resampler"
 	internal_type "github.com/rapidaai/api/assistant-api/internal/type"
@@ -22,13 +24,15 @@ type rnnoiseDenoiser struct {
 	inputConfig    *protos.AudioConfig
 	audioSampler   internal_type.AudioResampler
 	audioConverter internal_type.AudioConverter
+	onPacket       func(context.Context, ...internal_type.Packet) error
 }
 
 // NewDenoiser creates a new denoiser instance
 func NewRnnoiseDenoiser(
 	ctx context.Context,
-	logger commons.Logger, inputConfig *protos.AudioConfig, options utils.Option,
+	logger commons.Logger, inputConfig *protos.AudioConfig, onPacket func(context.Context, ...internal_type.Packet) error, options utils.Option,
 ) (internal_type.Denoiser, error) {
+	start := time.Now()
 	rn, err := NewRNNoise()
 	if err != nil {
 		return nil, err
@@ -42,7 +46,7 @@ func NewRnnoiseDenoiser(
 		return nil, err
 	}
 
-	return &rnnoiseDenoiser{
+	d := &rnnoiseDenoiser{
 		audioSampler:   sampler,
 		audioConverter: converter,
 		rnNoise:        rn,
@@ -51,19 +55,58 @@ func NewRnnoiseDenoiser(
 			AudioFormat: protos.AudioConfig_LINEAR16,
 		},
 		inputConfig: inputConfig,
-		logger:      logger}, nil
+		logger:      logger,
+		onPacket:    onPacket,
+	}
+
+	if onPacket != nil {
+		_ = onPacket(ctx, internal_type.ConversationEventPacket{
+			Name: "denoise",
+			Data: map[string]string{
+				"type":     "initialized",
+				"provider": "rnnoise",
+				"init_ms":  fmt.Sprintf("%d", time.Since(start).Milliseconds()),
+			},
+			Time: time.Now(),
+		})
+	}
+
+	return d, nil
 }
 
-// ProcessStream processes a continuous audio stream
-func (rnd *rnnoiseDenoiser) Denoise(ctx context.Context, input []byte) ([]byte, float64, error) {
+// Denoise processes the audio in pkt and pushes a DenoisedAudioPacket via
+// onPacket instead of returning bytes to the caller. On error it falls back
+// to the original audio and still emits the packet with NoiseReduced=false.
+func (rnd *rnnoiseDenoiser) Denoise(ctx context.Context, pkt internal_type.DenoiseAudioPacket) error {
+	input := pkt.Audio
+	fallback := func(err error, noFallback bool) error {
+		if rnd.onPacket != nil {
+			_ = rnd.onPacket(ctx, internal_type.DenoisedAudioPacket{
+				ContextID:    pkt.ContextID,
+				Audio:        input,
+				NoiseReduced: false,
+			}, internal_type.ConversationEventPacket{
+				ContextID: pkt.ContextID,
+				Name:      "denoise",
+				Data: map[string]string{
+					"type":     "error",
+					"error":    err.Error(),
+					"fallback": fmt.Sprintf("%v", noFallback),
+				},
+				Time: time.Now(),
+			})
+		}
+		return nil
+	}
+
 	idi, err := rnd.audioSampler.Resample(input, rnd.inputConfig, rnd.denoiserConfig)
 	if err != nil {
-		return nil, 0, err
+		return fallback(err, false)
 	}
 
 	floatSample, err := rnd.audioConverter.ConvertToFloat32Samples(idi, rnd.denoiserConfig)
 	if err != nil {
-		return nil, 0, err
+		return fallback(err, false)
 	}
 
 	var combinedCleanedAudio []float32
@@ -75,7 +118,6 @@ func (rnd *rnnoiseDenoiser) Denoise(ctx context.Context, input []byte) ([]byte, 
 			end = len(floatSample)
 		}
 
-		// Extract chunk and pad if it is less than 480 samples
 		chunk := floatSample[i:end]
 		if len(chunk) < 480 {
 			padding := make([]float32, 480-len(chunk))
@@ -84,29 +126,47 @@ func (rnd *rnnoiseDenoiser) Denoise(ctx context.Context, input []byte) ([]byte, 
 
 		cnf, cleanedAudio, err := rnd.rnNoise.SuppressNoise(chunk)
 		if err != nil {
-			return nil, 0, err
+			return fallback(err, false)
 		}
 
-		// Append results
 		combinedCleanedAudio = append(combinedCleanedAudio, cleanedAudio...)
 		combinedCnf += cnf
 	}
 
-	// Average the confidence scores
 	if len(combinedCleanedAudio) > 0 {
 		combinedCnf /= float64((len(floatSample)-1)/480 + 1)
 	}
 
 	ido, err := rnd.audioConverter.ConvertToByteSamples(combinedCleanedAudio, rnd.denoiserConfig)
 	if err != nil {
-		return nil, 0, err
+		return fallback(err, false)
 	}
 
 	idm, err := rnd.audioSampler.Resample(ido, rnd.denoiserConfig, rnd.inputConfig)
 	if err != nil {
-		return nil, 0, err
+		return fallback(err, false)
 	}
-	return idm, combinedCnf, err
+	if rnd.onPacket != nil {
+		_ = rnd.onPacket(ctx,
+			internal_type.DenoisedAudioPacket{
+				ContextID:    pkt.ContextID,
+				Audio:        idm,
+				Confidence:   combinedCnf,
+				NoiseReduced: true,
+			},
+			internal_type.ConversationEventPacket{
+				ContextID: pkt.ContextID,
+				Name:      "denoise",
+				Data: map[string]string{
+					"type":         "completed",
+					"input_bytes":  fmt.Sprintf("%d", len(input)),
+					"output_bytes": fmt.Sprintf("%d", len(idm)),
+				},
+				Time: time.Now(),
+			},
+		)
+	}
+	return nil
 }
 
 // Close releases resources

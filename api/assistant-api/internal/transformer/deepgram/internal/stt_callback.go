@@ -7,17 +7,23 @@
 package deepgram_internal
 
 import (
+	"fmt"
+	"strings"
+	"time"
+
 	msginterfaces "github.com/deepgram/deepgram-go-sdk/v3/pkg/api/listen/v1/websocket/interfaces"
 	internal_type "github.com/rapidaai/api/assistant-api/internal/type"
 	"github.com/rapidaai/pkg/commons"
 	"github.com/rapidaai/pkg/utils"
+	"github.com/rapidaai/protos"
 )
 
 // Implement the LiveMessageCallback interface
 type deepgramSttCallback struct {
-	logger   commons.Logger
-	onPacket func(pkt ...internal_type.Packet) error
-	options  utils.Option
+	logger    commons.Logger
+	onPacket  func(pkt ...internal_type.Packet) error
+	options   utils.Option
+	startedAt time.Time
 }
 
 func NewDeepgramSttCallback(
@@ -41,31 +47,91 @@ func (d *deepgramSttCallback) Open(or *msginterfaces.OpenResponse) error {
 // Handle incoming transcription messages from Deepgram
 func (d *deepgramSttCallback) Message(mr *msginterfaces.MessageResponse) error {
 	for _, alternative := range mr.Channel.Alternatives {
-		if alternative.Transcript != "" {
-			if v, err := d.options.GetFloat64("listen.threshold"); err == nil {
-				if float32(alternative.Confidence) < float32(v) {
-					d.onPacket(
-						internal_type.SpeechToTextPacket{
-							Script:     alternative.Transcript,
-							Confidence: alternative.Confidence,
-							Language:   d.GetMostUsedLanguage(alternative.Languages),
-							Interim:    true,
+		if alternative.Transcript == "" {
+			continue
+		}
+		lang := d.GetMostUsedLanguage(alternative.Languages)
+		confStr := fmt.Sprintf("%.4f", alternative.Confidence)
+
+		if v, err := d.options.GetFloat64("listen.threshold"); err == nil {
+			if float32(alternative.Confidence) < float32(v) {
+				// Below confidence threshold — emit as interim
+				d.onPacket(
+					internal_type.SpeechToTextPacket{
+						Script:     alternative.Transcript,
+						Confidence: alternative.Confidence,
+						Language:   lang,
+						Interim:    true,
+					},
+					internal_type.ConversationEventPacket{
+						Name: "stt",
+						Data: map[string]string{
+							"type":       "interim",
+							"script":     alternative.Transcript,
+							"confidence": confStr,
 						},
-					)
-					return nil
-				}
+						Time: time.Now(),
+					},
+				)
+				return nil
 			}
+		}
+
+		if mr.IsFinal {
+			// Final transcript — emit completed event + latency metric
+			now := time.Now()
+			var latencyMs int64
+			if !d.startedAt.IsZero() {
+				latencyMs = now.Sub(d.startedAt).Milliseconds()
+				d.startedAt = time.Time{}
+			}
+			wordCount := len(strings.Fields(alternative.Transcript))
 			d.onPacket(
 				internal_type.InterruptionPacket{Source: "word"},
 				internal_type.SpeechToTextPacket{
 					Script:     alternative.Transcript,
 					Confidence: alternative.Confidence,
-					Language:   d.GetMostUsedLanguage(alternative.Languages),
-					Interim:    !mr.IsFinal,
+					Language:   lang,
+					Interim:    false,
+				},
+				internal_type.ConversationEventPacket{
+					Name: "stt",
+					Data: map[string]string{
+						"type":       "completed",
+						"script":     alternative.Transcript,
+						"confidence": confStr,
+						"language":   lang,
+						"word_count": fmt.Sprintf("%d", wordCount),
+						"char_count": fmt.Sprintf("%d", len(alternative.Transcript)),
+					},
+					Time: now,
+				},
+				internal_type.MessageMetricPacket{
+					Metrics: []*protos.Metric{{Name: "stt_latency_ms", Value: fmt.Sprintf("%d", latencyMs)}},
 				},
 			)
-			return nil
+		} else {
+			// Non-final interim transcript
+			d.onPacket(
+				internal_type.InterruptionPacket{Source: "word"},
+				internal_type.SpeechToTextPacket{
+					Script:     alternative.Transcript,
+					Confidence: alternative.Confidence,
+					Language:   lang,
+					Interim:    true,
+				},
+				internal_type.ConversationEventPacket{
+					Name: "stt",
+					Data: map[string]string{
+						"type":       "interim",
+						"script":     alternative.Transcript,
+						"confidence": confStr,
+					},
+					Time: time.Now(),
+				},
+			)
 		}
+		return nil
 	}
 	return nil
 }
@@ -82,6 +148,9 @@ func (d *deepgramSttCallback) Metadata(md *msginterfaces.MetadataResponse) error
 
 // Handle speech started event
 func (d *deepgramSttCallback) SpeechStarted(ssr *msginterfaces.SpeechStartedResponse) error {
+	if d.startedAt.IsZero() {
+		d.startedAt = time.Now()
+	}
 	return nil
 }
 
@@ -94,6 +163,11 @@ func (d *deepgramSttCallback) Close(cr *msginterfaces.CloseResponse) error {
 // Handle errors from Deepgram
 func (d *deepgramSttCallback) Error(er *msginterfaces.ErrorResponse) error {
 	d.logger.Errorf("Error %+v", er)
+	d.onPacket(internal_type.ConversationEventPacket{
+		Name: "stt",
+		Data: map[string]string{"type": "error", "error": er.ErrMsg},
+		Time: time.Now(),
+	})
 	return nil
 }
 

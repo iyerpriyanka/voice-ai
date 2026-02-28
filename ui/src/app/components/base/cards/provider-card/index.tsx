@@ -48,7 +48,7 @@ export const ProviderCard: FC<ProviderCardProps> = memo(
         />
         <Card
           className={cn(
-            'shadow-sm group flex flex-col rounded-[2px]',
+            'relative min-h-full p-4 md:p-5 rounded-2xl border! shadow-none',
             className,
           )}
           data-id={provider.code}

@@ -116,6 +116,15 @@ func durationBytes(d time.Duration) int {
 // Unrecognised packet types are silently ignored.
 func (r *audioRecorder) Record(_ context.Context, p internal_type.Packet) error {
 	switch pkt := p.(type) {
+	case internal_type.RecordUserAudioPacket:
+		return r.push(pkt.Audio, trackUser)
+	case internal_type.RecordAssistantAudioPacket:
+		if pkt.Truncate {
+			r.truncateSystemTrack()
+			return nil
+		}
+		return r.push(pkt.Audio, trackSystem)
+	// Legacy packet types kept for backward compatibility
 	case internal_type.UserAudioPacket:
 		return r.push(pkt.Audio, trackUser)
 	case internal_type.TextToSpeechAudioPacket:

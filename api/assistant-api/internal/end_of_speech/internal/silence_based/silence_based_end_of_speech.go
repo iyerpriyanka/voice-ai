@@ -8,6 +8,7 @@ package internal_silence_based
 import (
 	"context"
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
@@ -57,6 +58,7 @@ type eosState struct {
 // NewSilenceBasedEOS creates a new silence-based end-of-speech detector
 func NewSilenceBasedEndOfSpeech(logger commons.Logger, callback func(context.Context, ...internal_type.Packet) error, opts utils.Option,
 ) (internal_type.EndOfSpeech, error) {
+	start := time.Now()
 	threshold := 1000 * time.Millisecond
 	if v, err := opts.GetFloat64("microphone.eos.timeout"); err == nil {
 		threshold = time.Duration(v) * time.Millisecond
@@ -73,6 +75,18 @@ func NewSilenceBasedEndOfSpeech(logger commons.Logger, callback func(context.Con
 	}
 
 	go eos.worker()
+
+	if callback != nil {
+		_ = callback(context.Background(), internal_type.ConversationEventPacket{
+			Name: "eos",
+			Data: map[string]string{
+				"type":    "initialized",
+				"init_ms": fmt.Sprintf("%d", time.Since(start).Milliseconds()),
+			},
+			Time: time.Now(),
+		})
+	}
+
 	return eos, nil
 }
 
@@ -93,10 +107,13 @@ func (eos *SilenceBasedEOS) Analyze(ctx context.Context, pkt internal_type.Packe
 		eos.state.segment = seg
 		eos.mu.Unlock()
 		// let the client know about interim speech
-		eos.callback(ctx, internal_type.InterimEndOfSpeechPacket{
-			Speech:    seg.Text,
-			ContextID: seg.ContextID,
-		})
+		eos.callback(ctx,
+			internal_type.InterimEndOfSpeechPacket{Speech: seg.Text, ContextID: seg.ContextID},
+			internal_type.ConversationEventPacket{
+				Name: "eos",
+				Data: map[string]string{"type": "interim", "speech": seg.Text},
+			},
+		)
 		eos.send(command{
 			ctx:     ctx,
 			segment: seg,
@@ -150,10 +167,13 @@ func (eos *SilenceBasedEOS) Analyze(ctx context.Context, pkt internal_type.Packe
 		eos.mu.Unlock()
 
 		// let the client know about interim speech
-		eos.callback(ctx, internal_type.InterimEndOfSpeechPacket{
-			Speech:    newSeg.Text,
-			ContextID: newSeg.ContextID,
-		})
+		eos.callback(ctx,
+			internal_type.InterimEndOfSpeechPacket{Speech: newSeg.Text, ContextID: newSeg.ContextID},
+			internal_type.ConversationEventPacket{
+				Name: "eos",
+				Data: map[string]string{"type": "interim", "speech": newSeg.Text},
+			},
+		)
 
 		// trigger the command to reset timer
 		eos.send(command{
@@ -272,10 +292,21 @@ func (eos *SilenceBasedEOS) fire(ctx context.Context, seg SpeechSegment) {
 		ctx = context.Background()
 	}
 
-	_ = eos.callback(ctx, internal_type.EndOfSpeechPacket{
-		Speech:    seg.Text,
-		ContextID: seg.ContextID,
-	})
+	wordCount := len(strings.Fields(seg.Text))
+	_ = eos.callback(ctx,
+		internal_type.EndOfSpeechPacket{Speech: seg.Text, ContextID: seg.ContextID},
+		internal_type.ConversationEventPacket{
+			Name: "eos",
+			Data: map[string]string{
+				"type":       "detected",
+				"context_id": seg.ContextID,
+				"speech":     seg.Text,
+				"word_count": fmt.Sprintf("%d", wordCount),
+				"char_count": fmt.Sprintf("%d", len(seg.Text)),
+			},
+			Time: time.Now(),
+		},
+	)
 
 	eos.send(command{reset: true})
 }

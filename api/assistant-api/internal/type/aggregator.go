@@ -14,19 +14,14 @@ import (
 //
 // Implementations are expected to:
 //   - Accept inputs via Aggregate
-//   - Emit results asynchronously on the Result channel
-//   - Release resources and stop processing on Close
+//   - Push results directly via the onPacket callback supplied at construction
+//   - Release resources on Close
 type LLMTextAggregator interface {
-	// Aggregate consumes an aggregator input (such as an LLMStreamChunk
-	// or Finalize signal). Implementations should respect context
-	// cancellation and deadlines.
+	// Aggregate consumes one or more LLM packets and pushes completed
+	// sentences to the onPacket callback. Implementations should respect
+	// context cancellation and deadlines.
 	Aggregate(ctx context.Context, in ...LLMPacket) error
 
-	// Result returns a read-only channel on which aggregated outputs
-	// are delivered.
-	Result() <-chan Packet
-
-	// Close terminates the aggregator, releases resources,
-	// and closes the Result channel.
+	// Close terminates the aggregator and releases resources.
 	Close() error
 }

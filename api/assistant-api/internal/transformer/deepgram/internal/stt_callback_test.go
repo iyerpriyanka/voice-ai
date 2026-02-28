@@ -144,7 +144,8 @@ func TestMessage(t *testing.T) {
 
 		require.NoError(t, err)
 		packets := collector.GetPackets()
-		require.Len(t, packets, 2)
+		// Final: InterruptionPacket + SpeechToTextPacket + ConversationEventPacket + MessageMetricPacket
+		require.Len(t, packets, 4)
 
 		// First packet should be InterruptionPacket
 		interruption, ok := packets[0].(internal_type.InterruptionPacket)
@@ -158,6 +159,12 @@ func TestMessage(t *testing.T) {
 		assert.Equal(t, 0.95, stt.Confidence)
 		assert.Equal(t, "en", stt.Language)
 		assert.False(t, stt.Interim) // IsFinal=true means Interim=false
+
+		// Fourth packet should be MessageMetricPacket with stt_latency_ms
+		metric, ok := packets[3].(internal_type.MessageMetricPacket)
+		assert.True(t, ok, "fourth packet should be MessageMetricPacket")
+		assert.Len(t, metric.Metrics, 1)
+		assert.Equal(t, "stt_latency_ms", metric.Metrics[0].Name)
 	})
 
 	t.Run("sets interim true when IsFinal is false", func(t *testing.T) {
@@ -168,7 +175,8 @@ func TestMessage(t *testing.T) {
 
 		require.NoError(t, err)
 		packets := collector.GetPackets()
-		require.Len(t, packets, 2)
+		// Interim: InterruptionPacket + SpeechToTextPacket + ConversationEventPacket (no metric)
+		require.Len(t, packets, 3)
 
 		stt := packets[1].(internal_type.SpeechToTextPacket)
 		assert.True(t, stt.Interim)
@@ -197,7 +205,8 @@ func TestMessage(t *testing.T) {
 
 		require.NoError(t, err)
 		packets := collector.GetPackets()
-		require.Len(t, packets, 2)
+		// Final: InterruptionPacket + SpeechToTextPacket + ConversationEventPacket + MessageMetricPacket
+		require.Len(t, packets, 4)
 
 		stt := packets[1].(internal_type.SpeechToTextPacket)
 		assert.Equal(t, "second transcript", stt.Script)
@@ -251,7 +260,8 @@ func TestMessageWithConfidenceThreshold(t *testing.T) {
 
 		require.NoError(t, err)
 		packets := collector.GetPackets()
-		require.Len(t, packets, 1)
+		// Below threshold: SpeechToTextPacket + ConversationEventPacket
+		require.Len(t, packets, 2)
 
 		stt := packets[0].(internal_type.SpeechToTextPacket)
 		assert.True(t, stt.Interim, "should be marked as interim when confidence is below threshold")
@@ -270,7 +280,8 @@ func TestMessageWithConfidenceThreshold(t *testing.T) {
 
 		require.NoError(t, err)
 		packets := collector.GetPackets()
-		require.Len(t, packets, 2)
+		// Final above threshold: InterruptionPacket + SpeechToTextPacket + ConversationEventPacket + MessageMetricPacket
+		require.Len(t, packets, 4)
 
 		stt := packets[1].(internal_type.SpeechToTextPacket)
 		assert.False(t, stt.Interim, "should use IsFinal value when confidence is above threshold")
@@ -288,7 +299,8 @@ func TestMessageWithConfidenceThreshold(t *testing.T) {
 
 		require.NoError(t, err)
 		packets := collector.GetPackets()
-		require.Len(t, packets, 2)
+		// Final at boundary: InterruptionPacket + SpeechToTextPacket + ConversationEventPacket + MessageMetricPacket
+		require.Len(t, packets, 4)
 
 		stt := packets[1].(internal_type.SpeechToTextPacket)
 		// When confidence equals threshold, it should NOT be below threshold
@@ -303,7 +315,8 @@ func TestMessageWithConfidenceThreshold(t *testing.T) {
 
 		require.NoError(t, err)
 		packets := collector.GetPackets()
-		require.Len(t, packets, 2)
+		// Final without threshold: InterruptionPacket + SpeechToTextPacket + ConversationEventPacket + MessageMetricPacket
+		require.Len(t, packets, 4)
 
 		stt := packets[1].(internal_type.SpeechToTextPacket)
 		// Without threshold, should use IsFinal directly
@@ -321,7 +334,8 @@ func TestMessageWithConfidenceThreshold(t *testing.T) {
 
 		require.NoError(t, err)
 		packets := collector.GetPackets()
-		require.Len(t, packets, 2)
+		// Final above zero threshold: InterruptionPacket + SpeechToTextPacket + ConversationEventPacket + MessageMetricPacket
+		require.Len(t, packets, 4)
 
 		stt := packets[1].(internal_type.SpeechToTextPacket)
 		assert.False(t, stt.Interim)
@@ -339,7 +353,8 @@ func TestMessageWithConfidenceThreshold(t *testing.T) {
 
 		require.NoError(t, err)
 		packets := collector.GetPackets()
-		require.Len(t, packets, 1)
+		// Below threshold: SpeechToTextPacket + ConversationEventPacket
+		require.Len(t, packets, 2)
 
 		stt := packets[0].(internal_type.SpeechToTextPacket)
 		assert.True(t, stt.Interim)
@@ -539,11 +554,11 @@ func TestMessageSequence(t *testing.T) {
 		}
 
 		packets := collector.GetPackets()
-		// 4 messages × 2 packets each = 8 packets
-		assert.Len(t, packets, 8)
+		// 3 interim × 3 packets + 1 final × 4 packets = 13 packets
+		assert.Len(t, packets, 13)
 
-		// Verify the last message is marked as final (Interim=false)
-		lastStt := packets[7].(internal_type.SpeechToTextPacket)
+		// Verify the last SpeechToTextPacket is marked as final (Interim=false)
+		lastStt := packets[10].(internal_type.SpeechToTextPacket)
 		assert.False(t, lastStt.Interim)
 		assert.Equal(t, "hello world", lastStt.Script)
 	})
@@ -564,8 +579,8 @@ func TestMessageSequence(t *testing.T) {
 		}
 
 		packets := collector.GetPackets()
-		// Only 2 non-empty messages × 2 packets each = 4 packets
-		assert.Len(t, packets, 4)
+		// 1 interim × 3 packets + 1 final × 4 packets = 7 packets
+		assert.Len(t, packets, 7)
 	})
 }
 
@@ -589,8 +604,8 @@ func TestConcurrentMessageProcessing(t *testing.T) {
 		wg.Wait()
 
 		packets := collector.GetPackets()
-		// Each message generates 2 packets
-		assert.Len(t, packets, numGoroutines*2)
+		// Each final message generates 4 packets (Interruption + SpeechToText + ConversationEvent + MessageMetric)
+		assert.Len(t, packets, numGoroutines*4)
 	})
 }
 
@@ -612,7 +627,7 @@ func TestEdgeCases(t *testing.T) {
 
 		require.NoError(t, err)
 		packets := collector.GetPackets()
-		require.Len(t, packets, 2)
+		require.Len(t, packets, 4)
 
 		stt := packets[1].(internal_type.SpeechToTextPacket)
 		assert.Len(t, stt.Script, 10000)
@@ -627,7 +642,7 @@ func TestEdgeCases(t *testing.T) {
 
 		require.NoError(t, err)
 		packets := collector.GetPackets()
-		require.Len(t, packets, 2)
+		require.Len(t, packets, 4)
 
 		stt := packets[1].(internal_type.SpeechToTextPacket)
 		assert.Equal(t, unicodeText, stt.Script)
@@ -642,7 +657,7 @@ func TestEdgeCases(t *testing.T) {
 
 		require.NoError(t, err)
 		packets := collector.GetPackets()
-		require.Len(t, packets, 2)
+		require.Len(t, packets, 4)
 
 		stt := packets[1].(internal_type.SpeechToTextPacket)
 		assert.Equal(t, specialText, stt.Script)
@@ -656,7 +671,7 @@ func TestEdgeCases(t *testing.T) {
 
 		require.NoError(t, err)
 		packets := collector.GetPackets()
-		require.Len(t, packets, 2)
+		require.Len(t, packets, 4)
 
 		stt := packets[1].(internal_type.SpeechToTextPacket)
 		assert.Equal(t, 0.0, stt.Confidence)
@@ -671,7 +686,7 @@ func TestEdgeCases(t *testing.T) {
 
 		require.NoError(t, err)
 		packets := collector.GetPackets()
-		require.Len(t, packets, 2)
+		require.Len(t, packets, 4)
 
 		stt := packets[1].(internal_type.SpeechToTextPacket)
 		assert.Equal(t, 1.5, stt.Confidence)
@@ -686,7 +701,7 @@ func TestEdgeCases(t *testing.T) {
 
 		require.NoError(t, err)
 		packets := collector.GetPackets()
-		require.Len(t, packets, 2)
+		require.Len(t, packets, 4)
 
 		stt := packets[1].(internal_type.SpeechToTextPacket)
 		assert.Equal(t, -0.5, stt.Confidence)
@@ -701,7 +716,7 @@ func TestEdgeCases(t *testing.T) {
 
 		require.NoError(t, err)
 		packets := collector.GetPackets()
-		require.Len(t, packets, 2)
+		require.Len(t, packets, 4)
 
 		stt := packets[1].(internal_type.SpeechToTextPacket)
 		assert.Equal(t, "   ", stt.Script)

@@ -8,7 +8,6 @@ package adapter_internal
 import (
 	"context"
 	"sync"
-	"time"
 
 	internal_sentence_aggregator "github.com/rapidaai/api/assistant-api/internal/aggregator/text"
 	internal_audio "github.com/rapidaai/api/assistant-api/internal/audio"
@@ -33,7 +32,6 @@ func (listening *genericRequestor) initializeSpeechToText(ctx context.Context) e
 	if transformerConfig != nil {
 		options = utils.MergeMaps(options, transformerConfig.GetOptions())
 		eGroup.Go(func() error {
-			//
 			spanCtx, span, _ := listening.Tracer().StartSpan(ectx, utils.AssistantListenConnectStage)
 			defer span.EndSpan(spanCtx, utils.AssistantListenConnectStage)
 
@@ -125,7 +123,6 @@ func (listening *genericRequestor) disconnectSpeechToText(ctx context.Context) e
 }
 
 func (listening *genericRequestor) initializeEndOfSpeech(ctx context.Context) error {
-	start := time.Now()
 	options := utils.Option{"microphone.eos.timeout": 500}
 	transformerConfig, _ := listening.GetSpeechToTextTransformer()
 	if transformerConfig != nil {
@@ -141,7 +138,6 @@ func (listening *genericRequestor) initializeEndOfSpeech(ctx context.Context) er
 		return err
 	}
 	listening.endOfSpeech = endOfSpeech
-	listening.logger.Benchmark("listen.endOfSpeech", time.Since(start))
 	return nil
 }
 
@@ -155,7 +151,9 @@ func (listening *genericRequestor) disconnectEndOfSpeech(ctx context.Context) er
 }
 
 func (listening *genericRequestor) initializeDenoiser(ctx context.Context, options utils.Option) error {
-	denoise, err := internal_denoiser.GetDenoiser(ctx, listening.logger, internal_audio.RAPIDA_INTERNAL_AUDIO_CONFIG, options)
+	denoise, err := internal_denoiser.GetDenoiser(ctx, listening.logger, internal_audio.RAPIDA_INTERNAL_AUDIO_CONFIG,
+		func(pctx context.Context, pkt ...internal_type.Packet) error { return listening.OnPacket(pctx, pkt...) },
+		options)
 	if err != nil {
 		listening.logger.Errorf("error wile intializing denoiser %+v", err)
 	}
@@ -239,10 +237,15 @@ func (spk *genericRequestor) disconnectTextToSpeech(ctx context.Context) error {
 }
 
 // Initialize the text aggregator for assembling sentences from tokens.
+// Aggregated sentences are pushed directly to OnPacket as SpeakTextPacket
+// values — no intermediate goroutine or channel needed.
 func (spk *genericRequestor) initializeTextAggregator(ctx context.Context) error {
-	if textAggregator, err := internal_sentence_aggregator.GetLLMTextAggregator(ctx, spk.logger); err == nil {
+	textAggregator, err := internal_sentence_aggregator.GetLLMTextAggregator(ctx, spk.logger,
+		func(pctx context.Context, pkts ...internal_type.Packet) error {
+			return spk.OnPacket(pctx, pkts...)
+		})
+	if err == nil {
 		spk.textAggregator = textAggregator
-		go spk.onAssembleSentence(ctx)
 	}
 	return nil
 }
@@ -252,18 +255,4 @@ func (io *genericRequestor) disconnectTextAggregator() error {
 		io.textAggregator.Close()
 	}
 	return nil
-}
-
-func (spk *genericRequestor) onAssembleSentence(ctx context.Context) {
-	for {
-		select {
-		case <-ctx.Done():
-			return
-		case result, ok := <-spk.textAggregator.Result():
-			if !ok {
-				return
-			}
-			spk.callSpeaking(ctx, result)
-		}
-	}
 }

@@ -1,4 +1,4 @@
-import React, { FC, memo, useEffect, useRef, useState } from 'react';
+import React, { FC, memo, useEffect, useMemo, useRef, useState } from 'react';
 import {
   VoiceAgent as VI,
   ConnectionConfig,
@@ -11,8 +11,6 @@ import { MessagingAction } from '@/app/pages/preview-agent/voice-agent/actions';
 import { ConversationMessages } from '@/app/pages/preview-agent/voice-agent/text/conversations';
 import { cn } from '@/utils';
 import { QuickSuggestion } from '@/app/pages/preview-agent/voice-agent/text/suggestions';
-import { Tab } from '@/app/components/tab';
-import { YellowNoticeBlock } from '@/app/components/container/message/notice-block';
 import {
   JsonTextarea,
   NumberTextarea,
@@ -23,17 +21,172 @@ import {
 import { InputVarForm } from '@/app/pages/endpoint/view/try-playground/experiment-prompt/components/input-var-form';
 import { InputVarType } from '@/models/common';
 import { InputGroup } from '@/app/components/input-group';
-import {
-  Check,
-  CheckCheck,
-  ChevronLeft,
-  ExternalLink,
-  Info,
-} from 'lucide-react';
+import { ChevronLeft, ExternalLink, Info } from 'lucide-react';
 import { useRapidaStore } from '@/hooks';
 import { PageTitleBlock } from '@/app/components/blocks/page-title-block';
 import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
 import { PageLoader } from '@/app/components/loader/page-loader';
+import { YellowNoticeBlock } from '@/app/components/container/message/notice-block';
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+type EventEntry = {
+  type:
+    | 'directive'
+    | 'configuration'
+    | 'userMessage'
+    | 'assistantMessage'
+    | 'interrupt'
+    | 'pipelineEvent'
+    | 'metric';
+  ts: Date;
+  payload: any;
+};
+
+type MsgTab = 'messages' | 'events';
+
+// ---------------------------------------------------------------------------
+// Conversation event row
+// ---------------------------------------------------------------------------
+
+const EVENT_COLORS: Record<string, string> = {
+  session: 'text-gray-500 dark:text-gray-400',
+  stt: 'text-green-600 dark:text-green-400',
+  llm: 'text-blue-600 dark:text-blue-400',
+  tts: 'text-violet-600 dark:text-violet-400',
+  vad: 'text-yellow-600 dark:text-yellow-400',
+  eos: 'text-cyan-600 dark:text-cyan-400',
+  denoise: 'text-orange-600 dark:text-orange-400',
+  audio: 'text-slate-600 dark:text-slate-400',
+  tool: 'text-pink-600 dark:text-pink-400',
+  behavior: 'text-rose-600 dark:text-rose-400',
+  knowledge: 'text-teal-600 dark:text-teal-400',
+};
+
+const ConversationEventRow: FC<{ entry: EventEntry }> = ({ entry }) => {
+  const [expanded, setExpanded] = useState(false);
+  const ts = entry.ts.toISOString().slice(11, 23);
+  const toggle = () => setExpanded(p => !p);
+
+  if (entry.type === 'pipelineEvent') {
+    const { name, dataMap, id, time } = entry.payload as {
+      name: string;
+      dataMap: Array<[string, string]>;
+      id?: string;
+      time?: unknown;
+    };
+    const data = Object.fromEntries(dataMap ?? []);
+    const color = EVENT_COLORS[name] ?? 'text-gray-500 dark:text-gray-400';
+    const jsonPayload = { id, time, ...data };
+
+    return (
+      <>
+        <tr
+          className="hover:bg-gray-100 dark:hover:bg-gray-800/60 cursor-pointer select-text"
+          onClick={toggle}
+        >
+          <td className="pl-3 pr-2 py-[3px] whitespace-nowrap tabular-nums text-gray-400 dark:text-gray-500">
+            {ts}
+          </td>
+          <td
+            className={cn(
+              'px-2 py-[3px] whitespace-nowrap font-semibold',
+              color,
+            )}
+          >
+            {name}
+          </td>
+          <td
+            colSpan={2}
+            className="px-2 pr-3 py-[3px] text-gray-600 dark:text-gray-300 max-w-0 overflow-hidden truncate"
+          >
+            {JSON.stringify(jsonPayload)}
+          </td>
+        </tr>
+        {expanded && (
+          <tr className="bg-gray-50 dark:bg-gray-800/40">
+            <td />
+            <td colSpan={3} className="pl-2 pr-3 pt-1 pb-2">
+              <pre className="whitespace-pre-wrap break-all text-gray-700 dark:text-gray-200 text-sm/6">
+                {JSON.stringify(jsonPayload, null, 2)}
+              </pre>
+            </td>
+          </tr>
+        )}
+      </>
+    );
+  }
+
+  // Non-pipeline events — time | role | json
+  const label =
+    entry.type === 'userMessage'
+      ? 'user'
+      : entry.type === 'assistantMessage'
+        ? 'assistant'
+        : entry.type === 'configuration'
+          ? 'session'
+          : entry.type === 'interrupt'
+            ? 'interrupt'
+            : entry.type === 'metric'
+              ? 'metric'
+              : entry.type;
+
+  const labelColor =
+    entry.type === 'userMessage'
+      ? 'text-emerald-600 dark:text-emerald-400'
+      : entry.type === 'assistantMessage'
+        ? 'text-indigo-600 dark:text-indigo-400'
+        : entry.type === 'interrupt'
+          ? 'text-orange-600 dark:text-orange-400'
+          : entry.type === 'configuration'
+            ? 'text-sky-600 dark:text-sky-400'
+            : entry.type === 'metric'
+              ? 'text-lime-600 dark:text-lime-400'
+              : 'text-red-600 dark:text-red-400';
+
+  return (
+    <>
+      <tr
+        className="hover:bg-gray-100 dark:hover:bg-gray-800/60 cursor-pointer select-text"
+        onClick={toggle}
+      >
+        <td className="pl-3 pr-2 py-[3px] whitespace-nowrap tabular-nums text-gray-400 dark:text-gray-500">
+          {ts}
+        </td>
+        <td
+          className={cn(
+            'px-2 py-[3px] whitespace-nowrap font-semibold',
+            labelColor,
+          )}
+        >
+          {label}
+        </td>
+        <td
+          colSpan={2}
+          className="px-2 pr-3 py-[3px] text-gray-600 dark:text-gray-300 max-w-0 overflow-hidden truncate"
+        >
+          {JSON.stringify(entry.payload)}
+        </td>
+      </tr>
+      {expanded && (
+        <tr className="bg-gray-50 dark:bg-gray-800/40">
+          <td />
+          <td colSpan={3} className="pl-2 pr-3 pt-1 pb-2">
+            <pre className="whitespace-pre-wrap break-all text-gray-700 dark:text-gray-200 text-sm/6">
+              {JSON.stringify(entry.payload, null, 2)}
+            </pre>
+          </td>
+        </tr>
+      )}
+    </>
+  );
+};
+
+// ---------------------------------------------------------------------------
+// Main layout
+// ---------------------------------------------------------------------------
 
 export const VoiceAgent: FC<{
   debug: boolean;
@@ -41,639 +194,565 @@ export const VoiceAgent: FC<{
   agentConfig: AgentConfig;
   agentCallback?: AgentCallback;
 }> = ({ debug, connectConfig, agentConfig, agentCallback }) => {
-  //
-  const voiceAgentContextValue = React.useMemo(() => {
-    return new VI(connectConfig, agentConfig, agentCallback);
-  }, [connectConfig, agentConfig, agentCallback]);
+  const voiceAgentContextValue = React.useMemo(
+    () => new VI(connectConfig, agentConfig, agentCallback),
+    [connectConfig, agentConfig, agentCallback],
+  );
 
   const [assistant, setAssistant] = useState<Assistant | null>(null);
+  const [events, setEvents] = useState<EventEntry[]>([]);
+  const [variables, setVariables] = useState<Variable[]>([]);
+  const [msgTab, setMsgTab] = useState<MsgTab>('messages');
+  const callbackRegistered = useRef(false);
+  const eventsBottomRef = useRef<HTMLDivElement>(null);
+
   const { loading, showLoader, hideLoader } = useRapidaStore();
 
+  // Fetch assistant info
   useEffect(() => {
     showLoader('block');
-    let ci = new VI(connectConfig, agentConfig, agentCallback);
-    ci.getAssistant()
+    new VI(connectConfig, agentConfig, agentCallback)
+      .getAssistant()
       .then(ex => {
         hideLoader();
-        if (ex.getSuccess()) {
-          setAssistant(ex.getData()!);
-        }
+        if (ex.getSuccess()) setAssistant(ex.getData()!);
       })
-      .catch();
+      .catch(() => hideLoader());
   }, []);
 
-  if (loading) {
-    return <PageLoader />;
-  } else
-    return (
-      <div className="h-dvh flex p-8 text-sm/6 w-full gap-3 md:gap-6">
-        <div className="relative overflow-hidden h-full mx-auto w-2/3 dark:bg-gray-950/50 border">
-          {debug ? (
-            <div className="z-10 absolute top-0 left-0 right-0 ">
-              <PageHeaderBlock className="border-b pl-3">
-                <a
-                  href={`/deployment/assistant/${agentConfig.id}/overview`}
-                  className="flex items-center hover:text-red-600 hover:cursor-pointer"
-                >
-                  <ChevronLeft className="w-5 h-5 mr-1" strokeWidth={1.5} />
-                  <PageTitleBlock className="text-sm/6">
-                    Back to Assistant
-                  </PageTitleBlock>
-                </a>
-              </PageHeaderBlock>
-              {!assistant?.getDebuggerdeployment()?.hasInputaudio() && (
-                <YellowNoticeBlock className="flex items-center justify-between gap-3">
-                  <Info className="shrink-0 w-4 h-4" />
-                  <div className="text-sm font-medium">
-                    Voice functionality is currently disabled. Please enable it
-                    to enjoy a voice experience with your assistant.
-                  </div>
-                  <a
-                    target="_blank"
-                    href={`/deployment/assistant/${assistant?.getId()}/deployment/debugger`}
-                    className="h-7 flex items-center font-medium hover:underline ml-auto text-yellow-600"
-                    rel="noreferrer"
-                  >
-                    Enable voice
-                    <ExternalLink
-                      className="shrink-0 w-4 h-4 ml-1.5"
-                      strokeWidth={1.5}
-                    />
-                  </a>
-                </YellowNoticeBlock>
-              )}
-            </div>
-          ) : (
-            <div className="bg-white dark:bg-gray-950 z-10 absolute top-0 left-0 right-0">
-              {!assistant?.getApideployment()?.hasInputaudio() && (
-                <YellowNoticeBlock className="flex items-center justify-between gap-3">
-                  <Info className="shrink-0 w-4 h-4" />
-                  <div className="text-sm font-medium">
-                    Voice functionality is currently disabled. Please enable it
-                    to enjoy a voice experience with your assistant.
-                  </div>
-                  <a
-                    target="_blank"
-                    href={`/deployment/assistant/${assistant?.getId()}/manage/deployment/debugger`}
-                    className="h-7 flex items-center font-medium hover:underline ml-auto text-yellow-600"
-                    rel="noreferrer"
-                  >
-                    Enable voice
-                    <ExternalLink
-                      className="shrink-0 w-4 h-4 ml-1.5"
-                      strokeWidth={1.5}
-                    />
-                  </a>
-                </YellowNoticeBlock>
-              )}
-            </div>
-          )}
-          <div className="h-full flex flex-row flex-nowrap items-stretch">
-            <div className="flex flex-col grow min-w-0 flex-1">
-              <div className="flex flex-col justify-center grow min-h-0 px-4">
-                <div
-                  className={cn(
-                    'max-h-full flex gap-2 overflow-y-auto flex-col',
-                  )}
-                >
-                  <div className="flex flex-col items-center py-20 justify-center px-4">
-                    <div className="flex w-full flex-col items-start gap-1 ">
-                      <span className="text-3xl font-semibold">Hello,</span>
-                      <span className="text-xl font-medium opacity-80">
-                        How can I help you today?
-                      </span>
-                    </div>
-                    <div className="flex w-full flex-wrap items-center gap-2 mt-4">
-                      {[
-                        'What can you do?',
-                        'Can you connect me to a human?',
-                        'How can you help me?',
-                        'Can you connect me to a human?',
-                        'Do you remember our past conversations?',
-                      ].map((suggestion, idx) => {
-                        return (
-                          <QuickSuggestion
-                            key={`suggestion-${idx}`}
-                            suggestion={suggestion}
-                            onClick={async () => {
-                              await voiceAgentContextValue?.onSendText(
-                                suggestion,
-                              );
-                            }}
-                          />
-                        );
-                      })}
-                    </div>
-                  </div>
-                  <ConversationMessages vag={voiceAgentContextValue} />
-                </div>
-              </div>
-              <MessagingAction
-                assistant={assistant}
-                placeholder="How can I help you?"
-                voiceAgent={voiceAgentContextValue}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="shrink-0 flex flex-col overflow-auto border w-1/3">
-          <VoiceAgentDebugger
-            voiceAgent={voiceAgentContextValue}
-            assistant={assistant}
-          />
-        </div>
-      </div>
-    );
-};
-
-export const VoiceAgentDebugger: FC<{
-  voiceAgent: VI;
-  assistant: Assistant | null;
-}> = memo(({ voiceAgent, assistant }) => {
-  type EventData = {
-    type: string;
-    payload: any; // Adjust `any` to a more specific type if possible
-  };
-  const ctrRef = useRef<HTMLDivElement>(null);
-
-  const [variables, setVaribales] = useState<Variable[]>([]);
-  const [events, setEvents] = useState<EventData[]>([]);
-  const callbackRegisteredRef = useRef(false); // Persistent across renders
-
-  /**
-   *
-   * @param ref
-   */
-  const scrollTo = ref => {
-    setTimeout(
-      () =>
-        ref.current?.scrollIntoView({ inline: 'center', behavior: 'smooth' }),
-      777,
-    );
-  };
-
-  //   on change of message to scroll
+  // Load variables from assistant
   useEffect(() => {
-    scrollTo(ctrRef);
-  }, [JSON.stringify(events)]);
-
-  const onChangeArgument = (k: string, vl: string) => {
-    voiceAgent.agentConfiguration.addArgument(k, vl);
-  };
-
-  useEffect(() => {
-    if (assistant) {
-      let pmtVar = assistant
-        ?.getAssistantprovidermodel()
-        ?.getTemplate()
-        ?.getPromptvariablesList();
-      if (pmtVar) {
-        pmtVar.forEach(v => {
-          if (v.getDefaultvalue()) {
-            voiceAgent.agentConfiguration.addArgument(
-              v.getName(),
-              v.getDefaultvalue(),
-            );
-          }
-        });
-        setVaribales(pmtVar);
-      }
-    }
-
-    if (!callbackRegisteredRef.current) {
-      callbackRegisteredRef.current = true; // Mark the callback as registered
-      voiceAgent.registerCallback({
-        onDirective(arg) {
-          setEvents(prevEvents => [
-            ...prevEvents,
-            { type: 'directive', payload: arg },
-          ]);
-        },
-        onConfiguration: args => {
-          setEvents(prevEvents => [
-            ...prevEvents,
-            { type: 'configuration', payload: args },
-          ]);
-        },
-        onUserMessage: args => {
-          setEvents(prevEvents => [
-            ...prevEvents,
-            { type: 'userMessage', payload: args },
-          ]);
-        },
-        onAssistantMessage: args => {
-          if (args?.messageText)
-            setEvents(prevEvents => [
-              ...prevEvents,
-              { type: 'assistantMessage', payload: args },
-            ]);
-        },
-        onInterrupt: args => {
-          setEvents(prevEvents => [
-            ...prevEvents,
-            { type: 'interrupt', payload: args },
-          ]);
-        },
+    if (!assistant) return;
+    const pmtVar = assistant
+      .getAssistantprovidermodel()
+      ?.getTemplate()
+      ?.getPromptvariablesList();
+    if (pmtVar) {
+      pmtVar.forEach(v => {
+        if (v.getDefaultvalue())
+          voiceAgentContextValue.agentConfiguration.addArgument(
+            v.getName(),
+            v.getDefaultvalue(),
+          );
       });
+      setVariables(pmtVar);
     }
-  }, [voiceAgent, JSON.stringify(assistant)]);
+  }, [assistant]);
+
+  // Register callbacks once
+  useEffect(() => {
+    if (callbackRegistered.current) return;
+    callbackRegistered.current = true;
+    voiceAgentContextValue.registerCallback({
+      onDirective: arg =>
+        setEvents(p => [
+          ...p,
+          { type: 'directive', ts: new Date(), payload: arg },
+        ]),
+      onConfiguration: args =>
+        setEvents(p => [
+          ...p,
+          { type: 'configuration', ts: new Date(), payload: args },
+        ]),
+      onUserMessage: args =>
+        setEvents(p => [
+          ...p,
+          { type: 'userMessage', ts: new Date(), payload: args },
+        ]),
+      onAssistantMessage: args => {
+        if (args?.messageText)
+          setEvents(p => [
+            ...p,
+            { type: 'assistantMessage', ts: new Date(), payload: args },
+          ]);
+      },
+      onInterrupt: args =>
+        setEvents(p => [
+          ...p,
+          { type: 'interrupt', ts: new Date(), payload: args },
+        ]),
+      onConversationEvent: event =>
+        setEvents(p => [
+          ...p,
+          { type: 'pipelineEvent', ts: new Date(), payload: event },
+        ]),
+      onMetric: metric =>
+        setEvents(p => [
+          ...p,
+          { type: 'metric', ts: new Date(), payload: metric },
+        ]),
+    });
+  }, [voiceAgentContextValue]);
+
+  // Auto-scroll events tab when new events arrive
+  useEffect(() => {
+    if (msgTab === 'events') {
+      setTimeout(
+        () => eventsBottomRef.current?.scrollIntoView({ behavior: 'smooth' }),
+        50,
+      );
+    }
+  }, [events.length, msgTab]);
+
+  if (loading) return <PageLoader />;
+
+  const voiceWarning = debug
+    ? !assistant?.getDebuggerdeployment()?.hasInputaudio()
+    : !assistant?.getApideployment()?.hasInputaudio();
+
+  const enableVoiceHref = debug
+    ? `/deployment/assistant/${agentConfig.id}/deployment/debugger`
+    : `/deployment/assistant/${assistant?.getId()}/manage/deployment/debugger`;
 
   return (
-    <Tab
-      strict
-      active="assistant"
-      className={cn(
-        'sticky top-0 z-1',
-        'border-b dark:bg-gray-900 bg-white dark:border-gray-800',
-      )}
-      tabs={[
-        {
-          label: 'assistant',
-          element: (
-            <>
-              {assistant && (
-                <div className="flex flex-col w-full h-full flex-1 grow">
-                  <div className="p-4 text-sm leading-normal text-muted">
-                    <div className="flex flex-row justify-between items-center text-sm tracking-wider">
-                      <h3>Name</h3>
-                    </div>
-                    <div className="py-2 text-sm font-mono tracking-wider lowercase leading-normal font-medium">
-                      {assistant.getName()}
-                    </div>
-                    <div className="mt-4 flex flex-row justify-between items-center text-sm tracking-wider">
-                      <h3>Executor</h3>
-                    </div>
-                    <div className="py-2 text-sm font-mono tracking-wider lowercase leading-normal font-medium">
-                      {assistant.hasAssistantprovideragentkit() && 'Agentkit'}
-                      {assistant.hasAssistantproviderwebsocket() && 'Websocket'}
-                      {assistant.hasAssistantprovidermodel() && 'Model'}
-                    </div>
-                    {assistant.getDescription() && (
-                      <>
-                        <div className="flex mt-4 flex-row justify-between items-center text-sm tracking-wider">
-                          <h3>Description</h3>
-                        </div>
-                        <div className="py-2 text-sm font-mono tracking-wider lowercase leading-normal font-medium">
-                          {assistant.getDescription()}
-                        </div>
-                      </>
-                    )}
-                  </div>
+    <div className="h-dvh flex p-8 text-sm/6 w-full gap-3 md:gap-6">
+      {/* ── Left: messaging ─────────────────────────────────────────── */}
+      <div className="flex flex-col overflow-hidden h-full w-2/3 border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-950">
+        {/* Header */}
+        <div className="shrink-0">
+          {debug && (
+            <PageHeaderBlock className="border-b pl-3">
+              <a
+                href={`/deployment/assistant/${agentConfig.id}/overview`}
+                className="flex items-center hover:text-red-600 hover:cursor-pointer"
+              >
+                <ChevronLeft className="w-5 h-5 mr-1" strokeWidth={1.5} />
+                <PageTitleBlock className="text-sm/6">
+                  Back to Assistant
+                </PageTitleBlock>
+              </a>
+            </PageHeaderBlock>
+          )}
+          {voiceWarning && (
+            <YellowNoticeBlock className="flex items-center justify-between gap-3">
+              <Info className="shrink-0 w-4 h-4" />
+              <div className="text-sm font-medium">
+                Voice functionality is currently disabled. Please enable it to
+                enjoy a voice experience with your assistant.
+              </div>
+              <a
+                target="_blank"
+                href={enableVoiceHref}
+                className="h-7 flex items-center font-medium hover:underline ml-auto text-yellow-600"
+                rel="noreferrer"
+              >
+                Enable voice
+                <ExternalLink
+                  className="shrink-0 w-4 h-4 ml-1.5"
+                  strokeWidth={1.5}
+                />
+              </a>
+            </YellowNoticeBlock>
+          )}
+          {/* Tab bar */}
+          <div className="flex items-center border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950">
+            {(['messages', 'events'] as MsgTab[]).map(t => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setMsgTab(t)}
+                className={cn(
+                  'px-4 py-2.5 text-sm/6 font-medium border-b-2 transition-colors',
+                  msgTab === t
+                    ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200',
+                )}
+              >
+                {t === 'events' && events.length > 0
+                  ? `events (${events.length})`
+                  : t}
+              </button>
+            ))}
+          </div>
+        </div>
 
-                  {variables.length > 0 && (
-                    <InputGroup
-                      title="Arguments"
-                      childClass="p-0"
-                      className="m-0 border-x-0 rounded-none border-0"
-                    >
-                      <div className="text-sm leading-normal">
-                        {variables.map((x, idx) => {
-                          return (
-                            <InputVarForm key={idx} var={x}>
-                              {x.getType() === InputVarType.textInput && (
-                                <TextTextarea
-                                  readOnly={voiceAgent.isConnected}
-                                  id={x.getName()}
-                                  defaultValue={x.getDefaultvalue()}
-                                  onChange={(
-                                    e: React.ChangeEvent<HTMLTextAreaElement>,
-                                  ) =>
-                                    onChangeArgument(
-                                      x.getName(),
-                                      e.target.value,
-                                    )
-                                  }
-                                />
-                              )}
-                              {x.getType() === InputVarType.paragraph && (
-                                <ParagraphTextarea
-                                  id={x.getName()}
-                                  readOnly={voiceAgent.isConnected}
-                                  defaultValue={x.getDefaultvalue()}
-                                  onChange={(
-                                    e: React.ChangeEvent<HTMLTextAreaElement>,
-                                  ) =>
-                                    onChangeArgument(
-                                      x.getName(),
-                                      e.target.value,
-                                    )
-                                  }
-                                />
-                              )}
-                              {x.getType() === InputVarType.number && (
-                                <NumberTextarea
-                                  readOnly={voiceAgent.isConnected}
-                                  id={x.getName()}
-                                  defaultValue={x.getDefaultvalue()}
-                                  onChange={(
-                                    e: React.ChangeEvent<HTMLTextAreaElement>,
-                                  ) =>
-                                    onChangeArgument(
-                                      x.getName(),
-                                      e.target.value,
-                                    )
-                                  }
-                                />
-                              )}
-                              {x.getType() === InputVarType.json && (
-                                <JsonTextarea
-                                  readOnly={voiceAgent.isConnected}
-                                  id={x.getName()}
-                                  defaultValue={x.getDefaultvalue()}
-                                  onChange={(
-                                    e: React.ChangeEvent<HTMLTextAreaElement>,
-                                  ) =>
-                                    onChangeArgument(
-                                      x.getName(),
-                                      e.target.value,
-                                    )
-                                  }
-                                />
-                              )}
-                              {x.getType() === InputVarType.url && (
-                                <UrlTextarea
-                                  readOnly={voiceAgent.isConnected}
-                                  id={x.getName()}
-                                  defaultValue={x.getDefaultvalue()}
-                                  onChange={(
-                                    e: React.ChangeEvent<HTMLTextAreaElement>,
-                                  ) =>
-                                    onChangeArgument(
-                                      x.getName(),
-                                      e.target.value,
-                                    )
-                                  }
-                                />
-                              )}
-                            </InputVarForm>
-                          );
-                        })}
-                      </div>
-                    </InputGroup>
-                  )}
-                  <InputGroup
-                    title="Deployment"
-                    childClass="p-3 text-muted"
-                    className="m-0 border-x-0 rounded-none"
-                  >
-                    <div className="space-y-4">
-                      <div className="flex justify-between">
-                        <div className="text-sm font-mono tracking-wider lowercase">
-                          Input Mode
-                        </div>
-                        <div className="font-medium font-mono">
-                          Text
-                          {assistant
-                            ?.getDebuggerdeployment()
-                            ?.getInputaudio() && ', Audio'}
-                        </div>
-                      </div>
-                      <div className="flex justify-between">
-                        <div className="text-sm font-mono tracking-wider lowercase">
-                          Output Mode
-                        </div>
-                        <div className="font-medium font-mono">
-                          Text
-                          {assistant
-                            ?.getDebuggerdeployment()
-                            ?.getOutputaudio() && ', Audio'}
-                        </div>
-                      </div>
-                      {/*  */}
-                      {assistant
-                        .getDebuggerdeployment()
-                        ?.getInputaudio()
-                        ?.getAudiooptionsList() &&
-                        assistant
-                          .getDebuggerdeployment()
-                          ?.getInputaudio()
-                          ?.getAudiooptionsList().length! > 0 && (
-                          <div className="space-y-4">
-                            <div className="flex justify-between">
-                              <div className="text-muted font-mono lowercase tracking-wider">
-                                Listen.Provider
-                              </div>
-                              <div className="font-medium mt-1 font-mono">
-                                {assistant
-                                  .getDebuggerdeployment()
-                                  ?.getInputaudio()
-                                  ?.getAudioprovider()}
-                              </div>
-                            </div>
-                            {assistant
-                              .getDebuggerdeployment()
-                              ?.getInputaudio()
-                              ?.getAudiooptionsList()
-                              .filter(d => d.getValue())
-                              .filter(d => d.getKey().startsWith('listen.'))
-                              .map((detail, index) => (
-                                <div
-                                  className="flex justify-between"
-                                  key={index}
-                                >
-                                  <div className="text-sm font-mono tracking-wider lowercase">
-                                    {detail.getKey()}
-                                  </div>
-                                  <div className="font-medium font-mono">
-                                    {detail.getValue()}
-                                  </div>
-                                </div>
-                              ))}
-                          </div>
-                        )}
-                      {assistant
-                        .getDebuggerdeployment()
-                        ?.getInputaudio()
-                        ?.getAudiooptionsList() &&
-                        assistant
-                          .getDebuggerdeployment()
-                          ?.getOutputaudio()
-                          ?.getAudiooptionsList().length! > 0 && (
-                          <div className="space-y-4">
-                            <div className="flex justify-between">
-                              <div className="text-sm font-mono tracking-wider lowercase">
-                                Listen.Provider
-                              </div>
-                              <div className="font-medium mt-1 font-mono">
-                                {assistant
-                                  .getDebuggerdeployment()
-                                  ?.getOutputaudio()
-                                  ?.getAudioprovider()}
-                              </div>
-                            </div>
-                            {assistant
-                              .getDebuggerdeployment()
-                              ?.getOutputaudio()
-                              ?.getAudiooptionsList()
-                              .filter(d => d.getValue())
-                              .filter(d => d.getKey().startsWith('speak.'))
-                              .map((detail, index) => (
-                                <div
-                                  key={index}
-                                  className="flex justify-between"
-                                >
-                                  <div className="text-sm font-mono tracking-wider lowercase">
-                                    {detail.getKey()}
-                                  </div>
-                                  <div className="font-medium font-mono">
-                                    {detail.getValue()}
-                                  </div>
-                                </div>
-                              ))}
-                          </div>
-                        )}
-                    </div>
-                  </InputGroup>
-                </div>
-              )}
-            </>
-          ),
-        },
-        {
-          label: 'events',
-          element: (
-            <div className="flex flex-col flex-1 divide-y w-full ">
-              {events.length === 0 ? (
-                <div className="flex items-center justify-center flex-1 h-full">
-                  No events have been recorded yet. Start interacting to see
-                  updates here.
-                </div>
-              ) : (
-                events.map((event, idx) => {
-                  if (event.type === 'action') {
-                    return (
-                      <div
-                        key={idx}
-                        className="p-2 text-xs flex flex-col space-y-1"
-                      >
-                        <span>
-                          <strong>Rapida</strong>
-                        </span>
-                        <div>
-                          Action Triggered with data{' '}
-                          {JSON.stringify(event.payload)}
-                        </div>
-                      </div>
-                    );
-                  } else if (event.type === 'configuration') {
-                    const { assistantconversationid, assistant } =
-                      event.payload;
-                    return (
-                      <div
-                        key={idx}
-                        className="p-2 text-xs flex flex-col space-y-1"
-                      >
-                        <span>
-                          <strong>Rapida</strong>
-                        </span>
-                        <div>
-                          Connected with Assistant {assistant.assistantid}{' '}
-                          version {assistant.version}
-                        </div>
-                        <div>
-                          Conversation created with ID {assistantconversationid}
-                        </div>
-                      </div>
-                    );
-                  } else if (event.type === 'userMessage') {
-                    return (
-                      <div
-                        key={idx}
-                        data-key={event.payload.id}
-                        className="p-2 text-xs flex flex-col space-y-1"
-                      >
-                        <div className="flex space-x-1 items-center">
-                          <strong>User</strong>
-                          <span className="inline-block">
-                            {event.payload.completed ? (
-                              <CheckCheck
-                                className="w-3 h-3 text-green-600"
-                                strokeWidth={1.5}
-                              />
-                            ) : (
-                              <Check className="w-3 h-3" strokeWidth={1.5} />
-                            )}
-                          </span>
-                        </div>
-                        <div>{JSON.stringify(event.payload.messageText)}</div>{' '}
-                      </div>
-                    );
-                  } else if (event.type === 'assistantMessage') {
-                    return (
-                      <div
-                        key={idx}
-                        data-key={event.payload.id}
-                        className="p-2 text-xs flex flex-col space-y-1"
-                      >
-                        <div className="flex space-x-1 items-center">
-                          <strong>Assistant</strong>
-                          <span className="inline-block">
-                            {event.payload.completed ? (
-                              <CheckCheck
-                                className="w-3 h-3 text-green-600"
-                                strokeWidth={1.5}
-                              />
-                            ) : (
-                              <Check className="w-3 h-3" strokeWidth={1.5} />
-                            )}
-                          </span>
-                        </div>
-                        <div>{JSON.stringify(event.payload.messageText)}</div>{' '}
-                        {/* Show specific field */}
-                      </div>
-                    );
-                  } else if (event.type === 'message') {
-                    return (
-                      <div
-                        key={idx}
-                        className="p-2 text-xs flex flex-col space-y-1"
-                      >
-                        <span>
-                          <strong>Rapida</strong>
-                        </span>
-                        <div>
-                          Trun completed for message{' '}
-                          {JSON.stringify(event.payload.messageid)}
-                        </div>
-                      </div>
-                    );
-                  } else if (event.type === 'interrupt') {
-                    return (
-                      <div
-                        key={idx}
-                        className="p-2 text-xs flex flex-col space-y-1"
-                      >
-                        <span>
-                          <strong>Rapida</strong>
-                        </span>
-                        <div>
-                          {event.payload.type === 1
-                            ? 'Interruption detected from client audio [vad]'
-                            : 'Interruption from STT provider [word]'}
-                        </div>
-                      </div>
-                    );
-                  } else {
-                    // Default case for other event types
-                    return (
-                      <div
-                        key={idx}
-                        className="p-2 text-xs flex flex-col space-y-1"
-                      >
-                        <span>
-                          <strong>System</strong>
-                        </span>
-                        <code>{JSON.stringify(event.payload)}</code>
-                      </div>
-                    );
-                  }
-                })
-              )}
-              <div ref={ctrRef} />
-            </div>
-          ),
-        },
-      ]}
-    />
+        {/* Messages tab */}
+        {msgTab === 'messages' &&
+          (() => {
+            const hasMessages = events.some(
+              e => e.type === 'userMessage' || e.type === 'assistantMessage',
+            );
+            return hasMessages ? (
+              <div className="flex flex-col grow min-h-0 overflow-y-auto px-4 py-4">
+                <ConversationMessages vag={voiceAgentContextValue} />
+              </div>
+            ) : (
+              <AssistantPlaceholder assistant={assistant} />
+            );
+          })()}
+
+        {/* Events tab — structured conversation event rows */}
+        {msgTab === 'events' && (
+          <div className="flex-1 min-h-0 overflow-y-auto py-1">
+            {events.length === 0 ? (
+              <div className="flex items-center justify-center h-full text-gray-400 dark:text-gray-500 text-sm/6 font-mono">
+                No events yet…
+              </div>
+            ) : (
+              <table className="w-full table-fixed font-mono text-sm/6 border-collapse">
+                <colgroup>
+                  <col className="w-[9rem]" />
+                  <col className="w-[6rem]" />
+                  <col className="w-[10rem]" />
+                  <col />
+                </colgroup>
+                <tbody>
+                  {events.map((entry, i) => (
+                    <ConversationEventRow key={i} entry={entry} />
+                  ))}
+                </tbody>
+              </table>
+            )}
+            <div ref={eventsBottomRef} />
+          </div>
+        )}
+
+        {/* Messaging action — always visible */}
+        <MessagingAction
+          assistant={assistant}
+          placeholder="How can I help you?"
+          className=" border-t"
+          voiceAgent={voiceAgentContextValue}
+        />
+      </div>
+
+      {/* ── Right: assistant + metrics ──────────────────────────────── */}
+      <div className="shrink-0 flex flex-col overflow-hidden border border-gray-200 dark:border-gray-700 w-1/3 rounded bg-white dark:bg-gray-950">
+        <VoiceAgentDebugger
+          debug={debug}
+          voiceAgent={voiceAgentContextValue}
+          assistant={assistant}
+          variables={variables}
+          events={events}
+          onChangeArgument={(k, v) =>
+            voiceAgentContextValue.agentConfiguration.addArgument(k, v)
+          }
+        />
+      </div>
+    </div>
   );
-});
+};
+
+// ---------------------------------------------------------------------------
+// Right panel: tabs — arguments | configuration | metrics
+// ---------------------------------------------------------------------------
+
+type RightTab = 'arguments' | 'configuration' | 'metrics';
+
+export const VoiceAgentDebugger: FC<{
+  debug: boolean;
+  voiceAgent: VI;
+  assistant: Assistant | null;
+  variables: Variable[];
+  events: EventEntry[];
+  onChangeArgument: (k: string, v: string) => void;
+}> = memo(
+  ({ debug, voiceAgent, assistant, variables, events, onChangeArgument }) => {
+    const [tab, setTab] = useState<RightTab>('configuration');
+    const metrics = useMemo(() => computeMetrics(events), [events]);
+
+    const deployment = assistant
+      ? (debug
+          ? assistant.getDebuggerdeployment()
+          : assistant.getApideployment()) ?? null
+      : null;
+    const stt = deployment?.getInputaudio() ?? null;
+    const tts = deployment?.getOutputaudio() ?? null;
+    const model = assistant?.getAssistantprovidermodel() ?? null;
+
+    return (
+      <div className="flex flex-col h-full overflow-hidden text-sm">
+        {/* Tab bar */}
+        <div className="shrink-0 flex items-center border-b border-gray-200 dark:border-gray-700">
+          {(['configuration', 'arguments', 'metrics'] as RightTab[]).map(t => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => setTab(t)}
+              className={cn(
+                'px-3 py-2.5 text-sm/6 font-medium border-b-2 transition-colors',
+                tab === t
+                  ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                  : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200',
+              )}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+
+        {/* ── arguments tab ── */}
+        {tab === 'arguments' && (
+          <div className="flex-1 min-h-0 overflow-y-auto">
+            {variables.length > 0 ? (
+              <div className="[&_label]:!text-sm [&_label]:!leading-6 [&_label]:!py-2 [&_label]:!px-3 [&_textarea]:!text-sm [&_textarea]:!leading-6">
+                {variables.map((x, idx) => (
+                  <InputVarForm key={idx} var={x}>
+                    {x.getType() === InputVarType.textInput && (
+                      <TextTextarea
+                        readOnly={voiceAgent.isConnected}
+                        id={x.getName()}
+                        defaultValue={x.getDefaultvalue()}
+                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                          onChangeArgument(x.getName(), e.target.value)
+                        }
+                      />
+                    )}
+                    {x.getType() === InputVarType.paragraph && (
+                      <ParagraphTextarea
+                        id={x.getName()}
+                        readOnly={voiceAgent.isConnected}
+                        defaultValue={x.getDefaultvalue()}
+                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                          onChangeArgument(x.getName(), e.target.value)
+                        }
+                      />
+                    )}
+                    {x.getType() === InputVarType.number && (
+                      <NumberTextarea
+                        readOnly={voiceAgent.isConnected}
+                        id={x.getName()}
+                        defaultValue={x.getDefaultvalue()}
+                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                          onChangeArgument(x.getName(), e.target.value)
+                        }
+                      />
+                    )}
+                    {x.getType() === InputVarType.json && (
+                      <JsonTextarea
+                        readOnly={voiceAgent.isConnected}
+                        id={x.getName()}
+                        defaultValue={x.getDefaultvalue()}
+                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                          onChangeArgument(x.getName(), e.target.value)
+                        }
+                      />
+                    )}
+                    {x.getType() === InputVarType.url && (
+                      <UrlTextarea
+                        readOnly={voiceAgent.isConnected}
+                        id={x.getName()}
+                        defaultValue={x.getDefaultvalue()}
+                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                          onChangeArgument(x.getName(), e.target.value)
+                        }
+                      />
+                    )}
+                  </InputVarForm>
+                ))}
+              </div>
+            ) : (
+              <p className="p-4 text-sm/6 text-gray-400 dark:text-gray-500">
+                No arguments defined.
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* ── configuration tab ── */}
+        {tab === 'configuration' && (
+          <div className="flex-1 min-h-0 overflow-y-auto">
+            {assistant ? (
+              <>
+                <ConfigBlock title="assistant">
+                  <InfoRow label="name" value={assistant.getName()} />
+                  <InfoRow
+                    label="executor"
+                    value={
+                      assistant.hasAssistantprovideragentkit()
+                        ? 'agentkit'
+                        : assistant.hasAssistantproviderwebsocket()
+                          ? 'websocket'
+                          : 'model'
+                    }
+                  />
+                  {assistant.getDescription() && (
+                    <InfoRow
+                      label="description"
+                      value={assistant.getDescription()}
+                    />
+                  )}
+                </ConfigBlock>
+
+                {stt && (
+                  <ConfigBlock title="stt">
+                    <InfoRow label="provider" value={stt.getAudioprovider()} />
+                    {stt.getAudiooptionsList().map(m => (
+                      <InfoRow
+                        key={m.getKey()}
+                        label={m.getKey()}
+                        value={m.getValue()}
+                      />
+                    ))}
+                  </ConfigBlock>
+                )}
+
+                {tts && (
+                  <ConfigBlock title="tts">
+                    <InfoRow label="provider" value={tts.getAudioprovider()} />
+                    {tts.getAudiooptionsList().map(m => (
+                      <InfoRow
+                        key={m.getKey()}
+                        label={m.getKey()}
+                        value={m.getValue()}
+                      />
+                    ))}
+                  </ConfigBlock>
+                )}
+
+                {model && (
+                  <ConfigBlock title="llm">
+                    <InfoRow
+                      label="provider"
+                      value={model.getModelprovidername()}
+                    />
+                    {model.getAssistantmodeloptionsList().map(m => (
+                      <InfoRow
+                        key={m.getKey()}
+                        label={m.getKey()}
+                        value={m.getValue()}
+                      />
+                    ))}
+                  </ConfigBlock>
+                )}
+              </>
+            ) : (
+              <p className="p-4 text-sm/6 text-gray-400 dark:text-gray-500">
+                Loading…
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* ── metrics tab ── */}
+        {tab === 'metrics' && (
+          <div className="flex-1 min-h-0 overflow-y-auto p-4">
+            {Object.keys(metrics).length === 0 ? (
+              <p className="text-sm/6 text-gray-400 dark:text-gray-500">
+                No metrics yet.
+              </p>
+            ) : (
+              <div className="grid grid-cols-2 gap-x-6 gap-y-5">
+                {Object.entries(metrics).map(([k, v]) => (
+                  <MetricCard key={k} label={k} value={String(v)} />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  },
+);
+
+// ---------------------------------------------------------------------------
+// Sub-components
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// Empty-state placeholder — developer console style
+// ---------------------------------------------------------------------------
+
+const AssistantPlaceholder: FC<{
+  assistant: Assistant | null;
+}> = ({ assistant }) => (
+  <div className="flex flex-col flex-1 min-h-0 items-start justify-end gap-1 px-2 pb-6 select-none">
+    <span className="text-2xl font-semibold text-gray-800 dark:text-gray-100 italic">
+      Hello,
+    </span>
+    <span className="text-lg text-gray-400 dark:text-gray-500 font-semibold italic">
+      How can I help you today?
+    </span>
+  </div>
+);
+
+const ConfigBlock: FC<{ title: string; children: React.ReactNode }> = ({
+  title,
+  children,
+}) => (
+  <div className="border-b border-gray-200 dark:border-gray-700">
+    <div className="px-4 pt-3 pb-1 text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+      {title}
+    </div>
+    <div className="px-4 pb-3 space-y-2">{children}</div>
+  </div>
+);
+
+const InfoRow: FC<{ label: string; value: string }> = ({ label, value }) => (
+  <div className="flex justify-between gap-4 text-sm/6">
+    <span className="text-gray-500 dark:text-gray-400 lowercase tracking-wide shrink-0">
+      {label}
+    </span>
+    <span className="text-gray-900 dark:text-gray-100 font-medium text-right truncate">
+      {value}
+    </span>
+  </div>
+);
+
+const MetricCard: FC<{ label: string; value: string }> = ({ label, value }) => (
+  <div className="flex flex-col gap-0.5">
+    <span className="text-xs uppercase tracking-wide text-gray-400 dark:text-gray-500 truncate">
+      {label.replace(/_/g, ' ')}
+    </span>
+    <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 tabular-nums">
+      {value}
+    </span>
+  </div>
+);
+
+// ---------------------------------------------------------------------------
+// Metrics computation
+// ---------------------------------------------------------------------------
+
+function computeMetrics(events: EventEntry[]): Record<string, string | number> {
+  const m: Record<string, string | number> = {
+    messages_sent: events.filter(
+      e => e.type === 'userMessage' && e.payload?.completed,
+    ).length,
+    messages_received: events.filter(e => e.type === 'assistantMessage').length,
+    pipeline_events: events.filter(e => e.type === 'pipelineEvent').length,
+  };
+
+  // Walk in reverse to get the latest value for each key.
+  for (let i = events.length - 1; i >= 0; i--) {
+    const e = events[i];
+
+    // Server-emitted ConversationMetric packets (stt_latency_ms, llm_ttft_ms, etc.)
+    if (e.type === 'metric') {
+      const list: Array<{ name: string; value: string }> =
+        e.payload?.metricsList ?? [];
+      for (const { name, value } of list) {
+        if (name && !(name in m)) m[name] = value;
+      }
+      continue;
+    }
+
+    // Pipeline events — extract well-known fields
+    if (e.type !== 'pipelineEvent') continue;
+    const { name, dataMap } = e.payload as {
+      name: string;
+      dataMap: Array<[string, string]>;
+    };
+    const data = Object.fromEntries(dataMap ?? []);
+    const type = data['type'];
+
+    if (
+      name === 'llm' &&
+      type === 'provider_metrics' &&
+      !('llm_input_tokens' in m)
+    ) {
+      if (data['input_tokens']) m['llm_input_tokens'] = data['input_tokens'];
+      if (data['output_tokens']) m['llm_output_tokens'] = data['output_tokens'];
+    }
+    if (name === 'stt' && type === 'completed' && !('stt_words' in m)) {
+      if (data['word_count']) m['stt_words'] = data['word_count'];
+    }
+    if (name === 'tts' && type === 'completed' && !('tts_audio_kb' in m)) {
+      if (data['audio_bytes'])
+        m['tts_audio_kb'] =
+          `${Math.round(Number(data['audio_bytes']) / 1024)} KB`;
+    }
+  }
+
+  return m;
+}

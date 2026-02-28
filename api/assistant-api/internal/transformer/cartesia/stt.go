@@ -10,14 +10,16 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"sync"
+	"time"
 
 	"github.com/gorilla/websocket"
 	cartesia_internal "github.com/rapidaai/api/assistant-api/internal/transformer/cartesia/internal"
 	internal_type "github.com/rapidaai/api/assistant-api/internal/type"
 	"github.com/rapidaai/pkg/commons"
 	"github.com/rapidaai/pkg/utils"
-	"github.com/rapidaai/protos"
+	protos "github.com/rapidaai/protos"
 )
 
 type cartesiaSpeechToText struct {
@@ -31,6 +33,9 @@ type cartesiaSpeechToText struct {
 
 	connection *websocket.Conn
 	onPacket   func(pkt ...internal_type.Packet) error
+
+	// observability: time when speech started
+	startedAt time.Time
 }
 
 // Name implements internal_transformer.SpeechToTextTransformer.
@@ -67,8 +72,18 @@ func (cst *cartesiaSpeechToText) Initialize() error {
 	cst.connection = conn
 	defer cst.mu.Unlock()
 
+	cst.startedAt = time.Now()
 	go cst.speechToTextCallback(conn, cst.ctx)
 	cst.logger.Debugf("cartesia-stt: connection established")
+
+	cst.onPacket(internal_type.ConversationEventPacket{
+		Name: "stt",
+		Data: map[string]string{
+			"type":     "initialized",
+			"provider": cst.Name(),
+		},
+		Time: time.Now(),
+	})
 	return nil
 }
 
@@ -83,18 +98,65 @@ func (cst *cartesiaSpeechToText) speechToTextCallback(conn *websocket.Conn, ctx 
 			_, msg, err := conn.ReadMessage()
 			if err != nil {
 				cst.logger.Error("cartesia-tts: error reading from Cartesia WebSocket: ", err)
+				cst.onPacket(internal_type.ConversationEventPacket{
+					Name: "stt",
+					Data: map[string]string{"type": "error", "error": err.Error()},
+					Time: time.Now(),
+				})
 				return
 			}
 			var resp cartesia_internal.SpeechToTextOutput
 			if err := json.Unmarshal(msg, &resp); err == nil && resp.Text != "" {
 				if cst.onPacket != nil {
-					cst.onPacket(
-						internal_type.InterruptionPacket{Source: internal_type.InterruptionSourceWord},
-						internal_type.SpeechToTextPacket{
-							Script:   resp.Text,
-							Language: resp.Language,
-							Interim:  !resp.IsFinal,
-						})
+					if !resp.IsFinal {
+						cst.onPacket(
+							internal_type.InterruptionPacket{Source: internal_type.InterruptionSourceWord},
+							internal_type.SpeechToTextPacket{
+								Script:   resp.Text,
+								Language: resp.Language,
+								Interim:  true,
+							},
+							internal_type.ConversationEventPacket{
+								Name: "stt",
+								Data: map[string]string{
+									"type":       "interim",
+									"script":     resp.Text,
+									"confidence": "0.9000",
+								},
+								Time: time.Now(),
+							},
+						)
+					} else {
+						now := time.Now()
+						var latencyMs int64
+						if !cst.startedAt.IsZero() {
+							latencyMs = now.Sub(cst.startedAt).Milliseconds()
+							cst.startedAt = time.Time{}
+						}
+						cst.onPacket(
+							internal_type.InterruptionPacket{Source: internal_type.InterruptionSourceWord},
+							internal_type.SpeechToTextPacket{
+								Script:   resp.Text,
+								Language: resp.Language,
+								Interim:  false,
+							},
+							internal_type.ConversationEventPacket{
+								Name: "stt",
+								Data: map[string]string{
+									"type":       "completed",
+									"script":     resp.Text,
+									"confidence": "0.9000",
+									"language":   resp.Language,
+									"word_count": fmt.Sprintf("%d", len(strings.Fields(resp.Text))),
+									"char_count": fmt.Sprintf("%d", len(resp.Text)),
+								},
+								Time: now,
+							},
+							internal_type.MessageMetricPacket{
+								Metrics: []*protos.Metric{{Name: "stt_latency_ms", Value: fmt.Sprintf("%d", latencyMs)}},
+							},
+						)
+					}
 				}
 			}
 		}

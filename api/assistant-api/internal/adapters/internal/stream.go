@@ -83,21 +83,19 @@ func (t *genericRequestor) Talk(_ context.Context, auth types.SimplePrinciple) e
 							t.disconnectTextToSpeech(t.streamer.Context())
 						})
 					}
-					t.messaging.SwitchMode(type_enums.TextMode)
+					t.SwitchMode(type_enums.TextMode)
 				case protos.StreamMode_STREAM_MODE_AUDIO:
-					// Switching to audio mode — only initialize subsystems
-					// that are not already running.
+					// Switching to audio mode — initialize subsystems synchronously
+					// so they are ready before audio packets arrive from WebRTC.
 					if t.textToSpeechTransformer == nil {
-						utils.Go(t.streamer.Context(), func() {
-							t.initializeTextToSpeech(t.streamer.Context())
-						})
+						t.initializeTextToSpeech(t.streamer.Context())
 					}
 					if t.speechToTextTransformer == nil {
-						utils.Go(t.streamer.Context(), func() {
-							t.initializeSpeechToText(t.streamer.Context())
-						})
+						if err := t.initializeSpeechToText(t.streamer.Context()); err != nil {
+							t.logger.Errorf("failed to initialize speech-to-text on mode switch: %v", err)
+						}
 					}
-					t.messaging.SwitchMode(type_enums.AudioMode)
+					t.SwitchMode(type_enums.AudioMode)
 				}
 			}
 

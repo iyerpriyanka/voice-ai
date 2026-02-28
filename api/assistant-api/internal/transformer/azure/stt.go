@@ -10,7 +10,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"sync"
+	"time"
 
 	"github.com/Microsoft/cognitive-services-speech-sdk-go/audio"
 	"github.com/Microsoft/cognitive-services-speech-sdk-go/common"
@@ -37,6 +39,9 @@ type azureSpeechToText struct {
 	azureAudioConfig *audio.AudioConfig
 	inputstream      *audio.PushAudioInputStream
 	onPacket         func(pkt ...internal_type.Packet) error
+
+	// observability: time when speech started
+	startedAt time.Time
 }
 
 // NewAzureSpeechToText creates a new Azure Speech-to-Text transformer instance.
@@ -98,6 +103,14 @@ func (s *azureSpeechToText) Initialize() error {
 	s.registerEventHandlers()
 	s.client.StartContinuousRecognitionAsync()
 
+	s.onPacket(internal_type.ConversationEventPacket{
+		Name: "stt",
+		Data: map[string]string{
+			"type":     "initialized",
+			"provider": s.Name(),
+		},
+		Time: time.Now(),
+	})
 	return nil
 }
 
@@ -156,6 +169,10 @@ func (s *azureSpeechToText) OnRecognizing(event speech.SpeechRecognitionEventArg
 		return
 	}
 
+	if s.startedAt.IsZero() {
+		s.startedAt = time.Now()
+	}
+
 	language := result.PrimaryLanguage.Language
 	if language == "" {
 		language = "en-US"
@@ -168,7 +185,17 @@ func (s *azureSpeechToText) OnRecognizing(event speech.SpeechRecognitionEventArg
 			Confidence: defaultConfidence,
 			Language:   language,
 			Interim:    true,
-		})
+		},
+		internal_type.ConversationEventPacket{
+			Name: "stt",
+			Data: map[string]string{
+				"type":       "interim",
+				"script":     result.Text,
+				"confidence": "0.9000",
+			},
+			Time: time.Now(),
+		},
+	)
 }
 
 // OnRecognized handles final speech recognition results.
@@ -205,6 +232,14 @@ func (s *azureSpeechToText) OnRecognized(event speech.SpeechRecognitionEventArgs
 		return
 	}
 
+	now := time.Now()
+	var latencyMs int64
+	if !s.startedAt.IsZero() {
+		latencyMs = now.Sub(s.startedAt).Milliseconds()
+		s.startedAt = time.Time{}
+	}
+
+	confStr := fmt.Sprintf("%.4f", confidence)
 	s.onPacket(
 		internal_type.InterruptionPacket{Source: internal_type.InterruptionSourceWord},
 		internal_type.SpeechToTextPacket{
@@ -212,11 +247,32 @@ func (s *azureSpeechToText) OnRecognized(event speech.SpeechRecognitionEventArgs
 			Confidence: confidence,
 			Language:   "en-US",
 			Interim:    false,
-		})
+		},
+		internal_type.ConversationEventPacket{
+			Name: "stt",
+			Data: map[string]string{
+				"type":       "completed",
+				"script":     text,
+				"confidence": confStr,
+				"language":   "en-US",
+				"word_count": fmt.Sprintf("%d", len(strings.Fields(text))),
+				"char_count": fmt.Sprintf("%d", len(text)),
+			},
+			Time: now,
+		},
+		internal_type.MessageMetricPacket{
+			Metrics: []*protos.Metric{{Name: "stt_latency_ms", Value: fmt.Sprintf("%d", latencyMs)}},
+		},
+	)
 }
 
 func (s *azureSpeechToText) OnCancelled(event speech.SpeechRecognitionCanceledEventArgs) {
 	defer event.Close()
+	s.onPacket(internal_type.ConversationEventPacket{
+		Name: "stt",
+		Data: map[string]string{"type": "error", "error": "recognition cancelled"},
+		Time: time.Now(),
+	})
 }
 
 // Close stops recognition and releases all Azure Speech SDK resources.

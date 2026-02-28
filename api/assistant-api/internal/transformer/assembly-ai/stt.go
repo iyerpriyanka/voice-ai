@@ -11,6 +11,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 
@@ -34,6 +35,9 @@ type assemblyaiSTT struct {
 	connection *websocket.Conn
 	logger     commons.Logger
 	onPacket   func(pkt ...internal_type.Packet) error
+
+	// observability: time when speech started
+	startedAt time.Time
 }
 
 func NewAssemblyaiSpeechToText(ctx context.Context, logger commons.Logger, credential *protos.VaultCredential,
@@ -83,6 +87,15 @@ func (aai *assemblyaiSTT) Initialize() error {
 
 	aai.logger.Debugf("assembly-ai-stt: connection established")
 	go aai.speechToTextCallback(connection, aai.ctx)
+
+	aai.onPacket(internal_type.ConversationEventPacket{
+		Name: "stt",
+		Data: map[string]string{
+			"type":     "initialized",
+			"provider": aai.Name(),
+		},
+		Time: time.Now(),
+	})
 	return nil
 }
 
@@ -96,6 +109,11 @@ func (aai *assemblyaiSTT) speechToTextCallback(conn *websocket.Conn, ctx context
 			_, msg, err := conn.ReadMessage()
 			if err != nil {
 				aai.logger.Errorf("assembly-ai-stt: read error: %v", err)
+				aai.onPacket(internal_type.ConversationEventPacket{
+					Name: "stt",
+					Data: map[string]string{"type": "error", "error": err.Error()},
+					Time: time.Now(),
+				})
 				return
 			}
 
@@ -107,6 +125,9 @@ func (aai *assemblyaiSTT) speechToTextCallback(conn *websocket.Conn, ctx context
 
 			switch transcript.Type {
 			case "Turn":
+				if aai.startedAt.IsZero() {
+					aai.startedAt = time.Now()
+				}
 				if len(transcript.Words) == 0 {
 					aai.logger.Warnf("assembly-ai-stt: received Turn message with no words")
 					continue
@@ -133,14 +154,60 @@ func (aai *assemblyaiSTT) speechToTextCallback(conn *websocket.Conn, ctx context
 					continue
 				}
 
-				aai.onPacket(
-					internal_type.InterruptionPacket{Source: internal_type.InterruptionSourceWord},
-					internal_type.SpeechToTextPacket{
-						Script:     filteredTranscript,
-						Language:   "en",
-						Confidence: totalConfidence / float64(wordCount),
-						Interim:    !transcript.EndOfTurn || !transcript.TurnIsFormatted,
-					})
+				isInterim := !transcript.EndOfTurn || !transcript.TurnIsFormatted
+				confStr := fmt.Sprintf("%.4f", totalConfidence/float64(wordCount))
+
+				if isInterim {
+					aai.onPacket(
+						internal_type.InterruptionPacket{Source: internal_type.InterruptionSourceWord},
+						internal_type.SpeechToTextPacket{
+							Script:     filteredTranscript,
+							Language:   "en",
+							Confidence: totalConfidence / float64(wordCount),
+							Interim:    true,
+						},
+						internal_type.ConversationEventPacket{
+							Name: "stt",
+							Data: map[string]string{
+								"type":       "interim",
+								"script":     filteredTranscript,
+								"confidence": confStr,
+							},
+							Time: time.Now(),
+						},
+					)
+				} else {
+					now := time.Now()
+					var latencyMs int64
+					if !aai.startedAt.IsZero() {
+						latencyMs = now.Sub(aai.startedAt).Milliseconds()
+						aai.startedAt = time.Time{}
+					}
+					aai.onPacket(
+						internal_type.InterruptionPacket{Source: internal_type.InterruptionSourceWord},
+						internal_type.SpeechToTextPacket{
+							Script:     filteredTranscript,
+							Language:   "en",
+							Confidence: totalConfidence / float64(wordCount),
+							Interim:    false,
+						},
+						internal_type.ConversationEventPacket{
+							Name: "stt",
+							Data: map[string]string{
+								"type":       "completed",
+								"script":     filteredTranscript,
+								"confidence": confStr,
+								"language":   "en",
+								"word_count": fmt.Sprintf("%d", len(strings.Fields(filteredTranscript))),
+								"char_count": fmt.Sprintf("%d", len(filteredTranscript)),
+							},
+							Time: now,
+						},
+						internal_type.MessageMetricPacket{
+							Metrics: []*protos.Metric{{Name: "stt_latency_ms", Value: fmt.Sprintf("%d", latencyMs)}},
+						},
+					)
+				}
 
 			case "Begin":
 				aai.logger.Debugf("assembly-ai-stt: received Begin message")

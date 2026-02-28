@@ -51,7 +51,7 @@ func TestGetDenoiserWithValidTypes(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			opts := utils.Option{DenoiserOptionsKeyProvider: tt.identifier}
 
-			denoiser, err := GetDenoiser(t.Context(), mockLogger, config, opts)
+			denoiser, err := GetDenoiser(t.Context(), mockLogger, config, nil, opts)
 			assert.NoError(t, err)
 			assert.NotNil(t, denoiser)
 		})
@@ -77,7 +77,7 @@ func TestGetDenoiserWithInvalidIdentifiers(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			opts := utils.Option{DenoiserOptionsKeyProvider: tt.identifier}
 
-			denoiser, err := GetDenoiser(t.Context(), mockLogger, config, opts)
+			denoiser, err := GetDenoiser(t.Context(), mockLogger, config, nil, opts)
 			assert.NoError(t, err)
 			assert.NotNil(t, denoiser)
 		})
@@ -101,7 +101,7 @@ func TestGetDenoiserWithNilLogger(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			opts := utils.Option{DenoiserOptionsKeyProvider: tt.identifier}
 
-			denoiser, _ := GetDenoiser(t.Context(), nil, config, opts)
+			denoiser, _ := GetDenoiser(t.Context(), nil, config, nil, opts)
 			assert.NotNil(t, denoiser)
 		})
 	}
@@ -123,7 +123,7 @@ func TestGetDenoiserWithNilAudioConfig(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			opts := utils.Option{DenoiserOptionsKeyProvider: tt.identifier}
 
-			denoiser, _ := GetDenoiser(t.Context(), mockLogger, nil, opts)
+			denoiser, _ := GetDenoiser(t.Context(), mockLogger, nil, nil, opts)
 			assert.NotNil(t, denoiser)
 		})
 	}
@@ -146,7 +146,7 @@ func TestAllDenoiserTypesCallFactory(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			opts := utils.Option{DenoiserOptionsKeyProvider: tt.identifier}
-			denoiser, err := GetDenoiser(t.Context(), mockLogger, config, opts)
+			denoiser, err := GetDenoiser(t.Context(), mockLogger, config, nil, opts)
 			assert.NoError(t, err)
 			assert.NotNil(t, denoiser)
 		})
@@ -214,7 +214,7 @@ func TestDenoiserFactoryDefaults(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			opts := utils.Option{DenoiserOptionsKeyProvider: tt.identifier}
-			denoiser, err := GetDenoiser(t.Context(), mockLogger, config, opts)
+			denoiser, err := GetDenoiser(t.Context(), mockLogger, config, nil, opts)
 			assert.NoError(t, err)
 			assert.NotNil(t, denoiser)
 		})
@@ -251,7 +251,7 @@ func TestDenoiserFactoryWithDifferentConfigs(t *testing.T) {
 			config := &protos.AudioConfig{SampleRate: tt.sampleRate}
 			opts := utils.Option{DenoiserOptionsKeyProvider: tt.identifier}
 
-			denoiser, err := GetDenoiser(t.Context(), mockLogger, config, opts)
+			denoiser, err := GetDenoiser(t.Context(), mockLogger, config, nil, opts)
 			assert.NoError(t, err)
 			assert.NotNil(t, denoiser)
 		})
@@ -266,7 +266,7 @@ func BenchmarkGetDenoiserKRISP(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		GetDenoiser(b.Context(), nil, config, opts)
+		GetDenoiser(b.Context(), nil, config, nil, opts)
 	}
 }
 
@@ -278,7 +278,7 @@ func BenchmarkGetDenoiserRNNoise(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		GetDenoiser(b.Context(), nil, config, opts)
+		GetDenoiser(b.Context(), nil, config, nil, opts)
 	}
 }
 
@@ -290,7 +290,7 @@ func BenchmarkGetDenoiserDefault(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		GetDenoiser(b.Context(), nil, config, opts)
+		GetDenoiser(b.Context(), nil, config, nil, opts)
 	}
 }
 

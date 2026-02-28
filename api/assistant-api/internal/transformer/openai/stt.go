@@ -8,6 +8,7 @@ package internal_transformer_openai
 
 import (
 	"context"
+	"time"
 
 	openai "github.com/openai/openai-go"
 	"github.com/openai/openai-go/option"
@@ -17,15 +18,25 @@ import (
 )
 
 type openaiSpeechToText struct {
-	logger commons.Logger
-	client openai.Client
-	ctx    context.Context
-	cancel context.CancelFunc
+	logger   commons.Logger
+	client   openai.Client
+	ctx      context.Context
+	cancel   context.CancelFunc
+	onPacket func(pkt ...internal_type.Packet) error
 }
 
 func (o *openaiSpeechToText) Initialize() error {
 	o.ctx, o.cancel = context.WithCancel(context.Background())
 	o.client = openai.NewClient(option.WithAPIKey("YOUR_API_KEY"))
+
+	o.onPacket(internal_type.ConversationEventPacket{
+		Name: "stt",
+		Data: map[string]string{
+			"type":     "initialized",
+			"provider": o.Name(),
+		},
+		Time: time.Now(),
+	})
 	return nil
 }
 
@@ -53,7 +64,8 @@ func NewOpenaiSpeechToText(
 	opts utils.Option,
 ) (internal_type.SpeechToTextTransformer, error) {
 	stt := &openaiSpeechToText{
-		logger: logger,
+		logger:   logger,
+		onPacket: onPacket,
 	}
 	return stt, nil
 }

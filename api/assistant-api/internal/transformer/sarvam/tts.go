@@ -12,6 +12,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/gorilla/websocket"
 	sarvam_internal "github.com/rapidaai/api/assistant-api/internal/transformer/sarvam/internal"
@@ -76,6 +77,14 @@ func (rt *sarvamTextToSpeech) Initialize() error {
 
 	rt.logger.Debugf("sarvam-tts: connection established")
 	go rt.textToSpeechCallback(conn, rt.ctx)
+	rt.onPacket(internal_type.ConversationEventPacket{
+		Name: "tts",
+		Data: map[string]string{
+			"type":     "initialized",
+			"provider": rt.Name(),
+		},
+		Time: time.Now(),
+	})
 	return nil
 }
 
@@ -121,10 +130,10 @@ func (rt *sarvamTextToSpeech) textToSpeechCallback(conn *websocket.Conn, ctx con
 				rt.logger.Errorf("sarvam-tts: error decoding audio data: %v", err)
 				continue
 			}
-			rt.onPacket(internal_type.TextToSpeechAudioPacket{
-				ContextID:  rt.contextId,
-				AudioChunk: rawAudioData,
-			})
+			rt.mu.Lock()
+			contextId := rt.contextId
+			rt.mu.Unlock()
+			rt.onPacket(internal_type.TextToSpeechAudioPacket{ContextID: contextId, AudioChunk: rawAudioData})
 		case "event":
 			eventData, err := response.AsEvent()
 			if err != nil {
@@ -161,7 +170,6 @@ func (rt *sarvamTextToSpeech) Transform(ctx context.Context, in internal_type.LL
 
 	switch input := in.(type) {
 	case internal_type.InterruptionPacket:
-		// no way to cancel ongoing synthesis in sarvam tts
 		return nil
 	case internal_type.LLMResponseDeltaPacket:
 		if err := connection.WriteJSON(map[string]interface{}{
@@ -173,6 +181,14 @@ func (rt *sarvamTextToSpeech) Transform(ctx context.Context, in internal_type.LL
 			rt.logger.Errorf("sarvam-tts: error writing text message to websocket: %v", err)
 			return err
 		}
+		rt.onPacket(internal_type.ConversationEventPacket{
+			Name: "tts",
+			Data: map[string]string{
+				"type": "speaking",
+				"text": input.Text,
+			},
+			Time: time.Now(),
+		})
 	case internal_type.LLMResponseDonePacket:
 		if err := connection.WriteJSON(map[string]interface{}{
 			"type": "flush",
@@ -180,6 +196,20 @@ func (rt *sarvamTextToSpeech) Transform(ctx context.Context, in internal_type.LL
 			rt.logger.Errorf("sarvam-tts: error sending flush signal to websocket: %v", err)
 			return err
 		}
+		now := time.Now()
+		rt.mu.Lock()
+		contextId := rt.contextId
+		rt.mu.Unlock()
+		rt.onPacket(
+			internal_type.TextToSpeechEndPacket{ContextID: contextId},
+			internal_type.ConversationEventPacket{
+				Name: "tts",
+				Data: map[string]string{
+					"type": "completed",
+				},
+				Time: now,
+			},
+		)
 		return nil
 	default:
 		return fmt.Errorf("sarvam-tts: unsupported input type %T", in)

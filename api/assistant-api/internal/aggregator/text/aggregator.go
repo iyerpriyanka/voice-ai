@@ -16,6 +16,7 @@ import (
 func GetLLMTextAggregator(
 	ctx context.Context,
 	logger commons.Logger,
+	onPacket func(context.Context, ...internal_type.Packet) error,
 ) (internal_type.LLMTextAggregator, error) {
-	return internal_default_aggregator.NewDefaultLLMTextAggregator(ctx, logger)
+	return internal_default_aggregator.NewDefaultLLMTextAggregator(ctx, logger, onPacket)
 }

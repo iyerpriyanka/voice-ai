@@ -8,6 +8,7 @@ package adapter_internal
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 	"time"
 
@@ -76,7 +77,14 @@ func (r *genericRequestor) initializeGreeting(ctx context.Context, behavior *int
 		return
 	}
 
-	if err := r.OnPacket(ctx, internal_type.StaticPacket{ContextID: r.messaging.GetID(), Text: greetingContent}); err != nil {
+	if err := r.OnPacket(ctx,
+		internal_type.StaticPacket{ContextID: r.GetID(), Text: greetingContent},
+		internal_type.ConversationEventPacket{
+			Name: "behavior",
+			Data: map[string]string{"type": "greeting", "text_chars": fmt.Sprintf("%d", len(greetingContent))},
+			Time: time.Now(),
+		},
+	); err != nil {
 		r.logger.Errorf("error while sending greeting message: %v", err)
 	}
 }
@@ -98,7 +106,7 @@ func (r *genericRequestor) initializeMaxSessionDuration(ctx context.Context, beh
 	timeoutDuration := time.Duration(*behavior.MaxSessionDuration) * time.Second
 	r.maxSessionTimer = time.AfterFunc(timeoutDuration, func() {
 		r.OnPacket(ctx, internal_type.DirectivePacket{
-			ContextID: r.messaging.GetID(),
+			ContextID: r.GetID(),
 			Directive: protos.ConversationDirective_END_CONVERSATION,
 			Arguments: map[string]interface{}{
 				"reason": "max session duration reached",
@@ -122,7 +130,14 @@ func (r *genericRequestor) OnError(ctx context.Context) error {
 		mistakeContent = r.templateParser.Parse(*behavior.Mistake, r.GetArgs())
 	}
 
-	if err := r.OnPacket(ctx, internal_type.StaticPacket{ContextID: r.messaging.GetID(), Text: mistakeContent}); err != nil {
+	if err := r.OnPacket(ctx,
+		internal_type.StaticPacket{ContextID: r.GetID(), Text: mistakeContent},
+		internal_type.ConversationEventPacket{
+			Name: "behavior",
+			Data: map[string]string{"type": "error", "text_chars": fmt.Sprintf("%d", len(mistakeContent))},
+			Time: time.Now(),
+		},
+	); err != nil {
 		r.logger.Errorf("error while sending error message: %v", err)
 	}
 
@@ -147,7 +162,7 @@ func (r *genericRequestor) onIdleTimeout(ctx context.Context) error {
 	if behavior.IdealTimeoutBackoff != nil && *behavior.IdealTimeoutBackoff > 0 {
 		if r.idleTimeoutCount >= *behavior.IdealTimeoutBackoff {
 			r.OnPacket(ctx, internal_type.DirectivePacket{
-				ContextID: r.messaging.GetID(),
+				ContextID: r.GetID(),
 				Directive: protos.ConversationDirective_END_CONVERSATION,
 				Arguments: map[string]interface{}{
 					"reason": "max session duration reached",
@@ -164,7 +179,22 @@ func (r *genericRequestor) onIdleTimeout(ctx context.Context) error {
 		return nil
 	}
 
-	if err := r.OnPacket(ctx, internal_type.StaticPacket{ContextID: r.messaging.GetID(), Text: timeoutContent}); err != nil {
+	maxCount := 0
+	if behavior.IdealTimeoutBackoff != nil {
+		maxCount = int(*behavior.IdealTimeoutBackoff)
+	}
+	if err := r.OnPacket(ctx,
+		internal_type.StaticPacket{ContextID: r.GetID(), Text: timeoutContent},
+		internal_type.ConversationEventPacket{
+			Name: "behavior",
+			Data: map[string]string{
+				"type":      "idle_timeout",
+				"count":     fmt.Sprintf("%d", r.idleTimeoutCount),
+				"max_count": fmt.Sprintf("%d", maxCount),
+			},
+			Time: time.Now(),
+		},
+	); err != nil {
 		r.logger.Errorf("error while sending idle timeout message: %v", err)
 	}
 

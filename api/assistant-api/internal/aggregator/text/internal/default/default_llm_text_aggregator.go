@@ -8,21 +8,20 @@
 // text aggregator for streaming LLM responses.
 //
 // The aggregator accumulates incoming text deltas, splits them at sentence
-// boundaries, and emits complete sentences through a buffered channel.
+// boundaries, and pushes complete sentences directly to the onPacket callback.
 // It supports multilingual punctuation (Latin, CJK, Devanagari, Arabic)
 // and handles context switching between concurrent speakers/contexts.
 //
 // # Usage
 //
-//	agg, err := NewDefaultLLMTextAggregator(ctx, logger)
-//	if err != nil { ... }
-//	defer agg.Close()
-//
-//	go func() {
-//	    for pkt := range agg.Result() {
+//	agg, err := NewDefaultLLMTextAggregator(ctx, logger, func(ctx context.Context, pkts ...internal_type.Packet) error {
+//	    for _, pkt := range pkts {
 //	        process(pkt)
 //	    }
-//	}()
+//	    return nil
+//	})
+//	if err != nil { ... }
+//	defer agg.Close()
 //
 //	agg.Aggregate(ctx, deltaPacket1, deltaPacket2, donePacket)
 package internal_default_aggregator
@@ -53,9 +52,6 @@ var sentenceBoundaries = []string{
 }
 
 const (
-	// resultChannelSize is the buffered capacity for the output sentence channel.
-	resultChannelSize = 32
-
 	// emitBufferPrealloc is the initial capacity for the per-call emit buffer,
 	// sized to avoid reallocation in the common case of a few sentences.
 	emitBufferPrealloc = 8
@@ -67,16 +63,15 @@ const (
 
 // textAggregator implements internal_type.LLMTextAggregator using regex-based
 // sentence boundary detection. It accumulates streamed text deltas, extracts
-// complete sentences at punctuation boundaries, and forwards them through a
-// buffered channel.
+// complete sentences at punctuation boundaries, and pushes them directly to
+// the onPacket callback as SpeakTextPacket values.
 //
-// Thread safety: all mutable state is guarded by mu. Channel sends are
-// performed outside the lock to prevent deadlocks with slow consumers.
+// Thread safety: all mutable state is guarded by mu. The onPacket callback is
+// invoked outside the lock to prevent deadlocks with slow consumers.
 type textAggregator struct {
-	logger commons.Logger
+	logger   commons.Logger
+	onPacket func(context.Context, ...internal_type.Packet) error
 
-	// result delivers aggregated sentence packets to downstream consumers.
-	result chan internal_type.Packet
 	closed bool
 
 	// mu guards buffer, currentContext, closed, and toEmitBuffer.
@@ -102,7 +97,7 @@ type textAggregator struct {
 // compiled once during construction.
 //
 // Returns an error if the boundary regex compilation fails.
-func NewDefaultLLMTextAggregator(_ context.Context, logger commons.Logger) (internal_type.LLMTextAggregator, error) {
+func NewDefaultLLMTextAggregator(_ context.Context, logger commons.Logger, onPacket func(context.Context, ...internal_type.Packet) error) (internal_type.LLMTextAggregator, error) {
 	regex, err := compileBoundaryRegex()
 	if err != nil {
 		return nil, err
@@ -110,7 +105,7 @@ func NewDefaultLLMTextAggregator(_ context.Context, logger commons.Logger) (inte
 
 	return &textAggregator{
 		logger:        logger,
-		result:        make(chan internal_type.Packet, resultChannelSize),
+		onPacket:      onPacket,
 		toEmitBuffer:  make([]internal_type.Packet, 0, emitBufferPrealloc),
 		boundaryRegex: regex,
 	}, nil
@@ -136,50 +131,32 @@ func compileBoundaryRegex() (*regexp.Regexp, error) {
 // LLMTextAggregator interface implementation
 // ============================================================================
 
-// Aggregate processes one or more LLM packets and emits complete sentences
-// through the Result channel.
+// Aggregate processes one or more LLM packets and pushes completed sentences
+// to the onPacket callback as SpeakTextPacket values.
 //
 // Behaviour per packet type:
 //   - LLMResponseDeltaPacket: text is appended to the buffer. If a context
 //     switch is detected (different ContextID), the buffer is reset first.
-//     Complete sentences are extracted at boundary positions and emitted.
+//     Complete sentences are extracted at boundary positions and pushed.
 //   - LLMResponseDonePacket: any remaining buffered text for the active
-//     context is flushed, then the done packet itself is forwarded.
-//
-// The method respects context cancellation: if ctx is cancelled while sending
-// to the result channel, the remaining packets are dropped and ctx.Err() is
-// returned.
+//     context is flushed as SpeakTextPacket{IsFinal: false}, then a final
+//     SpeakTextPacket{IsFinal: true} is pushed to signal end of generation.
 //
 // Returns an error if the aggregator has been closed.
 func (st *textAggregator) Aggregate(ctx context.Context, pkts ...internal_type.LLMPacket) error {
-	toEmit, resultChan, err := st.processPackets(pkts)
+	toEmit, err := st.processPackets(pkts)
 	if err != nil {
 		return err
 	}
 
-	// Emit outside the lock to prevent deadlocks with slow consumers.
-	for _, pkt := range toEmit {
-		select {
-		case resultChan <- pkt:
-		case <-ctx.Done():
-			return ctx.Err()
-		}
+	if len(toEmit) == 0 || st.onPacket == nil {
+		return nil
 	}
-	return nil
+
+	return st.onPacket(ctx, toEmit...)
 }
 
-// Result returns a read-only channel that receives complete sentence packets.
-//
-// The channel is closed when Close is called. Consumers should range over it:
-//
-//	for pkt := range aggregator.Result() {
-//	    fmt.Println(pkt)
-//	}
-func (st *textAggregator) Result() <-chan internal_type.Packet {
-	return st.result
-}
-
-// Close gracefully shuts down the aggregator and closes the result channel.
+// Close gracefully shuts down the aggregator.
 //
 // After Close is called, subsequent Aggregate calls return an error.
 // It is safe to call Close multiple times; subsequent calls are no-ops.
@@ -193,7 +170,6 @@ func (st *textAggregator) Close() error {
 
 	st.buffer.Reset()
 	st.currentContext = ""
-	close(st.result)
 	st.closed = true
 
 	return nil
@@ -204,14 +180,14 @@ func (st *textAggregator) Close() error {
 // ============================================================================
 
 // processPackets processes all packets under a single lock acquisition.
-// Returns a snapshot of packets to emit and the result channel reference,
-// allowing the caller to perform channel sends without holding the lock.
-func (st *textAggregator) processPackets(pkts []internal_type.LLMPacket) ([]internal_type.Packet, chan internal_type.Packet, error) {
+// Returns a snapshot of packets to emit, allowing the caller to invoke
+// the callback without holding the lock.
+func (st *textAggregator) processPackets(pkts []internal_type.LLMPacket) ([]internal_type.Packet, error) {
 	st.mu.Lock()
 	defer st.mu.Unlock()
 
 	if st.closed {
-		return nil, nil, errors.New("text aggregator is closed")
+		return nil, errors.New("text aggregator is closed")
 	}
 
 	// Reset the reusable emit buffer for this call.
@@ -221,11 +197,10 @@ func (st *textAggregator) processPackets(pkts []internal_type.LLMPacket) ([]inte
 		st.dispatchPacketLocked(pkt)
 	}
 
-	// Snapshot the emit buffer so the caller can send outside the lock.
+	// Snapshot the emit buffer so the caller can invoke the callback outside the lock.
 	snapshot := make([]internal_type.Packet, len(st.toEmitBuffer))
 	copy(snapshot, st.toEmitBuffer)
-
-	return snapshot, st.result, nil
+	return snapshot, nil
 }
 
 // dispatchPacketLocked routes a single LLM packet to the appropriate handler.
@@ -255,15 +230,20 @@ func (st *textAggregator) handleDeltaLocked(delta internal_type.LLMResponseDelta
 	st.extractSentencesAtBoundaryLocked(delta.ContextID)
 }
 
-// handleDoneLocked flushes any remaining buffered text for the active context,
-// then forwards the done packet.
+// handleDoneLocked flushes any remaining buffered text for the active context
+// as a non-final SpeakTextPacket, then emits a final SpeakTextPacket to signal
+// end of generation.
 // MUST be called with mu held.
 func (st *textAggregator) handleDoneLocked(done internal_type.LLMResponseDonePacket) {
 	if done.ContextID == st.currentContext {
 		st.flushBufferLocked(done.ContextID)
 		st.currentContext = ""
 	}
-	st.toEmitBuffer = append(st.toEmitBuffer, done)
+	st.toEmitBuffer = append(st.toEmitBuffer, internal_type.SpeakTextPacket{
+		ContextID: done.ContextID,
+		Text:      done.Text,
+		IsFinal:   true,
+	})
 }
 
 // ============================================================================
@@ -271,7 +251,7 @@ func (st *textAggregator) handleDoneLocked(done internal_type.LLMResponseDonePac
 // ============================================================================
 
 // extractSentencesAtBoundaryLocked scans the buffer for sentence boundaries,
-// emits all complete text up to the last boundary as a single delta packet,
+// emits all complete text up to the last boundary as a single SpeakTextPacket,
 // and retains any trailing partial sentence in the buffer.
 // MUST be called with mu held.
 func (st *textAggregator) extractSentencesAtBoundaryLocked(contextID string) {
@@ -290,9 +270,10 @@ func (st *textAggregator) extractSentencesAtBoundaryLocked(contextID string) {
 	}
 
 	if complete := strings.TrimSpace(text[:lastBoundaryEnd]); complete != "" {
-		st.toEmitBuffer = append(st.toEmitBuffer, internal_type.LLMResponseDeltaPacket{
+		st.toEmitBuffer = append(st.toEmitBuffer, internal_type.SpeakTextPacket{
 			ContextID: contextID,
 			Text:      complete,
+			IsFinal:   false,
 		})
 	}
 
@@ -303,14 +284,15 @@ func (st *textAggregator) extractSentencesAtBoundaryLocked(contextID string) {
 	}
 }
 
-// flushBufferLocked emits any non-empty buffered text as a final delta packet
-// and resets the buffer.
+// flushBufferLocked emits any non-empty buffered text as a non-final
+// SpeakTextPacket and resets the buffer.
 // MUST be called with mu held.
 func (st *textAggregator) flushBufferLocked(contextID string) {
 	if remaining := strings.TrimSpace(st.buffer.String()); remaining != "" {
-		st.toEmitBuffer = append(st.toEmitBuffer, internal_type.LLMResponseDeltaPacket{
+		st.toEmitBuffer = append(st.toEmitBuffer, internal_type.SpeakTextPacket{
 			ContextID: contextID,
 			Text:      remaining,
+			IsFinal:   false,
 		})
 	}
 	st.buffer.Reset()

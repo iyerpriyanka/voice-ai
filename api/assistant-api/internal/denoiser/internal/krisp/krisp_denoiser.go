@@ -15,14 +15,15 @@ import (
 )
 
 type krispDenoiser struct {
-	logger commons.Logger
+	logger   commons.Logger
+	onPacket func(context.Context, ...internal_type.Packet) error
 }
 
-func NewKrispDenoiser(ctx context.Context, logger commons.Logger, inCfg *protos.AudioConfig, options utils.Option) (internal_type.Denoiser, error) {
-	return &krispDenoiser{logger: logger}, nil
+func NewKrispDenoiser(ctx context.Context, logger commons.Logger, inCfg *protos.AudioConfig, onPacket func(context.Context, ...internal_type.Packet) error, options utils.Option) (internal_type.Denoiser, error) {
+	return &krispDenoiser{logger: logger, onPacket: onPacket}, nil
 }
 
-func (krisp *krispDenoiser) Denoise(ctx context.Context, input []byte) ([]byte, float64, error) {
+func (krisp *krispDenoiser) Denoise(ctx context.Context, pkt internal_type.DenoiseAudioPacket) error {
 	panic("not yet implimented")
 }
 

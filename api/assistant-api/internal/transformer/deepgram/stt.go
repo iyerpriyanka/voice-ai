@@ -14,6 +14,7 @@ import (
 	"fmt"
 	"io"
 	"sync"
+	"time"
 
 	interfaces "github.com/deepgram/deepgram-go-sdk/v3/pkg/client/interfaces/v1"
 	client "github.com/deepgram/deepgram-go-sdk/v3/pkg/client/listen"
@@ -47,7 +48,6 @@ func NewDeepgramSpeechToText(ctx context.Context, logger commons.Logger, vaultCr
 		logger.Errorf("deepgram-stt: Key from credential failed %+v", err)
 		return nil, err
 	}
-	//
 	ct, ctxCancel := context.WithCancel(ctx)
 	return &deepgramSTT{
 		ctx:            ct,
@@ -79,7 +79,14 @@ func (dg *deepgramSTT) Initialize() error {
 	dg.client = dgClient
 	defer dg.mu.Unlock()
 
-	dg.logger.Debugf("deepgram-stt: connection established")
+	dg.onPacket(internal_type.ConversationEventPacket{
+		Name: "stt",
+		Data: map[string]string{
+			"type":     "initialized",
+			"provider": dg.Name(),
+		},
+		Time: time.Now(),
+	})
 	return nil
 }
 

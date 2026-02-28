@@ -11,12 +11,11 @@ import "context"
 // Implementations of this interface are expected to provide methods for removing
 // noise from audio data and flushing any internal state.
 type Denoiser interface {
-	// Denoise takes a slice of float32 audio samples and returns a new slice
-	// with noise reduction applied. The input audio data is typically in the
-	// range of [-1, 1]. The method should process the input samples and return
-	// the denoised version, maintaining the same length as the input.
-	//
-	Denoise(ctx context.Context, input []byte) ([]byte, float64, error)
+	// Denoise processes the raw audio in pkt and pushes a DenoisedAudioPacket
+	// via the onPacket callback instead of returning bytes to the caller.
+	// On processing error the denoiser falls back to the original audio and
+	// still emits a DenoisedAudioPacket with NoiseReduced=false.
+	Denoise(ctx context.Context, pkt DenoiseAudioPacket) error
 	// Flush clears any internal state of the denoiser. This method should be
 	// called when processing of a stream of audio data is complete or when
 	// switching between different audio streams. It ensures that any buffered

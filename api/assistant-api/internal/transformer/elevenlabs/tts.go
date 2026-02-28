@@ -15,6 +15,7 @@ import (
 	"io"
 	"net/http"
 	"sync"
+	"time"
 
 	"github.com/gorilla/websocket"
 
@@ -32,7 +33,8 @@ type elevenlabsTTS struct {
 	ctxCancel context.CancelFunc
 
 	// mutex
-	mu sync.Mutex
+	mu        sync.Mutex
+	contextId string
 
 	logger     commons.Logger
 	connection *websocket.Conn
@@ -72,6 +74,14 @@ func (ct *elevenlabsTTS) Initialize() error {
 	defer ct.mu.Unlock()
 
 	go ct.textToSpeechCallback(conn, ct.ctx)
+	ct.onPacket(internal_type.ConversationEventPacket{
+		Name: "tts",
+		Data: map[string]string{
+			"type":     "initialized",
+			"provider": ct.Name(),
+		},
+		Time: time.Now(),
+	})
 	return nil
 }
 
@@ -104,18 +114,20 @@ func (elt *elevenlabsTTS) textToSpeechCallback(conn *websocket.Conn, ctx context
 
 			if rawAudioData, err := base64.StdEncoding.DecodeString(audioData.Audio); err == nil {
 				if audioData.ContextId != nil {
-					elt.onPacket(internal_type.TextToSpeechAudioPacket{
-						ContextID:  *audioData.ContextId,
-						AudioChunk: rawAudioData,
-					})
+					elt.onPacket(internal_type.TextToSpeechAudioPacket{ContextID: *audioData.ContextId, AudioChunk: rawAudioData})
 				}
 			}
 
 			if audioData.IsFinal != nil && *audioData.IsFinal {
 				if audioData.ContextId != nil {
-					elt.onPacket(internal_type.TextToSpeechEndPacket{
-						ContextID: *audioData.ContextId,
-					})
+					elt.onPacket(
+						internal_type.TextToSpeechEndPacket{ContextID: *audioData.ContextId},
+						internal_type.ConversationEventPacket{
+							Name: "tts",
+							Data: map[string]string{"type": "completed"},
+							Time: time.Now(),
+						},
+					)
 				}
 			}
 		}
@@ -126,7 +138,10 @@ func (elt *elevenlabsTTS) textToSpeechCallback(conn *websocket.Conn, ctx context
 func (t *elevenlabsTTS) Transform(ctx context.Context, in internal_type.LLMPacket) error {
 	t.mu.Lock()
 	cnn := t.connection
-	currentCtx := in.ContextId()
+	currentCtx := t.contextId
+	if in.ContextId() != t.contextId {
+		t.contextId = in.ContextId()
+	}
 	t.mu.Unlock()
 
 	if cnn == nil {
@@ -135,15 +150,30 @@ func (t *elevenlabsTTS) Transform(ctx context.Context, in internal_type.LLMPacke
 
 	switch input := in.(type) {
 	case internal_type.InterruptionPacket:
+		if currentCtx != "" {
+			t.onPacket(internal_type.ConversationEventPacket{
+				Name: "tts",
+				Data: map[string]string{"type": "interrupted"},
+				Time: time.Now(),
+			})
+		}
 		return nil
 	case internal_type.LLMResponseDeltaPacket:
 		if err := cnn.WriteJSON(map[string]interface{}{
 			"text":       input.Text,
-			"context_id": currentCtx,
+			"context_id": t.contextId,
 			"flush":      true,
 		}); err != nil {
 			t.logger.Errorf("elevenlab-tts: unable to write json for text to speech: %v", err)
 		}
+		t.onPacket(internal_type.ConversationEventPacket{
+			Name: "tts",
+			Data: map[string]string{
+				"type": "speaking",
+				"text": input.Text,
+			},
+			Time: time.Now(),
+		})
 	case internal_type.LLMResponseDonePacket:
 		return nil
 	default:

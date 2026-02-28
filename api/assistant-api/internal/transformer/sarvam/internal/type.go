@@ -35,7 +35,7 @@ type SpeechToTextEventData struct {
 	EventType  string  `json:"event_type,omitempty"`  // Optional: Type of event
 	Timestamp  string  `json:"timestamp,omitempty"`   // Optional: Timestamp of the event
 	SignalType string  `json:"signal_type,omitempty"` // Optional: Voice Activity Detection (VAD) signal type, e.g., "START_SPEECH", "END_SPEECH"
-	OccurredAt float64 `json:"occurred_at,omitempty"` // Optional: Epoch timestamp when the event occurred
+	Time       float64 `json:"occurred_at,omitempty"` // Optional: Epoch timestamp when the event occurred
 }
 
 type SarvamSpeechToTextResponse struct {

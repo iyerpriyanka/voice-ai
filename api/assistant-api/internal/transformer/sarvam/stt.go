@@ -9,7 +9,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"sync"
+	"time"
 
 	"github.com/gorilla/websocket"
 	sarvam_internal "github.com/rapidaai/api/assistant-api/internal/transformer/sarvam/internal"
@@ -31,6 +33,9 @@ type sarvamSpeechToText struct {
 
 	logger   commons.Logger
 	onPacket func(pkt ...internal_type.Packet) error
+
+	// observability: time when connection established
+	startedAt time.Time
 }
 
 // Name implements internal_transformer.SpeechToTextTransformer.
@@ -87,13 +92,39 @@ func (cst *sarvamSpeechToText) speechToTextCallback(conn *websocket.Conn, ctx co
 		case "data":
 			if transcriptionData, err := response.AsTranscription(); err == nil {
 				if cst.onPacket != nil {
+					now := time.Now()
+					var latencyMs int64
+					cst.mu.Lock()
+					if !cst.startedAt.IsZero() {
+						latencyMs = now.Sub(cst.startedAt).Milliseconds()
+					}
+					cst.mu.Unlock()
+					langCode := ""
+					if transcriptionData.LanguageCode != nil {
+						langCode = *transcriptionData.LanguageCode
+					}
 					cst.onPacket(
 						internal_type.InterruptionPacket{Source: internal_type.InterruptionSourceWord},
 						internal_type.SpeechToTextPacket{
 							Script:     transcriptionData.Transcript,
 							Confidence: 0.9,
-							Language:   *transcriptionData.LanguageCode,
+							Language:   langCode,
 							Interim:    false,
+						},
+						internal_type.ConversationEventPacket{
+							Name: "stt",
+							Data: map[string]string{
+								"type":       "completed",
+								"script":     transcriptionData.Transcript,
+								"confidence": "0.9000",
+								"language":   langCode,
+								"word_count": fmt.Sprintf("%d", len(strings.Fields(transcriptionData.Transcript))),
+								"char_count": fmt.Sprintf("%d", len(transcriptionData.Transcript)),
+							},
+							Time: now,
+						},
+						internal_type.MessageMetricPacket{
+							Metrics: []*protos.Metric{{Name: "stt_latency_ms", Value: fmt.Sprintf("%d", latencyMs)}},
 						},
 					)
 				}
@@ -105,6 +136,14 @@ func (cst *sarvamSpeechToText) speechToTextCallback(conn *websocket.Conn, ctx co
 					"sarvam-stt: error from server: %v",
 					errorData,
 				)
+				cst.onPacket(internal_type.ConversationEventPacket{
+					Name: "stt",
+					Data: map[string]string{
+						"type":  "error",
+						"error": fmt.Sprintf("%v", errorData),
+					},
+					Time: time.Now(),
+				})
 			}
 
 		case "events":
@@ -133,9 +172,19 @@ func (cst *sarvamSpeechToText) Initialize() error {
 
 	cst.mu.Lock()
 	cst.connection = conn
+	cst.startedAt = time.Now()
 	cst.mu.Unlock()
 
 	go cst.speechToTextCallback(conn, cst.ctx)
+
+	cst.onPacket(internal_type.ConversationEventPacket{
+		Name: "stt",
+		Data: map[string]string{
+			"type":     "initialized",
+			"provider": cst.Name(),
+		},
+		Time: time.Now(),
+	})
 	return nil
 }
 

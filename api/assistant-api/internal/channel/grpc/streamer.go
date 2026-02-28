@@ -133,6 +133,13 @@ func (uds *unidirectionalStreamer) Send(out internal_type.Stream) error {
 			Success: false,
 			Data:    &protos.AssistantTalkResponse_Error{Error: out},
 		})
+
+	case *protos.ConversationEvent:
+		return uds.server.Send(&protos.AssistantTalkResponse{
+			Code:    200,
+			Success: true,
+			Data:    &protos.AssistantTalkResponse_Event{Event: out},
+		})
 	}
 	return nil
 }

@@ -350,7 +350,6 @@ func (s *webrtcStreamer) readRemoteAudio(track *pionwebrtc.TrackRemote) {
 			continue
 		}
 
-		// Decode Opus to PCM (48kHz)
 		pcm, err := opusDecoder.Decode(pkt.Payload)
 		if err != nil {
 			s.Logger.Debugw("Opus decode failed", "error", err, "payloadSize", len(pkt.Payload))
@@ -449,6 +448,8 @@ func (s *webrtcStreamer) buildGRPCResponse(msg internal_type.Stream) *protos.Web
 		resp.Data = &protos.WebTalkResponse_Directive{Directive: m}
 	case *protos.ConversationError:
 		resp.Data = &protos.WebTalkResponse_Error{Error: m}
+	case *protos.ConversationEvent:
+		resp.Data = &protos.WebTalkResponse_Event{Event: m}
 	case *protos.ConversationMetadata:
 		resp.Data = &protos.WebTalkResponse_Metadata{Metadata: m}
 	case *protos.ConversationMetric:
@@ -757,6 +758,8 @@ func (s *webrtcStreamer) Send(response internal_type.Stream) error {
 			s.PushDisconnection(protos.ConversationDisconnection_DISCONNECTION_TYPE_TOOL)
 		}
 	case *protos.ConversationError:
+		s.PushOutput(data)
+	case *protos.ConversationEvent:
 		s.PushOutput(data)
 	case *protos.ConversationMetadata:
 		s.PushOutput(data)
