@@ -440,11 +440,11 @@ func TestConcurrency_HistoryAndSnapshot(t *testing.T) {
 	var wg sync.WaitGroup
 	wg.Add(2)
 
-	// Writer: appends to history via handleStaticPacket
+	comm, _ := newTestComm()
 	go func() {
 		defer wg.Done()
 		for i := 0; i < 100; i++ {
-			_ = e.handleStaticPacket(internal_type.StaticPacket{
+			_ = e.Execute(context.Background(), comm, internal_type.StaticPacket{
 				ContextID: fmt.Sprintf("ctx-%d", i),
 				Text:      fmt.Sprintf("msg-%d", i),
 			})
@@ -469,8 +469,6 @@ func TestHistoryClearedAfterClose(t *testing.T) {
 	e.mu.Lock()
 	e.history = append(e.history, &protos.Message{Role: "user"})
 	e.mu.Unlock()
-	e.done = make(chan struct{})
-	close(e.done)
 
 	_ = e.Close(context.Background())
 
@@ -479,17 +477,19 @@ func TestHistoryClearedAfterClose(t *testing.T) {
 }
 
 // =============================================================================
-// Tests: handleStaticPacket
+// Tests: Execute — StaticPacket and UserTextPacket paths
 // =============================================================================
 
-func TestHandleStaticPacket(t *testing.T) {
+func TestExecute_StaticPacket_AppendsHistory(t *testing.T) {
 	e := newTestExecutor()
+	comm, collector := newTestComm()
 
-	err := e.handleStaticPacket(internal_type.StaticPacket{
+	err := e.Execute(context.Background(), comm, internal_type.StaticPacket{
 		ContextID: "ctx-1",
 		Text:      "hello",
 	})
 	require.NoError(t, err)
+	assert.Empty(t, collector.all(), "StaticPacket should not emit packets")
 
 	snapshot := e.snapshotHistory()
 	require.Len(t, snapshot, 1)
@@ -497,23 +497,18 @@ func TestHandleStaticPacket(t *testing.T) {
 	assert.Equal(t, []string{"hello"}, snapshot[0].GetAssistant().GetContents())
 }
 
-// =============================================================================
-// Tests: handleUserTextPacket
-// =============================================================================
-
-func TestHandleUserTextPacket(t *testing.T) {
+func TestExecute_UserTextPacket_SendsAndRecordsHistory(t *testing.T) {
 	e := newTestExecutor()
 	stream := newMockStream()
 	e.stream = stream
 	comm, collector := newTestComm()
 
-	err := e.handleUserTextPacket(context.Background(), comm, internal_type.UserTextPacket{
+	err := e.Execute(context.Background(), comm, internal_type.UserTextPacket{
 		ContextID: "ctx-1",
 		Text:      "say hello",
 	})
 	require.NoError(t, err)
 
-	// Verify ConversationEventPacket
 	evs := findPackets[internal_type.ConversationEventPacket](collector.all())
 	require.Len(t, evs, 1)
 	assert.Equal(t, "executing", evs[0].Data["type"])
@@ -521,51 +516,13 @@ func TestHandleUserTextPacket(t *testing.T) {
 	assert.Equal(t, "9", evs[0].Data["input_char_count"])
 	assert.Equal(t, "0", evs[0].Data["history_count"])
 
-	// Verify stream.Send was called
 	stream.mu.Lock()
 	defer stream.mu.Unlock()
 	require.Len(t, stream.sendCalls, 1)
 
-	// Verify history was updated with the user message
 	snapshot := e.snapshotHistory()
 	require.Len(t, snapshot, 1)
 	assert.Equal(t, "user", snapshot[0].Role)
-}
-
-// =============================================================================
-// Tests: Execute routing — 3 cases
-// =============================================================================
-
-func TestExecute_UserTextPacket(t *testing.T) {
-	e := newTestExecutor()
-	stream := newMockStream()
-	e.stream = stream
-	comm, _ := newTestComm()
-
-	err := e.Execute(context.Background(), comm, internal_type.UserTextPacket{
-		ContextID: "ctx-1",
-		Text:      "test",
-	})
-	require.NoError(t, err)
-
-	stream.mu.Lock()
-	defer stream.mu.Unlock()
-	assert.Len(t, stream.sendCalls, 1, "should have sent a chat request")
-}
-
-func TestExecute_StaticPacket(t *testing.T) {
-	e := newTestExecutor()
-	comm, collector := newTestComm()
-
-	err := e.Execute(context.Background(), comm, internal_type.StaticPacket{
-		ContextID: "ctx-1",
-		Text:      "static",
-	})
-	require.NoError(t, err)
-	assert.Empty(t, collector.all(), "StaticPacket should not emit packets")
-
-	snapshot := e.snapshotHistory()
-	require.Len(t, snapshot, 1, "StaticPacket should append to history")
 }
 
 func TestExecute_UnsupportedPacket(t *testing.T) {
@@ -578,30 +535,31 @@ func TestExecute_UnsupportedPacket(t *testing.T) {
 }
 
 // =============================================================================
-// Tests: sendLocked — 2 cases
+// Tests: send — nil stream and success
 // =============================================================================
 
-func TestSendLocked_NilStream(t *testing.T) {
+func TestSend_NilStream(t *testing.T) {
 	e := newTestExecutor()
 	e.stream = nil
+	comm, _ := newTestComm()
 
-	err := e.sendLocked(&protos.ChatRequest{})
+	err := e.chat(context.Background(), comm, "ctx-1", &protos.Message{Role: "user"})
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "stream not connected")
 }
 
-func TestSendLocked_Success(t *testing.T) {
+func TestSend_Success(t *testing.T) {
 	e := newTestExecutor()
 	stream := newMockStream()
 	e.stream = stream
+	comm, _ := newTestComm()
 
-	err := e.sendLocked(&protos.ChatRequest{RequestId: "r1"})
+	err := e.chat(context.Background(), comm, "ctx-1", &protos.Message{Role: "user"})
 	require.NoError(t, err)
 
 	stream.mu.Lock()
 	defer stream.mu.Unlock()
 	require.Len(t, stream.sendCalls, 1)
-	assert.Equal(t, "r1", stream.sendCalls[0].RequestId)
 }
 
 // =============================================================================
@@ -615,8 +573,6 @@ func TestClose_ClearsHistoryAndStream(t *testing.T) {
 	e.mu.Lock()
 	e.history = append(e.history, &protos.Message{Role: "user"})
 	e.mu.Unlock()
-	e.done = make(chan struct{})
-	close(e.done)
 
 	err := e.Close(context.Background())
 	require.NoError(t, err)
@@ -627,26 +583,10 @@ func TestClose_ClearsHistoryAndStream(t *testing.T) {
 	assert.Empty(t, e.history)
 }
 
-func TestClose_WaitsForDone(t *testing.T) {
-	e := newTestExecutor()
-	e.done = make(chan struct{})
-
-	go func() {
-		time.Sleep(50 * time.Millisecond)
-		close(e.done)
-	}()
-
-	start := time.Now()
-	err := e.Close(context.Background())
-	require.NoError(t, err)
-	assert.GreaterOrEqual(t, time.Since(start), 40*time.Millisecond,
-		"Close should have waited for done channel")
-}
 
 func TestClose_NoPanicNilStream(t *testing.T) {
 	e := newTestExecutor()
 	e.stream = nil
-	e.done = nil
 
 	err := e.Close(context.Background())
 	require.NoError(t, err, "Close on nil stream should not panic")
@@ -808,32 +748,30 @@ func TestConcurrency_ListenAndClose(t *testing.T) {
 	e := newTestExecutor()
 	stream := newMockStream()
 	e.stream = stream
-	e.done = make(chan struct{})
 	comm, _ := newTestComm()
 
 	ctx, cancel := context.WithCancel(context.Background())
+	e.ctx = ctx
+	e.ctxCancel = cancel
 
 	go func() {
-		defer close(e.done)
 		e.listen(ctx, comm)
 	}()
 
 	time.Sleep(5 * time.Millisecond)
-	cancel()
 	err := e.Close(context.Background())
 	require.NoError(t, err)
 }
 
 // =============================================================================
-// Tests: handleUserTextPacket includes correct history_count
+// Tests: Execute UserTextPacket includes correct history_count
 // =============================================================================
 
-func TestHandleUserTextPacket_HistoryCount(t *testing.T) {
+func TestExecute_UserTextPacket_HistoryCount(t *testing.T) {
 	e := newTestExecutor()
 	stream := newMockStream()
 	e.stream = stream
 
-	// Pre-populate history
 	e.mu.Lock()
 	e.history = append(e.history,
 		&protos.Message{Role: "user"},
@@ -843,7 +781,7 @@ func TestHandleUserTextPacket_HistoryCount(t *testing.T) {
 
 	comm, collector := newTestComm()
 
-	err := e.handleUserTextPacket(context.Background(), comm, internal_type.UserTextPacket{
+	err := e.Execute(context.Background(), comm, internal_type.UserTextPacket{
 		ContextID: "ctx-2",
 		Text:      "follow up",
 	})
@@ -854,29 +792,6 @@ func TestHandleUserTextPacket_HistoryCount(t *testing.T) {
 	assert.Equal(t, "2", evs[0].Data["history_count"], "should reflect 2 existing messages")
 }
 
-// =============================================================================
-// Tests: Close with pending done channel times out
-// =============================================================================
-
-func TestClose_TimeoutsOnStuckDone(t *testing.T) {
-	e := newTestExecutor()
-	e.done = make(chan struct{}) // never closed
-
-	start := time.Now()
-	done := make(chan error, 1)
-	go func() {
-		done <- e.Close(context.Background())
-	}()
-
-	select {
-	case err := <-done:
-		require.NoError(t, err)
-		elapsed := time.Since(start)
-		assert.Greater(t, elapsed, 4*time.Second)
-	case <-time.After(7 * time.Second):
-		t.Fatal("Close did not return within expected timeout")
-	}
-}
 
 // =============================================================================
 // Tests: Execute with stream send error
@@ -895,4 +810,55 @@ func TestExecute_SendError(t *testing.T) {
 	})
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "failed to send chat request")
+}
+
+// =============================================================================
+// Tests: Bug 1 — history not modified on send error
+// =============================================================================
+
+func TestExecute_SendError_HistoryNotModified(t *testing.T) {
+	e := newTestExecutor()
+	stream := newMockStream()
+	stream.sendErr = fmt.Errorf("send failed")
+	e.stream = stream
+	comm, _ := newTestComm()
+
+	err := e.Execute(context.Background(), comm, internal_type.UserTextPacket{
+		ContextID: "ctx-1",
+		Text:      "test",
+	})
+	require.Error(t, err)
+	assert.Empty(t, e.snapshotHistory(), "history must not be modified when send fails")
+}
+
+// =============================================================================
+// Tests: Bug 3 — listener exits cleanly when context is cancelled before EOF
+// =============================================================================
+
+func TestListen_ExitsCleanlyOnClose(t *testing.T) {
+	e := newTestExecutor()
+	stream := newMockStream()
+	e.stream = stream
+	comm, collector := newTestComm()
+
+	ctx, cancel := context.WithCancel(context.Background())
+
+	listenDone := make(chan struct{})
+	go func() {
+		defer close(listenDone)
+		e.listen(ctx, comm)
+	}()
+
+	// Cancel context first (simulating ctxCancel() in Close()), then unblock Recv.
+	cancel()
+	close(stream.recvCh)
+
+	select {
+	case <-listenDone:
+	case <-time.After(2 * time.Second):
+		t.Fatal("listener did not exit after context cancellation")
+	}
+
+	dirs := findPackets[internal_type.DirectivePacket](collector.all())
+	assert.Empty(t, dirs, "END_CONVERSATION must not be dispatched when context is cancelled")
 }

@@ -17,18 +17,9 @@
 //     parallel, opens a persistent StreamChat bidi stream, and spawns a
 //     listener goroutine.
 //  2. Execute (called per user turn) — snapshots history, builds a chat
-//     request, appends the user message to history, and sends atomically
-//     under a single lock acquisition.
-//  3. Close — tears down the stream, clears history, and waits for the
-//     listener goroutine to exit (with a 5 s timeout).
-//
-// # Concurrency
-//
-// A single sync.RWMutex (mu) guards both the history slice and the gRPC
-// stream. Write paths (chat, handleResponse, executeToolCalls, handleStaticPacket,
-// Close) acquire mu.Lock; read paths (snapshotHistory, chatWithHistory, listen
-// for stream ref) acquire mu.RLock. The sendLocked helper allows callers that
-// already hold mu to send without double-locking.
+//     request, sends it, and appends the user message to history on success.
+//  3. Close — cancels the listener context, tears down the stream, and
+//     clears history. The listener goroutine exits asynchronously.
 //
 // # ConversationEvent contract
 //
@@ -64,6 +55,8 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+var _ internal_agent_executor.AssistantExecutor = (*modelAssistantExecutor)(nil)
+
 type modelAssistantExecutor struct {
 	logger             commons.Logger
 	toolExecutor       internal_agent_executor.ToolExecutor
@@ -72,7 +65,8 @@ type modelAssistantExecutor struct {
 	history            []*protos.Message
 	stream             grpc.BidiStreamingClient[protos.ChatRequest, protos.ChatResponse]
 	mu                 sync.RWMutex
-	done               chan struct{}
+	ctx                context.Context
+	ctxCancel          context.CancelFunc
 }
 
 func NewModelAssistantExecutor(logger commons.Logger) internal_agent_executor.AssistantExecutor {
@@ -84,66 +78,63 @@ func NewModelAssistantExecutor(logger commons.Logger) internal_agent_executor.As
 	}
 }
 
-func (executor *modelAssistantExecutor) Name() string {
+// Name returns the executor name identifier.
+func (e *modelAssistantExecutor) Name() string {
 	return "model"
 }
 
-func (executor *modelAssistantExecutor) Initialize(ctx context.Context, communication internal_type.Communication, cfg *protos.ConversationInitialization) error {
+// Initialize fetches credentials, opens the StreamChat bidi stream, and spawns
+// the listener goroutine.
+//
+// Emits ConversationEventPacket: {type: "llm_initialized"}.
+func (e *modelAssistantExecutor) Initialize(ctx context.Context, communication internal_type.Communication, cfg *protos.ConversationInitialization) error {
 	start := time.Now()
 	g, gCtx := errgroup.WithContext(ctx)
 	var providerCredential *protos.VaultCredential
 
-	// Goroutine to fetch provider credentials
 	g.Go(func() error {
 		credentialID, err := communication.Assistant().AssistantProviderModel.GetOptions().GetUint64("rapida.credential_id")
 		if err != nil {
-			executor.logger.Errorf("Error while getting provider model credential ID: %v", err)
+			e.logger.Errorf("Error while getting provider model credential ID: %v", err)
 			return fmt.Errorf("failed to get credential ID: %w", err)
 		}
 		cred, err := communication.VaultCaller().GetCredential(gCtx, communication.Auth(), credentialID)
 		if err != nil {
-			executor.logger.Errorf("Error while getting provider model credentials: %v", err)
+			e.logger.Errorf("Error while getting provider model credentials: %v", err)
 			return fmt.Errorf("failed to get provider credential: %w", err)
 		}
 		providerCredential = cred
 		return nil
 	})
 
-	// Goroutine to initialize tool executor
 	g.Go(func() error {
-		if err := executor.toolExecutor.Initialize(gCtx, communication); err != nil {
-			executor.logger.Errorf("Error initializing tool executor: %v", err)
+		if err := e.toolExecutor.Initialize(gCtx, communication); err != nil {
+			e.logger.Errorf("Error initializing tool executor: %v", err)
 			return fmt.Errorf("failed to initialize tool executor: %w", err)
 		}
 		return nil
 	})
 
-	// Wait for all goroutines to complete
 	if err := g.Wait(); err != nil {
-		executor.logger.Errorf("Error during initialization: %v", err)
+		e.logger.Errorf("Error during initialization: %v", err)
 		return err
 	}
 
-	// Assign after goroutines complete to avoid race conditions
-	executor.providerCredential = providerCredential
-
-	// Open bidirectional stream for persistent connection
+	e.providerCredential = providerCredential
 	stream, err := communication.IntegrationCaller().StreamChat(
 		ctx,
 		communication.Auth(),
 		communication.Assistant().AssistantProviderModel.ModelProviderName,
 	)
 	if err != nil {
-		executor.logger.Errorf("Failed to open stream: %v", err)
+		e.logger.Errorf("Failed to open stream: %v", err)
 		return fmt.Errorf("failed to open stream: %w", err)
 	}
-	executor.stream = stream
+	e.stream = stream
 
-	// Start listener goroutine - handles server responses and connection close
-	executor.done = make(chan struct{})
-	utils.Go(ctx, func() {
-		defer close(executor.done)
-		executor.listen(ctx, communication)
+	e.ctx, e.ctxCancel = context.WithCancel(ctx)
+	utils.Go(e.ctx, func() {
+		e.listen(e.ctx, communication)
 	})
 
 	llmData := communication.Assistant().AssistantProviderModel.GetOptions().ToStringMap()
@@ -155,61 +146,63 @@ func (executor *modelAssistantExecutor) Initialize(ctx context.Context, communic
 		Data: llmData,
 		Time: time.Now(),
 	})
-	return nil
+	return g.Wait()
 }
 
-func (executor *modelAssistantExecutor) chat(
+func (e *modelAssistantExecutor) chat(
 	ctx context.Context,
 	communication internal_type.Communication,
 	contextID string,
 	in *protos.Message,
 	histories ...*protos.Message,
 ) error {
-	// Build request from the caller-provided snapshot (no lock needed)
-	request := executor.buildChatRequest(communication, contextID, append(histories, in)...)
-	// Atomically append to history and send — single lock acquisition
-	executor.mu.Lock()
-	executor.history = append(executor.history, in)
-	err := executor.sendLocked(request)
-	executor.mu.Unlock()
-	if err != nil {
-		executor.logger.Errorf("error sending chat request: %v", err)
+	request := e.buildChatRequest(communication, contextID, append(histories, in)...)
+
+	e.mu.RLock()
+	stream := e.stream
+	e.mu.RUnlock()
+
+	if stream == nil {
+		return fmt.Errorf("stream not connected")
+	}
+	if err := stream.Send(request); err != nil {
+		e.logger.Errorf("error sending chat request: %v", err)
 		return fmt.Errorf("failed to send chat request: %w", err)
 	}
+	e.mu.Lock()
+	e.history = append(e.history, in)
+	e.mu.Unlock()
 	return nil
 }
 
-// chatWithHistory sends a chat request using all messages already in executor.history.
-// Unlike chat(), it does not append any new message — the caller is responsible for
-// ensuring history is already up-to-date before calling this.
-func (executor *modelAssistantExecutor) chatWithHistory(
+// chatWithHistory sends a chat request using all messages already in e.history.
+// Unlike chat(), it does not append any new message — the caller is responsible
+// for ensuring history is already up-to-date before calling this.
+func (e *modelAssistantExecutor) chatWithHistory(
 	ctx context.Context,
 	communication internal_type.Communication,
 	contextID string,
 ) error {
-	// Hold lock through build+send: avoids a snapshot allocation and guarantees
-	// the request reflects the exact history that was current at send time.
-	executor.mu.Lock()
-	request := executor.buildChatRequest(communication, contextID, executor.history...)
-	err := executor.sendLocked(request)
-	executor.mu.Unlock()
-	if err != nil {
-		executor.logger.Errorf("error sending chat request: %v", err)
+	e.mu.RLock()
+	stream := e.stream
+	snapshot := make([]*protos.Message, len(e.history))
+	copy(snapshot, e.history)
+	e.mu.RUnlock()
+
+	if stream == nil {
+		return fmt.Errorf("stream not connected")
+	}
+	request := e.buildChatRequest(communication, contextID, snapshot...)
+	if err := stream.Send(request); err != nil {
+		e.logger.Errorf("error sending chat request: %v", err)
 		return fmt.Errorf("failed to send chat request: %w", err)
 	}
 	return nil
 }
 
-// sendLocked writes to the gRPC stream. Caller MUST hold mu.
-func (executor *modelAssistantExecutor) sendLocked(req *protos.ChatRequest) error {
-	if executor.stream == nil {
-		return fmt.Errorf("stream not connected")
-	}
-	return executor.stream.Send(req)
-}
-
-// listen reads messages from the stream until context is cancelled or connection closes.
-func (executor *modelAssistantExecutor) listen(ctx context.Context, communication internal_type.Communication) {
+// listen reads messages from the stream until context is cancelled or the
+// connection closes.
+func (e *modelAssistantExecutor) listen(ctx context.Context, communication internal_type.Communication) {
 	for {
 		select {
 		case <-ctx.Done():
@@ -217,9 +210,9 @@ func (executor *modelAssistantExecutor) listen(ctx context.Context, communicatio
 		default:
 		}
 
-		executor.mu.RLock()
-		stream := executor.stream
-		executor.mu.RUnlock()
+		e.mu.RLock()
+		stream := e.stream
+		e.mu.RUnlock()
 
 		if stream == nil {
 			return
@@ -227,20 +220,27 @@ func (executor *modelAssistantExecutor) listen(ctx context.Context, communicatio
 
 		resp, err := stream.Recv()
 		if err != nil {
-			reason := executor.streamErrorReason(err)
+			// If the context was cancelled (e.g., by Close()), exit without
+			// dispatching END_CONVERSATION — the caller initiated the teardown.
+			select {
+			case <-ctx.Done():
+				return
+			default:
+			}
+			reason := e.streamErrorReason(err)
 			communication.OnPacket(ctx, internal_type.DirectivePacket{
 				Directive: protos.ConversationDirective_END_CONVERSATION,
 				Arguments: map[string]interface{}{"reason": reason},
 			})
 			return
 		}
-		executor.handleResponse(ctx, communication, resp)
+		e.handleResponse(ctx, communication, resp)
 	}
 }
 
 // streamErrorReason maps a stream error to a human-readable reason string.
-func (executor *modelAssistantExecutor) streamErrorReason(err error) string {
-	executor.logger.Debugf("Listener received error: %v", err)
+func (e *modelAssistantExecutor) streamErrorReason(err error) string {
+	e.logger.Debugf("Listener received error: %v", err)
 	switch {
 	case errors.Is(err, io.EOF):
 		return "server closed connection"
@@ -254,10 +254,10 @@ func (executor *modelAssistantExecutor) streamErrorReason(err error) string {
 }
 
 // handleResponse processes a single response from the server.
-func (executor *modelAssistantExecutor) handleResponse(ctx context.Context, communication internal_type.Communication, resp *protos.ChatResponse) {
+func (e *modelAssistantExecutor) handleResponse(ctx context.Context, communication internal_type.Communication, resp *protos.ChatResponse) {
 	output := resp.GetData()
 	metrics := resp.GetMetrics()
-	// Handle error responses
+
 	if !resp.GetSuccess() && resp.GetError() != nil {
 		errMsg := resp.GetError().GetErrorMessage()
 		communication.OnPacket(ctx,
@@ -278,7 +278,6 @@ func (executor *modelAssistantExecutor) handleResponse(ctx context.Context, comm
 		return
 	}
 
-	// Check if this is the final message (has metrics)
 	if len(metrics) > 0 {
 		hasToolCalls := len(output.GetAssistant().GetToolCalls()) > 0
 		responseText := strings.Join(output.GetAssistant().GetContents(), "")
@@ -290,9 +289,9 @@ func (executor *modelAssistantExecutor) handleResponse(ctx context.Context, comm
 		// causing OpenAI to reject with: "An assistant message with 'tool_calls' must
 		// be followed by tool messages responding to each 'tool_call_id'."
 		if !hasToolCalls {
-			executor.mu.Lock()
-			executor.history = append(executor.history, output)
-			executor.mu.Unlock()
+			e.mu.Lock()
+			e.history = append(e.history, output)
+			e.mu.Unlock()
 		}
 
 		communication.OnPacket(ctx,
@@ -318,8 +317,8 @@ func (executor *modelAssistantExecutor) handleResponse(ctx context.Context, comm
 		)
 
 		if hasToolCalls {
-			if err := executor.executeToolCalls(ctx, communication, resp.GetRequestId(), output); err != nil {
-				executor.logger.Errorf("tool call follow-up failed: %v", err)
+			if err := e.executeToolCalls(ctx, communication, resp.GetRequestId(), output); err != nil {
+				e.logger.Errorf("tool call follow-up failed: %v", err)
 				communication.OnPacket(ctx, internal_type.LLMErrorPacket{
 					ContextID: resp.GetRequestId(),
 					Error:     fmt.Errorf("tool call follow-up failed: %w", err),
@@ -338,21 +337,21 @@ func (executor *modelAssistantExecutor) handleResponse(ctx context.Context, comm
 
 // buildChatRequest constructs the chat request with all necessary parameters.
 // The caller provides the complete conversation messages (system prompt is prepended automatically).
-func (executor *modelAssistantExecutor) buildChatRequest(communication internal_type.Communication, contextID string, messages ...*protos.Message) *protos.ChatRequest {
+func (e *modelAssistantExecutor) buildChatRequest(communication internal_type.Communication, contextID string, messages ...*protos.Message) *protos.ChatRequest {
 	assistant := communication.Assistant()
 	template := assistant.AssistantProviderModel.Template.GetTextChatCompleteTemplate()
-	systemMessages := executor.inputBuilder.Message(
+	systemMessages := e.inputBuilder.Message(
 		template.Prompt,
-		utils.MergeMaps(executor.inputBuilder.PromptArguments(template.Variables), communication.GetArgs()),
+		utils.MergeMaps(e.inputBuilder.PromptArguments(template.Variables), communication.GetArgs()),
 	)
-	return executor.inputBuilder.Chat(
+	return e.inputBuilder.Chat(
 		contextID,
 		&protos.Credential{
-			Id:    executor.providerCredential.GetId(),
-			Value: executor.providerCredential.GetValue(),
+			Id:    e.providerCredential.GetId(),
+			Value: e.providerCredential.GetValue(),
 		},
-		executor.inputBuilder.Options(utils.MergeMaps(assistant.AssistantProviderModel.GetOptions(), communication.GetOptions()), nil),
-		executor.toolExecutor.GetFunctionDefinitions(),
+		e.inputBuilder.Options(utils.MergeMaps(assistant.AssistantProviderModel.GetOptions(), communication.GetOptions()), nil),
+		e.toolExecutor.GetFunctionDefinitions(),
 		map[string]string{
 			"assistant_id":                fmt.Sprintf("%d", assistant.Id),
 			"message_id":                  contextID,
@@ -362,97 +361,76 @@ func (executor *modelAssistantExecutor) buildChatRequest(communication internal_
 	)
 }
 
-// executeToolCalls handles tool execution and recursive chat.
-// The assistant message (output) is NOT yet in executor.history — we add both
-// the assistant message and tool result atomically to prevent a race where a
-// concurrent user message could see the assistant message with tool_calls but
-// without the corresponding tool results (which causes OpenAI 400 errors).
-func (executor *modelAssistantExecutor) executeToolCalls(ctx context.Context, communication internal_type.Communication, contextID string, output *protos.Message,
+// executeToolCalls executes all requested tool calls and sends the follow-up
+// chat with both the assistant message and tool results appended atomically.
+// The assistant message is NOT yet in e.history — we add both together to
+// prevent a concurrent user message from seeing tool_calls without results
+// (which causes OpenAI 400 errors).
+func (e *modelAssistantExecutor) executeToolCalls(ctx context.Context, communication internal_type.Communication, contextID string, output *protos.Message,
 ) error {
-	toolExecution := executor.toolExecutor.ExecuteAll(ctx, contextID, output.GetAssistant().GetToolCalls(), communication)
-	// Atomically append both the assistant message (with tool_calls) and the tool
-	// result to history, so any concurrent reader always sees them as a pair.
-	executor.mu.Lock()
-	executor.history = append(executor.history, output, toolExecution)
-	executor.mu.Unlock()
-	// Build the follow-up request using the full history (which now includes
-	// output + toolExecution). chatWithHistory reads history under lock.
-	return executor.chatWithHistory(ctx, communication, contextID)
+	toolExecution := e.toolExecutor.ExecuteAll(ctx, contextID, output.GetAssistant().GetToolCalls(), communication)
+	e.mu.Lock()
+	e.history = append(e.history, output, toolExecution)
+	e.mu.Unlock()
+	return e.chatWithHistory(ctx, communication, contextID)
 }
 
-// Execute processes incoming packets when user triggers a message
-func (executor *modelAssistantExecutor) Execute(ctx context.Context, communication internal_type.Communication, pctk internal_type.Packet) error {
+// Execute forwards an incoming packet to the LLM.
+//
+// Emits ConversationEventPacket: {type: "executing"} for UserTextPacket.
+func (e *modelAssistantExecutor) Execute(ctx context.Context, communication internal_type.Communication, pctk internal_type.Packet) error {
 	switch plt := pctk.(type) {
 	case internal_type.UserTextPacket:
-		return executor.handleUserTextPacket(ctx, communication, plt)
+		snapshot := e.snapshotHistory()
+		communication.OnPacket(ctx, internal_type.ConversationEventPacket{
+			ContextID: plt.ContextID,
+			Name:      "llm",
+			Data: map[string]string{
+				"type":             "executing",
+				"script":           plt.Text,
+				"input_char_count": fmt.Sprintf("%d", len(plt.Text)),
+				"history_count":    fmt.Sprintf("%d", len(snapshot)),
+			},
+			Time: time.Now(),
+		})
+		return e.chat(ctx, communication, plt.ContextID, &protos.Message{Role: "user", Message: &protos.Message_User{User: &protos.UserMessage{Content: plt.Text}}}, snapshot...)
+
 	case internal_type.StaticPacket:
-		return executor.handleStaticPacket(plt)
+		e.mu.Lock()
+		e.history = append(e.history, &protos.Message{
+			Role: "assistant",
+			Message: &protos.Message_Assistant{Assistant: &protos.AssistantMessage{
+				Contents: []string{plt.Text},
+			}},
+		})
+		e.mu.Unlock()
+		return nil
+
 	default:
 		return fmt.Errorf("unsupported packet type: %T", pctk)
 	}
 }
 
-// handleUserTextPacket processes user text input
-func (executor *modelAssistantExecutor) handleUserTextPacket(ctx context.Context, communication internal_type.Communication, packet internal_type.UserTextPacket,
-) error {
-	snapshot := executor.snapshotHistory()
-	communication.OnPacket(ctx, internal_type.ConversationEventPacket{
-		ContextID: packet.ContextID,
-		Name:      "llm",
-		Data: map[string]string{
-			"type":             "executing",
-			"script":           packet.Text,
-			"input_char_count": fmt.Sprintf("%d", len(packet.Text)),
-			"history_count":    fmt.Sprintf("%d", len(snapshot)),
-		},
-		Time: time.Now(),
-	})
-	return executor.chat(ctx, communication, packet.ContextID, &protos.Message{Role: "user", Message: &protos.Message_User{User: &protos.UserMessage{Content: packet.Text}}}, snapshot...)
-}
-
-// handleStaticPacket appends static assistant response to history
-func (executor *modelAssistantExecutor) handleStaticPacket(packet internal_type.StaticPacket) error {
-	executor.mu.Lock()
-	executor.history = append(executor.history, &protos.Message{
-		Role: "assistant",
-		Message: &protos.Message_Assistant{Assistant: &protos.AssistantMessage{
-			Contents: []string{packet.Text},
-		}},
-	})
-	executor.mu.Unlock()
-	return nil
-}
-
 // snapshotHistory returns a point-in-time copy of the conversation history.
-func (executor *modelAssistantExecutor) snapshotHistory() []*protos.Message {
-	executor.mu.RLock()
-	snapshot := make([]*protos.Message, len(executor.history))
-	copy(snapshot, executor.history)
-	executor.mu.RUnlock()
+func (e *modelAssistantExecutor) snapshotHistory() []*protos.Message {
+	e.mu.RLock()
+	snapshot := make([]*protos.Message, len(e.history))
+	copy(snapshot, e.history)
+	e.mu.RUnlock()
 	return snapshot
 }
 
-func (executor *modelAssistantExecutor) Close(ctx context.Context) error {
-	executor.mu.Lock()
-
-	// Close the stream
-	if executor.stream != nil {
-		executor.stream.CloseSend()
-		executor.stream = nil
+// Close cancels the listener context, tears down the stream, and clears history.
+func (e *modelAssistantExecutor) Close(ctx context.Context) error {
+	if e.ctxCancel != nil {
+		e.ctxCancel()
 	}
-
-	// Clear history
-	executor.history = make([]*protos.Message, 0)
-	done := executor.done
-	executor.mu.Unlock()
-
-	// Wait for listener goroutine to exit
-	if done != nil {
-		select {
-		case <-done:
-		case <-time.After(5 * time.Second):
-			executor.logger.Errorf("Timed out waiting for listener goroutine to exit")
-		}
+	e.mu.Lock()
+	if e.stream != nil {
+		e.stream.CloseSend()
+		e.stream = nil
 	}
+	e.history = make([]*protos.Message, 0)
+	e.mu.Unlock()
 	return nil
 }

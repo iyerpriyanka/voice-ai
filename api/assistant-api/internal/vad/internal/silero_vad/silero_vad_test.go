@@ -106,9 +106,13 @@ func TestSileroVAD_Name(t *testing.T) {
 
 func TestSileroVAD_Process_Silence_NoCallback(t *testing.T) {
 	inputConfig := internal_audio.NewLinear16khzMonoAudioConfig()
-	callbackCalled := false
-	callback := func(context.Context, ...internal_type.Packet) error {
-		callbackCalled = true
+	detectionFired := false
+	callback := func(_ context.Context, pkts ...internal_type.Packet) error {
+		for _, p := range pkts {
+			if _, ok := p.(internal_type.InterruptionPacket); ok {
+				detectionFired = true
+			}
+		}
 		return nil
 	}
 
@@ -116,7 +120,7 @@ func TestSileroVAD_Process_Silence_NoCallback(t *testing.T) {
 
 	err := vad.Process(context.Background(), generateSilence(16000))
 	require.NoError(t, err)
-	assert.False(t, callbackCalled)
+	assert.False(t, detectionFired, "silence should not trigger a speech detection event")
 }
 
 func TestSileroVAD_Process_Speech_AllowsCallback(t *testing.T) {

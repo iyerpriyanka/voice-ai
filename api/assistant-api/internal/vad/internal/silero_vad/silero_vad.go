@@ -115,15 +115,17 @@ func NewSileroVAD(
 	// Start lifecycle manager for automatic cleanup
 	svad.startLifecycleManager(ctx)
 
-	_ = onPacket(ctx, internal_type.ConversationEventPacket{
-		Name: "vad",
-		Data: map[string]string{
-			"type":     "initialized",
-			"provider": vadName,
-			"init_ms":  fmt.Sprintf("%d", time.Since(start).Milliseconds()),
-		},
-		Time: time.Now(),
-	})
+	if onPacket != nil {
+		_ = onPacket(ctx, internal_type.ConversationEventPacket{
+			Name: "vad",
+			Data: map[string]string{
+				"type":     "initialized",
+				"provider": vadName,
+				"init_ms":  fmt.Sprintf("%d", time.Since(start).Milliseconds()),
+			},
+			Time: time.Now(),
+		})
+	}
 
 	return svad, nil
 }
@@ -289,17 +291,17 @@ func (s *SileroVAD) prepareAudioSamples(pkt internal_type.UserAudioPacket) ([]fl
 }
 
 // detectSafely performs voice activity detection with CGO resource protection.
-// Acquires read lock to prevent Close() from destroying detector during detection.
+// Holds the write lock for the duration of the CGO call: speech.Detector
+// mutates internal ONNX state and is not safe for concurrent use.
 func (s *SileroVAD) detectSafely(samples []float32) ([]speech.Segment, error) {
-	s.mu.RLock()
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	if s.isTerminated || s.detector == nil {
-		s.mu.RUnlock()
 		return nil, nil
 	}
-	detector := s.detector
-	s.mu.RUnlock()
 
-	segments, err := detector.Detect(samples)
+	segments, err := s.detector.Detect(samples)
 	if err != nil {
 		return nil, fmt.Errorf("detection failed: %w", err)
 	}
@@ -324,20 +326,22 @@ func (s *SileroVAD) notifyActivity(ctx context.Context, segments []speech.Segmen
 		}
 	}
 
-	s.onPacket(ctx,
-		internal_type.InterruptionPacket{
-			Source:  internal_type.InterruptionSourceVad,
-			StartAt: minStart,
-			EndAt:   maxEnd,
-		},
-		internal_type.ConversationEventPacket{
-			Name: "vad",
-			Data: map[string]string{
-				"type":          "detected",
-				"start_at":      fmt.Sprintf("%f", minStart),
-				"end_at":        fmt.Sprintf("%f", maxEnd),
-				"segment_count": fmt.Sprintf("%d", len(segments)),
+	if s.onPacket != nil {
+		s.onPacket(ctx,
+			internal_type.InterruptionPacket{
+				Source:  internal_type.InterruptionSourceVad,
+				StartAt: minStart,
+				EndAt:   maxEnd,
 			},
-		},
-	)
+			internal_type.ConversationEventPacket{
+				Name: "vad",
+				Data: map[string]string{
+					"type":          "detected",
+					"start_at":      fmt.Sprintf("%f", minStart),
+					"end_at":        fmt.Sprintf("%f", maxEnd),
+					"segment_count": fmt.Sprintf("%d", len(segments)),
+				},
+			},
+		)
+	}
 }

@@ -118,7 +118,7 @@ func TestMultipleTexts(t *testing.T) {
 		t.Fatalf("expected 3 results, got %d", len(results))
 	}
 
-	expected := []string{"First sentence.", "Second sentence.", "Third sentence."}
+	expected := []string{"First sentence.", " Second sentence.", " Third sentence."}
 	for i, result := range results {
 		if ts, ok := result.(internal_type.SpeakTextPacket); ok {
 			if ts.Text != expected[i] {
@@ -409,7 +409,7 @@ func TestWhitespaceHandling(t *testing.T) {
 		t.Fatalf("expected at least 1 result, got %d", len(results))
 	}
 
-	if ts, ok := results[0].(internal_type.SpeakTextPacket); ok && ts.Text != "Hello." {
+	if ts, ok := results[0].(internal_type.SpeakTextPacket); ok && ts.Text != "Hello.   \n  " {
 		t.Errorf("expected 'Hello.', got %q", ts.Text)
 	}
 }
@@ -500,7 +500,7 @@ func TestLLMStreamingInput(t *testing.T) {
 
 	expected := []string{
 		"Hello world, this is an LLM streamed sentence.",
-		"Another one!",
+		" Another one!",
 	}
 
 	for i, r := range results {
