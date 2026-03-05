@@ -52,9 +52,9 @@ import (
 type InteractionState int
 
 const (
-	Unknown     InteractionState = 1
-	Interrupt   InteractionState = 6
-	Interrupted InteractionState = 7
+	Unknown       InteractionState = 1
+	Interrupt     InteractionState = 6
+	Interrupted   InteractionState = 7
 	LLMGenerating InteractionState = 8
 	LLMGenerated  InteractionState = 5
 )
@@ -185,9 +185,10 @@ func NewGenericRequestor(
 
 		events:  observe.NewEventCollector(logger, observe.SessionMeta{}),
 		metrics: observe.NewMetricCollector(logger, observe.SessionMeta{}),
-		contextID:        uuid.NewString(),
-		interactionState: Unknown,
-		msgMode:          type_enums.TextMode,
+
+		contextID:         uuid.NewString(),
+		interactionState:  Unknown,
+		msgMode:           type_enums.TextMode,
 		assistantExecutor: internal_agent_executor_llm.NewAssistantExecutor(logger),
 
 		//
@@ -413,69 +414,26 @@ func (r *genericRequestor) initializeCollectors(ctx context.Context) {
 
 	// OpenSearch is the platform's own telemetry store — register only when reachable.
 	if r.opensearch != nil && r.opensearch.IsConnected(ctx) {
-		exp := observe_exporters.NewOpenSearchExporter(r.logger, &r.config.AppConfig, r.opensearch)
-		eventExporters = append(eventExporters, exp)
-		metricExporters = append(metricExporters, exp)
+		evtExp, metExp, err := observe_exporters.GetExporter(ctx, r.logger, &r.config.AppConfig, r.opensearch, string(observe.OPENSEARCH), nil)
+		if err == nil && evtExp != nil {
+			eventExporters = append(eventExporters, evtExp)
+			metricExporters = append(metricExporters, metExp)
+		}
 	}
 
 	for _, p := range providers {
 		opts := p.GetOptions()
-		switch p.ProviderType {
-		case "otlp_http", "otlp_grpc":
-			cfg := observe_exporters.OTLPConfigFromOptions(opts, p.ProviderType)
-			if cfg.Endpoint == "" {
-				r.logger.Errorf("observe: OTLP provider %d has no endpoint in options", p.Id)
-				continue
-			}
-			exp, err := observe_exporters.NewOTLPExporter(ctx, cfg)
-			if err != nil {
-				r.logger.Errorf("observe: OTLP exporter creation failed for provider %d: %v", p.Id, err)
-				continue
-			}
-			eventExporters = append(eventExporters, exp)
-			metricExporters = append(metricExporters, exp)
-
-		case "xray":
-			exp, err := observe_exporters.NewXRayExporter(ctx, opts)
-			if err != nil {
-				r.logger.Errorf("observe: X-Ray exporter creation failed for provider %d: %v", p.Id, err)
-				continue
-			}
-			eventExporters = append(eventExporters, exp)
-			metricExporters = append(metricExporters, exp)
-
-		case "google_trace":
-			exp, err := observe_exporters.NewGoogleTraceExporter(ctx, opts)
-			if err != nil {
-				r.logger.Errorf("observe: Google Cloud Trace exporter creation failed for provider %d: %v", p.Id, err)
-				continue
-			}
-			eventExporters = append(eventExporters, exp)
-			metricExporters = append(metricExporters, exp)
-
-		case "azure_monitor":
-			exp, err := observe_exporters.NewAzureMonitorExporter(ctx, opts)
-			if err != nil {
-				r.logger.Errorf("observe: Azure Monitor exporter creation failed for provider %d: %v", p.Id, err)
-				continue
-			}
-			eventExporters = append(eventExporters, exp)
-			metricExporters = append(metricExporters, exp)
-
-		case "datadog":
-			exp, err := observe_exporters.NewDatadogExporter(ctx, opts)
-			if err != nil {
-				r.logger.Errorf("observe: Datadog exporter creation failed for provider %d: %v", p.Id, err)
-				continue
-			}
-			eventExporters = append(eventExporters, exp)
-			metricExporters = append(metricExporters, exp)
-
-		case "logging":
-			exp := observe_exporters.NewLoggingExporter(r.logger)
-			eventExporters = append(eventExporters, exp)
-			metricExporters = append(metricExporters, exp)
+		evtExp, metExp, err := observe_exporters.GetExporter(ctx, r.logger, &r.config.AppConfig, r.opensearch, p.ProviderType, opts)
+		if err != nil {
+			r.logger.Errorf("observe: exporter creation failed for provider %d (%s): %v", p.Id, p.ProviderType, err)
+			continue
 		}
+		if evtExp == nil || metExp == nil {
+			r.logger.Errorf("observe: exporter returned nil for provider %d (%s)", p.Id, p.ProviderType)
+			continue
+		}
+		eventExporters = append(eventExporters, evtExp)
+		metricExporters = append(metricExporters, metExp)
 	}
 
 	r.events = observe.NewEventCollector(r.logger, meta, eventExporters...)

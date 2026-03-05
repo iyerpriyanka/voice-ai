@@ -267,10 +267,10 @@ export const ConfigureAssistantDeploymentPage = () => {
       </PageHeaderBlock>
 
       {hasAnyDeployment ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 content-start gap-[2px] m-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 content-start gap-4 m-4">
           {/* Debugger */}
           {assistant?.hasDebuggerdeployment() && (
-            <BaseCard className="bg-light-background">
+            <BaseCard className="col-span-1 border">
               <div className="flex-1 p-4 md:p-5 space-y-4">
                 {/* Header */}
                 <div className="flex items-start justify-between">
@@ -329,7 +329,7 @@ export const ConfigureAssistantDeploymentPage = () => {
 
           {/* SDK / API */}
           {assistant?.hasApideployment() && (
-            <BaseCard className="bg-light-background">
+            <BaseCard className="col-span-1 border">
               <div className="flex-1 p-4 md:p-5 space-y-4">
                 <div className="flex items-start justify-between">
                   <Code
@@ -401,7 +401,7 @@ export const ConfigureAssistantDeploymentPage = () => {
 
           {/* Phone Call */}
           {assistant?.hasPhonedeployment() && (
-            <BaseCard className="bg-light-background">
+            <BaseCard className="col-span-1 border">
               <div className="flex-1 p-4 md:p-5 space-y-4">
                 <div className="flex items-start justify-between">
                   <Phone
@@ -458,7 +458,7 @@ export const ConfigureAssistantDeploymentPage = () => {
 
           {/* Web Widget */}
           {assistant?.hasWebplugindeployment() && (
-            <BaseCard className="bg-light-background">
+            <BaseCard className="col-span-1 border">
               <div className="flex-1 p-4 md:p-5 space-y-4">
                 <div className="flex items-start justify-between">
                   <Globe

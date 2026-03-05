@@ -139,7 +139,7 @@ func (rt *rimeTTS) readLoop(conn *websocket.Conn) {
 			rt.handleServerError(conn, response)
 			return
 		default:
-			rt.logger.Debugf("rime-tts: unhandled message type: %s", response.Type)
+			// rt.logger.Debugf("rime-tts: unhandled message type: %s", response.Type)
 		}
 	}
 }

@@ -306,7 +306,7 @@ func (e *modelAssistantExecutor) handleResponse(ctx context.Context, communicati
 					"type":                "completed",
 					"text":                responseText,
 					"response_char_count": fmt.Sprintf("%d", len(responseText)),
-					"finish_reason":       "stop",
+					"finish_reason":       resp.GetFinishReason(),
 				},
 				Time: now,
 			},
@@ -328,10 +328,21 @@ func (e *modelAssistantExecutor) handleResponse(ctx context.Context, communicati
 		return
 	}
 	if len(output.GetAssistant().GetContents()) > 0 {
-		communication.OnPacket(ctx, internal_type.LLMResponseDeltaPacket{
-			ContextID: resp.GetRequestId(),
-			Text:      strings.Join(output.GetAssistant().GetContents(), ""),
-		})
+		text := strings.Join(output.GetAssistant().GetContents(), "")
+		communication.OnPacket(ctx,
+			internal_type.LLMResponseDeltaPacket{
+				ContextID: resp.GetRequestId(),
+				Text:      text,
+			},
+			internal_type.ConversationEventPacket{
+				Name: "llm",
+				Data: map[string]string{
+					"type":                "chunk",
+					"text":                text,
+					"response_char_count": fmt.Sprintf("%d", len(text)),
+				},
+				Time: time.Now(),
+			})
 	}
 }
 

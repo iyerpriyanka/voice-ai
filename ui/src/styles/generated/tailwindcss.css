@@ -3251,6 +3251,9 @@
   .gap-\[2px\] {
     gap: 2px;
   }
+  .gap-\[5px\] {
+    gap: 5px;
+  }
   .gap-px {
     gap: 1px;
   }
