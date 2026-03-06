@@ -199,7 +199,7 @@ func TestHandleResponse(t *testing.T) {
 				require.Len(t, pkts, 1)
 				ev, ok := pkts[0].(internal_type.ConversationEventPacket)
 				require.True(t, ok)
-				assert.Equal(t, "llm", ev.Name)
+				assert.Equal(t, "agentkit", ev.Name)
 				assert.Equal(t, "initialization_ack", ev.Data["type"])
 				assert.Equal(t, "42", ev.Data["conversation_id"])
 			},
@@ -234,11 +234,17 @@ func TestHandleResponse(t *testing.T) {
 				},
 			},
 			wantFunc: func(t *testing.T, pkts []internal_type.Packet) {
-				require.Len(t, pkts, 1)
+				require.Len(t, pkts, 2)
 				delta, ok := pkts[0].(internal_type.LLMResponseDeltaPacket)
 				require.True(t, ok)
 				assert.Equal(t, "msg-1", delta.ContextID)
 				assert.Equal(t, "hello ", delta.Text)
+				ev, ok := pkts[1].(internal_type.ConversationEventPacket)
+				require.True(t, ok)
+				assert.Equal(t, "agentkit", ev.Name)
+				assert.Equal(t, "chunk", ev.Data["type"])
+				assert.Equal(t, "hello ", ev.Data["text"])
+				assert.Equal(t, "6", ev.Data["response_char_count"])
 			},
 		},
 		{

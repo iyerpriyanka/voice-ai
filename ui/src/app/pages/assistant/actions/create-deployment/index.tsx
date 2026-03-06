@@ -207,6 +207,15 @@ export const ConfigureAssistantDeploymentPage = () => {
           )}
         </div>
         <div className="flex items-stretch self-stretch border-l border-gray-200 dark:border-gray-800">
+          <IButton
+            type="button"
+            className="h-full"
+            onClick={() => get(assistantId)}
+          >
+            <RotateCw className="w-4 h-4" strokeWidth={1.5} />
+          </IButton>
+          <div className="w-px self-stretch bg-gray-200 dark:bg-gray-800 shrink-0" />
+
           <IBlueBGButton
             className="h-full px-4"
             onClick={() => setCreateDeploymentPopover(true)}
@@ -255,14 +264,6 @@ export const ConfigureAssistantDeploymentPage = () => {
               );
             })}
           </Popover>
-          <div className="w-px self-stretch bg-gray-200 dark:bg-gray-800 shrink-0" />
-          <IButton
-            type="button"
-            className="h-full"
-            onClick={() => get(assistantId)}
-          >
-            <RotateCw className="w-4 h-4" strokeWidth={1.5} />
-          </IButton>
         </div>
       </PageHeaderBlock>
 

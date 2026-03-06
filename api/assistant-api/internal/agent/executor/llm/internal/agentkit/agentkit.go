@@ -26,12 +26,13 @@
 //
 // The executor emits ConversationEventPacket at every critical point so the
 // debugger, analytics, and webhook pipelines have full visibility. Events use
-// Name="llm" for agent-level events and Name="tool" for tool observability:
+// Name="agentkit" for agent-level events and Name="tool" for tool observability:
 //
 //	Initialize  → {type: "agentkit_initialized", provider, url, init_ms}
 //	Execute     → {type: "executing",   script, input_char_count}
 //	Init ack    → {type: "initialization_ack", conversation_id}
 //	Interruption→ {type: "interruption", source}
+//	Text chunk  → {type: "chunk",       text, response_char_count}
 //	Text done   → {type: "completed",   text, response_char_count}
 //	Tool call   → {type: "tool_call",   tool_id, name}          (Name="tool")
 //	Tool result → {type: "tool_result",  tool_id, name, success} (Name="tool")
@@ -115,7 +116,7 @@ func (e *agentkitExecutor) Initialize(ctx context.Context, comm internal_type.Co
 	}
 
 	comm.OnPacket(ctx, internal_type.ConversationEventPacket{
-		Name: "llm",
+		Name: "agentkit",
 		Data: map[string]string{
 			"type":     "agentkit_initialized",
 			"provider": "agentkit",
@@ -278,7 +279,7 @@ func (e *agentkitExecutor) handleResponse(ctx context.Context, resp *protos.Talk
 		// Emits: ConversationEventPacket {type: "initialization_ack"}
 		e.logger.Debugf("AgentKit initialization acknowledged, conversationId=%d", data.Initialization.GetAssistantConversationId())
 		comm.OnPacket(ctx, internal_type.ConversationEventPacket{
-			Name: "llm",
+			Name: "agentkit",
 			Data: map[string]string{
 				"type":            "initialization_ack",
 				"conversation_id": fmt.Sprintf("%d", data.Initialization.GetAssistantConversationId()),
@@ -292,7 +293,7 @@ func (e *agentkitExecutor) handleResponse(ctx context.Context, resp *protos.Talk
 			internal_type.InterruptionPacket{ContextID: data.Interruption.Id, Source: internal_type.InterruptionSourceWord},
 			internal_type.ConversationEventPacket{
 				ContextID: data.Interruption.Id,
-				Name:      "llm",
+				Name:      "agentkit",
 				Data:      map[string]string{"type": "interruption", "source": "word"},
 				Time:      time.Now(),
 			},
@@ -310,7 +311,7 @@ func (e *agentkitExecutor) handleResponse(ctx context.Context, resp *protos.Talk
 					},
 					internal_type.ConversationEventPacket{
 						ContextID: data.Assistant.GetId(),
-						Name:      "llm",
+						Name:      "agentkit",
 						Data: map[string]string{
 							"type":                "completed",
 							"text":                msg.Text,
@@ -321,8 +322,20 @@ func (e *agentkitExecutor) handleResponse(ctx context.Context, resp *protos.Talk
 				)
 				return
 			}
-			// Streaming delta — no ConversationEventPacket (too noisy, matches model pattern)
-			comm.OnPacket(ctx, internal_type.LLMResponseDeltaPacket{ContextID: data.Assistant.GetId(), Text: msg.Text})
+			// Streaming delta — emit "chunk" event matching model.go pattern
+			comm.OnPacket(ctx,
+				internal_type.LLMResponseDeltaPacket{ContextID: data.Assistant.GetId(), Text: msg.Text},
+				internal_type.ConversationEventPacket{
+					ContextID: data.Assistant.GetId(),
+					Name:      "agentkit",
+					Data: map[string]string{
+						"type":                "chunk",
+						"text":                msg.Text,
+						"response_char_count": fmt.Sprintf("%d", len(msg.Text)),
+					},
+					Time: time.Now(),
+				},
+			)
 		case *protos.ConversationAssistantMessage_Audio:
 			e.logger.Debugf("Received audio message (not implemented)")
 		}
@@ -368,7 +381,7 @@ func (e *agentkitExecutor) handleResponse(ctx context.Context, resp *protos.Talk
 				Error: fmt.Errorf("agentkit error %d: %s", data.Error.GetErrorCode(), errMsg),
 			},
 			internal_type.ConversationEventPacket{
-				Name: "llm",
+				Name: "agentkit",
 				Data: map[string]string{
 					"type":  "error",
 					"error": errMsg,
@@ -396,7 +409,7 @@ func (e *agentkitExecutor) Execute(ctx context.Context, comm internal_type.Commu
 	case internal_type.UserTextPacket:
 		comm.OnPacket(ctx, internal_type.ConversationEventPacket{
 			ContextID: p.ContextID,
-			Name:      "llm",
+			Name:      "agentkit",
 			Data: map[string]string{
 				"type":             "executing",
 				"script":           p.Text,

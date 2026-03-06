@@ -13,49 +13,16 @@ import (
 	internal_assistant_entity "github.com/rapidaai/api/assistant-api/internal/entity/assistants"
 	internal_type "github.com/rapidaai/api/assistant-api/internal/type"
 	integration_client_builders "github.com/rapidaai/pkg/clients/integration/builders"
+	"github.com/rapidaai/pkg/commons"
 	gorm_types "github.com/rapidaai/pkg/models/gorm/types"
 	"github.com/rapidaai/pkg/utils"
 	"github.com/rapidaai/protos"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"go.uber.org/zap/zapcore"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
-
-// =============================================================================
-// Mock: nopLogger
-// =============================================================================
-
-type nopLogger struct{}
-
-func (nopLogger) Level() zapcore.Level                           { return zapcore.DebugLevel }
-func (nopLogger) Debug(...interface{})                           {}
-func (nopLogger) Debugf(string, ...interface{})                  {}
-func (nopLogger) Debugw(string, ...interface{})                  {}
-func (nopLogger) Info(...interface{})                            {}
-func (nopLogger) Infof(string, ...interface{})                   {}
-func (nopLogger) Infow(string, ...interface{})                   {}
-func (nopLogger) Warn(...interface{})                            {}
-func (nopLogger) Warnf(string, ...interface{})                   {}
-func (nopLogger) Warnw(string, ...interface{})                   {}
-func (nopLogger) Error(...interface{})                           {}
-func (nopLogger) Errorf(string, ...interface{})                  {}
-func (nopLogger) Errorw(string, ...interface{})                  {}
-func (nopLogger) DPanic(...interface{})                          {}
-func (nopLogger) DPanicf(string, ...interface{})                 {}
-func (nopLogger) Panic(...interface{})                           {}
-func (nopLogger) Panicf(string, ...interface{})                  {}
-func (nopLogger) Fatal(...interface{})                           {}
-func (nopLogger) Fatalf(string, ...interface{})                  {}
-func (nopLogger) Benchmark(string, time.Duration)                {}
-func (nopLogger) Tracef(context.Context, string, ...interface{}) {}
-func (nopLogger) Sync() error                                   { return nil }
-
-// =============================================================================
-// Mock: packetCollector
-// =============================================================================
 
 type packetCollector struct {
 	mu   sync.Mutex
@@ -123,10 +90,10 @@ func (m *mockStream) CloseSend() error {
 }
 
 func (m *mockStream) Header() (metadata.MD, error) { return nil, nil }
-func (m *mockStream) Trailer() metadata.MD          { return nil }
-func (m *mockStream) Context() context.Context       { return context.Background() }
-func (m *mockStream) SendMsg(any) error              { return nil }
-func (m *mockStream) RecvMsg(any) error              { return nil }
+func (m *mockStream) Trailer() metadata.MD         { return nil }
+func (m *mockStream) Context() context.Context     { return context.Background() }
+func (m *mockStream) SendMsg(any) error            { return nil }
+func (m *mockStream) RecvMsg(any) error            { return nil }
 
 // =============================================================================
 // Mock: mockCommunication
@@ -201,7 +168,7 @@ func newTestComm() (*mockCommunication, *packetCollector) {
 }
 
 func newTestExecutor() *modelAssistantExecutor {
-	logger := nopLogger{}
+	logger, _ := commons.NewApplicationLogger()
 	return &modelAssistantExecutor{
 		logger:       logger,
 		toolExecutor: &mockToolExecutor{},
@@ -382,11 +349,19 @@ func TestHandleResponse_StreamDelta(t *testing.T) {
 	e.handleResponse(context.Background(), comm, resp)
 
 	pkts := collector.all()
-	require.Len(t, pkts, 1)
+	require.Len(t, pkts, 2)
+
 	delta, ok := pkts[0].(internal_type.LLMResponseDeltaPacket)
 	require.True(t, ok)
 	assert.Equal(t, "req-5", delta.ContextID)
 	assert.Equal(t, "partial", delta.Text)
+
+	ev, ok := pkts[1].(internal_type.ConversationEventPacket)
+	require.True(t, ok)
+	assert.Equal(t, "llm", ev.Name)
+	assert.Equal(t, "chunk", ev.Data["type"])
+	assert.Equal(t, "partial", ev.Data["text"])
+	assert.Equal(t, "7", ev.Data["response_char_count"])
 }
 
 // =============================================================================
@@ -582,7 +557,6 @@ func TestClose_ClearsHistoryAndStream(t *testing.T) {
 	assert.Nil(t, e.stream)
 	assert.Empty(t, e.history)
 }
-
 
 func TestClose_NoPanicNilStream(t *testing.T) {
 	e := newTestExecutor()
@@ -791,7 +765,6 @@ func TestExecute_UserTextPacket_HistoryCount(t *testing.T) {
 	require.Len(t, evs, 1)
 	assert.Equal(t, "2", evs[0].Data["history_count"], "should reflect 2 existing messages")
 }
-
 
 // =============================================================================
 // Tests: Execute with stream send error

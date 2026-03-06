@@ -129,7 +129,11 @@ export const AssistantViewLayout: FC<HTMLAttributes<HTMLDivElement>> = () => {
 
   //
   return (
-    <div className={cn('flex flex-col h-full flex-1 overflow-auto bg-white dark:bg-gray-900')}>
+    <div
+      className={cn(
+        'flex flex-col h-full flex-1 overflow-auto bg-white dark:bg-gray-900',
+      )}
+    >
       <Helmet title="Hosted Assistant" />
       <PageHeaderBlock>
         <div className="flex items-center gap-3">
@@ -155,46 +159,6 @@ export const AssistantViewLayout: FC<HTMLAttributes<HTMLDivElement>> = () => {
         {assistantAction.currentAssistant && (
           <div className="flex items-stretch h-12 border-l border-gray-200 dark:border-gray-800">
             {/* Create New Version */}
-            <div className="border-r border-gray-200 dark:border-gray-800 flex items-stretch">
-              <button
-                type="button"
-                onClick={() => setCreateVersionPopover(true)}
-                className={cn(
-                  'flex items-center gap-2 px-4 text-sm text-white bg-primary hover:bg-primary/90 transition-colors whitespace-nowrap',
-                  createVersionPopover && 'bg-primary/80',
-                )}
-              >
-                Create New Version
-                <GitPullRequestCreate className="w-4 h-4" strokeWidth={1.5} />
-              </button>
-              <Popover
-                align={'bottom-end'}
-                className="w-60 pb-2"
-                open={createVersionPopover}
-                setOpen={setCreateVersionPopover}
-              >
-                <div className="space-y-0.5 text-sm/6">
-                  <p className="px-4 py-2 text-[10px] font-semibold tracking-[0.12em] uppercase text-gray-500 dark:text-gray-400">
-                    New Version
-                  </p>
-                  <div className="border-t border-gray-200 dark:border-gray-800" />
-                  <IButton
-                    className="w-full justify-start"
-                    onClick={() => goToCreateAssistantVersion(assistantId!)}
-                  >
-                    Create New version
-                  </IButton>
-                  <IButton
-                    className="w-full justify-start"
-                    onClick={() =>
-                      goToCreateAssistantAgentKitVersion(assistantId!)
-                    }
-                  >
-                    Connect new AgentKit
-                  </IButton>
-                </div>
-              </Popover>
-            </div>
 
             {/* Configure assistant */}
             <div className="border-r border-gray-200 dark:border-gray-800 flex items-stretch">
@@ -246,6 +210,46 @@ export const AssistantViewLayout: FC<HTMLAttributes<HTMLDivElement>> = () => {
                     onClick={() => goToAssistantPreview(assistantId!)}
                   >
                     Debugging
+                  </IButton>
+                </div>
+              </Popover>
+            </div>
+            <div className="border-r border-gray-200 dark:border-gray-800 flex items-stretch">
+              <button
+                type="button"
+                onClick={() => setCreateVersionPopover(true)}
+                className={cn(
+                  'flex items-center gap-2 px-4 text-sm text-white bg-primary hover:bg-primary/90 transition-colors whitespace-nowrap',
+                  createVersionPopover && 'bg-primary/80',
+                )}
+              >
+                Create New Version
+                <GitPullRequestCreate className="w-4 h-4" strokeWidth={1.5} />
+              </button>
+              <Popover
+                align={'bottom-end'}
+                className="w-60 pb-2"
+                open={createVersionPopover}
+                setOpen={setCreateVersionPopover}
+              >
+                <div className="space-y-0.5 text-sm/6">
+                  <p className="px-4 py-2 text-[10px] font-semibold tracking-[0.12em] uppercase text-gray-500 dark:text-gray-400">
+                    New Version
+                  </p>
+                  <div className="border-t border-gray-200 dark:border-gray-800" />
+                  <IButton
+                    className="w-full justify-start"
+                    onClick={() => goToCreateAssistantVersion(assistantId!)}
+                  >
+                    Create New version
+                  </IButton>
+                  <IButton
+                    className="w-full justify-start"
+                    onClick={() =>
+                      goToCreateAssistantAgentKitVersion(assistantId!)
+                    }
+                  >
+                    Connect new AgentKit
                   </IButton>
                 </div>
               </Popover>

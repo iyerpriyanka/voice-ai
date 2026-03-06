@@ -107,8 +107,8 @@ func TestNewBaseStreamer_AudioConfigDerived(t *testing.T) {
 		WithOutputAudioConfig(mulaw8k),
 	)
 
-	// Input: 8 bytes/ms × 60ms = 480
-	assert.Equal(t, 480, bs.InputBufferThreshold(), "Should derive input threshold from audio config")
+	// Input: 8 bytes/ms × 80ms = 640
+	assert.Equal(t, 640, bs.InputBufferThreshold(), "Should derive input threshold from audio config")
 	// Output: 8 bytes/ms × 20ms = 160
 	assert.Equal(t, 160, bs.OutputFrameSize(), "Should derive output frame size from audio config")
 	// Output threshold defaults to frame size
@@ -615,7 +615,7 @@ func TestPushDisconnection_SendsDisconnectionMessage(t *testing.T) {
 	bs.PushDisconnection(protos.ConversationDisconnection_DISCONNECTION_TYPE_USER)
 
 	select {
-	case msg := <-bs.InputCh:
+	case msg := <-bs.CriticalCh:
 		dc, ok := msg.(*protos.ConversationDisconnection)
 		require.True(t, ok, "Should be a ConversationDisconnection")
 		assert.Equal(t, protos.ConversationDisconnection_DISCONNECTION_TYPE_USER, dc.Type)
@@ -640,11 +640,11 @@ func TestPushDisconnection_Idempotent(t *testing.T) {
 	bs.PushDisconnection(protos.ConversationDisconnection_DISCONNECTION_TYPE_USER) // second call — no-op
 
 	// Drain the first message
-	<-bs.InputCh
+	<-bs.CriticalCh
 
 	// No second message should exist
 	select {
-	case <-bs.InputCh:
+	case <-bs.CriticalCh:
 		t.Fatal("PushDisconnection should be idempotent — only one message")
 	default:
 	}
@@ -664,11 +664,11 @@ func TestPushDisconnection_ConcurrentCalls(t *testing.T) {
 
 	wg.Wait()
 
-	// Exactly one disconnection message should be on InputCh
+	// Exactly one disconnection message should be on CriticalCh
 	count := 0
 	for {
 		select {
-		case <-bs.InputCh:
+		case <-bs.CriticalCh:
 			count++
 		default:
 			goto done
@@ -978,7 +978,7 @@ func TestDerivedThresholds_AllFormats(t *testing.T) {
 			cfg: &protos.AudioConfig{
 				SampleRate: 8000, AudioFormat: protos.AudioConfig_MuLaw8, Channels: 1,
 			},
-			expectedInputThresh:  8 * 60, // 480
+			expectedInputThresh:  8 * 80, // 640
 			expectedOutputFrame:  8 * 20, // 160
 			expectedOutputThresh: 8 * 20, // 160
 		},
@@ -987,7 +987,7 @@ func TestDerivedThresholds_AllFormats(t *testing.T) {
 			cfg: &protos.AudioConfig{
 				SampleRate: 8000, AudioFormat: protos.AudioConfig_LINEAR16, Channels: 1,
 			},
-			expectedInputThresh:  16 * 60, // 960
+			expectedInputThresh:  16 * 80, // 1280
 			expectedOutputFrame:  16 * 20, // 320
 			expectedOutputThresh: 16 * 20, // 320
 		},
@@ -996,7 +996,7 @@ func TestDerivedThresholds_AllFormats(t *testing.T) {
 			cfg: &protos.AudioConfig{
 				SampleRate: 16000, AudioFormat: protos.AudioConfig_LINEAR16, Channels: 1,
 			},
-			expectedInputThresh:  32 * 60, // 1920
+			expectedInputThresh:  32 * 80, // 2560
 			expectedOutputFrame:  32 * 20, // 640
 			expectedOutputThresh: 32 * 20, // 640
 		},
@@ -1005,7 +1005,7 @@ func TestDerivedThresholds_AllFormats(t *testing.T) {
 			cfg: &protos.AudioConfig{
 				SampleRate: 48000, AudioFormat: protos.AudioConfig_LINEAR16, Channels: 1,
 			},
-			expectedInputThresh:  96 * 60, // 5760
+			expectedInputThresh:  96 * 80, // 7680
 			expectedOutputFrame:  96 * 20, // 1920
 			expectedOutputThresh: 96 * 20, // 1920
 		},

@@ -18,9 +18,9 @@ func MergeMaps(maps ...map[string]interface{}) Option {
 		for k, v := range m {
 			if nestedMap, ok := v.(map[string]interface{}); ok {
 				if existingNestedMap, exists := result[k].(map[string]interface{}); exists {
-					result[k] = MergeMaps(existingNestedMap, nestedMap)
+					result[k] = map[string]interface{}(MergeMaps(existingNestedMap, nestedMap))
 				} else {
-					result[k] = MergeMaps(nestedMap)
+					result[k] = map[string]interface{}(MergeMaps(nestedMap))
 				}
 			} else {
 				result[k] = v
