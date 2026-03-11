@@ -26,7 +26,7 @@ const ConfigSelect: FC<IConfigSelectProps> = ({
 }) => {
   const optionList = options.map((content, index) => {
     return {
-      id: `${index}-${content}`,
+      id: index,
       name: content,
     };
   });
@@ -62,7 +62,7 @@ const ConfigSelect: FC<IConfigSelectProps> = ({
               <Input
                 type="text"
                 value={option || ''}
-                className="h-10 border-none bg-transparent pl-0 pr-10"
+                className="h-10 border-none bg-transparent pl-0 pr-10 outline-none focus:outline-none"
                 placeholder={placeholder}
                 onChange={e => {
                   const value = e.target.value;
