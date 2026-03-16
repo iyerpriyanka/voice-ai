@@ -36,7 +36,6 @@ type googleOption struct {
 // NewGoogleOption initializes googleOption with provided credentials, audio configurations, and options.
 // Improves error handling and logging for better debugging and robustness.
 func NewGoogleOption(logger commons.Logger, vaultCredential *protos.VaultCredential, opts utils.Option) (*googleOption, error) {
-
 	co := make([]option.ClientOption, 0)
 	var projectID string
 	credentialsMap := vaultCredential.GetValue().AsMap()

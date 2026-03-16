@@ -84,8 +84,19 @@ func (google *googleSpeechToText) Transform(c context.Context, in internal_type.
 	}
 	google.mu.Unlock()
 
+	// If the stream was lost (e.g. Google timed out waiting for audio during
+	// slow boot), re-establish it transparently before sending audio.
 	if strm == nil {
-		return fmt.Errorf("google-stt: stream not initialized")
+		google.logger.Infof("google-stt: stream not available, re-initializing")
+		if err := google.Initialize(); err != nil {
+			return fmt.Errorf("google-stt: re-initialize failed: %w", err)
+		}
+		google.mu.Lock()
+		strm = google.stream
+		google.mu.Unlock()
+		if strm == nil {
+			return fmt.Errorf("google-stt: stream not initialized after re-initialize")
+		}
 	}
 
 	return strm.Send(&speechpb.StreamingRecognizeRequest{
@@ -111,6 +122,10 @@ func (g *googleSpeechToText) recvLoop(stream speechpb.Speech_StreamingRecognizeC
 				return
 			}
 			g.logger.Errorf("google-stt: recv error: %v", err)
+			// Mark stream as dead so Transform() can re-initialize on next audio packet.
+			g.mu.Lock()
+			g.stream = nil
+			g.mu.Unlock()
 			g.onPacket(internal_type.ConversationEventPacket{
 				Name: "stt",
 				Data: map[string]string{"type": "error", "error": err.Error()},
