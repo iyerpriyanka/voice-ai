@@ -101,7 +101,6 @@ func (elt *elevenlabsTTS) readLoop(conn *websocket.Conn) {
 			return
 		default:
 		}
-
 		_, audioChunk, err := conn.ReadMessage()
 		if err != nil {
 			elt.mu.Lock()
@@ -115,7 +114,6 @@ func (elt *elevenlabsTTS) readLoop(conn *websocket.Conn) {
 			}
 			return
 		}
-
 		var audioData elevenlabs_internal.ElevenlabTextToSpeechResponse
 		if err := json.Unmarshal(audioChunk, &audioData); err != nil {
 			elt.logger.Errorf("elevenlabs-tts: error parsing audio chunk: %v", err)

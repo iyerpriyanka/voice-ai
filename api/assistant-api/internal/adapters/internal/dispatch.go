@@ -425,7 +425,7 @@ func (talking *genericRequestor) handleSpeechToText(ctx context.Context, vl inte
 
 func (talking *genericRequestor) handleInterimEndOfSpeech(ctx context.Context, vl internal_type.InterimEndOfSpeechPacket) {
 	talking.Notify(ctx, &protos.ConversationUserMessage{
-		Id:        vl.ContextID,
+		Id:        talking.GetID(),
 		Message:   &protos.ConversationUserMessage_Text{Text: vl.Speech},
 		Completed: false,
 		Time:      timestamppb.New(time.Now()),
@@ -447,7 +447,6 @@ func (talking *genericRequestor) handleEndOfSpeech(ctx context.Context, vl inter
 		talking.logger.Tracef(ctx, "might be returning processing the duplicate message so cut it out.")
 		return
 	}
-
 	talking.OnPacket(ctx,
 		internal_type.SaveMessagePacket{ContextID: contextID, MessageRole: "user", Text: vl.Speech, Language: vl.Language},
 		internal_type.ExecuteLLMPacket{ContextID: contextID, Input: vl.Speech, Language: vl.Language})
@@ -460,8 +459,7 @@ func (talking *genericRequestor) handleEndOfSpeech(ctx context.Context, vl inter
 func (talking *genericRequestor) handleInterruption(ctx context.Context, vl internal_type.InterruptionPacket) {
 	switch vl.Source {
 	case internal_type.InterruptionSourceWord:
-		talking.resetIdleTimeoutTimer(ctx)
-
+		talking.stopIdleTimeoutTimer()
 		if err := talking.callEndOfSpeech(ctx, vl); err != nil {
 			talking.logger.Errorf("end of speech error: %v", err)
 		}
@@ -595,61 +593,44 @@ func (talking *genericRequestor) handleLLMError(ctx context.Context, vl internal
 // Static / system-injected handler
 // =============================================================================
 
-// handleStaticPacket speaks a pre-written message.
+// handleStaticPacket speaks a pre-written message (greeting, error, idle timeout).
 //
-// In text mode the text is sent to the client synchronously so that it
-// cannot be dropped by a contextID rotation from a fast-arriving user
-// message.  In audio mode the text flows through the text aggregator and
-// TTS pipeline in a goroutine (sentence splitting + synthesis).
+// Both modes follow the same state lifecycle: LLMGenerating → deliver →
+// LLMGenerated → start idle timer. This ensures the state machine is in
+// LLMGenerated after delivery so subsequent Transition(Interrupted) calls
+// (from onIdleTimeout or user interrupt) always succeed and rotate the
+// context ID.
+//
+// Text mode delivers synchronously; audio mode flows through the text
+// aggregator and TTS pipeline in a goroutine.
 func (talking *genericRequestor) handleStaticPacket(ctx context.Context, vl internal_type.StaticPacket) {
-	talking.startIdleTimeoutTimer(ctx)
 	talking.OnPacket(ctx, internal_type.SaveMessagePacket{ContextID: vl.ContextId(), MessageRole: vl.Role(), Text: vl.Content()})
 
-	// Text mode: deliver synchronously and do NOT transition to
-	// LLMGenerating/LLMGenerated. Static text is not real LLM activity,
-	// so the state machine should stay idle. This prevents the first
-	// user message from triggering an unnecessary word-interrupt (and
-	// contextID rotation) that would put greeting and response on
-	// different IDs.
-	if !talking.GetMode().Audio() {
-		if err := talking.assistantExecutor.Execute(ctx, talking, vl); err != nil {
-			talking.logger.Errorf("assistant executor error: %v", err)
-		}
-
-		if err := talking.Notify(ctx, &protos.ConversationAssistantMessage{
-			Time:      timestamppb.Now(),
-			Id:        vl.ContextId(),
-			Completed: true,
-			Message:   &protos.ConversationAssistantMessage_Text{Text: vl.Content()},
-		}); err != nil {
-			talking.logger.Tracef(ctx, "error sending static text: %v", err)
-		}
-		return
-	}
-
-	// Audio mode: set LLMGenerating so the interrupt cascade can cancel
-	// TTS playback if the user speaks over the greeting.
+	// Both text and audio modes follow the same state lifecycle:
+	// LLMGenerating → deliver → LLMGenerated → start idle timer.
+	// This ensures the state machine is in LLMGenerated after delivery,
+	// so the next Transition(Interrupted) from onIdleTimeout or user
+	// interrupt always succeeds and rotates the context ID.
 	if err := talking.Transition(LLMGenerating); err != nil {
 		talking.logger.Errorf("messaging transition error: %v", err)
 	}
 
-	utils.Go(ctx, func() {
-		if err := talking.assistantExecutor.Execute(ctx, talking, vl); err != nil {
-			talking.logger.Errorf("assistant executor error: %v", err)
-		}
+	if err := talking.assistantExecutor.Execute(ctx, talking, vl); err != nil {
+		talking.logger.Errorf("assistant executor error: %v", err)
+	}
 
-		if err := talking.callTextAggregator(ctx, internal_type.LLMResponseDeltaPacket{ContextID: vl.ContextId(), Text: vl.Text}); err != nil {
-			talking.OnPacket(ctx, internal_type.SpeakTextPacket{ContextID: vl.ContextId(), Text: vl.Text, IsFinal: false})
-		}
+	if err := talking.callTextAggregator(ctx, internal_type.LLMResponseDeltaPacket{ContextID: vl.ContextId(), Text: vl.Text}); err != nil {
+		talking.OnPacket(ctx, internal_type.SpeakTextPacket{ContextID: vl.ContextId(), Text: vl.Text, IsFinal: false})
+	}
 
-		if err := talking.Transition(LLMGenerated); err != nil {
-			talking.logger.Errorf("messaging transition error: %v", err)
-		}
+	if err := talking.callTextAggregator(ctx, internal_type.LLMResponseDonePacket{ContextID: vl.ContextId(), Text: vl.Text}); err != nil {
+		talking.OnPacket(ctx, internal_type.SpeakTextPacket{ContextID: vl.ContextId(), Text: vl.Text, IsFinal: true})
+	}
 
-		if err := talking.callTextAggregator(ctx, internal_type.LLMResponseDonePacket{ContextID: vl.ContextId(), Text: vl.Text}); err != nil {
-			talking.OnPacket(ctx, internal_type.SpeakTextPacket{ContextID: vl.ContextId(), Text: vl.Text, IsFinal: true})
-		}
-	})
+	if err := talking.Transition(LLMGenerated); err != nil {
+		talking.logger.Errorf("messaging transition error: %v", err)
+	}
+	talking.startIdleTimeoutTimer(ctx)
 }
 
 // =============================================================================
@@ -668,31 +649,17 @@ func (talking *genericRequestor) handleSpeakText(ctx context.Context, vl interna
 	}
 
 	if talking.textToSpeechTransformer != nil && talking.GetMode().Audio() {
-		var pkt internal_type.Packet
 		if vl.IsFinal {
-			pkt = internal_type.LLMResponseDonePacket{ContextID: vl.ContextID, Text: vl.Text}
+			if err := talking.textToSpeechTransformer.Transform(ctx, internal_type.LLMResponseDonePacket{ContextID: vl.ContextID, Text: vl.Text}); err != nil {
+				talking.logger.Errorf("speak: failed to send to TTS: %v", err)
+			}
 		} else {
-			pkt = internal_type.LLMResponseDeltaPacket{ContextID: vl.ContextID, Text: vl.Text}
-		}
-		if err := talking.textToSpeechTransformer.Transform(ctx, pkt); err != nil {
-			talking.logger.Errorf("speak: failed to send to TTS: %v", err)
-		}
-
-		// In audio mode, echo text deltas to client (done packets are silent — audio carries them)
-		if !vl.IsFinal {
-			if err := talking.Notify(ctx, &protos.ConversationAssistantMessage{
-				Time:      timestamppb.Now(),
-				Id:        vl.ContextID,
-				Completed: false,
-				Message:   &protos.ConversationAssistantMessage_Text{Text: vl.Text},
-			}); err != nil {
-				talking.logger.Tracef(ctx, "error while outputting chunk to the user: %w", err)
+			if err := talking.textToSpeechTransformer.Transform(ctx, internal_type.LLMResponseDeltaPacket{ContextID: vl.ContextID, Text: vl.Text}); err != nil {
+				talking.logger.Errorf("speak: failed to send to TTS: %v", err)
 			}
 		}
-		return
-	}
 
-	// Text mode or no TTS: notify client directly
+	}
 	if err := talking.Notify(ctx, &protos.ConversationAssistantMessage{
 		Time:      timestamppb.Now(),
 		Id:        vl.ContextID,

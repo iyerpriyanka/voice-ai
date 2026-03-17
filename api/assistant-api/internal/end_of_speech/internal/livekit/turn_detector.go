@@ -21,8 +21,9 @@ import (
 const (
 	turnDetectorName = "livekit_turn_detector"
 
-	envModelPathKey     = "LIVEKIT_TURN_MODEL_PATH"
-	envTokenizerPathKey = "LIVEKIT_TURN_TOKENIZER_PATH"
+	envModelPathKey      = "LIVEKIT_TURN_MODEL_PATH"
+	envModelMultiPathKey = "LIVEKIT_TURN_MULTI_MODEL_PATH"
+	envTokenizerPathKey  = "LIVEKIT_TURN_TOKENIZER_PATH"
 
 	defaultModelFileEn    = "models/model_q8.onnx"
 	defaultModelFileMulti = "models/model_q8_multilingual.onnx"
@@ -218,15 +219,18 @@ func resolveModelPath(configured string, multilingual bool) string {
 	if configured != "" {
 		return configured
 	}
+	if multilingual {
+		if envPath := os.Getenv(envModelMultiPathKey); envPath != "" {
+			return envPath
+		}
+		_, currentFile, _, _ := runtime.Caller(0)
+		return filepath.Join(filepath.Dir(currentFile), defaultModelFileMulti)
+	}
 	if envPath := os.Getenv(envModelPathKey); envPath != "" {
 		return envPath
 	}
-	defaultFile := defaultModelFileEn
-	if multilingual {
-		defaultFile = defaultModelFileMulti
-	}
 	_, currentFile, _, _ := runtime.Caller(0)
-	return filepath.Join(filepath.Dir(currentFile), defaultFile)
+	return filepath.Join(filepath.Dir(currentFile), defaultModelFileEn)
 }
 
 func resolveTokenizerPath(configured string) string {

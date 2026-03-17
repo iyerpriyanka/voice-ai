@@ -85,6 +85,7 @@ ENV LD_LIBRARY_PATH="/usr/local/lib:/opt/onnxruntime/lib:/opt/azure-speech-sdk/l
 ENV SILERO_MODEL_PATH="./models/silero_vad/silero_vad_20251001.onnx"
 ENV FIRERED_VAD_MODEL_PATH="./models/firered_vad/fireredvad_stream_vad_with_cache.onnx"
 ENV LIVEKIT_TURN_MODEL_PATH="./models/livekit_turn/model_q8.onnx"
+ENV LIVEKIT_TURN_MULTI_MODEL_PATH="./models/livekit_turn/model_q8_multilingual.onnx"
 ENV LIVEKIT_TURN_TOKENIZER_PATH="./models/livekit_turn/tokenizer.json"
 ENV PIPECAT_TURN_MODEL_PATH="./models/pipecat_turn/smart-turn-v3.2-cpu.onnx"
 

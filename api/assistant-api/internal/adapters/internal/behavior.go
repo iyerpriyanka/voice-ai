@@ -77,7 +77,7 @@ func (r *genericRequestor) initializeGreeting(ctx context.Context, behavior *int
 		return
 	}
 
-	r.Transition(Interrupted)
+	// r.Transition(Interrupted)
 	if err := r.OnPacket(ctx,
 		internal_type.StaticPacket{ContextID: r.GetID(), Text: greetingContent},
 		internal_type.ConversationEventPacket{
