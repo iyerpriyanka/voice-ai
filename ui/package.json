@@ -80,8 +80,6 @@
         "@floating-ui/react": "0.26.9",
         "@formatjs/intl-localematcher": "0.5.4",
         "@grpc/proto-loader": "0.7.13",
-        "@headlessui-float/react": "0.13.2",
-        "@headlessui/react": "2.1",
         "@improbable-eng/grpc-web": "0.15.0",
         "@material-tailwind/react": "2.1.8",
         "@monaco-editor/react": "4.6.0",
