@@ -10,7 +10,7 @@ import { ManualFile } from '@/app/pages/knowledge-base/action/components/datasou
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { ErrorMessage } from '@/app/components/ui/error-message';
 import { RapidaDocumentType } from '@/utils/rapida_document';
-import { ArrowLeft, UploadIcon } from 'lucide-react';
+import { ArrowLeft } from '@carbon/icons-react';
 import { Select } from '@/app/components/ui/select';
 import { Helmet } from '@/app/components/app-shell/helmet';
 import { FormLabel } from '@/app/components/ui/form-label';
@@ -84,7 +84,7 @@ export function CreateKnowledgeStructureDocumentPage() {
           className="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary transition-colors"
           onClick={goBack}
         >
-          <ArrowLeft className="w-4 h-4" strokeWidth={1.5} />
+          <ArrowLeft className="w-4 h-4" />
           Back to knowledge
         </button>
       </div>
