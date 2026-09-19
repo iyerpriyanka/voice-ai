@@ -250,6 +250,24 @@ jest.mock('@/app/components/dialogs/configure-assistant-template-modal', () => (
   ConfigureAssistantTemplateDialog: () => null,
 }));
 
+jest.mock('@carbon/icons-react', () => {
+  const actual = jest.requireActual('@carbon/icons-react');
+  return {
+    ...actual,
+    ArrowUpRight: ({ className, size, strokeWidth }: any) => (
+      <svg
+        className={className}
+        data-size={size}
+        data-stroke-width={strokeWidth}
+        data-testid="arrow-up-right-icon"
+      />
+    ),
+    Information: ({ size }: any) => (
+      <svg data-size={size} data-testid="information-icon" />
+    ),
+  };
+});
+
 jest.mock('@/app/components/layout/container/message/notice-block', () => ({
   YellowNoticeBlock: () => null,
 }));
@@ -346,6 +364,19 @@ describe('Requested create/update flow pages', () => {
         'Please provide a valid prompt template, it should at least have one variable.',
       ),
     ).toBeInTheDocument();
+  });
+
+  it('create endpoint renders the template action with a Carbon icon', () => {
+    render(<CreateEndpointPage />);
+
+    expect(screen.getByText('Usecase Template')).toBeInTheDocument();
+    expect(screen.getByTestId('arrow-up-right-icon')).toHaveAttribute(
+      'data-size',
+      '16',
+    );
+    expect(screen.getByTestId('arrow-up-right-icon')).not.toHaveAttribute(
+      'data-stroke-width',
+    );
   });
 
   it('create endpoint moves to define step after prompt variable edit', () => {

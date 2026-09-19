@@ -15,7 +15,7 @@ import {
   ToggletipButton,
   ToggletipContent,
 } from '@carbon/react';
-import { Information } from '@carbon/icons-react';
+import { ArrowUpRight, Information } from '@carbon/icons-react';
 import { TabForm } from '@/app/components/ui/tab-form';
 import {
   ConnectionConfig,
@@ -46,7 +46,6 @@ import { ChatCompletePrompt } from '@/utils/prompt';
 import { connectionConfig } from '@/configs';
 import { YellowNoticeBlock } from '@/app/components/layout/container/message/notice-block';
 import { InputHelper } from '@/app/components/ui/input-helper';
-import { ArrowUpRight } from 'lucide-react';
 import { ConfigureEndpointPromptDialog } from '@/app/components/dialogs/configure-endpoint-prompt-modal';
 import { CornerBorderOverlay } from '@/app/components/ui/corner-border';
 
@@ -340,7 +339,6 @@ export function CreateEndpointPage() {
                     </div>
                     <ArrowUpRight
                       className="shrink-0 mt-0.5 text-gray-500 dark:text-gray-400 group-hover:text-primary transition-colors"
-                      strokeWidth={1.5}
                       size={16}
                     />
                   </button>
