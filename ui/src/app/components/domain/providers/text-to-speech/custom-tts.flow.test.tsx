@@ -8,7 +8,7 @@ import {
   ValidateTextToSpeechIfInvalid,
 } from './provider';
 
-jest.mock('@/app/components/ui/json-editor', () => ({
+jest.mock('@/app/components/ui/editor/json-editor', () => ({
   JsonEditor: ({ value, onChange, placeholder }: any) => (
     <textarea
       value={value ?? ''}
@@ -18,7 +18,7 @@ jest.mock('@/app/components/ui/json-editor', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   PrimaryButton: ({ children, ...props }: any) => (
     <button {...props}>{children}</button>
   ),
@@ -30,7 +30,7 @@ jest.mock('@/app/components/ui/button', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/form', () => ({
+jest.mock('@/app/components/ui/primitives/form', () => ({
   Stack: ({ children }: any) => <div>{children}</div>,
   TextInput: ({ id, labelText, value, onChange, placeholder, type }: any) => (
     <div>

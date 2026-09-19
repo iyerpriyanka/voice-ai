@@ -1,11 +1,11 @@
 import React from 'react';
-import { TextImage } from '@/app/components/ui/text-image';
+import { TextImage } from '@/app/components/ui/primitives/text-image';
 import { User } from '@rapidaai/react';
 import { OrganizationRoleIndicator } from '@/app/components/domain/indicators/organization-role';
 import { toHumanReadableDate } from '@/utils/date';
 import { RadioButton, TableRow, TableCell } from '@carbon/react';
-import { CarbonIconIndicator } from '@/app/components/ui/icon-indicator';
-import { CopyButton } from '@/app/components/ui/buttons/copy-button';
+import { CarbonIconIndicator } from '@/app/components/ui/feedback/icon-indicator';
+import { CopyButton } from '@/app/components/ui/primitives/buttons/copy-button';
 
 export function SingleUser(props: {
   user: User;

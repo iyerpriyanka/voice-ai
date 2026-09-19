@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 
 import { TablePagination } from './table-pagination';
 
-jest.mock('@/app/components/ui/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   IconOnlyButton: ({
     iconDescription,
     kind,
@@ -23,7 +23,7 @@ jest.mock('@/app/components/ui/button', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/pagination', () => ({
+jest.mock('@/app/components/ui/primitives/pagination', () => ({
   Pagination: ({
     backwardText,
     className,

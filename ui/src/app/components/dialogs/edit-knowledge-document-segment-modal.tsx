@@ -7,11 +7,11 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-} from '@/app/components/ui/modal';
-import { FormLabel } from '@/app/components/ui/form-label';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
-import { FieldSet } from '@/app/components/ui/fieldset';
-import { Input } from '@/app/components/ui/input';
+} from '@/app/components/ui/primitives/modal';
+import { FormLabel } from '@/app/components/ui/primitives/form-label';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
+import { FieldSet } from '@/app/components/ui/primitives/fieldset';
+import { Input } from '@/app/components/ui/primitives/input';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { Checkmark } from '@carbon/icons-react';
 import { FC, useState } from 'react';

@@ -1,4 +1,4 @@
-import { BaseCard, CardDescription, CardTitle } from '@/app/components/ui/card';
+import { BaseCard, CardDescription, CardTitle } from '@/app/components/ui/primitives/card';
 import { useAllProviderCredentials } from '@/hooks/use-model';
 import { cn } from '@/utils';
 import { FC, HTMLAttributes, memo, useEffect, useState } from 'react';
@@ -10,8 +10,8 @@ import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import {
   OverflowMenu,
   OverflowMenuItem,
-} from '@/app/components/ui/overflow-menu';
-import { PrimaryButton, GhostButton } from '@/app/components/ui/button';
+} from '@/app/components/ui/primitives/overflow-menu';
+import { PrimaryButton, GhostButton } from '@/app/components/ui/primitives/button';
 import IconIndicator from '@carbon/react/es/components/IconIndicator';
 
 interface ProviderCardProps extends HTMLAttributes<HTMLDivElement> {

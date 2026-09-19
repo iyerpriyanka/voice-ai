@@ -17,7 +17,7 @@ import {
   ToggletipButton,
   ToggletipContent,
 } from '@carbon/react';
-import { FormLabel } from '@/app/components/ui/form-label';
+import { FormLabel } from '@/app/components/ui/primitives/form-label';
 import { Information } from '@carbon/icons-react';
 
 export const GetDefaultTextProviderConfigIfInvalid = (

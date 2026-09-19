@@ -1,6 +1,6 @@
 import { Helmet } from '@/app/components/app-shell/helmet';
-import { EmptyState } from '@/app/components/ui/empty-state';
-import { IconOnlyButton } from '@/app/components/ui/button';
+import { EmptyState } from '@/app/components/ui/feedback/empty-state';
+import { IconOnlyButton } from '@/app/components/ui/primitives/button';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import {
@@ -47,11 +47,11 @@ import {
   AssistantDeploymentVersionsModal,
 } from '@/app/components/dialogs/assistant-deployment-versions-modal';
 import SourceIndicator from '@/app/components/domain/indicators/source';
-import { RecordStatusIndicator } from '@/app/components/ui/record-status-indicator';
+import { RecordStatusIndicator } from '@/app/components/ui/feedback/record-status-indicator';
 import {
   OverflowMenu,
   OverflowMenuItem,
-} from '@/app/components/ui/overflow-menu';
+} from '@/app/components/ui/primitives/overflow-menu';
 import {
   Breadcrumb,
   BreadcrumbItem,

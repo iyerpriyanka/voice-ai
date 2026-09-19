@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 import { Metadata } from '@rapidaai/react';
 import { ConfigureTransferCall } from './transfer-call';
 
-jest.mock('@/app/components/ui/form', () => {
+jest.mock('@/app/components/ui/primitives/form', () => {
   const React = require('react');
   return {
     FormGroup: ({ legendText, children }: any) =>
@@ -81,7 +81,7 @@ jest.mock('@carbon/react', () => {
   };
 });
 
-jest.mock('@/app/components/ui/input-group', () => {
+jest.mock('@/app/components/ui/primitives/input-group', () => {
   const React = require('react');
   return {
     InputGroup: ({ title, children }: any) =>

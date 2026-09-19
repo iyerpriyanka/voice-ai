@@ -5,15 +5,15 @@ import { toHumanReadableDateTime } from '@/utils/date';
 import { Add, ObjectStorage, Renew } from '@carbon/icons-react';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/hooks';
-import { SectionLoader } from '@/app/components/ui/loaders/section-loader';
+import { SectionLoader } from '@/app/components/ui/feedback/loaders/section-loader';
 import toast from 'react-hot-toast/headless';
-import { EmptyState } from '@/app/components/ui/empty-state';
+import { EmptyState } from '@/app/components/ui/feedback/empty-state';
 import { CreateAssistantStorage } from './create-assistant-storage';
 import { UpdateAssistantStorage } from './update-assistant-storage';
 import { useAssistantStoragePageStore } from '@/app/pages/assistant/actions/store/use-storage-page-store';
 import { STORAGE_PROVIDER } from '@/providers';
-import { IconOnlyButton, PrimaryButton } from '@/app/components/ui/button';
-import { RecordStatusIndicator } from '@/app/components/ui/record-status-indicator';
+import { IconOnlyButton, PrimaryButton } from '@/app/components/ui/primitives/button';
+import { RecordStatusIndicator } from '@/app/components/ui/feedback/record-status-indicator';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -36,7 +36,7 @@ import {
   Tag,
 } from '@carbon/react';
 import { AssistantConfiguration, Metadata } from '@rapidaai/react';
-import { Pagination } from '@/app/components/ui/pagination';
+import { Pagination } from '@/app/components/ui/primitives/pagination';
 import {
   ScrollableTableSection,
   TableSection,

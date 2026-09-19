@@ -63,7 +63,7 @@ jest.mock('@carbon/react', () => {
 });
 
 // Mock form wrapper components.
-jest.mock('@/app/components/ui/form', () => {
+jest.mock('@/app/components/ui/primitives/form', () => {
   const React = require('react');
   return {
     TextInput: ({
@@ -140,7 +140,7 @@ jest.mock('@/app/components/domain/dropdowns/knowledge-dropdown', () => {
   };
 });
 
-jest.mock('@/app/components/ui/checkbox-card', () => {
+jest.mock('@/app/components/ui/primitives/checkbox-card', () => {
   const R = require('react');
   return {
     __esModule: true,
@@ -153,7 +153,7 @@ jest.mock('@/app/components/ui/checkbox-card', () => {
   };
 });
 
-jest.mock('@/app/components/ui/card', () => {
+jest.mock('@/app/components/ui/primitives/card', () => {
   const R = require('react');
   return {
     Card: ({ children, className }: any) =>
@@ -161,7 +161,7 @@ jest.mock('@/app/components/ui/card', () => {
   };
 });
 
-jest.mock('@/app/components/ui/slider', () => {
+jest.mock('@/app/components/ui/primitives/slider', () => {
   const R = require('react');
   return {
     Slider: ({ value, onSlide }: any) =>
@@ -174,7 +174,7 @@ jest.mock('@/app/components/ui/slider', () => {
   };
 });
 
-jest.mock('@/app/components/ui/tooltip', () => {
+jest.mock('@/app/components/ui/primitives/tooltip', () => {
   const R = require('react');
   return {
     Tooltip: ({ children }: any) => R.createElement('span', null, children),

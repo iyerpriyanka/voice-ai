@@ -1,11 +1,11 @@
 import { FC } from 'react';
 import { Select, SelectItem } from '@carbon/react';
-import { TextInput, TextArea, Stack } from '@/app/components/ui/form';
+import { TextInput, TextArea, Stack } from '@/app/components/ui/primitives/form';
 import { ConfigureToolProps, useParameterManager } from './common';
 import { BlueNoticeBlock } from '@/app/components/layout/container/message/notice-block';
 import { APiStringHeader } from '@/app/components/domain/external-api/api-header';
 import { MCP_PROTOCOL_OPTIONS } from './mcp/constant';
-import { InputGroup } from '@/app/components/ui/input-group';
+import { InputGroup } from '@/app/components/ui/primitives/input-group';
 
 // ============================================================================
 // Main Component

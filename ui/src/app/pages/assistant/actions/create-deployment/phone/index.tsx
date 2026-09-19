@@ -42,12 +42,12 @@ import {
   ValidateTelephonyOptions,
 } from '@/app/components/domain/providers/telephony';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
-import { TabForm } from '@/app/components/ui/tab-form';
+import { TabForm } from '@/app/components/ui/composites/tab-form';
 import {
   PrimaryButton,
   SecondaryButton,
   GhostButton,
-} from '@/app/components/ui/button';
+} from '@/app/components/ui/primitives/button';
 import { ButtonSet } from '@carbon/react';
 
 const STEPS = [

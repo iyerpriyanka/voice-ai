@@ -93,11 +93,11 @@ jest.mock('@/app/components/dialogs/endpoint-trace-modal', () => ({
     modalOpen ? <section>endpoint-log-modal</section> : null,
 }));
 
-jest.mock('@/app/components/ui/date-filter', () => ({
+jest.mock('@/app/components/ui/composites/date-filter', () => ({
   DateFilter: () => <div>date-filter</div>,
 }));
 
-jest.mock('@/app/components/ui/status-indicator', () => ({
+jest.mock('@/app/components/ui/feedback/status-indicator', () => ({
   CarbonStatusIndicator: ({ state }: any) => <span>Status {state}</span>,
 }));
 
@@ -105,15 +105,15 @@ jest.mock('@/app/components/domain/indicators/source', () => ({
   SourceIndicator: ({ source }: any) => <span>Source {source}</span>,
 }));
 
-jest.mock('@/app/components/ui/pagination', () => ({
+jest.mock('@/app/components/ui/primitives/pagination', () => ({
   Pagination: () => <div>pagination</div>,
 }));
 
-jest.mock('@/app/components/ui/empty-state', () => ({
+jest.mock('@/app/components/ui/feedback/empty-state', () => ({
   EmptyState: ({ title }: any) => <div>{title}</div>,
 }));
 
-jest.mock('@/app/components/ui/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   IconOnlyButton: ({ iconDescription, onClick }: any) => (
     <button type="button" aria-label={iconDescription} onClick={onClick}>
       {iconDescription}
@@ -121,7 +121,7 @@ jest.mock('@/app/components/ui/button', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/buttons/copy-button', () => ({
+jest.mock('@/app/components/ui/primitives/buttons/copy-button', () => ({
   CopyButton: ({ children }: any) => (
     <button type="button">Copy {children}</button>
   ),

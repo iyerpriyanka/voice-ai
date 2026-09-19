@@ -1,5 +1,5 @@
 import { Metadata } from '@rapidaai/react';
-import { Dropdown } from '@/app/components/ui/listbox-dropdown';
+import { Dropdown } from '@/app/components/ui/primitives/listbox-dropdown';
 import { OPENAI_EMBEDDING_MODEL } from '@/app/components/domain/providers/embedding/openai/constants';
 
 export const ConfigureOpenaiEmbeddingModel: React.FC<{

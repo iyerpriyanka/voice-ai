@@ -1,5 +1,5 @@
-import { IconOnlyButton } from '@/app/components/ui/button';
-import { ModalHeader, ModalProps } from '@/app/components/ui/modal';
+import { IconOnlyButton } from '@/app/components/ui/primitives/button';
+import { ModalHeader, ModalProps } from '@/app/components/ui/primitives/modal';
 import type { FC, HTMLAttributes, ReactNode } from 'react';
 import useMeasure from 'react-use-measure';
 import {

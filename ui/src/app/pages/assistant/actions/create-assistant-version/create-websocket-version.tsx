@@ -3,10 +3,10 @@ import { useRapidaStore } from '@/hooks';
 import { useCredential } from '@/hooks/use-credential';
 import { useParams } from 'react-router-dom';
 import { Helmet } from '@/app/components/app-shell/helmet';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
 import { ButtonSet } from '@carbon/react';
-import { TabForm } from '@/app/components/ui/tab-form';
-import { FieldSet } from '@/app/components/ui/fieldset';
+import { TabForm } from '@/app/components/ui/composites/tab-form';
+import { FieldSet } from '@/app/components/ui/primitives/fieldset';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import {
@@ -15,13 +15,13 @@ import {
   GetAssistantProviderResponse,
   GetAssistantRequest,
 } from '@rapidaai/react';
-import { FormLabel } from '@/app/components/ui/form-label';
-import { Textarea } from '@/app/components/ui/textarea';
-import { ErrorContainer } from '@/app/components/ui/error-container';
+import { FormLabel } from '@/app/components/ui/primitives/form-label';
+import { Textarea } from '@/app/components/ui/primitives/textarea';
+import { ErrorContainer } from '@/app/components/ui/feedback/error-container';
 import { CreateAssistantProvider, GetAssistant } from '@rapidaai/react';
 import { connectionConfig } from '@/configs';
 import { DocNoticeBlock } from '@/app/components/layout/container/message/notice-block/doc-notice-block';
-import { Input } from '@/app/components/ui/input';
+import { Input } from '@/app/components/ui/primitives/input';
 import { APiParameter } from '@/app/components/domain/external-api/api-parameter';
 
 export function CreateWebsocketVersion() {

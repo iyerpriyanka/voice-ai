@@ -4,9 +4,9 @@ import { CreateProjectResponse } from '@rapidaai/react';
 import { useForm } from 'react-hook-form';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/hooks';
-import { ErrorMessage } from '@/app/components/ui/error-message';
+import { ErrorMessage } from '@/app/components/ui/feedback/error-message';
 import toast from 'react-hot-toast/headless';
-import { ModalProps } from '@/app/components/ui/modal';
+import { ModalProps } from '@/app/components/ui/primitives/modal';
 import { ServiceError } from '@rapidaai/react';
 import { AuthContext } from '@/context/auth-context';
 import {
@@ -14,9 +14,9 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-} from '@/app/components/ui/modal';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
-import { Form, Stack, TextInput, TextArea } from '@/app/components/ui/form';
+} from '@/app/components/ui/primitives/modal';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
+import { Form, Stack, TextInput, TextArea } from '@/app/components/ui/primitives/form';
 import { connectionConfig } from '@/configs';
 
 interface CreateProjectDialogProps extends ModalProps {

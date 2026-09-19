@@ -62,7 +62,7 @@ jest.mock('@/app/components/layout/wrapper/blured-wrapper', () => ({
   BluredWrapper: ({ children }: any) => <div>{children}</div>,
 }));
 
-jest.mock('@/app/components/ui/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   GhostButton: ({
     children,
     hasIconOnly,
@@ -83,7 +83,7 @@ jest.mock('@/app/components/ui/button', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/empty-state', () => ({
+jest.mock('@/app/components/ui/feedback/empty-state', () => ({
   EmptyState: ({ action, onAction, title }: any) => (
     <section>
       <h2>{title}</h2>
@@ -96,11 +96,11 @@ jest.mock('@/app/components/ui/empty-state', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/icon-input', () => ({
+jest.mock('@/app/components/ui/composites/icon-input', () => ({
   SearchIconInput: () => <input aria-label="Search" type="search" />,
 }));
 
-jest.mock('@/app/components/ui/loading', () => ({
+jest.mock('@/app/components/ui/feedback/loading', () => ({
   PageLoading: () => <div data-testid="page-loading" />,
 }));
 

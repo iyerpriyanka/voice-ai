@@ -6,10 +6,10 @@ import { useNavigate } from 'react-router-dom';
 import { TableRow, TableCell, Tag, Link } from '@carbon/react';
 import { ProviderTag } from '@/app/components/domain/provider-tag';
 import { Launch, View, SourceControl } from '@carbon/icons-react';
-import { RecordStatusIndicator } from '@/app/components/ui/record-status-indicator';
+import { RecordStatusIndicator } from '@/app/components/ui/feedback/record-status-indicator';
 import { VersionIndicator } from '@/app/components/domain/indicators/version';
-import { IconOnlyButton } from '@/app/components/ui/button';
-import { CopyButton } from '@/app/components/ui/buttons/copy-button';
+import { IconOnlyButton } from '@/app/components/ui/primitives/button';
+import { CopyButton } from '@/app/components/ui/primitives/buttons/copy-button';
 import { cn } from '@/utils';
 import { auditActorLabel, createdAuditActor } from '@/utils/audit-actor';
 

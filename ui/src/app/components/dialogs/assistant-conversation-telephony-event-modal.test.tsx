@@ -21,7 +21,7 @@ jest.mock('@carbon/icons-react', () => ({
   ChevronRight: () => <svg data-testid="chevron-right" />,
 }));
 
-jest.mock('@/app/components/ui/code-highlighting', () => ({
+jest.mock('@/app/components/ui/editor/code-highlighting', () => ({
   CodeHighlighting: ({ language, code }: any) => (
     <div data-testid="payload" data-language={language}>
       {code}

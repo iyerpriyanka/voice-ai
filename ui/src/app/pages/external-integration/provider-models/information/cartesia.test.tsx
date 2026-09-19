@@ -37,7 +37,7 @@ jest.mock('@/app/components/layout/wrapper/blured-wrapper', () => ({
   BluredWrapper: ({ children }: any) => <div>{children}</div>,
 }));
 
-jest.mock('@/app/components/ui/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   GhostButton: ({ children, ...props }: React.ComponentProps<'button'>) => (
     <button type="button" {...props}>
       {children}
@@ -50,7 +50,7 @@ jest.mock('@/app/components/ui/button', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/icon-input', () => ({
+jest.mock('@/app/components/ui/composites/icon-input', () => ({
   SearchIconInput: ({ onChange }: any) => (
     <input
       aria-label="Search"
@@ -60,7 +60,7 @@ jest.mock('@/app/components/ui/icon-input', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/tooltip', () => ({
+jest.mock('@/app/components/ui/primitives/tooltip', () => ({
   Tooltip: ({ children, icon }: any) => (
     <span>
       {icon}

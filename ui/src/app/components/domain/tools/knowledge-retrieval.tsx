@@ -8,7 +8,7 @@ import {
   Search,
 } from '@carbon/icons-react';
 import { cn } from '@/utils';
-import { CornerBorderOverlay } from '@/app/components/ui/corner-border';
+import { CornerBorderOverlay } from '@/app/components/ui/primitives/corner-border';
 import { KnowledgeDropdown } from '@/app/components/domain/dropdowns/knowledge-dropdown';
 import { SelectableTile, Slider } from '@carbon/react';
 import { Tooltip } from '@carbon/react';
@@ -18,8 +18,8 @@ import {
   ToolDefinitionForm,
   useParameterManager,
 } from './common';
-import { Stack } from '@/app/components/ui/form';
-import { InputGroup } from '@/app/components/ui/input-group';
+import { Stack } from '@/app/components/ui/primitives/form';
+import { InputGroup } from '@/app/components/ui/primitives/input-group';
 
 // ============================================================================
 // Constants

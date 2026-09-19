@@ -117,7 +117,7 @@ jest.mock('@/app/components/domain/providers/telemetry', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   PrimaryButton: ({ children, isLoading: _, ...props }: any) => (
     <button {...props}>{children}</button>
   ),
@@ -126,15 +126,15 @@ jest.mock('@/app/components/ui/button', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/form', () => ({
+jest.mock('@/app/components/ui/primitives/form', () => ({
   Stack: ({ children }: any) => <div>{children}</div>,
 }));
 
-jest.mock('@/app/components/ui/notification', () => ({
+jest.mock('@/app/components/ui/feedback/notification', () => ({
   Notification: ({ subtitle }: any) => <div>{subtitle}</div>,
 }));
 
-jest.mock('@/app/components/ui/input-group', () => ({
+jest.mock('@/app/components/ui/primitives/input-group', () => ({
   InputGroup: ({ children }: any) => <div>{children}</div>,
 }));
 

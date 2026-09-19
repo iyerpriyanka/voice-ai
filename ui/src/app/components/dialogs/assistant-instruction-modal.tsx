@@ -1,14 +1,14 @@
-import { ModalProps } from '@/app/components/ui/modal';
+import { ModalProps } from '@/app/components/ui/primitives/modal';
 import {
   Modal,
   ModalHeader,
   ModalBody,
   ModalFooter,
-} from '@/app/components/ui/modal';
+} from '@/app/components/ui/primitives/modal';
 import { Launch } from '@carbon/icons-react';
 import { FC, HTMLAttributes, memo } from 'react';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
-import { CodeHighlighting } from '@/app/components/ui/code-highlighting';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
+import { CodeHighlighting } from '@/app/components/ui/editor/code-highlighting';
 import { DeploymentSectionHeader } from '@/app/components/dialogs/deployment-modal-primitives';
 import { useDocumentationUrl } from '@/theme/documentation-url';
 

@@ -15,14 +15,14 @@ jest.mock('@/configs', () => ({
   },
 }));
 
-jest.mock('@/app/components/ui/modal', () => ({
+jest.mock('@/app/components/ui/primitives/modal', () => ({
   Modal: ({ open, children }: any) => (open ? <div>{children}</div> : null),
   ModalHeader: ({ title }: any) => <div>{title}</div>,
   ModalBody: ({ children }: any) => <div>{children}</div>,
   ModalFooter: ({ children }: any) => <div>{children}</div>,
 }));
 
-jest.mock('@/app/components/ui/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   PrimaryButton: ({ children, ...props }: any) => (
     <button {...props}>{children}</button>
   ),
@@ -31,7 +31,7 @@ jest.mock('@/app/components/ui/button', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/notification', () => ({
+jest.mock('@/app/components/ui/feedback/notification', () => ({
   Notification: ({ subtitle }: any) => <div>{subtitle}</div>,
 }));
 

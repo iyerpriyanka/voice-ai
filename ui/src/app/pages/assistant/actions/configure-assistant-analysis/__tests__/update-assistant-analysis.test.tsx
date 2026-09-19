@@ -154,7 +154,7 @@ jest.mock('@/app/components/domain/dropdowns/endpoint-dropdown', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/tab-form', () => ({
+jest.mock('@/app/components/ui/composites/tab-form', () => ({
   TabForm: ({ form, activeTab, errorMessage, formHeading }: any) => {
     const React = require('react');
     const active = form.find((f: any) => f.code === activeTab) || form[0];
@@ -175,7 +175,7 @@ jest.mock('@/app/components/ui/tab-form', () => ({
   },
 }));
 
-jest.mock('@/app/components/ui/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   TertiaryButton: ({ children, ...props }: any) => (
     <button {...props}>{children}</button>
   ),
@@ -184,7 +184,7 @@ jest.mock('@/app/components/ui/button', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   PrimaryButton: ({ children, renderIcon: _renderIcon, ...props }: any) => (
     <button {...props}>{children}</button>
   ),
@@ -196,7 +196,7 @@ jest.mock('@/app/components/ui/button', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/form', () => ({
+jest.mock('@/app/components/ui/primitives/form', () => ({
   Stack: ({ children }: any) => <div>{children}</div>,
   TextInput: ({
     id,
@@ -279,19 +279,19 @@ jest.mock('@carbon/react', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/fieldset', () => ({
+jest.mock('@/app/components/ui/primitives/fieldset', () => ({
   FieldSet: ({ children }: any) => <div>{children}</div>,
 }));
 
-jest.mock('@/app/components/ui/form-label', () => ({
+jest.mock('@/app/components/ui/primitives/form-label', () => ({
   FormLabel: ({ children }: any) => <label>{children}</label>,
 }));
 
-jest.mock('@/app/components/ui/input', () => ({
+jest.mock('@/app/components/ui/primitives/input', () => ({
   Input: ({ ...props }: any) => <input {...props} />,
 }));
 
-jest.mock('@/app/components/ui/select', () => ({
+jest.mock('@/app/components/ui/primitives/select', () => ({
   Select: ({ options = [], value, onChange }: any) => (
     <select value={value} onChange={onChange}>
       {options.map((o: any) => (
@@ -303,11 +303,11 @@ jest.mock('@/app/components/ui/select', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/textarea', () => ({
+jest.mock('@/app/components/ui/primitives/textarea', () => ({
   Textarea: ({ ...props }: any) => <textarea {...props} />,
 }));
 
-jest.mock('@/app/components/ui/input-helper', () => ({
+jest.mock('@/app/components/ui/primitives/input-helper', () => ({
   InputHelper: ({ children }: any) => <span>{children}</span>,
 }));
 

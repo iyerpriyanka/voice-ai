@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import React, { useState } from 'react';
 import { Modal } from '@carbon/react';
-import { TextInput } from '@/app/components/ui/form';
+import { TextInput } from '@/app/components/ui/primitives/form';
 
 type ConfirmDeleteDialogProps = {
   showing: boolean;

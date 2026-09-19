@@ -1,10 +1,10 @@
 import { PageActionButtonBlock } from '@/app/components/layout/blocks/page-action-button-block';
 import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
 import { PageTitleBlock } from '@/app/components/layout/blocks/page-title-block';
-import { PrimaryButton, GhostButton } from '@/app/components/ui/button';
-import { Select } from '@/app/components/ui/select';
-import { Slider } from '@/app/components/ui/slider';
-import { InputGroup } from '@/app/components/ui/input-group';
+import { PrimaryButton, GhostButton } from '@/app/components/ui/primitives/button';
+import { Select } from '@/app/components/ui/primitives/select';
+import { Slider } from '@/app/components/ui/primitives/slider';
+import { InputGroup } from '@/app/components/ui/primitives/input-group';
 
 const harmfulCategories = [
   {

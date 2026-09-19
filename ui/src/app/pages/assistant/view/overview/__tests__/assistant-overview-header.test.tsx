@@ -20,11 +20,11 @@ jest.mock('@/hooks/use-global-navigator', () => ({
   }),
 }));
 
-jest.mock('@/app/components/ui/loaders/section-loader', () => ({
+jest.mock('@/app/components/ui/feedback/loaders/section-loader', () => ({
   SectionLoader: () => <div>Loading section</div>,
 }));
 
-jest.mock('@/app/components/ui/notification', () => ({
+jest.mock('@/app/components/ui/feedback/notification', () => ({
   LinkNotification: ({ title }: any) => <div>{title}</div>,
 }));
 

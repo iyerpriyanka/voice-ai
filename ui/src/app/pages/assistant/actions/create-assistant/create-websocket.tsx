@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Helmet } from '@/app/components/app-shell/helmet';
 import { useRapidaStore } from '@/hooks';
-import { TabForm } from '@/app/components/ui/tab-form';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
+import { TabForm } from '@/app/components/ui/composites/tab-form';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
 import { ButtonSet } from '@carbon/react';
 import {
   Assistant,
@@ -15,11 +15,11 @@ import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confir
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { randomMeaningfullName } from '@/utils';
-import { FieldSet } from '@/app/components/ui/fieldset';
-import { FormLabel } from '@/app/components/ui/form-label';
-import { Input } from '@/app/components/ui/input';
-import { Textarea } from '@/app/components/ui/textarea';
-import { TagInput } from '@/app/components/ui/tag-input';
+import { FieldSet } from '@/app/components/ui/primitives/fieldset';
+import { FormLabel } from '@/app/components/ui/primitives/form-label';
+import { Input } from '@/app/components/ui/primitives/input';
+import { Textarea } from '@/app/components/ui/primitives/textarea';
+import { TagInput } from '@/app/components/ui/composites/tag-input';
 import { AssistantTag } from '@/app/components/domain/tags/assistant-tags';
 import {
   ChevronRight,

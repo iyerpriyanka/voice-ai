@@ -2,13 +2,13 @@ import {
   PrimaryButton,
   GhostButton,
   IconOnlyButton,
-} from '@/app/components/ui/button';
-import { Dropdown } from '@/app/components/ui/dropdown';
-import { Form, Stack, TextInput } from '@/app/components/ui/form';
+} from '@/app/components/ui/primitives/button';
+import { Dropdown } from '@/app/components/ui/primitives/dropdown';
+import { Form, Stack, TextInput } from '@/app/components/ui/primitives/form';
 import { ArrowLeft, PhoneOutgoing } from '@carbon/icons-react';
-import { Notification } from '@/app/components/ui/notification';
-import { Tabs } from '@/app/components/ui/tabs';
-import { Text } from '@/app/components/ui/text';
+import { Notification } from '@/app/components/ui/feedback/notification';
+import { Tabs } from '@/app/components/ui/primitives/tabs';
+import { Text } from '@/app/components/ui/primitives/text';
 import {
   ArgumentList,
   ConfigEmpty,

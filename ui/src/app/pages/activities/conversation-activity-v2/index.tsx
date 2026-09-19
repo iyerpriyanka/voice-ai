@@ -33,10 +33,10 @@ import {
 } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
 import { Helmet } from '@/app/components/app-shell/helmet';
-import { EmptyState } from '@/app/components/ui/empty-state';
-import { Pagination } from '@/app/components/ui/pagination';
+import { EmptyState } from '@/app/components/ui/feedback/empty-state';
+import { Pagination } from '@/app/components/ui/primitives/pagination';
 import { ScrollableTableSection } from '@/app/components/layout/sections/table-section';
-import { CopyButton } from '@/app/components/ui/buttons/copy-button';
+import { CopyButton } from '@/app/components/ui/primitives/buttons/copy-button';
 import { connectionConfig } from '@/configs';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import {

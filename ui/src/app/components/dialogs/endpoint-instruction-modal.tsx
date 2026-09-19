@@ -1,7 +1,7 @@
 import { Endpoint, EndpointProviderModel } from '@rapidaai/react';
 import { RightSideModal } from '@/app/components/dialogs/right-side-modal';
 import { EndpointIntegration } from '@/app/components/domain/integration-document/endpoint-integration';
-import { ModalProps } from '@/app/components/ui/modal';
+import { ModalProps } from '@/app/components/ui/primitives/modal';
 import { cn } from '@/utils';
 import { HTMLAttributes } from 'react';
 

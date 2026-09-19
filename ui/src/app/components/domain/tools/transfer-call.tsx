@@ -1,12 +1,12 @@
 import { FC, useState, useCallback } from 'react';
-import { FormGroup, Stack, TextArea } from '@/app/components/ui/form';
+import { FormGroup, Stack, TextArea } from '@/app/components/ui/primitives/form';
 import { Select, SelectItem, Slider, Tooltip } from '@carbon/react';
 import {
   ConfigureToolProps,
   ToolDefinitionForm,
   useParameterManager,
 } from './common';
-import { InputGroup } from '@/app/components/ui/input-group';
+import { InputGroup } from '@/app/components/ui/primitives/input-group';
 import ConfigSelect from '@/app/components/domain/configuration/config-var/config-select';
 import { SEPARATOR } from './transfer-call/constant';
 import { Information } from '@carbon/icons-react';

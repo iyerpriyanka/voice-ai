@@ -1,10 +1,10 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { Metadata } from '@rapidaai/react';
 import { SettingsAdjust, Add, TrashCan } from '@carbon/icons-react';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
 import { cn } from '@/utils';
-import { TextInput, TextArea } from '@/app/components/ui/form';
-import { TertiaryButton } from '@/app/components/ui/button';
+import { TextInput, TextArea } from '@/app/components/ui/primitives/form';
+import { TertiaryButton } from '@/app/components/ui/primitives/button';
 import {
   Select as CarbonSelect,
   SelectItem,
@@ -26,10 +26,10 @@ import {
   resolveCategoryParameters,
 } from '@/providers/config-loader';
 import { getDefaultsFromConfig } from '@/providers/config-defaults';
-import { JsonEditor } from '@/app/components/ui/json-editor';
+import { JsonEditor } from '@/app/components/ui/editor/json-editor';
 import { WebsocketDslEditor } from '@/app/components/domain/providers/websocket-dsl-editor';
 import { HelpToggletip } from '@/app/components/domain/providers/help-label';
-import { FormLabel } from '@/app/components/ui/form-label';
+import { FormLabel } from '@/app/components/ui/primitives/form-label';
 
 const FieldLabelRow: React.FC<{
   param: ParameterConfig;

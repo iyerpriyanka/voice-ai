@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { Endpoint } from '@rapidaai/react';
 import { cn } from '@/utils';
 import { EndpointDropdown } from '@/app/components/domain/dropdowns/endpoint-dropdown';
-import { InputGroup } from '@/app/components/ui/input-group';
+import { InputGroup } from '@/app/components/ui/primitives/input-group';
 import {
   ConfigureToolProps,
   ToolDefinitionForm,
@@ -10,7 +10,7 @@ import {
   PARAMETER_TYPE_OPTIONS,
   useParameterManager,
 } from './common';
-import { Stack } from '@/app/components/ui/form';
+import { Stack } from '@/app/components/ui/primitives/form';
 
 // ============================================================================
 // Constants

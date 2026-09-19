@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from '@/app/components/app-shell/helmet';
-import { DateFilter } from '@/app/components/ui/date-filter';
+import { DateFilter } from '@/app/components/ui/composites/date-filter';
 import { useCredential } from '@/hooks/use-credential';
 import toast from 'react-hot-toast/headless';
 import { useRapidaStore } from '@/hooks';
@@ -13,11 +13,11 @@ import { PageTitleWithCount } from '@/app/components/layout/blocks/page-title-wi
 import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
 import { useKnowledgeActivityLogPage } from '@/hooks/use-knowledge-activity-log-page-store';
 import { KnowledgeLogDialog } from '@/app/components/dialogs/knowledge-log-modal';
-import { CarbonStatusIndicator } from '@/app/components/ui/status-indicator';
-import { Pagination } from '@/app/components/ui/pagination';
-import { IconOnlyButton } from '@/app/components/ui/button';
+import { CarbonStatusIndicator } from '@/app/components/ui/feedback/status-indicator';
+import { Pagination } from '@/app/components/ui/primitives/pagination';
+import { IconOnlyButton } from '@/app/components/ui/primitives/button';
 import { Renew, View, DataBase } from '@carbon/icons-react';
-import { EmptyState } from '@/app/components/ui/empty-state';
+import { EmptyState } from '@/app/components/ui/feedback/empty-state';
 
 import {
   Table,
@@ -31,7 +31,7 @@ import {
   TableToolbarSearch,
   Loading,
 } from '@carbon/react';
-import { TableLink } from '@/app/components/ui/table-link';
+import { TableLink } from '@/app/components/ui/table/table-link';
 
 export function ListingPage() {
   const { loading, showLoader, hideLoader } = useRapidaStore();

@@ -42,7 +42,7 @@ jest.mock('@/hooks', () => ({
   useRapidaStore: () => ({ loading: false, loadingType: undefined }),
 }));
 
-jest.mock('@/app/components/ui/text', () => ({
+jest.mock('@/app/components/ui/primitives/text', () => ({
   Text: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 

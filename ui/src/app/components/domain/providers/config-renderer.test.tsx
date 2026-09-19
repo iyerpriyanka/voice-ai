@@ -15,7 +15,7 @@ jest.mock('@/utils', () => ({
   cn: (...inputs: any[]) => inputs.filter(Boolean).join(' '),
 }));
 
-jest.mock('@/app/components/ui/json-editor', () => {
+jest.mock('@/app/components/ui/editor/json-editor', () => {
   const React = require('react');
   return {
     JsonEditor: ({ value, onChange, placeholder }: any) =>
@@ -27,7 +27,7 @@ jest.mock('@/app/components/ui/json-editor', () => {
   };
 });
 
-jest.mock('@/app/components/ui/listbox-dropdown', () => {
+jest.mock('@/app/components/ui/primitives/listbox-dropdown', () => {
   const React = require('react');
   return {
     Dropdown: ({ currentValue, setValue, allValue, placeholder }: any) =>
@@ -84,7 +84,7 @@ jest.mock('@/app/components/ui/listbox-dropdown', () => {
   };
 });
 
-jest.mock('@/app/components/ui/form', () => {
+jest.mock('@/app/components/ui/primitives/form', () => {
   const React = require('react');
   return {
     TextInput: ({

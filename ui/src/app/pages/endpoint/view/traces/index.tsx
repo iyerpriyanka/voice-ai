@@ -13,12 +13,12 @@ import {
 import { getTimeTakenMetric, getTotalTokenMetric } from '@/utils/metadata';
 import { EndpointTraceModal } from '@/app/components/dialogs/endpoint-trace-modal';
 import { useEndpointLogPage } from '@/hooks/use-endpoint-log-page-store';
-import { CarbonStatusIndicator } from '@/app/components/ui/status-indicator';
-import { Pagination } from '@/app/components/ui/pagination';
-import { IconOnlyButton } from '@/app/components/ui/button';
-import { CopyButton } from '@/app/components/ui/buttons/copy-button';
-import { DateFilter } from '@/app/components/ui/date-filter';
-import { EmptyState } from '@/app/components/ui/empty-state';
+import { CarbonStatusIndicator } from '@/app/components/ui/feedback/status-indicator';
+import { Pagination } from '@/app/components/ui/primitives/pagination';
+import { IconOnlyButton } from '@/app/components/ui/primitives/button';
+import { CopyButton } from '@/app/components/ui/primitives/buttons/copy-button';
+import { DateFilter } from '@/app/components/ui/composites/date-filter';
+import { EmptyState } from '@/app/components/ui/feedback/empty-state';
 import { Renew, View, Activity } from '@carbon/icons-react';
 import { ScrollableTableSection } from '@/app/components/layout/sections/table-section';
 

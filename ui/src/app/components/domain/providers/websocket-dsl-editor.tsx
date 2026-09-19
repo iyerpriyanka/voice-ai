@@ -1,4 +1,4 @@
-import { JsonEditor } from '@/app/components/ui/json-editor';
+import { JsonEditor } from '@/app/components/ui/editor/json-editor';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import {
   getWebsocketDslEditorSuggestions,

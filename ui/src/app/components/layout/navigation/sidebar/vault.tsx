@@ -1,4 +1,4 @@
-import { Disclosure } from '@/app/components/ui/disclosure';
+import { Disclosure } from '@/app/components/ui/primitives/disclosure';
 import { SidebarIconWrapper } from '@/app/components/layout/navigation/sidebar/sidebar-icon-wrapper';
 import { SidebarLabel } from '@/app/components/layout/navigation/sidebar/sidebar-label';
 import { SidebarSimpleListItem } from '@/app/components/layout/navigation/sidebar/sidebar-simple-list-item';

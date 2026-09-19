@@ -141,7 +141,7 @@ jest.mock('@/app/pages/assistant/actions/hooks/use-confirmation', () => ({
   }),
 }));
 
-jest.mock('@/app/components/ui/tab-form', () => ({
+jest.mock('@/app/components/ui/composites/tab-form', () => ({
   TabForm: ({ activeTab, errorMessage, form, formHeading }: any) => {
     const active = form.find((item: any) => item.code === activeTab) ?? form[0];
     return (
@@ -164,7 +164,7 @@ jest.mock('@/app/components/ui/tab-form', () => ({
   },
 }));
 
-jest.mock('@/app/components/ui/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   PrimaryButton: ({ children, isLoading: _isLoading, ...props }: any) => (
     <button {...props}>{children}</button>
   ),
@@ -212,16 +212,16 @@ jest.mock('@carbon/icons-react', () => {
 });
 
 jest.mock('@/app/components/app-shell/helmet', () => ({ Helmet: () => null }));
-jest.mock('@/app/components/ui/fieldset', () => ({
+jest.mock('@/app/components/ui/primitives/fieldset', () => ({
   FieldSet: ({ children }: any) => <div>{children}</div>,
 }));
-jest.mock('@/app/components/ui/form-label', () => ({
+jest.mock('@/app/components/ui/primitives/form-label', () => ({
   FormLabel: ({ children }: any) => <label>{children}</label>,
 }));
-jest.mock('@/app/components/ui/input', () => ({
+jest.mock('@/app/components/ui/primitives/input', () => ({
   Input: (props: any) => <input {...props} />,
 }));
-jest.mock('@/app/components/ui/select', () => ({
+jest.mock('@/app/components/ui/primitives/select', () => ({
   Select: ({ options = [], ...props }: any) => (
     <select {...props}>
       {options.map((option: { name: string; value: string }) => (
@@ -232,10 +232,10 @@ jest.mock('@/app/components/ui/select', () => ({
     </select>
   ),
 }));
-jest.mock('@/app/components/ui/textarea', () => ({
+jest.mock('@/app/components/ui/primitives/textarea', () => ({
   Textarea: (props: any) => <textarea {...props} />,
 }));
-jest.mock('@/app/components/ui/tag-input', () => ({ TagInput: () => null }));
+jest.mock('@/app/components/ui/composites/tag-input', () => ({ TagInput: () => null }));
 jest.mock('@/app/components/domain/tags/assistant-tags', () => ({
   AssistantTag: [],
 }));
@@ -251,16 +251,16 @@ jest.mock('@/app/components/layout/container/message/notice-block', () => ({
 jest.mock('@/app/components/domain/external-api/api-parameter', () => ({
   APiParameter: () => null,
 }));
-jest.mock('@/app/components/ui/input-helper', () => ({
+jest.mock('@/app/components/ui/primitives/input-helper', () => ({
   InputHelper: ({ children }: any) => <div>{children}</div>,
 }));
-jest.mock('@/app/components/ui/code-editor', () => ({
+jest.mock('@/app/components/ui/editor/code-editor', () => ({
   CodeEditor: (props: any) => <textarea {...props} />,
 }));
 jest.mock('@/app/components/layout/blocks/section-divider', () => ({
   SectionDivider: ({ label }: any) => <div>{label}</div>,
 }));
-jest.mock('@/app/components/ui/error-container', () => ({
+jest.mock('@/app/components/ui/feedback/error-container', () => ({
   ErrorContainer: ({ code, title }: any) => (
     <div>
       <span>{code}</span>

@@ -32,7 +32,7 @@ jest.mock('@uiw/react-markdown-preview', () => ({
   default: ({ source }: { source: string }) => <div>{source}</div>,
 }));
 
-jest.mock('@/app/components/ui/floating-tooltip', () => ({
+jest.mock('@/app/components/ui/primitives/floating-tooltip', () => ({
   Tooltip: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 

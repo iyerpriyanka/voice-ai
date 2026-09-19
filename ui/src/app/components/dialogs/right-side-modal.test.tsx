@@ -59,7 +59,7 @@ jest.mock('framer-motion', () => {
   };
 });
 
-jest.mock('@/app/components/ui/modal', () => ({
+jest.mock('@/app/components/ui/primitives/modal', () => ({
   ModalHeader: ({ label, title, onClose }: any) => (
     <header>
       <span>{label}</span>
@@ -71,7 +71,7 @@ jest.mock('@/app/components/ui/modal', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   IconOnlyButton: ({ iconDescription, kind, renderIcon: Icon, ...props }: any) => (
     <button
       type="button"

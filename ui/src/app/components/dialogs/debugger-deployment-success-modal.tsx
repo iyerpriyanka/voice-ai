@@ -1,11 +1,11 @@
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
-import { ModalProps } from '@/app/components/ui/modal';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
+import { ModalProps } from '@/app/components/ui/primitives/modal';
 import {
   Modal,
   ModalHeader,
   ModalBody,
   ModalFooter,
-} from '@/app/components/ui/modal';
+} from '@/app/components/ui/primitives/modal';
 import { Launch } from '@carbon/icons-react';
 import type { FC } from 'react';
 

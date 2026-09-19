@@ -44,7 +44,7 @@ jest.mock('@/app/components/layout/blocks/page-action-button-block', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   GhostButton: ({ children, ...props }: React.ComponentProps<'button'>) => (
     <button type="button" {...props}>
       {children}
@@ -55,11 +55,11 @@ jest.mock('@/app/components/ui/button', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/card', () => ({
+jest.mock('@/app/components/ui/primitives/card', () => ({
   Card: ({ children }: any) => <div>{children}</div>,
 }));
 
-jest.mock('@/app/components/ui/checkbox-card', () => ({
+jest.mock('@/app/components/ui/primitives/checkbox-card', () => ({
   __esModule: true,
   default: ({ children, ...props }: React.ComponentProps<'input'>) => (
     <label>
@@ -69,27 +69,27 @@ jest.mock('@/app/components/ui/checkbox-card', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/fieldset', () => ({
+jest.mock('@/app/components/ui/primitives/fieldset', () => ({
   FieldSet: ({ children, className }: any) => (
     <fieldset className={className}>{children}</fieldset>
   ),
 }));
 
-jest.mock('@/app/components/ui/form-label', () => ({
+jest.mock('@/app/components/ui/primitives/form-label', () => ({
   FormLabel: ({ children, htmlFor }: any) => (
     <label htmlFor={htmlFor}>{children}</label>
   ),
 }));
 
-jest.mock('@/app/components/ui/input', () => ({
+jest.mock('@/app/components/ui/primitives/input', () => ({
   Input: (props: React.ComponentProps<'input'>) => <input {...props} />,
 }));
 
-jest.mock('@/app/components/ui/input-helper', () => ({
+jest.mock('@/app/components/ui/primitives/input-helper', () => ({
   InputHelper: ({ children }: any) => <p>{children}</p>,
 }));
 
-jest.mock('@/app/components/ui/slider', () => ({
+jest.mock('@/app/components/ui/primitives/slider', () => ({
   Slider: ({ onSlide, value }: any) => (
     <input
       aria-label="Slider"
@@ -100,11 +100,11 @@ jest.mock('@/app/components/ui/slider', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/switch', () => ({
+jest.mock('@/app/components/ui/primitives/switch', () => ({
   SwitchWithLabel: ({ label }: any) => <div>{label}</div>,
 }));
 
-jest.mock('@/app/components/ui/tooltip', () => ({
+jest.mock('@/app/components/ui/primitives/tooltip', () => ({
   Tooltip: ({ children, icon }: any) => (
     <span>
       {icon}

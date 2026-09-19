@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { ModalProps } from '@/app/components/ui/modal';
+import { ModalProps } from '@/app/components/ui/primitives/modal';
 import { HowItWorksDialog } from '@/app/components/dialogs/how-it-works-modal';
 
 interface HowKnowledgeWorksModalProps extends ModalProps {}

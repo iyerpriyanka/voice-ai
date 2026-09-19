@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react';
 import { CONFIG } from '@/configs';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import {
   BuildinTool,
@@ -16,7 +16,7 @@ import { CreateAssistantTool } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
 import { useRapidaStore } from '@/hooks';
 import { connectionConfig } from '@/configs';
-import { TabForm } from '@/app/components/ui/tab-form';
+import { TabForm } from '@/app/components/ui/composites/tab-form';
 import { ButtonSet } from '@carbon/react';
 
 export const CreateTool: FC<{ assistantId: string }> = ({ assistantId }) => {

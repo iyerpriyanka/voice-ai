@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 
 import { AssistantWebwidgetDeploymentDialog } from './assistant-instruction-modal';
 
-jest.mock('@/app/components/ui/modal', () => ({
+jest.mock('@/app/components/ui/primitives/modal', () => ({
   Modal: ({ open, children }: any) => (open ? <div>{children}</div> : null),
   ModalHeader: ({ title, children }: any) => (
     <header>
@@ -16,7 +16,7 @@ jest.mock('@/app/components/ui/modal', () => ({
   ModalFooter: ({ children }: any) => <footer>{children}</footer>,
 }));
 
-jest.mock('@/app/components/ui/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   PrimaryButton: ({ children, renderIcon: Icon, ...props }: any) => (
     <button {...props}>
       {children}
@@ -32,7 +32,7 @@ jest.mock('@carbon/icons-react', () => ({
   Launch: () => <svg data-testid="documentation-icon" />,
 }));
 
-jest.mock('@/app/components/ui/code-highlighting', () => ({
+jest.mock('@/app/components/ui/editor/code-highlighting', () => ({
   CodeHighlighting: ({ code }: any) => <pre>{code}</pre>,
 }));
 

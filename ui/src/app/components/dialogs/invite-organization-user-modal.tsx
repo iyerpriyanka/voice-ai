@@ -6,16 +6,16 @@ import {
 } from '@rapidaai/react';
 import { Dropdown } from '@carbon/react';
 import toast from 'react-hot-toast/headless';
-import { ModalProps } from '@/app/components/ui/modal';
+import { ModalProps } from '@/app/components/ui/primitives/modal';
 import {
   Modal,
   ModalHeader,
   ModalBody,
   ModalFooter,
-} from '@/app/components/ui/modal';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
-import { Stack, TextInput } from '@/app/components/ui/form';
-import { ErrorMessage } from '@/app/components/ui/error-message';
+} from '@/app/components/ui/primitives/modal';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
+import { Stack, TextInput } from '@/app/components/ui/primitives/form';
+import { ErrorMessage } from '@/app/components/ui/feedback/error-message';
 import { AuthContext } from '@/context/auth-context';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/hooks';

@@ -3,7 +3,7 @@ import React, { useRef } from 'react';
 import { useBoolean } from 'ahooks';
 import MessageTypeSelector from './message-type-selector';
 import type { PromptRole } from '@/models/prompt';
-import { GhostButton } from '@/app/components/ui/button';
+import { GhostButton } from '@/app/components/ui/primitives/button';
 import { cn } from '@/utils';
 import { useToggleExpend } from '@/hooks/use-toggle-expend';
 import PromptEditor from '@/app/components/domain/prompt-editor/prompt-editor';

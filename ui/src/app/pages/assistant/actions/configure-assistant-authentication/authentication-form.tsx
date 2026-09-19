@@ -23,9 +23,9 @@ import { useCurrentCredential } from '@/hooks/use-credential';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { connectionConfig } from '@/configs';
-import { Notification } from '@/app/components/ui/notification';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
-import { InputGroup } from '@/app/components/ui/input-group';
+import { Notification } from '@/app/components/ui/feedback/notification';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
+import { InputGroup } from '@/app/components/ui/primitives/input-group';
 import { APiStringHeader } from '@/app/components/domain/external-api/api-header';
 import {
   ASSISTANT_CONDITION_KEY_OPTIONS,
@@ -36,7 +36,7 @@ import {
   normalizeAssistantConditionEntries,
 } from '@/app/components/domain/tools/common';
 import { SourceConditionRule } from '@/app/components/domain/conditions/source-condition-rule';
-import { Stack, TextInput } from '@/app/components/ui/form';
+import { Stack, TextInput } from '@/app/components/ui/primitives/form';
 
 import {
   AUTH_KEY_OPTIONS_BY_TYPE,

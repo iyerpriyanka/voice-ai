@@ -5,7 +5,7 @@ import { DeleteProviderKey } from '@rapidaai/react';
 import { GetCredentialResponse, VaultCredential } from '@rapidaai/react';
 import { useRapidaStore } from '@/hooks';
 import toast from 'react-hot-toast/headless';
-import { ModalProps } from '@/app/components/ui/modal';
+import { ModalProps } from '@/app/components/ui/primitives/modal';
 import { useAllProviderCredentials } from '@/hooks/use-model';
 import { useProviderContext } from '@/context/provider-context';
 import { toHumanReadableRelativeTime } from '@/utils/date';
@@ -17,15 +17,15 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-} from '@/app/components/ui/modal';
+} from '@/app/components/ui/primitives/modal';
 import {
   PrimaryButton,
   TertiaryButton,
   DangerButton,
-} from '@/app/components/ui/button';
-import { Stack } from '@/app/components/ui/form';
+} from '@/app/components/ui/primitives/button';
+import { Stack } from '@/app/components/ui/primitives/form';
 import { TrashCan } from '@carbon/icons-react';
-import { CopyButton } from '@/app/components/ui/buttons/copy-button';
+import { CopyButton } from '@/app/components/ui/primitives/buttons/copy-button';
 
 interface ViewProviderCredentialDialogProps extends ModalProps {
   currentProvider: RapidaProvider;

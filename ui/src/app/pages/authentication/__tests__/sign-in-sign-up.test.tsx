@@ -102,11 +102,11 @@ jest.mock('@/app/components/app-shell/helmet', () => ({
   Helmet: () => null,
 }));
 
-jest.mock('@/app/components/ui/buttons/social-button-group', () => ({
+jest.mock('@/app/components/ui/primitives/buttons/social-button-group', () => ({
   SocialButtonGroup: () => <div data-testid="social-buttons" />,
 }));
 
-jest.mock('@/app/components/ui/form', () => ({
+jest.mock('@/app/components/ui/primitives/form', () => ({
   Stack: ({ children }: any) => <div>{children}</div>,
   TextInput: require('react').forwardRef(
     ({ labelText: _labelText, ...props }: any, ref: any) => (
@@ -115,11 +115,11 @@ jest.mock('@/app/components/ui/form', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/notification', () => ({
+jest.mock('@/app/components/ui/feedback/notification', () => ({
   Notification: ({ subtitle }: { subtitle: string }) => <div>{subtitle}</div>,
 }));
 
-jest.mock('@/app/components/ui/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   PrimaryButton: ({
     children,
     isLoading: _i,

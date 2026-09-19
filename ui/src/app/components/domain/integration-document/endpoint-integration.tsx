@@ -1,7 +1,7 @@
 import { Variable, Endpoint, EndpointProviderModel } from '@rapidaai/react';
-import { Tab } from '@/app/components/ui/tabs';
+import { Tab } from '@/app/components/ui/primitives/tabs';
 import { FC, ReactNode } from 'react';
-import { CodeHighlighting } from '@/app/components/ui/code-highlighting';
+import { CodeHighlighting } from '@/app/components/ui/editor/code-highlighting';
 import { RapidaCredentialCard } from '@/app/components/domain/cards/rapida-credential-card';
 
 // Auto-sizes Monaco to its content.

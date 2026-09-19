@@ -38,14 +38,14 @@ import {
 import { connectionConfig } from '@/configs';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { DebuggerDeploymentSuccessDialog } from '@/app/components/dialogs/debugger-deployment-success-modal';
-import { TabForm } from '@/app/components/ui/tab-form';
+import { TabForm } from '@/app/components/ui/composites/tab-form';
 import {
   PrimaryButton,
   SecondaryButton,
   GhostButton,
-} from '@/app/components/ui/button';
+} from '@/app/components/ui/primitives/button';
 import { ButtonSet, CheckboxGroup } from '@carbon/react';
-import { InputCheckbox } from '@/app/components/ui/input-checkbox';
+import { InputCheckbox } from '@/app/components/ui/primitives/input-checkbox';
 
 type SectionCode = 'experience' | 'stt' | 'tts';
 type ExistingDebuggerConfig = {

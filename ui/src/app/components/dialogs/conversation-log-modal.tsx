@@ -1,11 +1,11 @@
 import { AssistantConversationMessage } from '@rapidaai/react';
 import { Metadata } from '@rapidaai/react';
-import { Tabs } from '@/app/components/ui/tabs';
-import { ModalProps } from '@/app/components/ui/modal';
+import { Tabs } from '@/app/components/ui/primitives/tabs';
+import { ModalProps } from '@/app/components/ui/primitives/modal';
 import { RightSideModal } from '@/app/components/dialogs/right-side-modal';
-import { CodeHighlighting } from '@/app/components/ui/code-highlighting';
-import { MarkdownViewer } from '@/app/components/ui/markdown-viewer';
-import { EmptyState } from '@/app/components/ui/empty-state';
+import { CodeHighlighting } from '@/app/components/ui/editor/code-highlighting';
+import { MarkdownViewer } from '@/app/components/ui/editor/markdown-viewer';
+import { EmptyState } from '@/app/components/ui/feedback/empty-state';
 import { Chat } from '@carbon/icons-react';
 import { FC, useState } from 'react';
 

@@ -69,7 +69,7 @@ jest.mock(
   }),
 );
 
-jest.mock('@/app/components/ui/notification', () => ({
+jest.mock('@/app/components/ui/feedback/notification', () => ({
   Notification: ({ subtitle }: any) => <div>{subtitle}</div>,
 }));
 

@@ -4,7 +4,7 @@ import { useCredential } from '@/hooks/use-credential';
 import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast/headless';
 import { useParams } from 'react-router-dom';
-import { Tab } from '@/app/components/ui/tabs';
+import { Tab } from '@/app/components/ui/primitives/tabs';
 import { Documents } from './documents';
 import { ConnectionConfig, GetKnowledgeBase } from '@rapidaai/react';
 import { GetKnowledgeResponse } from '@rapidaai/react';

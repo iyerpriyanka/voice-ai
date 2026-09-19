@@ -1,5 +1,5 @@
 import { lazyLoad } from '@/utils/loadable';
-import { PageLoading } from '@/app/components/ui/loading';
+import { PageLoading } from '@/app/components/ui/feedback/loading';
 
 export const DeploymentEndpointPage = lazyLoad(
   () => import('./listing'),

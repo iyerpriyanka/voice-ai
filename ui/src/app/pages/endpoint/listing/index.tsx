@@ -7,11 +7,11 @@ import { Helmet } from '@/app/components/app-shell/helmet';
 import { Endpoint } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
 import { useRapidaStore } from '@/hooks';
-import { PrimaryButton } from '@/app/components/ui/button';
-import { Pagination } from '@/app/components/ui/pagination';
-import { EmptyState } from '@/app/components/ui/empty-state';
+import { PrimaryButton } from '@/app/components/ui/primitives/button';
+import { Pagination } from '@/app/components/ui/primitives/pagination';
+import { EmptyState } from '@/app/components/ui/feedback/empty-state';
 import { Add, Renew, Connect } from '@carbon/icons-react';
-import { PageLoading } from '@/app/components/ui/loading';
+import { PageLoading } from '@/app/components/ui/feedback/loading';
 import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
 import { PageTitleBlock } from '@/app/components/layout/blocks/page-title-block';
 import {

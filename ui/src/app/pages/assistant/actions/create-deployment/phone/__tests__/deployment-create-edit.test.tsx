@@ -175,7 +175,7 @@ jest.mock('@/hooks/use-global-navigator', () => ({
 
 jest.mock('@/app/components/app-shell/helmet', () => ({ Helmet: () => null }));
 
-jest.mock('@/app/components/ui/tab-form', () => ({
+jest.mock('@/app/components/ui/composites/tab-form', () => ({
   TabForm: ({ activeTab, form, errorMessage, onChangeActiveTab }: any) => {
     const active = form.find((x: any) => x.code === activeTab);
     return (
@@ -203,7 +203,7 @@ jest.mock('@/app/components/ui/tab-form', () => ({
   },
 }));
 
-jest.mock('@/app/components/ui/tabs', () => ({
+jest.mock('@/app/components/ui/primitives/tabs', () => ({
   Tabs: ({ tabs = [], children, selectedIndex = 0, onChange }: any) => {
     const panels = Array.isArray(children) ? children : [children];
     return (
@@ -261,7 +261,7 @@ jest.mock('@/app/components/domain/providers/text-to-speech/provider', () => ({
     mockValidateTextToSpeechIfInvalid(...args),
 }));
 
-jest.mock('@/app/components/ui/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   PrimaryButton: ({ children, isLoading, ...props }: any) => (
     <button {...props}>{children}</button>
   ),

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { SearchIconInput } from '@/app/components/ui/icon-input';
+import { SearchIconInput } from '@/app/components/ui/composites/icon-input';
 import { Helmet } from '@/app/components/app-shell/helmet';
 import { BluredWrapper } from '@/app/components/layout/wrapper/blured-wrapper';
 import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
@@ -11,8 +11,8 @@ import { CreateProviderCredentialDialog } from '@/app/components/dialogs/create-
 import { ViewProviderCredentialDialog } from '@/app/components/dialogs/view-provider-credential-modal';
 import { useAllProviderCredentials } from '@/hooks/use-model';
 import { Add, Checkmark } from '@carbon/icons-react';
-import { Tooltip } from '@/app/components/ui/tooltip';
-import { PrimaryButton, GhostButton } from '@/app/components/ui/button';
+import { Tooltip } from '@/app/components/ui/primitives/tooltip';
+import { PrimaryButton, GhostButton } from '@/app/components/ui/primitives/button';
 import { VoiceCard } from '@/app/pages/external-integration/provider-models/information/voice-card';
 import { useLocation } from 'react-router-dom';
 

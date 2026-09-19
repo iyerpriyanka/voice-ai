@@ -8,7 +8,7 @@ import { Helmet } from '@/app/components/app-shell/helmet';
 import {
   PrimaryButton,
   SecondaryButton,
-} from '@/app/components/ui/button';
+} from '@/app/components/ui/primitives/button';
 import {
   ButtonSet,
   Toggletip,
@@ -16,7 +16,7 @@ import {
   ToggletipContent,
 } from '@carbon/react';
 import { ArrowUpRight, Information } from '@carbon/icons-react';
-import { TabForm } from '@/app/components/ui/tab-form';
+import { TabForm } from '@/app/components/ui/composites/tab-form';
 import {
   ConnectionConfig,
   CreateEndpointResponse,
@@ -34,20 +34,20 @@ import {
 } from '@/app/components/domain/providers/text';
 import { ConfigPrompt } from '@/app/components/domain/configuration/config-prompt';
 import { randomMeaningfullName, randomString } from '@/utils';
-import { FieldSet } from '@/app/components/ui/fieldset';
-import { FormLabel } from '@/app/components/ui/form-label';
-import { Input } from '@/app/components/ui/input';
-import { TagInput } from '@/app/components/ui/tag-input';
+import { FieldSet } from '@/app/components/ui/primitives/fieldset';
+import { FormLabel } from '@/app/components/ui/primitives/form-label';
+import { Input } from '@/app/components/ui/primitives/input';
+import { TagInput } from '@/app/components/ui/composites/tag-input';
 import { EndpointTag } from '@/app/components/domain/tags/endpoint-tags';
-import { Textarea } from '@/app/components/ui/textarea';
+import { Textarea } from '@/app/components/ui/primitives/textarea';
 import { CreateEndpoint } from '@rapidaai/react';
 import { ServiceError } from '@rapidaai/react';
 import { ChatCompletePrompt } from '@/utils/prompt';
 import { connectionConfig } from '@/configs';
 import { YellowNoticeBlock } from '@/app/components/layout/container/message/notice-block';
-import { InputHelper } from '@/app/components/ui/input-helper';
+import { InputHelper } from '@/app/components/ui/primitives/input-helper';
 import { ConfigureEndpointPromptDialog } from '@/app/components/dialogs/configure-endpoint-prompt-modal';
-import { CornerBorderOverlay } from '@/app/components/ui/corner-border';
+import { CornerBorderOverlay } from '@/app/components/ui/primitives/corner-border';
 
 export function CreateEndpointPage() {
   const { authId, token, projectId } = useCurrentCredential();

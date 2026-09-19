@@ -16,15 +16,15 @@ import { InputVarType } from '@/models/common';
 import {
   Notification,
   LinkNotification,
-} from '@/app/components/ui/notification';
-import { GhostButton, IconOnlyButton } from '@/app/components/ui/button';
-import { EmptyState } from '@/app/components/ui/empty-state';
+} from '@/app/components/ui/feedback/notification';
+import { GhostButton, IconOnlyButton } from '@/app/components/ui/primitives/button';
+import { EmptyState } from '@/app/components/ui/feedback/empty-state';
 import { Activity, Copy, FilterRemove } from '@carbon/icons-react';
 import { DismissibleTag, Tag } from '@carbon/react';
-import { Tabs } from '@/app/components/ui/tabs';
-import { Text } from '@/app/components/ui/text';
+import { Tabs } from '@/app/components/ui/primitives/tabs';
+import { Text } from '@/app/components/ui/primitives/text';
 import { ArrowLeft } from '@carbon/icons-react';
-import { TextArea } from '@/app/components/ui/form';
+import { TextArea } from '@/app/components/ui/primitives/form';
 import { PreviewAgentHeader } from './preview-agent-header';
 
 export { PreviewAgentHeader } from './preview-agent-header';

@@ -67,7 +67,7 @@ jest.mock('@/utils/date', () => ({
   toHumanReadableRelativeTime: jest.fn(() => 'recently'),
 }));
 
-jest.mock('@/app/components/ui/modal', () => ({
+jest.mock('@/app/components/ui/primitives/modal', () => ({
   Modal: ({ open, children }: any) => (open ? <div>{children}</div> : null),
   ModalHeader: ({ label, title }: any) => (
     <header>
@@ -79,11 +79,11 @@ jest.mock('@/app/components/ui/modal', () => ({
   ModalFooter: ({ children }: any) => <footer>{children}</footer>,
 }));
 
-jest.mock('@/app/components/ui/form', () => ({
+jest.mock('@/app/components/ui/primitives/form', () => ({
   Stack: ({ children }: any) => <div>{children}</div>,
 }));
 
-jest.mock('@/app/components/ui/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   PrimaryButton: ({ children, ...props }: any) => (
     <button {...props}>{children}</button>
   ),

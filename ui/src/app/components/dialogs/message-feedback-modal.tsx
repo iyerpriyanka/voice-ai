@@ -1,12 +1,12 @@
-import { ModalProps } from '@/app/components/ui/modal';
+import { ModalProps } from '@/app/components/ui/primitives/modal';
 import {
   Modal,
   ModalHeader,
   ModalBody,
   ModalFooter,
-} from '@/app/components/ui/modal';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
-import { Textarea } from '@/app/components/ui/textarea';
+} from '@/app/components/ui/primitives/modal';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
+import { Textarea } from '@/app/components/ui/primitives/textarea';
 import { Checkmark } from '@carbon/icons-react';
 import { FC, useState } from 'react';
 

@@ -7,12 +7,12 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-} from '@/app/components/ui/modal';
-import { FormLabel } from '@/app/components/ui/form-label';
-import { PrimaryButton, GhostButton } from '@/app/components/ui/button';
-import { ErrorMessage } from '@/app/components/ui/error-message';
-import { FieldSet } from '@/app/components/ui/fieldset';
-import { Textarea } from '@/app/components/ui/textarea';
+} from '@/app/components/ui/primitives/modal';
+import { FormLabel } from '@/app/components/ui/primitives/form-label';
+import { PrimaryButton, GhostButton } from '@/app/components/ui/primitives/button';
+import { ErrorMessage } from '@/app/components/ui/feedback/error-message';
+import { FieldSet } from '@/app/components/ui/primitives/fieldset';
+import { Textarea } from '@/app/components/ui/primitives/textarea';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { FC, useState } from 'react';
 import { connectionConfig } from '@/configs';

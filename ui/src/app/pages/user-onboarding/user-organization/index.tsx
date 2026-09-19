@@ -9,9 +9,9 @@ import { useRapidaStore } from '@/hooks';
 import { ServiceError } from '@rapidaai/react';
 import { AuthContext } from '@/context/auth-context';
 import { connectionConfig } from '@/configs';
-import { Stack, TextInput } from '@/app/components/ui/form';
-import { PrimaryButton } from '@/app/components/ui/button';
-import { Notification } from '@/app/components/ui/notification';
+import { Stack, TextInput } from '@/app/components/ui/primitives/form';
+import { PrimaryButton } from '@/app/components/ui/primitives/button';
+import { Notification } from '@/app/components/ui/feedback/notification';
 import { ArrowRight } from '@carbon/icons-react';
 import { Select, SelectItem } from '@carbon/react';
 

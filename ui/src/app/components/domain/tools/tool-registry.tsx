@@ -28,7 +28,7 @@ import {
   ValidateMCPDefaultOptions,
 } from '@/app/components/domain/tools/mcp/constant';
 import { ConfigureTransferCall } from '@/app/components/domain/tools/transfer-call';
-import { InputGroup } from '@/app/components/ui/input-group';
+import { InputGroup } from '@/app/components/ui/primitives/input-group';
 import {
   GetTransferCallDefaultOptions,
   ValidateTransferCallDefaultOptions,

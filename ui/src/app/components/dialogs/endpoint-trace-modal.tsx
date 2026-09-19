@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react';
 import { EndpointLog } from '@rapidaai/react';
 import { RightSideModal } from '@/app/components/dialogs/right-side-modal';
-import { ModalProps } from '@/app/components/ui/modal';
+import { ModalProps } from '@/app/components/ui/primitives/modal';
 import { SourceIndicator } from '@/app/components/domain/indicators/source';
 import { EndpointMetrics } from '@/app/components/dialogs/endpoint-trace-metrics';
 import { EndpointMetadatas } from '@/app/components/dialogs/endpoint-trace-metadatas';
@@ -10,8 +10,8 @@ import { EndpointArguments } from '@/app/components/dialogs/endpoint-trace-argum
 import { toHumanReadableDateTime } from '@/utils/date';
 import { getTotalTokenMetric } from '@/utils/metadata';
 import { OverviewRow } from '@/app/components/dialogs/overview-row';
-import { Tabs } from '@/app/components/ui/tabs';
-import { CarbonStatusIndicator } from '@/app/components/ui/status-indicator';
+import { Tabs } from '@/app/components/ui/primitives/tabs';
+import { CarbonStatusIndicator } from '@/app/components/ui/feedback/status-indicator';
 
 interface EndpointTraceModalProps extends ModalProps {
   currentTrace: EndpointLog | null;

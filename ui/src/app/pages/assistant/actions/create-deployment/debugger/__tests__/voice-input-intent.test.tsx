@@ -164,10 +164,10 @@ jest.mock(
     DebuggerDeploymentSuccessDialog: () => null,
   }),
 );
-jest.mock('@/app/components/ui/card', () => ({
+jest.mock('@/app/components/ui/primitives/card', () => ({
   BaseCard: ({ children }: any) => <div>{children}</div>,
 }));
-jest.mock('@/app/components/ui/input-checkbox', () => ({
+jest.mock('@/app/components/ui/primitives/input-checkbox', () => ({
   InputCheckbox: ({ children, ...props }: any) => (
     <label>
       <input type="checkbox" {...props} />
@@ -175,10 +175,10 @@ jest.mock('@/app/components/ui/input-checkbox', () => ({
     </label>
   ),
 }));
-jest.mock('@/app/components/ui/input-helper', () => ({
+jest.mock('@/app/components/ui/primitives/input-helper', () => ({
   InputHelper: ({ children }: any) => <div>{children}</div>,
 }));
-jest.mock('@/app/components/ui/switch', () => ({
+jest.mock('@/app/components/ui/primitives/switch', () => ({
   SwitchWithLabel: ({ enable, setEnable, label }: any) => (
     <button type="button" onClick={() => setEnable(!enable)}>
       {label}
@@ -186,7 +186,7 @@ jest.mock('@/app/components/ui/switch', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/tab-form', () => ({
+jest.mock('@/app/components/ui/composites/tab-form', () => ({
   TabForm: ({ activeTab, form, errorMessage }: any) => {
     const active = form.find((x: any) => x.code === activeTab);
     return (
@@ -268,7 +268,7 @@ jest.mock('@/app/pages/assistant/actions/hooks/use-confirmation', () => {
   };
 });
 
-jest.mock('@/app/components/ui/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   PrimaryButton: ({ children, isLoading: _, ...props }: any) => (
     <button {...props}>{children}</button>
   ),

@@ -78,7 +78,7 @@ jest.mock('@carbon/icons-react', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   GhostButton: ({
     children,
     renderIcon: Icon,

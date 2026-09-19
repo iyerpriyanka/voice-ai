@@ -5,22 +5,22 @@ import {
 } from '@rapidaai/react';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { CreateProviderKey } from '@rapidaai/react';
-import { ErrorMessage } from '@/app/components/ui/error-message';
+import { ErrorMessage } from '@/app/components/ui/feedback/error-message';
 import { useRapidaStore } from '@/hooks';
 import toast from 'react-hot-toast/headless';
-import { ModalProps } from '@/app/components/ui/modal';
+import { ModalProps } from '@/app/components/ui/primitives/modal';
 import {
   Modal,
   ModalHeader,
   ModalBody,
   ModalFooter,
-} from '@/app/components/ui/modal';
+} from '@/app/components/ui/primitives/modal';
 import {
   PrimaryButton,
   SecondaryButton,
   TertiaryButton,
-} from '@/app/components/ui/button';
-import { Stack, TextInput, TextArea } from '@/app/components/ui/form';
+} from '@/app/components/ui/primitives/button';
+import { Stack, TextInput, TextArea } from '@/app/components/ui/primitives/form';
 import {
   Dropdown,
   Button,

@@ -148,7 +148,7 @@ jest.mock('@/app/pages/assistant/actions/hooks/use-confirmation', () => ({
   }),
 }));
 
-jest.mock('@/app/components/ui/input-group', () => ({
+jest.mock('@/app/components/ui/primitives/input-group', () => ({
   InputGroup: ({ title, children }: any) => (
     <section>
       {title ? <div>{title}</div> : null}
@@ -165,15 +165,15 @@ jest.mock('@/app/components/domain/external-api/api-header', () => ({
   APiStringHeader: () => <div>headers</div>,
 }));
 
-jest.mock('@/app/components/ui/notification', () => ({
+jest.mock('@/app/components/ui/feedback/notification', () => ({
   Notification: ({ subtitle }: any) => <div>{subtitle}</div>,
 }));
 
-jest.mock('@/app/components/ui/status-indicator', () => ({
+jest.mock('@/app/components/ui/feedback/status-indicator', () => ({
   CarbonStatusIndicator: ({ state }: any) => <span>{state}</span>,
 }));
 
-jest.mock('@/app/components/ui/overflow-menu', () => ({
+jest.mock('@/app/components/ui/primitives/overflow-menu', () => ({
   OverflowMenu: ({ children }: any) => <div>{children}</div>,
   OverflowMenuItem: ({ itemText, onClick, disabled }: any) => (
     <button disabled={disabled} onClick={onClick}>
@@ -182,7 +182,7 @@ jest.mock('@/app/components/ui/overflow-menu', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/empty-state', () => ({
+jest.mock('@/app/components/ui/feedback/empty-state', () => ({
   EmptyState: ({
     title,
     subtitle,
@@ -199,7 +199,7 @@ jest.mock('@/app/components/ui/empty-state', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/loaders/section-loader', () => ({
+jest.mock('@/app/components/ui/feedback/loaders/section-loader', () => ({
   SectionLoader: () => <div>loading</div>,
 }));
 
@@ -207,7 +207,7 @@ jest.mock('@/app/components/layout/sections/table-section', () => ({
   TableSection: ({ children }: any) => <div>{children}</div>,
 }));
 
-jest.mock('@/app/components/ui/form', () => ({
+jest.mock('@/app/components/ui/primitives/form', () => ({
   Stack: ({ children }: any) => <div>{children}</div>,
   TextInput: ({ id, labelText, value, onChange, hideLabel }: any) => (
     <div>
@@ -220,7 +220,7 @@ jest.mock('@/app/components/ui/form', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   PrimaryButton: ({
     children,
     isLoading: _isLoading,
@@ -313,7 +313,7 @@ jest.mock('@carbon/react', () => ({
   Tooltip: ({ children }: any) => <span>{children}</span>,
 }));
 
-jest.mock('@/app/components/ui/record-status-indicator', () => ({
+jest.mock('@/app/components/ui/feedback/record-status-indicator', () => ({
   RecordStatusIndicator: ({ state }: any) => (
     <span>
       {state === 'ACTIVE'
@@ -325,7 +325,7 @@ jest.mock('@/app/components/ui/record-status-indicator', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/url-table-cell', () => ({
+jest.mock('@/app/components/ui/table/url-table-cell', () => ({
   UrlTableCell: ({ url }: any) => <td>{url || '-'}</td>,
 }));
 

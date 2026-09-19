@@ -4,10 +4,10 @@ import {
   CardDescription,
   CardTitle,
   LinkCard,
-} from '@/app/components/ui/card';
+} from '@/app/components/ui/primitives/card';
 import { Knowledge } from '@rapidaai/react';
 import { cn } from '@/utils';
-import { CardOptionMenu } from '@/app/components/ui/menu';
+import { CardOptionMenu } from '@/app/components/ui/composites/menu';
 import { formatHumanReadableNumber } from '@/utils/format';
 import { Folders } from '@carbon/icons-react';
 

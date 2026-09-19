@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 
 import { TableHead, TableHederWithCheckbox } from './table-head';
 
-jest.mock('@/app/components/ui/input-checkbox', () => ({
+jest.mock('@/app/components/ui/primitives/input-checkbox', () => ({
   InputCheckbox: ({ onChange, ...props }: any) => (
     <input
       {...props}
@@ -29,7 +29,9 @@ describe('TableHead', () => {
       </table>,
     );
 
-    expect(screen.getByRole('columnheader', { name: 'Name' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('columnheader', { name: 'Name' }),
+    ).toBeInTheDocument();
     expect(
       screen.getByRole('columnheader', { name: 'Status' }),
     ).toBeInTheDocument();

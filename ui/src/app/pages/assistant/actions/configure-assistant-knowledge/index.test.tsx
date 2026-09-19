@@ -32,7 +32,7 @@ jest.mock('@/app/components/layout/blocks/page-title-block', () => ({
   PageTitleBlock: ({ children }: any) => <h1>{children}</h1>,
 }));
 
-jest.mock('@/app/components/ui/empty-state', () => ({
+jest.mock('@/app/components/ui/feedback/empty-state', () => ({
   EmptyState: ({ action, onAction, title }: any) => (
     <section>
       <h2>{title}</h2>
@@ -43,7 +43,7 @@ jest.mock('@/app/components/ui/empty-state', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/loaders/section-loader', () => ({
+jest.mock('@/app/components/ui/feedback/loaders/section-loader', () => ({
   SectionLoader: () => <div data-testid="section-loader" />,
 }));
 

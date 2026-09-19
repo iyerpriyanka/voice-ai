@@ -5,7 +5,7 @@ import { TEXT_TO_SPEECH_PROVIDER } from '@/providers';
 import { Metadata, VaultCredential } from '@rapidaai/react';
 import { useCallback } from 'react';
 import { Dropdown } from '@carbon/react';
-import { Stack } from '@/app/components/ui/form';
+import { Stack } from '@/app/components/ui/primitives/form';
 
 export const TextToSpeechProvider: React.FC<ProviderComponentProps> = props => {
   const { provider, parameters, onChangeProvider, onChangeParameter } = props;

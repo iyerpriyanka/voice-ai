@@ -20,7 +20,7 @@ import {
   Paginate,
 } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
-import { ModalProps } from '@/app/components/ui/modal';
+import { ModalProps } from '@/app/components/ui/primitives/modal';
 import { RightSideModal } from '@/app/components/dialogs/right-side-modal';
 import { toHumanReadableDateTime } from '@/utils/date';
 import { connectionConfig } from '@/configs';

@@ -1,7 +1,7 @@
-import { FormLabel } from '@/app/components/ui/form-label';
-import { FieldSet } from '@/app/components/ui/fieldset';
-import { Slider } from '@/app/components/ui/slider';
-import { Input } from '@/app/components/ui/input';
+import { FormLabel } from '@/app/components/ui/primitives/form-label';
+import { FieldSet } from '@/app/components/ui/primitives/fieldset';
+import { Slider } from '@/app/components/ui/primitives/slider';
+import { Input } from '@/app/components/ui/primitives/input';
 import { memo } from 'react';
 import { HelpToggletip } from '@/app/components/domain/providers/help-label';
 

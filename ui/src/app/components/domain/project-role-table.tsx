@@ -1,7 +1,7 @@
 import React from 'react';
 import { Add, TrashCan } from '@carbon/icons-react';
 import { Button, Dropdown } from '@carbon/react';
-import { TertiaryButton } from '@/app/components/ui/button';
+import { TertiaryButton } from '@/app/components/ui/primitives/button';
 
 export type ProjectRoleRow = {
   projectId: string;

@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 
 import { EndpointMetrics } from './endpoint-trace-metrics';
 
-jest.mock('@/app/components/ui/tooltip', () => ({
+jest.mock('@/app/components/ui/primitives/tooltip', () => ({
   Tooltip: ({ children, icon }: any) => (
     <span>
       {icon}
@@ -13,7 +13,7 @@ jest.mock('@/app/components/ui/tooltip', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/empty-state', () => ({
+jest.mock('@/app/components/ui/feedback/empty-state', () => ({
   EmptyState: ({ title, subtitle, icon: Icon }: any) => (
     <div>
       {Icon ? <Icon /> : null}

@@ -1,15 +1,15 @@
-import { FieldSet } from '@/app/components/ui/fieldset';
+import { FieldSet } from '@/app/components/ui/primitives/fieldset';
 import { Helmet } from '@/app/components/app-shell/helmet';
-import { Input } from '@/app/components/ui/input';
-import { TagInput } from '@/app/components/ui/tag-input';
+import { Input } from '@/app/components/ui/primitives/input';
+import { TagInput } from '@/app/components/ui/composites/tag-input';
 import { useCreateKnowledgePageStore } from '@/hooks/use-create-knowledge-page-store';
 import { useCallback, useEffect, useState } from 'react';
 import { useCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/hooks/use-rapida-store';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
 import { ButtonSet } from '@carbon/react';
 import { KnowledgeDocument } from '@rapidaai/react';
-import { TabForm } from '@/app/components/ui/tab-form';
+import { TabForm } from '@/app/components/ui/composites/tab-form';
 import { useCreateKnowledgeDocumentPageStore } from '@/hooks/use-create-knowledge-document-page-store';
 import { Knowledge } from '@rapidaai/react';
 import { KnowledgeTags } from '@/app/components/domain/tags/knowledge-tags';
@@ -17,13 +17,13 @@ import toast from 'react-hot-toast/headless';
 import { create_knowledge_success_message } from '@/utils/messages';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { ManualFile } from '@/app/pages/knowledge-base/action/components/datasource-uploader/manual-file';
-import { FormLabel } from '@/app/components/ui/form-label';
+import { FormLabel } from '@/app/components/ui/primitives/form-label';
 import ConfirmDialog from '@/app/components/dialogs/confirm-ui';
 import { useNavigate } from 'react-router-dom';
-import { Textarea } from '@/app/components/ui/textarea';
+import { Textarea } from '@/app/components/ui/primitives/textarea';
 import { EmbeddingProvider } from '@/app/components/domain/providers/embedding';
 import { DocNoticeBlock } from '@/app/components/layout/container/message/notice-block/doc-notice-block';
-import { InputHelper } from '@/app/components/ui/input-helper';
+import { InputHelper } from '@/app/components/ui/primitives/input-helper';
 import { SectionDivider } from '@/app/components/layout/blocks/section-divider';
 
 export function CreateKnowledgePage() {

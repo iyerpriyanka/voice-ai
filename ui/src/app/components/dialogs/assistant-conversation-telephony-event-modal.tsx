@@ -1,12 +1,12 @@
 import { RightSideModal } from '@/app/components/dialogs/right-side-modal';
-import { ModalProps } from '@/app/components/ui/modal';
+import { ModalProps } from '@/app/components/ui/primitives/modal';
 import { FC, HTMLAttributes, memo, useState } from 'react';
 import { ModalBody } from '@/app/components/dialogs/modal-body';
 import { AssistantConversationTelephonyEvent } from '@rapidaai/react';
 import { Button } from '@carbon/react';
 import { ChevronDown, ChevronRight } from '@carbon/icons-react';
 import { toHumanReadableDateTime } from '@/utils/date';
-import { CodeHighlighting } from '@/app/components/ui/code-highlighting';
+import { CodeHighlighting } from '@/app/components/ui/editor/code-highlighting';
 
 interface AssistantConversationTelephonyEventDialogProps
   extends ModalProps,

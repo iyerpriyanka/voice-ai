@@ -14,16 +14,16 @@ jest.mock('@/app/components/domain/providers/provider-component-props', () => ({
 jest.mock('@/utils', () => ({
   cn: (...inputs: any[]) => inputs.filter(Boolean).join(' '),
 }));
-jest.mock('@/app/components/ui/listbox-dropdown', () => ({
+jest.mock('@/app/components/ui/primitives/listbox-dropdown', () => ({
   Dropdown: () => null,
 }));
 jest.mock('@/app/components/domain/dropdowns/credential-dropdown', () => ({
   CredentialDropdown: () => null,
 }));
-jest.mock('@/app/components/ui/fieldset', () => ({
+jest.mock('@/app/components/ui/primitives/fieldset', () => ({
   FieldSet: ({ children }: any) => children ?? null,
 }));
-jest.mock('@/app/components/ui/form-label', () => ({
+jest.mock('@/app/components/ui/primitives/form-label', () => ({
   FormLabel: ({ children }: any) => children ?? null,
 }));
 jest.mock('@/app/components/domain/providers/config-renderer', () => ({

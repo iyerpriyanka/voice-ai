@@ -1,6 +1,6 @@
 import { Metadata } from '@rapidaai/react';
 import { FC } from 'react';
-import { EmptyState } from '@/app/components/ui/empty-state';
+import { EmptyState } from '@/app/components/ui/feedback/empty-state';
 import { DataBase } from '@carbon/icons-react';
 
 export const EndpointMetadatas: FC<{ metadata: Array<Metadata> }> = ({

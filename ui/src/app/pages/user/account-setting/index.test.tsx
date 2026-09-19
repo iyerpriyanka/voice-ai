@@ -14,7 +14,7 @@ jest.mock('@/app/components/layout/blocks/page-header-block', () => ({
   PageHeaderBlock: ({ children }: any) => <header>{children}</header>,
 }));
 
-jest.mock('@/app/components/ui/tabs', () => ({
+jest.mock('@/app/components/ui/primitives/tabs', () => ({
   Tab: ({ active, tabs }: any) => (
     <div data-active-tab={active}>
       {tabs.map((tab: any) => (

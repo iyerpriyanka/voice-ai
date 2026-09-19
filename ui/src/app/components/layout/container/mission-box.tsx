@@ -1,8 +1,8 @@
 import { ActionableHeader } from '@/app/components/layout/navigation/actionable-header';
 import { SidebarNavigation } from '@/app/components/layout/navigation/sidebar';
-import { Loader } from '@/app/components/ui/loader';
+import { Loader } from '@/app/components/ui/feedback/loader';
 import { useRapidaStore } from '@/hooks';
-import { Toast } from '@/app/components/ui/toast';
+import { Toast } from '@/app/components/ui/feedback/toast';
 import { ProviderContextProvider } from '@/context/provider-context';
 import { SidebarProvider } from '@/context/sidebar-context';
 

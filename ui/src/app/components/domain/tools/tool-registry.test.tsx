@@ -62,7 +62,7 @@ jest.mock('@carbon/react', () => ({
   Tooltip: ({ children }: any) => <>{children}</>,
 }));
 
-jest.mock('@/app/components/ui/input-group', () => ({
+jest.mock('@/app/components/ui/primitives/input-group', () => ({
   InputGroup: ({ title, children }: any) => (
     <section>
       <h3>{title}</h3>

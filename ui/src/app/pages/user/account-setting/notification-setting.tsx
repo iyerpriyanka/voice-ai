@@ -1,9 +1,9 @@
-import { FormLabel } from '@/app/components/ui/form-label';
-import { PrimaryButton } from '@/app/components/ui/button';
+import { FormLabel } from '@/app/components/ui/primitives/form-label';
+import { PrimaryButton } from '@/app/components/ui/primitives/button';
 import { ChevronRight } from '@carbon/icons-react';
-import { InputCheckbox } from '@/app/components/ui/input-checkbox';
-import { FieldSet } from '@/app/components/ui/fieldset';
-import { InputHelper } from '@/app/components/ui/input-helper';
+import { InputCheckbox } from '@/app/components/ui/primitives/input-checkbox';
+import { FieldSet } from '@/app/components/ui/primitives/fieldset';
+import { InputHelper } from '@/app/components/ui/primitives/input-helper';
 import { connectionConfig } from '@/configs';
 import { RAPIDA_SYSTEM_NOTIFICATION } from '@/models/notification';
 import { useState } from 'react';

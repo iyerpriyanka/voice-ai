@@ -4,14 +4,14 @@ import '@testing-library/jest-dom';
 
 import { MessageFeedbackDialog } from './message-feedback-modal';
 
-jest.mock('@/app/components/ui/modal', () => ({
+jest.mock('@/app/components/ui/primitives/modal', () => ({
   Modal: ({ open, children }: any) => (open ? <div>{children}</div> : null),
   ModalHeader: ({ title }: any) => <h2>{title}</h2>,
   ModalBody: ({ children }: any) => <main>{children}</main>,
   ModalFooter: ({ children }: any) => <footer>{children}</footer>,
 }));
 
-jest.mock('@/app/components/ui/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   PrimaryButton: ({ children, renderIcon: Icon, ...props }: any) => (
     <button {...props}>
       {children}

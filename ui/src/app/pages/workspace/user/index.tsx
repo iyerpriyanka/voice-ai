@@ -14,8 +14,8 @@ import toast from 'react-hot-toast/headless';
 import { useRapidaStore } from '@/hooks';
 import { useUserPageStore } from '@/hooks';
 import { SingleUser } from '@/app/pages/workspace/user/single-user';
-import { PrimaryButton } from '@/app/components/ui/button';
-import { Pagination } from '@/app/components/ui/pagination';
+import { PrimaryButton } from '@/app/components/ui/primitives/button';
+import { Pagination } from '@/app/components/ui/primitives/pagination';
 import { Add, Renew, TrashCan, UserAdmin } from '@carbon/icons-react';
 import {
   Table,

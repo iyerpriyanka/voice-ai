@@ -1,11 +1,11 @@
 import { Metric } from '@rapidaai/react';
 import { InvokeResponse } from '@rapidaai/react';
-import { MarkdownViewer } from '@/app/components/ui/markdown-viewer';
-import { Tab } from '@/app/components/ui/tabs';
+import { MarkdownViewer } from '@/app/components/ui/editor/markdown-viewer';
+import { Tab } from '@/app/components/ui/primitives/tabs';
 import { ExecuteMessage } from '@/app/pages/endpoint/view/try-playground/experiment-prompt/components/execute-message';
 import { cn } from '@/utils';
 import { FC, useEffect, useState } from 'react';
-import { CodeHighlighting } from '@/app/components/ui/code-highlighting';
+import { CodeHighlighting } from '@/app/components/ui/editor/code-highlighting';
 
 /**
  * OutputMessage Component

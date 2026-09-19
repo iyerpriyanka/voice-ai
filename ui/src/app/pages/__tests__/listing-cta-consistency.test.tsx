@@ -50,18 +50,18 @@ jest.mock('@/app/components/app-shell/helmet', () => ({
   Helmet: () => null,
 }));
 
-jest.mock('@/app/components/ui/loading', () => ({
+jest.mock('@/app/components/ui/feedback/loading', () => ({
   PageLoading: () => <div>Loading page</div>,
 }));
 
-jest.mock('@/app/components/ui/modal', () => ({
+jest.mock('@/app/components/ui/primitives/modal', () => ({
   Modal: ({ children, open }: any) =>
     open ? <div role="dialog">{children}</div> : null,
   ModalBody: ({ children }: any) => <div>{children}</div>,
   ModalHeader: ({ title }: any) => <h2>{title}</h2>,
 }));
 
-jest.mock('@/app/components/ui/pagination', () => ({
+jest.mock('@/app/components/ui/primitives/pagination', () => ({
   Pagination: ({ onChange, pageSize }: any) => (
     <button onClick={() => onChange({ page: 2, pageSize })}>Next page</button>
   ),

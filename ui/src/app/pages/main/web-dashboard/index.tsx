@@ -5,7 +5,7 @@ import {
   PrimaryButton,
   SecondaryButton,
   TertiaryButton,
-} from '@/app/components/ui/button';
+} from '@/app/components/ui/primitives/button';
 import { ArrowUpRight } from '@carbon/icons-react';
 import { Link, SkeletonPlaceholder, SkeletonText, Tile } from '@carbon/react';
 import { useEffect, useState, type ReactNode } from 'react';

@@ -11,7 +11,7 @@ import {
 } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
 import { Helmet } from '@/app/components/app-shell/helmet';
-import { EmptyState } from '@/app/components/ui/empty-state';
+import { EmptyState } from '@/app/components/ui/feedback/empty-state';
 import { AuthContext } from '@/context/auth-context';
 import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
 import { PageTitleBlock } from '@/app/components/layout/blocks/page-title-block';
@@ -27,11 +27,11 @@ import {
 import { connectionConfig } from '@/configs';
 import { toHumanReadableDate } from '@/utils/date';
 import { DocNoticeBlock } from '@/app/components/layout/container/message/notice-block/doc-notice-block';
-import { FieldSet } from '@/app/components/ui/fieldset';
-import { FormLabel } from '@/app/components/ui/form-label';
-import { CopyButton } from '@/app/components/ui/buttons/copy-button';
-import { GhostButton } from '@/app/components/ui/button';
-import { BaseCard } from '@/app/components/ui/card';
+import { FieldSet } from '@/app/components/ui/primitives/fieldset';
+import { FormLabel } from '@/app/components/ui/primitives/form-label';
+import { CopyButton } from '@/app/components/ui/primitives/buttons/copy-button';
+import { GhostButton } from '@/app/components/ui/primitives/button';
+import { BaseCard } from '@/app/components/ui/primitives/card';
 
 /**
  *

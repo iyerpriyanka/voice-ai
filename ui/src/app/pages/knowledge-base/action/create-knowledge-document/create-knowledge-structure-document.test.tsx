@@ -40,7 +40,7 @@ jest.mock('@/app/components/layout/container/message/notice-block/doc-notice-blo
   DocNoticeBlock: ({ children }: any) => <aside>{children}</aside>,
 }));
 
-jest.mock('@/app/components/ui/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   PrimaryButton: ({
     children,
     isLoading,
@@ -57,16 +57,16 @@ jest.mock('@/app/components/ui/button', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/error-message', () => ({
+jest.mock('@/app/components/ui/feedback/error-message', () => ({
   ErrorMessage: ({ message }: any) =>
     message ? <div role="alert">{message}</div> : null,
 }));
 
-jest.mock('@/app/components/ui/form-label', () => ({
+jest.mock('@/app/components/ui/primitives/form-label', () => ({
   FormLabel: ({ children }: any) => <label>{children}</label>,
 }));
 
-jest.mock('@/app/components/ui/select', () => ({
+jest.mock('@/app/components/ui/primitives/select', () => ({
   Select: ({ onChange, options, placeholder }: any) => (
     <select
       aria-label={placeholder}

@@ -1,11 +1,11 @@
 import {
   QuerySearch,
   parseQuerySearchFilters,
-} from '@/app/components/ui/query-search';
+} from '@/app/components/ui/composites/query-search';
 import type {
   QuerySearchField,
   QuerySearchOption,
-} from '@/app/components/ui/query-search';
+} from '@/app/components/ui/composites/query-search';
 import { TEXT_PROVIDERS } from '@/providers';
 
 type EndpointSearchCriteria = {

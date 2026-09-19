@@ -1,8 +1,8 @@
 import { FC } from 'react';
 import { Select, SelectItem } from '@carbon/react';
-import { Stack, TextInput } from '@/app/components/ui/form';
+import { Stack, TextInput } from '@/app/components/ui/primitives/form';
 import { APiStringHeader } from '@/app/components/domain/external-api/api-header';
-import { InputGroup } from '@/app/components/ui/input-group';
+import { InputGroup } from '@/app/components/ui/primitives/input-group';
 import {
   ConfigureToolProps,
   ToolDefinitionForm,

@@ -3,9 +3,9 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-} from '@/app/components/ui/modal';
+} from '@/app/components/ui/primitives/modal';
 import React, { FC } from 'react';
-import { ModalProps } from '@/app/components/ui/modal';
+import { ModalProps } from '@/app/components/ui/primitives/modal';
 import { Button } from '@carbon/react';
 import { Checkmark } from '@carbon/icons-react';
 

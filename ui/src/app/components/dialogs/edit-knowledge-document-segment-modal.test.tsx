@@ -21,14 +21,14 @@ jest.mock('@/hooks/use-credential', () => ({
   }),
 }));
 
-jest.mock('@/app/components/ui/modal', () => ({
+jest.mock('@/app/components/ui/primitives/modal', () => ({
   Modal: ({ open, children }: any) => (open ? <div>{children}</div> : null),
   ModalHeader: ({ title }: any) => <h2>{title}</h2>,
   ModalBody: ({ children }: any) => <main>{children}</main>,
   ModalFooter: ({ children }: any) => <footer>{children}</footer>,
 }));
 
-jest.mock('@/app/components/ui/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   PrimaryButton: ({ children, renderIcon: Icon, ...props }: any) => (
     <button {...props}>
       {children}
@@ -44,15 +44,15 @@ jest.mock('@carbon/icons-react', () => ({
   Checkmark: () => <svg data-testid="update-icon" />,
 }));
 
-jest.mock('@/app/components/ui/form-label', () => ({
+jest.mock('@/app/components/ui/primitives/form-label', () => ({
   FormLabel: ({ children }: any) => <label>{children}</label>,
 }));
 
-jest.mock('@/app/components/ui/fieldset', () => ({
+jest.mock('@/app/components/ui/primitives/fieldset', () => ({
   FieldSet: ({ children }: any) => <div>{children}</div>,
 }));
 
-jest.mock('@/app/components/ui/input', () => ({
+jest.mock('@/app/components/ui/primitives/input', () => ({
   Input: (props: any) => <input {...props} />,
 }));
 

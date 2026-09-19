@@ -1,13 +1,13 @@
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
-import { ModalProps } from '@/app/components/ui/modal';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
+import { ModalProps } from '@/app/components/ui/primitives/modal';
 import {
   Modal,
   ModalHeader,
   ModalBody,
   ModalFooter,
-} from '@/app/components/ui/modal';
-import { Notification } from '@/app/components/ui/notification';
-import { Stack, TextInput, TextArea } from '@/app/components/ui/form';
+} from '@/app/components/ui/primitives/modal';
+import { Notification } from '@/app/components/ui/feedback/notification';
+import { Stack, TextInput, TextArea } from '@/app/components/ui/primitives/form';
 import { useRapidaStore } from '@/hooks';
 import React, { useEffect, useState } from 'react';
 

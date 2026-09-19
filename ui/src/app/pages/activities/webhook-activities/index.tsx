@@ -29,11 +29,11 @@ import {
   Tag,
   Link,
 } from '@carbon/react';
-import { Pagination } from '@/app/components/ui/pagination';
-import { IconOnlyButton } from '@/app/components/ui/button';
-import { UrlTableCell } from '@/app/components/ui/url-table-cell';
+import { Pagination } from '@/app/components/ui/primitives/pagination';
+import { IconOnlyButton } from '@/app/components/ui/primitives/button';
+import { UrlTableCell } from '@/app/components/ui/table/url-table-cell';
 import { Renew, View, EventSchedule, Launch } from '@carbon/icons-react';
-import { EmptyState } from '@/app/components/ui/empty-state';
+import { EmptyState } from '@/app/components/ui/feedback/empty-state';
 import { ScrollableTableSection } from '@/app/components/layout/sections/table-section';
 import { RequestLogQuerySearch } from './request-query-search';
 

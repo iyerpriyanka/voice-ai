@@ -39,14 +39,14 @@ import {
 } from '@/app/components/domain/providers/text-to-speech/provider';
 import { connectionConfig } from '@/configs';
 import { AssistantWebwidgetDeploymentDialog } from '@/app/components/dialogs/assistant-instruction-modal';
-import { TabForm } from '@/app/components/ui/tab-form';
+import { TabForm } from '@/app/components/ui/composites/tab-form';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import {
   PrimaryButton,
   SecondaryButton,
   GhostButton,
-} from '@/app/components/ui/button';
-import { InputCheckbox } from '@/app/components/ui/input-checkbox';
+} from '@/app/components/ui/primitives/button';
+import { InputCheckbox } from '@/app/components/ui/primitives/input-checkbox';
 import { ButtonSet, CheckboxGroup } from '@carbon/react';
 
 const STEPS = [

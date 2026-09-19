@@ -5,7 +5,7 @@ import { TableCell } from '@/app/components/ui/table/table-cell';
 import { TableHead } from '@/app/components/ui/table/table-head';
 import { TableRow } from '@/app/components/ui/table/table-row';
 import { FC } from 'react';
-import { EmptyState } from '@/app/components/ui/empty-state';
+import { EmptyState } from '@/app/components/ui/feedback/empty-state';
 import { DataCheck } from '@carbon/icons-react';
 
 export const EndpointArguments: FC<{ args: Array<Argument> }> = ({ args }) => {

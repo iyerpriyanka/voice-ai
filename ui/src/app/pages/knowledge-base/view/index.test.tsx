@@ -63,7 +63,7 @@ jest.mock('@/app/components/layout/blocks/page-title-block', () => ({
   PageTitleBlock: ({ children }: any) => <h1>{children}</h1>,
 }));
 
-jest.mock('@/app/components/ui/tabs', () => ({
+jest.mock('@/app/components/ui/primitives/tabs', () => ({
   Tab: ({ tabs }: any) => (
     <div>
       {tabs.map((tab: any) => (

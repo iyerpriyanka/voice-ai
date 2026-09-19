@@ -14,11 +14,11 @@ const createMetadata = (key: string, value: string): Metadata => {
 const toMap = (items: Metadata[]) =>
   Object.fromEntries(items.map(item => [item.getKey(), item.getValue()]));
 
-jest.mock('@/app/components/ui/input-group', () => ({
+jest.mock('@/app/components/ui/primitives/input-group', () => ({
   InputGroup: ({ children }: any) => <div>{children}</div>,
 }));
 
-jest.mock('@/app/components/ui/form', () => ({
+jest.mock('@/app/components/ui/primitives/form', () => ({
   Stack: ({ children }: any) => <div>{children}</div>,
   TextInput: ({ id, value, onChange, labelText, hideLabel }: any) => (
     <div>
@@ -31,7 +31,7 @@ jest.mock('@/app/components/ui/form', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   TertiaryButton: ({ children, ...props }: any) => (
     <button {...props}>{children}</button>
   ),
@@ -66,7 +66,7 @@ jest.mock(
   }),
 );
 
-jest.mock('@/app/components/ui/code-editor', () => ({
+jest.mock('@/app/components/ui/editor/code-editor', () => ({
   CodeEditor: ({ value, onChange }: any) => (
     <textarea value={value ?? ''} onChange={e => onChange(e.target.value)} />
   ),

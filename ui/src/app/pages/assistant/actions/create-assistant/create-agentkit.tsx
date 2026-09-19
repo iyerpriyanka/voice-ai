@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Helmet } from '@/app/components/app-shell/helmet';
 import { useRapidaStore } from '@/hooks';
-import { TabForm } from '@/app/components/ui/tab-form';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
+import { TabForm } from '@/app/components/ui/composites/tab-form';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
 import { ButtonSet, Slider } from '@carbon/react';
 import {
   ChevronDown,
@@ -22,19 +22,19 @@ import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confir
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { randomMeaningfullName } from '@/utils';
-import { FieldSet } from '@/app/components/ui/fieldset';
-import { FormLabel } from '@/app/components/ui/form-label';
-import { Input } from '@/app/components/ui/input';
-import { Select } from '@/app/components/ui/select';
-import { Textarea } from '@/app/components/ui/textarea';
-import { TagInput } from '@/app/components/ui/tag-input';
+import { FieldSet } from '@/app/components/ui/primitives/fieldset';
+import { FormLabel } from '@/app/components/ui/primitives/form-label';
+import { Input } from '@/app/components/ui/primitives/input';
+import { Select } from '@/app/components/ui/primitives/select';
+import { Textarea } from '@/app/components/ui/primitives/textarea';
+import { TagInput } from '@/app/components/ui/composites/tag-input';
 import { AssistantTag } from '@/app/components/domain/tags/assistant-tags';
 import { DocNoticeBlock } from '@/app/components/layout/container/message/notice-block/doc-notice-block';
 import { CreateAssistant } from '@rapidaai/react';
 import { connectionConfig } from '@/configs';
 import { APiParameter } from '@/app/components/domain/external-api/api-parameter';
-import { InputHelper } from '@/app/components/ui/input-helper';
-import { CodeEditor } from '@/app/components/ui/code-editor';
+import { InputHelper } from '@/app/components/ui/primitives/input-helper';
+import { CodeEditor } from '@/app/components/ui/editor/code-editor';
 import toast from 'react-hot-toast/headless';
 import { SectionDivider } from '@/app/components/layout/blocks/section-divider';
 import { useTheme } from '@/theme/theme-provider';

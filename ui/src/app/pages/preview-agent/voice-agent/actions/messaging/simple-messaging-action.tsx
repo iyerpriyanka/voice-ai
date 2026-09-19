@@ -7,8 +7,8 @@ import {
 import { Send, VoiceMode, StopFilledAlt } from '@carbon/icons-react';
 import { FC, HTMLAttributes } from 'react';
 import { useForm } from 'react-hook-form';
-import { ScalableTextarea } from '@/app/components/ui/textarea';
-import { PrimaryButton } from '@/app/components/ui/button';
+import { ScalableTextarea } from '@/app/components/ui/primitives/textarea';
+import { PrimaryButton } from '@/app/components/ui/primitives/button';
 
 interface SimpleMessagingAcitonProps extends HTMLAttributes<HTMLDivElement> {
   placeholder?: string;

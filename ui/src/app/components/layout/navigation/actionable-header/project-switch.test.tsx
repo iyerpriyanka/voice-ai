@@ -51,7 +51,7 @@ jest.mock('@/theme/theme-provider', () => ({
   }),
 }));
 
-jest.mock('@/app/components/ui/custom-link', () => ({
+jest.mock('@/app/components/ui/primitives/custom-link', () => ({
   CustomLink: ({ to, children }: any) => <a href={to}>{children}</a>,
 }));
 

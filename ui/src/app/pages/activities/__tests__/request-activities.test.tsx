@@ -145,7 +145,7 @@ jest.mock('@/app/components/app-shell/helmet', () => ({
   Helmet: () => null,
 }));
 
-jest.mock('@/app/components/ui/query-search', () => ({
+jest.mock('@/app/components/ui/composites/query-search', () => ({
   QuerySearch: ({ placeholder }: any) => <input placeholder={placeholder} />,
   parseQuerySearchFilters: () => [],
 }));
@@ -158,19 +158,19 @@ jest.mock('@/app/components/layout/blocks/page-header-block', () => ({
   PageHeaderBlock: ({ children }: any) => <div>{children}</div>,
 }));
 
-jest.mock('@/app/components/ui/table-link', () => ({
+jest.mock('@/app/components/ui/table/table-link', () => ({
   TableLink: ({ children, href }: any) => <a href={href}>{children}</a>,
 }));
 
-jest.mock('@/app/components/ui/pagination', () => ({
+jest.mock('@/app/components/ui/primitives/pagination', () => ({
   Pagination: () => <div>pagination</div>,
 }));
 
-jest.mock('@/app/components/ui/empty-state', () => ({
+jest.mock('@/app/components/ui/feedback/empty-state', () => ({
   EmptyState: ({ title }: any) => <div>{title}</div>,
 }));
 
-jest.mock('@/app/components/ui/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   IconOnlyButton: ({
     iconDescription,
     children,

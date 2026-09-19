@@ -11,7 +11,7 @@ import {
 const mockSlider = jest.fn();
 const theme = developmentConfig.theme as unknown as ThemeManifest;
 
-jest.mock('@/app/components/ui/form', () => ({
+jest.mock('@/app/components/ui/primitives/form', () => ({
   Stack: ({ children }: any) => <div>{children}</div>,
   TextArea: ({ labelText, value }: any) => (
     <textarea aria-label={labelText} value={value} readOnly />

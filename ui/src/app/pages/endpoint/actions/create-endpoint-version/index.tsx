@@ -1,9 +1,9 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast/headless';
 import { Helmet } from '@/app/components/app-shell/helmet';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
 import { ButtonSet } from '@carbon/react';
-import { TabForm } from '@/app/components/ui/tab-form';
+import { TabForm } from '@/app/components/ui/composites/tab-form';
 import ConfirmDialog from '@/app/components/dialogs/confirm-ui';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/hooks';
@@ -30,12 +30,12 @@ import { ServiceError } from '@rapidaai/react';
 import { ChatCompletePrompt, Prompt } from '@/utils/prompt';
 import { CreateEndpointProviderModelResponse } from '@rapidaai/react';
 import { randomString } from '@/utils';
-import { FieldSet } from '@/app/components/ui/fieldset';
-import { FormLabel } from '@/app/components/ui/form-label';
-import { Textarea } from '@/app/components/ui/textarea';
+import { FieldSet } from '@/app/components/ui/primitives/fieldset';
+import { FormLabel } from '@/app/components/ui/primitives/form-label';
+import { Textarea } from '@/app/components/ui/primitives/textarea';
 import { connectionConfig } from '@/configs';
 import { DocNoticeBlock } from '@/app/components/layout/container/message/notice-block/doc-notice-block';
-import { InputHelper } from '@/app/components/ui/input-helper';
+import { InputHelper } from '@/app/components/ui/primitives/input-helper';
 
 export const CreateNewVersionEndpointPage: FC = () => {
   /**

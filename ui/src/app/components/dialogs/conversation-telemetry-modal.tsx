@@ -7,12 +7,12 @@ import {
   GetAllTelemetryRequest,
   Paginate,
 } from '@rapidaai/react';
-import { ModalProps } from '@/app/components/ui/modal';
+import { ModalProps } from '@/app/components/ui/primitives/modal';
 import { connectionConfig } from '@/configs';
 import { useCurrentCredential } from '@/hooks/use-credential';
-import { Modal, ModalHeader, ModalBody } from '@/app/components/ui/modal';
-import { Pagination } from '@/app/components/ui/pagination';
-import { Tabs } from '@/app/components/ui/tabs';
+import { Modal, ModalHeader, ModalBody } from '@/app/components/ui/primitives/modal';
+import { Pagination } from '@/app/components/ui/primitives/pagination';
+import { Tabs } from '@/app/components/ui/primitives/tabs';
 import {
   Table,
   TableHead,
@@ -31,9 +31,9 @@ import {
   Dropdown,
   MultiSelect,
 } from '@carbon/react';
-import { TableToolbarFilter } from '@/app/components/ui/table-toolbar-filter';
+import { TableToolbarFilter } from '@/app/components/ui/composites/table-toolbar-filter';
 import { ChevronRight } from '@carbon/icons-react';
-import { TextInput } from '@/app/components/ui/form';
+import { TextInput } from '@/app/components/ui/primitives/form';
 import {
   buildLatencySeries,
   buildTelemetryCriteriaInputs,

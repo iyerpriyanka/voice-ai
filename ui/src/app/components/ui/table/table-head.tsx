@@ -1,4 +1,4 @@
-import { InputCheckbox } from '@/app/components/ui/input-checkbox';
+import { InputCheckbox } from '@/app/components/ui/primitives/input-checkbox';
 import { cn } from '@/utils';
 import { FC, memo } from 'react';
 

@@ -37,13 +37,13 @@ import {
 } from '@/app/components/domain/providers/text-to-speech/provider';
 import { connectionConfig } from '@/configs';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
-import { TabForm } from '@/app/components/ui/tab-form';
+import { TabForm } from '@/app/components/ui/composites/tab-form';
 import {
   PrimaryButton,
   SecondaryButton,
   GhostButton,
-} from '@/app/components/ui/button';
-import { InputCheckbox } from '@/app/components/ui/input-checkbox';
+} from '@/app/components/ui/primitives/button';
+import { InputCheckbox } from '@/app/components/ui/primitives/input-checkbox';
 import { ButtonSet, CheckboxGroup } from '@carbon/react';
 
 const STEPS = [

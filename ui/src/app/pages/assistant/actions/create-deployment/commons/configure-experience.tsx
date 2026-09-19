@@ -1,5 +1,5 @@
 import { FC, ReactNode } from 'react';
-import { TextArea, Stack } from '@/app/components/ui/form';
+import { TextArea, Stack } from '@/app/components/ui/primitives/form';
 import {
   Button,
   ComboBox,

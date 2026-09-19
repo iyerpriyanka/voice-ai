@@ -37,8 +37,8 @@ import {
 import { cn } from '@/utils';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { Dropdown } from '@/app/components/ui/dropdown';
-import { Tile } from '@/app/components/ui/tile';
+import { Dropdown } from '@/app/components/ui/primitives/dropdown';
+import { Tile } from '@/app/components/ui/primitives/tile';
 import toast from 'react-hot-toast/headless';
 import {
   Button,

@@ -12,13 +12,13 @@ import {
 import { useRapidaStore } from '@/hooks';
 import { Metadata } from '@rapidaai/react';
 import { ServiceError } from '@rapidaai/react';
-import { Tabs } from '@/app/components/ui/tabs';
-import { CarbonStatusIndicator } from '@/app/components/ui/status-indicator';
-import { ModalProps } from '@/app/components/ui/modal';
+import { Tabs } from '@/app/components/ui/primitives/tabs';
+import { CarbonStatusIndicator } from '@/app/components/ui/feedback/status-indicator';
+import { ModalProps } from '@/app/components/ui/primitives/modal';
 import { RightSideModal } from '@/app/components/dialogs/right-side-modal';
 import { HttpStatusSpanIndicator } from '@/app/components/domain/indicators/http-status';
 import { connectionConfig } from '@/configs';
-import { CodeHighlighting } from '@/app/components/ui/code-highlighting';
+import { CodeHighlighting } from '@/app/components/ui/editor/code-highlighting';
 import { toHumanReadableDateTime } from '@/utils/date';
 
 interface LLMLogModalProps extends ModalProps {

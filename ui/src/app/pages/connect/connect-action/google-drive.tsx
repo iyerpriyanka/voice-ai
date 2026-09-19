@@ -1,6 +1,6 @@
 import { ActionConnect } from '@rapidaai/react';
 import { FC } from 'react';
-import { PageLoader } from '@/app/components/ui/loaders/page-loader';
+import { PageLoader } from '@/app/components/ui/feedback/loaders/page-loader';
 import { useOAuthCallback } from '@/hooks/use-oauth-callback';
 
 export const ConnectGoogleDriveActionPage: FC = () => {

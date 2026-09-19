@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Helmet } from '@/app/components/app-shell/helmet';
 import { useRapidaStore } from '@/hooks';
-import { TabForm } from '@/app/components/ui/tab-form';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
+import { TabForm } from '@/app/components/ui/composites/tab-form';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
 import {
   ButtonSet,
   Table,
@@ -34,8 +34,8 @@ import { useCurrentCredential } from '@/hooks/use-credential';
 import { useAllProviderCredentials } from '@/hooks/use-model';
 import { ConfigPrompt } from '@/app/components/domain/configuration/config-prompt';
 import { randomMeaningfullName, randomString } from '@/utils';
-import { TextInput, TextArea, Stack } from '@/app/components/ui/form';
-import { TagInput } from '@/app/components/ui/tag-input';
+import { TextInput, TextArea, Stack } from '@/app/components/ui/primitives/form';
+import { TagInput } from '@/app/components/ui/composites/tag-input';
 import { AssistantTag } from '@/app/components/domain/tags/assistant-tags';
 import {
   GetDefaultTextProviderConfigIfInvalid,
@@ -49,7 +49,7 @@ import {
   getToolConditionSourceLabel,
 } from '@/app/components/domain/tools/common';
 import { BUILDIN_TOOLS } from '@/llm-tools';
-import { EmptyState } from '@/app/components/ui/empty-state';
+import { EmptyState } from '@/app/components/ui/feedback/empty-state';
 import { ConfigureAssistantToolDialog } from '@/app/components/dialogs/assistant-configure-tool-modal';
 import { DocNoticeBlock } from '@/app/components/layout/container/message/notice-block/doc-notice-block';
 import { CreateAssistant } from '@rapidaai/react';
@@ -60,7 +60,7 @@ import { ChatCompletePrompt } from '@/utils/prompt';
 import toast from 'react-hot-toast/headless';
 import { ConfigureAssistantNextDialog } from '@/app/components/dialogs/assistant-configure-next-modal';
 import { SectionDivider } from '@/app/components/layout/blocks/section-divider';
-import { CornerBorderOverlay } from '@/app/components/ui/corner-border';
+import { CornerBorderOverlay } from '@/app/components/ui/primitives/corner-border';
 import { Add, ArrowUpRight, Edit, ToolKit, TrashCan } from '@carbon/icons-react';
 import {
   AssistantTemplate,

@@ -1,16 +1,16 @@
 import React, { FC, useState } from 'react';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
-import { ModalProps } from '@/app/components/ui/modal';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
+import { ModalProps } from '@/app/components/ui/primitives/modal';
 import {
   Modal,
   ModalHeader,
   ModalBody,
   ModalFooter,
-} from '@/app/components/ui/modal';
+} from '@/app/components/ui/primitives/modal';
 import { cn } from '@/utils';
 import assistantTemplates from '@/prompts/assistants/index.json';
 import { Checkmark } from '@carbon/icons-react';
-import { CornerBorderOverlay } from '@/app/components/ui/corner-border';
+import { CornerBorderOverlay } from '@/app/components/ui/primitives/corner-border';
 import { Tag, ContentSwitcher, Switch } from '@carbon/react';
 
 // ── Types ─────────────────────────────────────────────────────────────────────

@@ -3,7 +3,7 @@ import { VAD } from '@/providers';
 import { VADConfigComponent } from '@/app/components/domain/providers/vad/provider';
 import { useMemo } from 'react';
 import { Dropdown } from '@carbon/react';
-import { Stack } from '@/app/components/ui/form';
+import { Stack } from '@/app/components/ui/primitives/form';
 
 export const VADProvider: React.FC<ProviderComponentProps> = props => {
   const { provider, onChangeProvider } = props;

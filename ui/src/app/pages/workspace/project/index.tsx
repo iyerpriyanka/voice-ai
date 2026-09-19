@@ -11,8 +11,8 @@ import { useCredential } from '@/hooks/use-credential';
 import toast from 'react-hot-toast/headless';
 import { useRapidaStore } from '@/hooks';
 import { ServiceError } from '@rapidaai/react';
-import { PrimaryButton } from '@/app/components/ui/button';
-import { Pagination } from '@/app/components/ui/pagination';
+import { PrimaryButton } from '@/app/components/ui/primitives/button';
+import { Pagination } from '@/app/components/ui/primitives/pagination';
 import { Add, Edit, Renew, TrashCan } from '@carbon/icons-react';
 import {
   Table,
@@ -39,7 +39,7 @@ import { connectionConfig } from '@/configs';
 import { ConfirmDeleteDialog } from '@/app/components/dialogs/confirm-delete';
 import { AuthContext } from '@/context/auth-context';
 import { UpdateProjectDialog } from '@/app/components/dialogs/update-project-modal';
-import { CarbonIconIndicator } from '@/app/components/ui/icon-indicator';
+import { CarbonIconIndicator } from '@/app/components/ui/feedback/icon-indicator';
 
 const headers = [
   { key: 'name', header: 'Name' },

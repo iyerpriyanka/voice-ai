@@ -9,9 +9,9 @@ import { useCurrentCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/hooks';
 import { connectionConfig } from '@/configs';
 import toast from 'react-hot-toast/headless';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
-import { Stack } from '@/app/components/ui/form';
-import { Notification } from '@/app/components/ui/notification';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
+import { Stack } from '@/app/components/ui/primitives/form';
+import { Notification } from '@/app/components/ui/feedback/notification';
 import { ButtonSet } from '@carbon/react';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { TelemetryProvider } from '@/app/components/domain/providers/telemetry';
@@ -20,7 +20,7 @@ import {
   ValidateTelemetry,
 } from '@/app/components/domain/providers/telemetry/provider';
 import { TELEMETRY_PROVIDER } from '@/providers';
-import { InputGroup } from '@/app/components/ui/input-group';
+import { InputGroup } from '@/app/components/ui/primitives/input-group';
 
 const telemetryConfigurationType = 'telemetry';
 

@@ -1,7 +1,7 @@
 import { Metric } from '@rapidaai/react';
-import { Tooltip } from '@/app/components/ui/tooltip';
+import { Tooltip } from '@/app/components/ui/primitives/tooltip';
 import { FC } from 'react';
-import { EmptyState } from '@/app/components/ui/empty-state';
+import { EmptyState } from '@/app/components/ui/feedback/empty-state';
 import {
   ChartLine,
   CheckmarkFilled,

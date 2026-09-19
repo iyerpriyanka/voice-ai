@@ -1,11 +1,11 @@
-import { ModalProps } from '@/app/components/ui/modal';
+import { ModalProps } from '@/app/components/ui/primitives/modal';
 import {
   Modal,
   ModalHeader,
   ModalBody,
   ModalFooter,
-} from '@/app/components/ui/modal';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
+} from '@/app/components/ui/primitives/modal';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
 import {
   Phone,
   Code,

@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { HowItWorksDialog } from '@/app/components/dialogs/how-it-works-modal';
 
-jest.mock('@/app/components/ui/modal', () => ({
+jest.mock('@/app/components/ui/primitives/modal', () => ({
   Modal: ({ open, children }: any) =>
     open ? <div data-testid="modal">{children}</div> : null,
   ModalHeader: ({ title }: any) => <h2>{title}</h2>,

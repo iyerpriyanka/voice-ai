@@ -1,7 +1,7 @@
 import React, { HTMLAttributes } from 'react';
 import { cn } from '@/utils';
 import { useSidebar } from '@/context/sidebar-context';
-import { Text } from '@/app/components/ui/text';
+import { Text } from '@/app/components/ui/primitives/text';
 
 interface SidebarLabelProps extends HTMLAttributes<HTMLSpanElement> {
   isLoading?: boolean;

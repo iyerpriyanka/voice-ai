@@ -51,7 +51,7 @@ jest.mock('@/app/components/dialogs/create-provider-credential-modal', () => ({
   },
 }));
 
-jest.mock('@/app/components/ui/dropdown', () => ({
+jest.mock('@/app/components/ui/primitives/dropdown', () => ({
   Dropdown: ({
     id,
     titleText,

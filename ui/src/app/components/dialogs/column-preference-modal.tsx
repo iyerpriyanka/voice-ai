@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { ErrorMessage } from '@/app/components/ui/error-message';
+import { ErrorMessage } from '@/app/components/ui/feedback/error-message';
 import {
   Modal,
   ModalHeader,
   ModalBody,
   ModalFooter,
-} from '@/app/components/ui/modal';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
-import { Stack, Checkbox, FormGroup } from '@/app/components/ui/form';
+} from '@/app/components/ui/primitives/modal';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
+import { Stack, Checkbox, FormGroup } from '@/app/components/ui/primitives/form';
 import { RadioButton, RadioButtonGroup } from '@carbon/react';
 
 interface TablePreferenceModalProps {

@@ -8,7 +8,7 @@ jest.mock('@/utils', () => ({
   cn: (...inputs: string[]) => inputs.filter(Boolean).join(' '),
 }));
 
-jest.mock('@/app/components/ui/form', () => {
+jest.mock('@/app/components/ui/primitives/form', () => {
   const React = require('react');
   return {
     TextInput: ({
@@ -39,7 +39,7 @@ jest.mock('@/app/components/ui/form', () => {
   };
 });
 
-jest.mock('@/app/components/ui/button', () => {
+jest.mock('@/app/components/ui/primitives/button', () => {
   const React = require('react');
   return {
     TertiaryButton: ({ children, onClick }: any) =>
@@ -58,7 +58,7 @@ jest.mock(
   },
 );
 
-jest.mock('@/app/components/ui/code-editor', () => {
+jest.mock('@/app/components/ui/editor/code-editor', () => {
   const React = require('react');
   return {
     CodeEditor: ({ value, onChange }: any) =>

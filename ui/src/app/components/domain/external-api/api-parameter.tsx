@@ -1,6 +1,6 @@
 import { FC } from 'react';
-import { TextInput } from '@/app/components/ui/form';
-import { TertiaryButton } from '@/app/components/ui/button';
+import { TextInput } from '@/app/components/ui/primitives/form';
+import { TertiaryButton } from '@/app/components/ui/primitives/button';
 import { Add, TrashCan } from '@carbon/icons-react';
 import { Button } from '@carbon/react';
 

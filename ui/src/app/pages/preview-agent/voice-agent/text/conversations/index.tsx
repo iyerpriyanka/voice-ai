@@ -1,6 +1,6 @@
-import { Tooltip } from '@/app/components/ui/floating-tooltip';
+import { Tooltip } from '@/app/components/ui/primitives/floating-tooltip';
 import { BrandedLogo } from '@/app/components/layout/brand/branded-logo';
-import { TextImage } from '@/app/components/ui/text-image';
+import { TextImage } from '@/app/components/ui/primitives/text-image';
 import { toHumanReadableRelativeTimeFromDate } from '@/utils/date';
 import {
   Feedback,

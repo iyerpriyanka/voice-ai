@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
 import { CONFIG } from '@/configs';
 import {
   BuildinTool,
@@ -8,14 +8,14 @@ import {
   GetDefaultToolDefintion,
   ValidateToolDefaultOptions,
 } from '@/app/components/domain/tools/tool-registry';
-import { ModalProps } from '@/app/components/ui/modal';
+import { ModalProps } from '@/app/components/ui/primitives/modal';
 import {
   Modal,
   ModalHeader,
   ModalBody,
   ModalFooter,
-} from '@/app/components/ui/modal';
-import { Notification } from '@/app/components/ui/notification';
+} from '@/app/components/ui/primitives/modal';
+import { Notification } from '@/app/components/ui/feedback/notification';
 
 interface ConfigureAssistantToolDialogProps extends ModalProps {
   initialData: {

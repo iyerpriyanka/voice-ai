@@ -14,7 +14,7 @@ import { useParams } from 'react-router-dom';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { AssistantConversation } from '@rapidaai/react';
 import { useRapidaStore } from '@/hooks';
-import { PageLoader } from '@/app/components/ui/loaders/page-loader';
+import { PageLoader } from '@/app/components/ui/feedback/loaders/page-loader';
 import {
   ArrowLeft,
   Renew,
@@ -23,19 +23,19 @@ import {
   ChartLine,
 } from '@carbon/icons-react';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { GhostButton } from '@/app/components/ui/button';
+import { GhostButton } from '@/app/components/ui/primitives/button';
 import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
 import { Table } from '@/app/components/ui/table/table';
 import { TableHead } from '@/app/components/ui/table/table-head';
 import { TableBody } from '@/app/components/ui/table/table-body';
 import { TableRow } from '@/app/components/ui/table/table-row';
 import { TableCell } from '@/app/components/ui/table/table-cell';
-import { EmptyState } from '@/app/components/ui/empty-state';
+import { EmptyState } from '@/app/components/ui/feedback/empty-state';
 import { connectionConfig } from '@/configs';
 import { cn } from '@/utils';
-import { CarbonStatusIndicator } from '@/app/components/ui/status-indicator';
+import { CarbonStatusIndicator } from '@/app/components/ui/feedback/status-indicator';
 import { getStatusMetric } from '@/utils/metadata';
-import { Tabs } from '@/app/components/ui/tabs';
+import { Tabs } from '@/app/components/ui/primitives/tabs';
 
 // ── Tab definitions ───────────────────────────────────────────────────────────
 

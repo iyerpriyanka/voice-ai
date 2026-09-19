@@ -32,15 +32,15 @@ import type {
 } from 'reactflow';
 import { Helmet } from '@/app/components/app-shell/helmet';
 import { ConfigPrompt } from '@/app/components/domain/configuration/config-prompt';
-import { FormLabel } from '@/app/components/ui/form-label';
-import { CornerBorderOverlay } from '@/app/components/ui/corner-border';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
+import { FormLabel } from '@/app/components/ui/primitives/form-label';
+import { CornerBorderOverlay } from '@/app/components/ui/primitives/corner-border';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
 import {
   Modal,
   ModalBody,
   ModalFooter,
   ModalHeader,
-} from '@/app/components/ui/modal';
+} from '@/app/components/ui/primitives/modal';
 import { ReactSortable } from 'react-sortablejs';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';

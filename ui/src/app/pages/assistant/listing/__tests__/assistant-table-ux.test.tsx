@@ -38,11 +38,11 @@ jest.mock('@/app/components/domain/indicators/source', () => ({
   default: ({ source }: any) => <span>Deployment: {source}</span>,
 }));
 
-jest.mock('@/app/components/ui/record-status-indicator', () => ({
+jest.mock('@/app/components/ui/feedback/record-status-indicator', () => ({
   RecordStatusIndicator: ({ state }: any) => <span>Status: {state}</span>,
 }));
 
-jest.mock('@/app/components/ui/buttons/copy-button', () => ({
+jest.mock('@/app/components/ui/primitives/buttons/copy-button', () => ({
   CopyButton: ({ children }: any) => <button>Copy {children}</button>,
 }));
 
@@ -55,7 +55,7 @@ jest.mock('@/app/components/domain/indicators/version', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   IconOnlyButton: ({ iconDescription, onClick }: any) => (
     <button aria-label={iconDescription} onClick={onClick}>
       {iconDescription}

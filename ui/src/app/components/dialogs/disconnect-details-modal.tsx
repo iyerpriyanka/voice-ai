@@ -6,8 +6,8 @@ import {
   TableHeader,
   TableRow,
 } from '@carbon/react';
-import { ModalProps } from '@/app/components/ui/modal';
-import { Modal, ModalBody, ModalHeader } from '@/app/components/ui/modal';
+import { ModalProps } from '@/app/components/ui/primitives/modal';
+import { Modal, ModalBody, ModalHeader } from '@/app/components/ui/primitives/modal';
 
 type DisconnectDetail = {
   label: string;

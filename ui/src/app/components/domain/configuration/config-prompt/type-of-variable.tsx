@@ -1,4 +1,4 @@
-import { Select } from '@/app/components/ui/select';
+import { Select } from '@/app/components/ui/primitives/select';
 import { cn } from '@/utils';
 import { InputVarType } from '@/models/common';
 import React, { FC } from 'react';

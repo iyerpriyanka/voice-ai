@@ -1,18 +1,18 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
 import {
   Modal,
   ModalHeader,
   ModalBody,
   ModalFooter,
-} from '@/app/components/ui/modal';
-import { ModalProps } from '@/app/components/ui/modal';
+} from '@/app/components/ui/primitives/modal';
+import { ModalProps } from '@/app/components/ui/primitives/modal';
 import { ManualFile } from '@/app/pages/knowledge-base/action/components/datasource-uploader/manual-file';
 import { KnowledgeDocument } from '@rapidaai/react';
 import { useCreateKnowledgeDocumentPageStore } from '@/hooks/use-create-knowledge-document-page-store';
 import { useCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/hooks/use-rapida-store';
-import { Notification } from '@/app/components/ui/notification';
+import { Notification } from '@/app/components/ui/feedback/notification';
 
 interface CreateKnowledgeDocumentDialogProps extends ModalProps {
   knowledgeId: string;

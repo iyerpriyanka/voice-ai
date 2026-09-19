@@ -7,8 +7,8 @@ import toast from 'react-hot-toast/headless';
 import SingleAssistant from './single-assistant';
 import { useAssistantPageStore } from '@/hooks/use-assistant-page-store';
 import { Assistant } from '@rapidaai/react';
-import { EmptyState } from '@/app/components/ui/empty-state';
-import { Pagination } from '@/app/components/ui/pagination';
+import { EmptyState } from '@/app/components/ui/feedback/empty-state';
+import { Pagination } from '@/app/components/ui/primitives/pagination';
 import {
   Add,
   Bot,
@@ -30,10 +30,10 @@ import {
   SkeletonPlaceholder,
   SkeletonText,
 } from '@carbon/react';
-import { PrimaryButton } from '@/app/components/ui/button';
+import { PrimaryButton } from '@/app/components/ui/primitives/button';
 import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
 import { PageTitleBlock } from '@/app/components/layout/blocks/page-title-block';
-import { Modal, ModalBody, ModalHeader } from '@/app/components/ui/modal';
+import { Modal, ModalBody, ModalHeader } from '@/app/components/ui/primitives/modal';
 import {
   AssistantQuerySearch,
   getAssistantSearchCriteria,

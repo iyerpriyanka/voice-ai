@@ -11,8 +11,8 @@ import {
   ToggletipButton,
   ToggletipContent,
 } from '@carbon/react';
-import { Dropdown } from '@/app/components/ui/dropdown';
-import { FormLabel } from '@/app/components/ui/form-label';
+import { Dropdown } from '@/app/components/ui/primitives/dropdown';
+import { FormLabel } from '@/app/components/ui/primitives/form-label';
 
 interface CredentialDropdownProps {
   className?: string;

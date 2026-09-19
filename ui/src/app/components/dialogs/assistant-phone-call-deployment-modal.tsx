@@ -2,11 +2,11 @@ import {
   AssistantPhoneDeployment,
   DeploymentAudioProvider,
 } from '@rapidaai/react';
-import { ModalProps } from '@/app/components/ui/modal';
+import { ModalProps } from '@/app/components/ui/primitives/modal';
 import { RightSideModal } from '@/app/components/dialogs/right-side-modal';
 import { CONFIG } from '@/configs';
-import { CopyButton } from '@/app/components/ui/buttons/copy-button';
-import { InputHelper } from '@/app/components/ui/input-helper';
+import { CopyButton } from '@/app/components/ui/primitives/buttons/copy-button';
+import { InputHelper } from '@/app/components/ui/primitives/input-helper';
 import { YellowNoticeBlock } from '@/app/components/layout/container/message/notice-block';
 import { ProviderPill } from '@/app/components/domain/pills/provider-model-pill';
 import { FC, ReactNode, useMemo, useState } from 'react';
@@ -15,7 +15,7 @@ import {
   DeploymentRow,
   DeploymentSectionHeader,
 } from '@/app/components/dialogs/deployment-modal-primitives';
-import { Tabs } from '@/app/components/ui/tabs';
+import { Tabs } from '@/app/components/ui/primitives/tabs';
 
 interface AssistantPhoneCallDeploymentDialogProps extends ModalProps {
   deployment: AssistantPhoneDeployment;

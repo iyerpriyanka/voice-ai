@@ -9,11 +9,11 @@ import {
   AssistantToolLog,
 } from '@rapidaai/react';
 import { useRapidaStore } from '@/hooks';
-import { Tabs } from '@/app/components/ui/tabs';
-import { ModalProps } from '@/app/components/ui/modal';
+import { Tabs } from '@/app/components/ui/primitives/tabs';
+import { ModalProps } from '@/app/components/ui/primitives/modal';
 import { RightSideModal } from '@/app/components/dialogs/right-side-modal';
 import { connectionConfig } from '@/configs';
-import { CodeHighlighting } from '@/app/components/ui/code-highlighting';
+import { CodeHighlighting } from '@/app/components/ui/editor/code-highlighting';
 
 interface ToolLogModalProps extends ModalProps {
   currentActivityId: string;

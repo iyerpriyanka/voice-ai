@@ -3,7 +3,7 @@ import { useRapidaStore } from '@/hooks';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useParams } from 'react-router-dom';
 import { Helmet } from '@/app/components/app-shell/helmet';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
 import {
   ButtonSet,
   Toggletip,
@@ -11,8 +11,8 @@ import {
   ToggletipContent,
 } from '@carbon/react';
 import { Information } from '@carbon/icons-react';
-import { TabForm } from '@/app/components/ui/tab-form';
-import { FieldSet } from '@/app/components/ui/fieldset';
+import { TabForm } from '@/app/components/ui/composites/tab-form';
+import { FieldSet } from '@/app/components/ui/primitives/fieldset';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import {
@@ -25,10 +25,10 @@ import {
   Metadata,
   ConnectionConfig,
 } from '@rapidaai/react';
-import { FormLabel } from '@/app/components/ui/form-label';
-import { Textarea } from '@/app/components/ui/textarea';
+import { FormLabel } from '@/app/components/ui/primitives/form-label';
+import { Textarea } from '@/app/components/ui/primitives/textarea';
 import { ConfigPrompt } from '@/app/components/domain/configuration/config-prompt';
-import { ErrorContainer } from '@/app/components/ui/error-container';
+import { ErrorContainer } from '@/app/components/ui/feedback/error-container';
 import { ChatCompletePrompt, Prompt } from '@/utils/prompt';
 import {
   GetDefaultTextProviderConfigIfInvalid,

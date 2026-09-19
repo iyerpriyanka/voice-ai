@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { ProviderComponentProps } from '@/app/components/domain/providers/provider-component-props';
 import { TELEPHONY_PROVIDER } from '@/providers';
 import { Dropdown } from '@carbon/react';
-import { Stack } from '@/app/components/ui/form';
+import { Stack } from '@/app/components/ui/primitives/form';
 import { loadProviderConfig } from '@/providers/config-loader';
 import {
   getDefaultsFromConfig,
@@ -12,7 +12,7 @@ import {
 } from '@/providers/config-defaults';
 import { ConfigRenderer } from '@/app/components/domain/providers/config-renderer';
 import { HelpToggletip } from '@/app/components/domain/providers/help-label';
-import { FormLabel } from '@/app/components/ui/form-label';
+import { FormLabel } from '@/app/components/ui/primitives/form-label';
 
 const VONAGE_PHONE_REGEX = /^\+?[1-9]\d{1,14}$/;
 
