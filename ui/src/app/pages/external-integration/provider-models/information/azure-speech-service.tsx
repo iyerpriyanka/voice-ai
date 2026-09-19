@@ -10,7 +10,7 @@ import { cn } from '@/utils';
 import { CreateProviderCredentialDialog } from '@/app/components/dialogs/create-provider-credential-modal';
 import { ViewProviderCredentialDialog } from '@/app/components/dialogs/view-provider-credential-modal';
 import { useAllProviderCredentials } from '@/hooks/use-model';
-import { Check, Plus } from 'lucide-react';
+import { Add, Checkmark } from '@carbon/icons-react';
 import { Tooltip } from '@/app/components/ui/tooltip';
 import { PrimaryButton, GhostButton } from '@/app/components/ui/button';
 import { VoiceCard } from '@/app/pages/external-integration/provider-models/information/voice-card';
@@ -99,7 +99,7 @@ export function ProviderAzureSpeechServiceModelInformationPage() {
               <span className="inline-flex items-center">
                 <Tooltip
                   icon={
-                    <Check
+                    <Checkmark
                       className={cn(
                         connected
                           ? 'bg-blue-500 text-white'
@@ -142,7 +142,7 @@ export function ProviderAzureSpeechServiceModelInformationPage() {
             }}
           >
             Add new credential
-            <Plus strokeWidth={1.5} className="ml-1.5 h-4 w-4" />
+            <Add className="ml-1.5 h-4 w-4" />
           </PrimaryButton>
         </PaginationButtonBlock>
       </BluredWrapper>
