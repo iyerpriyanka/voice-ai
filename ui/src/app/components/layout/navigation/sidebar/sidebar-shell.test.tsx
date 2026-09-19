@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { SidebarNavigation } from '@/app/components/layout/navigation/sidebar';
 import developmentConfig from '@/configs/config.development.json';
 import { ThemeManifest } from '@/theme/types';
@@ -7,14 +7,24 @@ import { ThemeManifest } from '@/theme/types';
 const theme = developmentConfig.theme as unknown as ThemeManifest;
 
 let mockOpen = true;
+let mockLocked = false;
+let mockSetLocked = jest.fn();
 
 jest.mock('@/context/sidebar-context', () => ({
   useSidebar: () => ({
     open: mockOpen,
-    locked: false,
+    locked: mockLocked,
     setOpen: jest.fn(),
-    setLocked: jest.fn(),
+    setLocked: mockSetLocked,
   }),
+}));
+
+jest.mock('@carbon/react', () => ({
+  Button: ({ children, kind, ...props }: any) => (
+    <button data-design-system-button-kind={kind} {...props}>
+      {children}
+    </button>
+  ),
 }));
 
 jest.mock('@/theme/theme-provider', () => ({
@@ -64,6 +74,8 @@ jest.mock('@/app/components/layout/navigation/sidebar/project', () => ({
 describe('sidebar shell', () => {
   beforeEach(() => {
     mockOpen = true;
+    mockLocked = false;
+    mockSetLocked = jest.fn();
   });
 
   it('uses the shared shell surface and aligned full logo when expanded', () => {
@@ -95,5 +107,15 @@ describe('sidebar shell', () => {
     expect(screen.getByAltText('Rapida AI').parentElement).toHaveClass(
       'justify-center',
     );
+  });
+
+  it('uses the design-system ghost button to lock and unlock the sidebar', () => {
+    render(<SidebarNavigation />);
+
+    const toggle = screen.getByRole('button', { name: 'Expand sidebar' });
+    expect(toggle).toHaveAttribute('data-design-system-button-kind', 'ghost');
+
+    fireEvent.click(toggle);
+    expect(mockSetLocked).toHaveBeenCalledWith(true);
   });
 });

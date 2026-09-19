@@ -9,6 +9,7 @@ import { Aside } from '@/app/components/layout/aside';
 import { ExternalTool } from '@/app/components/layout/navigation/sidebar/external-tools';
 import { BrandedLogo } from '@/app/components/layout/brand/branded-logo';
 import { SidePanelClose, SidePanelOpen } from '@carbon/icons-react';
+import { Button } from '@carbon/react';
 import { useSidebar } from '@/context/sidebar-context';
 import { cn } from '@/utils/index';
 import { useRapidaStore } from '@/hooks';
@@ -16,7 +17,7 @@ import { Text } from '@/app/components/ui/text';
 import { useWorkspace } from '@/workspace';
 
 /**
- * Carbon UI Shell — Side Navigation
+ * Carbon UI Shell: Side Navigation
  * Spec: h-8 nav items, 4px left accent on active, 48px logo header,
  *       label-01 group headers, lock/collapse button in footer.
  */
@@ -28,7 +29,7 @@ export function SidebarNavigation(props: {}) {
 
   return (
     <Aside className="relative shrink-0 flex flex-col">
-      {/* ── Logo row — Carbon UI Shell header: h-12, border-b ── */}
+      {/* Logo row: Carbon UI Shell header, h-12 with bottom border. */}
       <div
         className={cn(
           'h-12 flex shrink-0 items-center border-b border-border-subtle px-3',
@@ -47,9 +48,9 @@ export function SidebarNavigation(props: {}) {
         />
       </div>
 
-      {/* ── Nav groups — scrollable ── */}
+      {/* Nav groups: scrollable. */}
       <nav className="flex-1 overflow-y-auto no-scrollbar py-2">
-        {/* Group 1 — primary nav */}
+        {/* Group 1: primary nav. */}
         <ul>
           <Dashboard isLoading={isLoading} />
           <Deployment isLoading={isLoading} />
@@ -58,7 +59,7 @@ export function SidebarNavigation(props: {}) {
           )}
         </ul>
 
-        {/* Group 2 — Observability */}
+        {/* Group 2: Observability. */}
         <div className="mt-2">
           <div
             className={cn(
@@ -84,7 +85,7 @@ export function SidebarNavigation(props: {}) {
           </ul>
         </div>
 
-        {/* Group 3 — Integrations */}
+        {/* Group 3: Integrations. */}
         <div className="mt-2">
           <div
             className={cn(
@@ -111,7 +112,7 @@ export function SidebarNavigation(props: {}) {
           </ul>
         </div>
 
-        {/* Group 4 — Organizations */}
+        {/* Group 4: Organizations. */}
         <div className="mt-2">
           <div
             className={cn(
@@ -139,17 +140,19 @@ export function SidebarNavigation(props: {}) {
         </div>
       </nav>
 
-      {/* ── Footer — collapse/expand button ── */}
+      {/* Footer: collapse and expand control. */}
       <div className="shrink-0 border-t border-border-subtle">
-        <button
+        <Button
           type="button"
+          kind="ghost"
+          size="sm"
           onClick={() => setLocked(!locked)}
           aria-label={locked ? 'Collapse sidebar' : 'Expand sidebar'}
           className={cn(
-            'flex items-center h-10 w-full cursor-pointer px-4',
-            'text-muted',
-            'hover:bg-layer-hover hover:text-foreground',
-            'transition-colors duration-100',
+            '!flex !h-10 !w-full !max-w-none !items-center !justify-start !px-4',
+            '!text-muted',
+            'hover:!bg-layer-hover hover:!text-foreground',
+            '!transition-colors !duration-100',
           )}
         >
           <span className="shrink-0">
@@ -167,7 +170,7 @@ export function SidebarNavigation(props: {}) {
           >
             {locked ? 'Collapse' : 'Expand'}
           </span>
-        </button>
+        </Button>
       </div>
     </Aside>
   );
