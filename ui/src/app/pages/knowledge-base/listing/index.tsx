@@ -11,7 +11,7 @@ import { Knowledge } from '@rapidaai/react';
 import { PageLoading } from '@/app/components/ui/loading';
 import { ClickableKnowledgeCard } from '@/app/components/domain/cards/knowledge-card';
 import { EmptyState } from '@/app/components/ui/empty-state';
-import { HowKnowledgeWorksDialog } from '@/app/components/dialogs/how-it-works-modal/how-knowledge-works';
+import { HowKnowledgeWorksDialog } from '@/app/components/dialogs/how-knowledge-works-modal';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { GhostButton } from '@/app/components/ui/button';
 import { Plus, RotateCw } from 'lucide-react';

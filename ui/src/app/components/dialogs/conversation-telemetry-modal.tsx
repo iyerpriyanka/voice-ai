@@ -39,24 +39,27 @@ import {
   buildTelemetryCriteriaInputs,
   EVENT_NAME_OPTIONS,
   formatDateTime,
+  getTelemetryContextId,
+  getTelemetryConversationId,
   getTelemetryRowData,
   getTelemetrySearchDocument,
+  getTelemetryScopeAttributes,
   matchesTelemetryFilters,
   METRIC_SCOPE_OPTIONS,
   splitStructuredTelemetryCriteria,
-} from './conversation-telemetry-modal/utils';
+} from './conversation-telemetry-utils';
 import type {
   SelectOption,
   TelemetryRow,
-} from './conversation-telemetry-modal/utils';
-import { LatencyStackChart } from './conversation-telemetry-modal/latency-stack-chart';
+} from './conversation-telemetry-utils';
+import { LatencyStackChart } from './conversation-telemetry-latency-stack-chart';
 
 export {
   buildLatencySeries,
   buildTelemetryCriteriaInputs,
   matchesTelemetryFilters,
   splitStructuredTelemetryCriteria,
-} from './conversation-telemetry-modal/utils';
+} from './conversation-telemetry-utils';
 
 interface ConversationTelemetryDialogProps extends ModalProps {
   assistantId: string;
@@ -370,15 +373,17 @@ export function ConversationTelemetryDialog(
         (row): row is Extract<TelemetryRow, { kind: 'metric' }> =>
           row.kind === 'metric',
       )
-      .map(row => ({
-        timestampMs: row.ts.getTime(),
-        contextId: row.record.getContextid(),
-        conversationId: row.record.getAssistantconversationid(),
-        metrics: row.record.getMetricsList().map(metric => ({
-          name: metric.getName(),
-          value: metric.getValue(),
-        })),
-      })),
+      .map(row => {
+        const scopeAttributes = getTelemetryScopeAttributes(row.record);
+        return {
+          timestampMs: row.ts.getTime(),
+          contextId: getTelemetryContextId(scopeAttributes),
+          conversationId: getTelemetryConversationId(scopeAttributes),
+          metrics: [
+            { name: row.record.getName(), value: row.record.getValue() },
+          ],
+        };
+      }),
   );
 
   useEffect(() => {

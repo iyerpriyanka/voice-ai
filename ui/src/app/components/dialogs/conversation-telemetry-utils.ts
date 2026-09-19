@@ -1,5 +1,8 @@
 import type { TYPES } from '@carbon/react/es/components/Tag/Tag';
-import { TelemetryEvent, TelemetryMetric } from '@rapidaai/react';
+import type {
+  ObservabilityEventRecord,
+  ObservabilityMetricRecord,
+} from '@rapidaai/react';
 
 export type TelemetryTagType = keyof typeof TYPES;
 
@@ -35,8 +38,8 @@ export type TelemetrySearchDocument = {
 };
 
 export type TelemetryRow =
-  | { kind: 'event'; ts: Date; key: string; record: TelemetryEvent }
-  | { kind: 'metric'; ts: Date; key: string; record: TelemetryMetric };
+  | { kind: 'event'; ts: Date; key: string; record: ObservabilityEventRecord }
+  | { kind: 'metric'; ts: Date; key: string; record: ObservabilityMetricRecord };
 
 export type LatencyMetricName =
   | 'stt.latency_ms'
@@ -62,9 +65,13 @@ export type LatencySeriesPoint = {
 
 export type EventTelemetryJson = {
   name: string;
+  component: string;
+  scope: string;
   messageId: string;
   conversationId: string;
   data: Record<string, string>;
+  context: Record<string, string>;
+  scopeAttributes: Record<string, string>;
 };
 
 export type MetricTelemetryJson = {
@@ -72,6 +79,8 @@ export type MetricTelemetryJson = {
   contextId: string;
   conversationId: string;
   metrics: Array<{ name: string; value: string }>;
+  context: Record<string, string>;
+  scopeAttributes: Record<string, string>;
 };
 
 export type TelemetryRowJson = EventTelemetryJson | MetricTelemetryJson;
@@ -163,6 +172,39 @@ export const LATENCY_STACK_ORDER: LatencyMetricName[] = [
 
 export const normalizeComponentType = (nameKey: string): string =>
   nameKey === 'sip' ? 'telephony' : nameKey;
+
+const mapToObject = (map: {
+  toArray: () => Array<[string, string]>;
+}): Record<string, string> => Object.fromEntries(map.toArray());
+
+const firstPresent = (...values: Array<string | undefined>): string =>
+  values.find(value => value && value.trim() !== '') || '';
+
+export const getTelemetryScopeAttributes = (
+  record: ObservabilityEventRecord | ObservabilityMetricRecord,
+): Record<string, string> => mapToObject(record.getScopeattributesMap());
+
+const getContext = (
+  record: ObservabilityEventRecord | ObservabilityMetricRecord,
+): Record<string, string> => mapToObject(record.getContextMap());
+
+export const getTelemetryConversationId = (
+  scopeAttributes: Record<string, string>,
+): string =>
+  firstPresent(
+    scopeAttributes.assistantConversationId,
+    scopeAttributes.conversationId,
+  );
+
+export const getTelemetryContextId = (
+  scopeAttributes: Record<string, string>,
+): string =>
+  firstPresent(
+    scopeAttributes.contextId,
+    scopeAttributes.messageId,
+    scopeAttributes.assistantConversationId,
+    scopeAttributes.conversationId,
+  );
 
 export const splitStructuredTelemetryCriteria = (
   criteriaInputs: CriteriaInput[],
@@ -326,26 +368,35 @@ export const buildLatencySeries = (
     }));
 };
 
-export function eventToJson(event: TelemetryEvent): EventTelemetryJson {
-  const data = Object.fromEntries(
-    event.getDataMap().toArray() as [string, string][],
-  );
+export function eventToJson(
+  event: ObservabilityEventRecord,
+): EventTelemetryJson {
+  const data = mapToObject(event.getAttributesMap());
+  const context = getContext(event);
+  const scopeAttributes = getTelemetryScopeAttributes(event);
   return {
-    name: event.getName(),
-    messageId: event.getMessageid(),
-    conversationId: event.getAssistantconversationid(),
+    name: event.getEvent(),
+    component: event.getComponent(),
+    scope: event.getScope(),
+    messageId: scopeAttributes.messageId || '',
+    conversationId: getTelemetryConversationId(scopeAttributes),
     data,
+    context,
+    scopeAttributes,
   };
 }
 
-export function metricToJson(metric: TelemetryMetric): MetricTelemetryJson {
+export function metricToJson(
+  metric: ObservabilityMetricRecord,
+): MetricTelemetryJson {
+  const scopeAttributes = getTelemetryScopeAttributes(metric);
   return {
     scope: metric.getScope(),
-    contextId: metric.getContextid(),
-    conversationId: metric.getAssistantconversationid(),
-    metrics: metric
-      .getMetricsList()
-      .map(m => ({ name: m.getName(), value: m.getValue() })),
+    contextId: getTelemetryContextId(scopeAttributes),
+    conversationId: getTelemetryConversationId(scopeAttributes),
+    metrics: [{ name: metric.getName(), value: metric.getValue() }],
+    context: getContext(metric),
+    scopeAttributes,
   };
 }
 
@@ -355,29 +406,33 @@ export function getTelemetrySearchDocument(
   json: TelemetryRowJson,
 ): TelemetrySearchDocument {
   if (row.kind === 'event') {
+    const eventJson = json as EventTelemetryJson;
     return {
       kind: 'event',
-      componentType: normalizeComponentType(row.record.getName().split('.')[0]),
+      componentType: normalizeComponentType(
+        row.record.getComponent() || row.record.getEvent().split('.')[0],
+      ),
       typeLabel,
-      name: row.record.getName(),
-      scope: '',
-      conversationId: row.record.getAssistantconversationid(),
-      messageId: row.record.getMessageid(),
+      name: row.record.getEvent(),
+      scope: row.record.getScope(),
+      conversationId: eventJson.conversationId,
+      messageId: eventJson.messageId,
       contextId: '',
-      eventDataType: json.data?.type || '',
+      eventDataType: eventJson.data.type || '',
       rawText: `${JSON.stringify(json)}\n${JSON.stringify(json, null, 2)}`,
     };
   }
 
+  const metricJson = json as MetricTelemetryJson;
   return {
     kind: 'metric',
     componentType: 'metric',
     typeLabel,
-    name: '',
+    name: row.record.getName(),
     scope: row.record.getScope(),
-    conversationId: row.record.getAssistantconversationid(),
+    conversationId: metricJson.conversationId,
     messageId: '',
-    contextId: row.record.getContextid(),
+    contextId: metricJson.contextId,
     eventDataType: '',
     rawText: `${JSON.stringify(json)}\n${JSON.stringify(json, null, 2)}`,
   };
@@ -385,9 +440,12 @@ export function getTelemetrySearchDocument(
 
 export function getTelemetryRowData(row: TelemetryRow): TelemetryRowData {
   if (row.kind === 'event') {
-    const nameKey = normalizeComponentType(row.record.getName().split('.')[0]);
+    const eventName = row.record.getEvent();
+    const nameKey = normalizeComponentType(
+      row.record.getComponent() || eventName.split('.')[0],
+    );
     return {
-      typeLabel: row.record.getName(),
+      typeLabel: eventName,
       tagType: EVENT_TAG_TYPE[nameKey] ?? 'gray',
       json: eventToJson(row.record),
     };

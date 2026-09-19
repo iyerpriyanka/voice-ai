@@ -9,8 +9,14 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { LATENCY_METRIC_META, LATENCY_STACK_ORDER } from './utils';
-import type { LatencyMetricName, LatencySeriesPoint } from './utils';
+import {
+  LATENCY_METRIC_META,
+  LATENCY_STACK_ORDER,
+} from './conversation-telemetry-utils';
+import type {
+  LatencyMetricName,
+  LatencySeriesPoint,
+} from './conversation-telemetry-utils';
 
 type LatencyStackChartProps = {
   isLoading: boolean;

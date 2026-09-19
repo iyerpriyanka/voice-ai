@@ -4,6 +4,10 @@ import {
   matchesTelemetryFilters,
   splitStructuredTelemetryCriteria,
 } from '@/app/components/dialogs/conversation-telemetry-modal';
+import {
+  getTelemetryRowData,
+  getTelemetrySearchDocument,
+} from '@/app/components/dialogs/conversation-telemetry-utils';
 
 describe('conversation telemetry structured criteria helpers', () => {
   it('extracts conversation and message/context ids from criteria list', () => {
@@ -196,6 +200,48 @@ describe('conversation telemetry structured criteria helpers', () => {
       conversationId: 'conv-1',
       'agent.ttft_ms': 15,
       sequence: 3,
+    });
+  });
+
+  it('maps observability event records into searchable telemetry rows', () => {
+    const row = {
+      kind: 'event' as const,
+      ts: new Date('2026-01-01T00:00:00.000Z'),
+      key: 'event-1',
+      record: {
+        getEvent: () => 'sip.call.lifecycle',
+        getComponent: () => 'sip',
+        getScope: () => 'message',
+        getAttributesMap: () => ({
+          toArray: () => [['type', 'initialized']],
+        }),
+        getContextMap: () => ({
+          toArray: () => [['traceId', 'trace-1']],
+        }),
+        getScopeattributesMap: () => ({
+          toArray: () => [
+            ['conversationId', 'conversation-1'],
+            ['messageId', 'message-1'],
+          ],
+        }),
+      } as any,
+    };
+
+    const rowData = getTelemetryRowData(row);
+    const document = getTelemetrySearchDocument(
+      row,
+      rowData.typeLabel,
+      rowData.json,
+    );
+
+    expect(rowData.typeLabel).toBe('sip.call.lifecycle');
+    expect(rowData.tagType).toBe('teal');
+    expect(document).toMatchObject({
+      componentType: 'telephony',
+      conversationId: 'conversation-1',
+      eventDataType: 'initialized',
+      messageId: 'message-1',
+      name: 'sip.call.lifecycle',
     });
   });
 });
