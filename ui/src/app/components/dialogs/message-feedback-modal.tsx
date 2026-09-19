@@ -7,7 +7,7 @@ import {
 } from '@/app/components/ui/modal';
 import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
 import { Textarea } from '@/app/components/ui/textarea';
-import { Check } from 'lucide-react';
+import { Checkmark } from '@carbon/icons-react';
 import { FC, useState } from 'react';
 
 export const MessageFeedbackDialog: FC<
@@ -54,9 +54,9 @@ export const MessageFeedbackDialog: FC<
             props.onSubmitFeedback(feedbackText);
           }}
           disabled={!feedbackText.trim()}
+          renderIcon={Checkmark}
         >
           Submit feedback
-          <Check className="ml-2" strokeWidth={1.5} />
         </PrimaryButton>
       </ModalFooter>
     </Modal>
