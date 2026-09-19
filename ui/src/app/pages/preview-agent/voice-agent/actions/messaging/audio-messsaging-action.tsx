@@ -1,7 +1,8 @@
 import { FC, HTMLAttributes, useState, useMemo, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ChevronDown, Check } from 'lucide-react';
 import {
+  Checkmark,
+  ChevronDown,
   Microphone,
   MicrophoneOff,
   Chat,
@@ -155,9 +156,8 @@ export const AudioMessagingAction: FC<AudioMessagingActionProps> = ({
                             </span>
                           </div>
                           {isActive && (
-                            <Check
+                            <Checkmark
                               className="w-4 h-4 shrink-0 text-white"
-                              strokeWidth={2}
                             />
                           )}
                         </button>
@@ -174,7 +174,6 @@ export const AudioMessagingAction: FC<AudioMessagingActionProps> = ({
                     {activeDeviceLabel}
                   </span>
                   <ChevronDown
-                    strokeWidth={1.5}
                     className={cn(
                       'w-4 h-4 transition-transform duration-300 text-gray-500 dark:text-gray-400',
                       isOpen ? 'rotate-180' : '',
