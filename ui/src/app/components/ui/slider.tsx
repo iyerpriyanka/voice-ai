@@ -1,46 +1,96 @@
 import { cn } from '@/utils';
-import { forwardRef, InputHTMLAttributes } from 'react';
+import {
+  Slider as CarbonSlider,
+  type SliderProps as CarbonSliderProps,
+} from '@carbon/react';
+import { useId, type ReactNode } from 'react';
 
-/**
- *
- */
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+type SliderNumber = number | string;
+
+interface SliderProps
+  extends Omit<
+    CarbonSliderProps,
+    | 'id'
+    | 'inputType'
+    | 'labelText'
+    | 'max'
+    | 'min'
+    | 'onChange'
+    | 'step'
+    | 'value'
+  > {
+  id?: string;
+  inputType?: string;
+  labelText?: ReactNode;
   max?: number | string;
   min?: number | string;
   step?: number | string;
-  onSlide: (number) => void;
+  type?: string;
+  value?: SliderNumber;
+  onChange?: CarbonSliderProps['onChange'];
+  onSlide?: (value: number) => void;
 }
 
-/**
- *
- */
-export const Slider = forwardRef<HTMLInputElement, InputProps>(
-  (props: InputProps, ref) => {
-    /**
-     * when any request is going disable all the input boxes
-     */
+const toSliderNumber = (value: SliderNumber | undefined, fallback: number) => {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return value;
+  }
 
-    const { onSlide, ...atr } = props;
-    return (
-      <input
-        ref={ref}
-        id={props.name}
-        type="range"
-        {...atr}
-        disabled={props.disabled}
-        max={props.max}
-        min={props.min}
-        step={props.step}
-        onChange={t => {
-          onSlide(t.target.valueAsNumber);
-        }}
-        className={cn(
-          'w-full',
-          'h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700',
-          //   'bg-white dark:bg-gray-950',
-          props.className,
-        )}
-      />
-    );
-  },
-);
+  const parsed = Number.parseFloat(String(value ?? ''));
+  return Number.isFinite(parsed) ? parsed : fallback;
+};
+
+export const Slider = ({
+  'aria-label': ariaLabel,
+  ariaLabelInput,
+  className,
+  hideLabel = true,
+  id,
+  inputType,
+  labelText,
+  max,
+  min,
+  name,
+  onChange,
+  onSlide,
+  step,
+  type,
+  value,
+  ...props
+}: SliderProps) => {
+  const generatedId = useId().replace(/:/g, '');
+  const minValue = toSliderNumber(min, 0);
+  const maxValue = toSliderNumber(max, 100);
+  const stepValue = toSliderNumber(step, 1);
+  const sliderValue = toSliderNumber(value, minValue);
+  const sliderId = id ?? name ?? `slider-${generatedId}`;
+  const accessibleLabel =
+    labelText ||
+    ariaLabel ||
+    ariaLabelInput ||
+    (typeof name === 'string' ? name : undefined) ||
+    'Slider';
+
+  return (
+    <CarbonSlider
+      {...props}
+      id={sliderId}
+      name={name}
+      min={minValue}
+      max={maxValue}
+      step={stepValue}
+      value={sliderValue}
+      labelText={accessibleLabel}
+      hideLabel={hideLabel}
+      ariaLabelInput={ariaLabelInput ?? String(accessibleLabel)}
+      inputType={inputType ?? type ?? 'number'}
+      onChange={data => {
+        onChange?.(data);
+        if (typeof data.value === 'number') {
+          onSlide?.(data.value);
+        }
+      }}
+      className={cn('w-full', className)}
+    />
+  );
+};
