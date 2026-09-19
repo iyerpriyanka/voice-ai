@@ -25,8 +25,7 @@ import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { RETRIEVE_METHOD } from '@/models/datasets';
 import { cn } from '@/utils';
 import { retrieveMethodFromString } from '@/utils';
-import { DataBase, ModelAlt, Search } from '@carbon/icons-react';
-import { InfoIcon } from 'lucide-react';
+import { DataBase, Information, ModelAlt, Search } from '@carbon/icons-react';
 import { FC, useEffect, useState } from 'react';
 import toast from 'react-hot-toast/headless';
 import { useParams } from 'react-router-dom';
@@ -265,7 +264,7 @@ export const UpdateKnowledge: FC<{ assistantId: string }> = ({
               <FieldSet className="flex justify-between">
                 <FormLabel htmlFor="top_k">
                   Top K
-                  <Tooltip icon={<InfoIcon className="w-4 h-4 ml-1" />}>
+                  <Tooltip icon={<Information className="w-4 h-4 ml-1" />}>
                     <p className={cn('font-normal text-sm p-1 w-64')}>
                       Used to filter chunks that are most similar to user
                       questions. The system will also dynamically adjust the
@@ -298,7 +297,7 @@ export const UpdateKnowledge: FC<{ assistantId: string }> = ({
               <FieldSet className="flex justify-between">
                 <FormLabel htmlFor="score_threshold">
                   Score Threshold
-                  <Tooltip icon={<InfoIcon className="w-4 h-4 ml-1" />}>
+                  <Tooltip icon={<Information className="w-4 h-4 ml-1" />}>
                     <p className={cn('font-normal text-sm p-1 w-64')}>
                       Used to filter chunks that are most similar to user
                       questions. The system will also dynamically adjust the
