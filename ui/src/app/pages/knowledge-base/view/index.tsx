@@ -20,7 +20,7 @@ import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-bloc
 import { PageTitleBlock } from '@/app/components/layout/blocks/page-title-block';
 import { connectionConfig } from '@/configs';
 import { CreateKnowledgeDocumentDialog } from '@/app/components/dialogs/create-knowledge-document-modal';
-import { Plus } from 'lucide-react';
+import { Add } from '@carbon/icons-react';
 
 /**
  *
@@ -164,7 +164,7 @@ export function ViewKnowledgePage() {
               className="flex items-center gap-2 px-4 text-sm text-white bg-primary hover:bg-primary/90 transition-colors whitespace-nowrap"
             >
               Add new document
-              <Plus strokeWidth={1.5} className="w-4 h-4" />
+              <Add className="w-4 h-4" />
             </button>
           </div>
         </PageHeaderBlock>
