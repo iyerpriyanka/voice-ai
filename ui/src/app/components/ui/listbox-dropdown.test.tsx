@@ -4,46 +4,50 @@ import '@testing-library/jest-dom';
 
 import { Dropdown } from './listbox-dropdown';
 
-jest.mock('@headlessui/react', () => ({
-  Listbox: ({ children, value, onChange, disabled }: any) => (
-    <div data-value={value || ''} data-disabled={disabled ? 'true' : 'false'}>
-      {children({ open: true })}
-      <button type="button" onClick={() => onChange('one')}>
-        choose-one
+jest.mock('@carbon/react', () => ({
+  Dropdown: ({
+    disabled,
+    direction,
+    itemToElement,
+    itemToString,
+    items,
+    label,
+    hideLabel,
+    onChange,
+    renderSelectedItem,
+    selectedItem,
+    titleText,
+    ...props
+  }: any) => (
+    <div
+      data-design-system-dropdown
+      data-direction={direction || ''}
+      data-disabled={disabled ? 'true' : 'false'}
+      data-label={label}
+      data-title-text={titleText}
+      data-hide-label={hideLabel ? 'true' : 'false'}
+      {...props}
+    >
+      <button type="button">
+        {selectedItem
+          ? renderSelectedItem?.(selectedItem)
+          : itemToString?.(selectedItem) || label}
       </button>
+      {items.map((item: any) => (
+        <button
+          key={itemToString(item)}
+          type="button"
+          onClick={() => onChange?.({ selectedItem: item })}
+        >
+          {itemToElement(item)}
+        </button>
+      ))}
     </div>
   ),
-  ListboxButton: ({ children, ...props }: any) => (
-    <button {...props}>{children}</button>
-  ),
-  ListboxOption: ({ children, value }: any) => (
-    <div data-testid={`option-${value}`}>{children({ selected: value === 'one' })}</div>
-  ),
-  ListboxOptions: ({ children }: any) => <div>{children}</div>,
-  Transition: ({ children }: any) => <>{children}</>,
-}));
-
-jest.mock('@headlessui-float/react', () => ({
-  Float: ({ children }: any) => <>{children}</>,
-}));
-
-jest.mock('@/app/components/ui/loaders/spinner', () => ({
-  Spinner: () => <span data-testid="spinner" />,
-}));
-
-jest.mock('@/app/components/ui/icon-input', () => ({
-  SearchIconInput: ({ onChange }: any) => (
-    <input aria-label="Search" onChange={onChange} />
-  ),
-}));
-
-jest.mock('@carbon/icons-react', () => ({
-  Checkmark: () => <svg data-testid="selected-icon" />,
-  ChevronDown: () => <svg data-testid="chevron-icon" />,
 }));
 
 describe('Dropdown', () => {
-  it('renders placeholder and standard chevron icon', () => {
+  it('renders placeholder and options through the design-system dropdown', () => {
     render(
       <Dropdown
         currentValue={null}
@@ -57,11 +61,13 @@ describe('Dropdown', () => {
     expect(
       screen.getByRole('button', { name: 'Choose value' }),
     ).toBeInTheDocument();
-    expect(screen.getByText('Choose value')).toBeInTheDocument();
-    expect(screen.getByTestId('chevron-icon')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'one' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Choose value' }).parentElement,
+    ).toHaveAttribute('data-design-system-dropdown');
   });
 
-  it('calls setValue from listbox changes and marks the selected option', () => {
+  it('calls setValue from dropdown changes and marks the selected option', () => {
     const setValue = jest.fn();
 
     render(
@@ -70,36 +76,45 @@ describe('Dropdown', () => {
         setValue={setValue}
         allValue={['one', 'two']}
         placeholder="Choose value"
-        option={value => <span>{value}</span>}
+        option={(value, selected) => (
+          <span>
+            {value}
+            {selected ? ' selected' : ''}
+          </span>
+        )}
       />,
     );
 
-    expect(screen.getByTestId('selected-icon')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'one' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'one selected' }),
+    ).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('button', { name: 'choose-one' }));
+    fireEvent.click(screen.getByRole('button', { name: 'two' }));
 
-    expect(setValue).toHaveBeenCalledWith('one');
+    expect(setValue).toHaveBeenCalledWith('two');
   });
 
-  it('renders search input when searchable', () => {
-    const onSearching = jest.fn();
+  it('renders custom selected labels and maps placement to direction', () => {
+    const selected = { code: 'openai', name: 'OpenAI' };
 
     render(
       <Dropdown
-        currentValue={null}
+        currentValue={selected}
         setValue={jest.fn()}
-        allValue={['one']}
-        placeholder="Choose value"
-        searchable
-        onSearching={onSearching}
-        option={value => <span>{value}</span>}
+        allValue={[selected]}
+        placeholder="Select provider"
+        placement="top"
+        label={item => <span>{item.name}</span>}
       />,
     );
 
-    fireEvent.change(screen.getByRole('textbox', { name: 'Search' }), {
-      target: { value: 'one' },
-    });
-
-    expect(onSearching).toHaveBeenCalledTimes(1);
+    const selectedButton = screen.getAllByRole('button', {
+      name: 'OpenAI',
+    })[0];
+    expect(selectedButton).toBeInTheDocument();
+    expect(
+      selectedButton.parentElement,
+    ).toHaveAttribute('data-direction', 'top');
   });
 });
