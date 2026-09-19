@@ -5,8 +5,8 @@ import {
   ModalBody,
   ModalFooter,
 } from '@/app/components/ui/modal';
+import { Launch } from '@carbon/icons-react';
 import { FC, HTMLAttributes, memo } from 'react';
-import { ExternalLink } from 'lucide-react';
 import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
 import { CodeHighlighting } from '@/app/components/ui/code-highlighting';
 import { DeploymentSectionHeader } from '@/app/components/dialogs/deployment-modal-primitives';
@@ -76,9 +76,9 @@ window.chatbotConfig = {
             size="lg"
             type="button"
             onClick={() => window.open(documentationUrl, '_blank')}
+            renderIcon={Launch}
           >
-            <span>View Documentation</span>
-            <ExternalLink className="w-4 h-4 ml-1" strokeWidth={1.5} />
+            View Documentation
           </PrimaryButton>
         </ModalFooter>
       </Modal>
