@@ -5,9 +5,68 @@ import '@testing-library/jest-dom';
 import { TablePagination } from './table-pagination';
 
 jest.mock('@/app/components/ui/button', () => ({
-  GhostButton: ({ children, ...props }: any) => (
-    <button {...props}>{children}</button>
+  IconOnlyButton: ({
+    iconDescription,
+    kind,
+    renderIcon: Icon,
+    size,
+    ...props
+  }: any) => (
+    <button
+      {...props}
+      aria-label={iconDescription}
+      data-design-system-icon-button-kind={kind}
+      data-design-system-icon-button-size={size}
+    >
+      {Icon ? <Icon /> : null}
+    </button>
   ),
+}));
+
+jest.mock('@/app/components/ui/pagination', () => ({
+  Pagination: ({
+    backwardText,
+    className,
+    forwardText,
+    onChange,
+    page,
+    pageSize,
+    pageSizes,
+    totalItems,
+  }: any) => {
+    const totalPages = Math.max(Math.ceil(totalItems / pageSize), 1);
+
+    return (
+      <nav
+        className={className}
+        data-design-system-pagination
+        data-page={page}
+        data-page-size={pageSize}
+        data-total-items={totalItems}
+      >
+        <button
+          type="button"
+          disabled={page <= 1}
+          onClick={() => onChange({ page: page - 1, pageSize })}
+        >
+          {backwardText}
+        </button>
+        <button
+          type="button"
+          disabled={page >= totalPages}
+          onClick={() => onChange({ page: page + 1, pageSize })}
+        >
+          {forwardText}
+        </button>
+        <button
+          type="button"
+          onClick={() => onChange({ page, pageSize: pageSizes[1] })}
+        >
+          Change page size
+        </button>
+      </nav>
+    );
+  },
 }));
 
 jest.mock('@/app/components/dialogs/column-preference-modal', () => ({
@@ -15,19 +74,12 @@ jest.mock('@/app/components/dialogs/column-preference-modal', () => ({
     open ? <div data-testid="column-preferences-dialog" /> : null,
 }));
 
-jest.mock('@/app/components/ui/tooltip-plus', () => ({
-  __esModule: true,
-  default: ({ children }: any) => <span>{children}</span>,
-}));
-
 jest.mock('@carbon/icons-react', () => ({
-  ChevronLeft: () => <svg data-testid="previous-icon" />,
-  ChevronRight: () => <svg data-testid="next-icon" />,
   SettingsAdjust: () => <svg data-testid="settings-icon" />,
 }));
 
 describe('TablePagination', () => {
-  it('renders page controls with design-system icons', () => {
+  it('renders Carbon pagination with the settings action', () => {
     render(
       <TablePagination
         currentPage={2}
@@ -37,14 +89,20 @@ describe('TablePagination', () => {
       />,
     );
 
-    expect(screen.getByTestId('previous-icon')).toBeInTheDocument();
-    expect(screen.getByTestId('next-icon')).toBeInTheDocument();
+    const pagination = screen.getByRole('navigation');
+    expect(pagination).toHaveAttribute('data-design-system-pagination');
+    expect(pagination).toHaveAttribute('data-page', '2');
+    expect(pagination).toHaveAttribute('data-page-size', '10');
+    expect(pagination).toHaveAttribute('data-total-items', '30');
     expect(screen.getByTestId('settings-icon')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '2' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Configure column preference' }),
+    ).toHaveAttribute('data-design-system-icon-button-kind', 'ghost');
   });
 
-  it('changes pages and opens column preferences', () => {
+  it('changes pages, updates page size, and opens column preferences', () => {
     const onChangeCurrentPage = jest.fn();
+    const onChangePageSize = jest.fn();
 
     render(
       <TablePagination
@@ -52,6 +110,7 @@ describe('TablePagination', () => {
         pageSize={10}
         totalItem={30}
         onChangeCurrentPage={onChangeCurrentPage}
+        onChangePageSize={onChangePageSize}
       />,
     );
 
@@ -61,7 +120,12 @@ describe('TablePagination', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     expect(onChangeCurrentPage).toHaveBeenCalledWith(3);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Setting' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Change page size' }));
+    expect(onChangePageSize).toHaveBeenCalledWith(20);
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Configure column preference' }),
+    );
     expect(screen.getByTestId('column-preferences-dialog')).toBeInTheDocument();
   });
 
