@@ -1,5 +1,5 @@
 import { cn } from '@/utils';
-import { Check } from 'lucide-react';
+import { RadioTile } from '@carbon/react';
 import React, { FC, InputHTMLAttributes } from 'react';
 
 interface CheckboxCardProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -12,37 +12,42 @@ const CheckboxCard: FC<CheckboxCardProps> = ({
   id,
   label,
   wrapperClassNames,
+  selectedClassNames,
+  className,
+  checked,
   disabled,
   children,
-  ...atr
+  name,
+  onChange,
+  required,
+  tabIndex,
+  value = '',
 }) => {
   return (
-    <label
-      htmlFor={id}
+    <RadioTile
+      id={id}
+      name={name}
+      value={typeof value === 'number' ? value : String(value)}
+      checked={Boolean(checked)}
+      disabled={disabled}
+      required={required}
+      tabIndex={tabIndex}
+      onChange={(_value, _name, event) => {
+        if (event.type === 'change') {
+          onChange?.(event as React.ChangeEvent<HTMLInputElement>);
+        }
+      }}
       className={cn(
         'relative h-fit',
         wrapperClassNames,
+        className,
+        checked && selectedClassNames,
         !disabled && 'cursor-pointer',
       )}
     >
       {label}
       {children}
-      <input
-        id={id}
-        className="hidden appearance-none peer"
-        {...atr}
-        disabled={disabled}
-      />
-      <span
-        className={cn(
-          'hidden peer-checked:block absolute inset-0 border-b-2 border-blue-600',
-        )}
-      >
-        <span className="absolute top-4 right-4 h-5 w-5 inline-flex items-center justify-center rounded-[2px] bg-blue-600 p-[2px]">
-          <Check className="text-white" />
-        </span>
-      </span>
-    </label>
+    </RadioTile>
   );
 };
 export default React.memo(CheckboxCard);
