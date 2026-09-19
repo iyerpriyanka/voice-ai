@@ -1,15 +1,10 @@
 import { cn } from '@/utils';
 import { IconOnlyButton } from '@/app/components/ui/button';
-import { Input } from '@/app/components/ui/input';
+import { Input, type InputProps } from '@/app/components/ui/input';
 import { Search } from '@carbon/icons-react';
-import {
-  forwardRef,
-  type ComponentProps,
-  type InputHTMLAttributes,
-  useId,
-} from 'react';
+import { forwardRef, type ComponentProps, useId } from 'react';
 
-interface IconInputProps extends InputHTMLAttributes<HTMLInputElement> {
+interface IconInputProps extends InputProps {
   wrapperClassName?: string;
   iconClassName?: string;
   placeholder?: string;
@@ -17,7 +12,7 @@ interface IconInputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export const SearchIconInput = forwardRef<HTMLInputElement, IconInputProps>(
   (props: IconInputProps, ref) => {
-    const generatedId = useId();
+    const generatedId = useId().replace(/:/g, '');
     const {
       wrapperClassName,
       className,
@@ -28,9 +23,10 @@ export const SearchIconInput = forwardRef<HTMLInputElement, IconInputProps>(
       ...atr
     } = props;
     const inputId = id ?? `search-input-${generatedId}`;
-    const SearchIcon = ({ className, ...iconProps }: ComponentProps<
-      typeof Search
-    >) => (
+    const SearchIcon = ({
+      className,
+      ...iconProps
+    }: ComponentProps<typeof Search>) => (
       <Search {...iconProps} className={cn(className, iconClassName)} />
     );
 
@@ -41,15 +37,13 @@ export const SearchIconInput = forwardRef<HTMLInputElement, IconInputProps>(
           wrapperClassName,
         )}
       >
-        <label htmlFor={inputId} className="sr-only">
-          Search
-        </label>
         <Input
           {...atr}
           id={inputId}
+          labelText="Search"
           name={name ?? 'search-input'}
           ref={ref}
-          className={cn('w-full py-2 pl-9!', className)}
+          className={cn('w-full [&_.cds--text-input]:!pl-9', className)}
           type="search"
           placeholder={placeholder ?? 'Find resources..'}
         />
