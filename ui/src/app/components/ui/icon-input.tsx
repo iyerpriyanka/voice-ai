@@ -1,7 +1,13 @@
 import { cn } from '@/utils';
+import { IconOnlyButton } from '@/app/components/ui/button';
 import { Input } from '@/app/components/ui/input';
 import { Search } from '@carbon/icons-react';
-import { forwardRef, InputHTMLAttributes } from 'react';
+import {
+  forwardRef,
+  type ComponentProps,
+  type InputHTMLAttributes,
+  useId,
+} from 'react';
 
 interface IconInputProps extends InputHTMLAttributes<HTMLInputElement> {
   wrapperClassName?: string;
@@ -11,7 +17,23 @@ interface IconInputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export const SearchIconInput = forwardRef<HTMLInputElement, IconInputProps>(
   (props: IconInputProps, ref) => {
-    const { wrapperClassName, className, iconClassName, ...atr } = props;
+    const generatedId = useId();
+    const {
+      wrapperClassName,
+      className,
+      iconClassName,
+      id,
+      name,
+      placeholder,
+      ...atr
+    } = props;
+    const inputId = id ?? `search-input-${generatedId}`;
+    const SearchIcon = ({ className, ...iconProps }: ComponentProps<
+      typeof Search
+    >) => (
+      <Search {...iconProps} className={cn(className, iconClassName)} />
+    );
+
     return (
       <div
         className={cn(
@@ -19,32 +41,26 @@ export const SearchIconInput = forwardRef<HTMLInputElement, IconInputProps>(
           wrapperClassName,
         )}
       >
-        <label htmlFor="search-input" className="sr-only">
+        <label htmlFor={inputId} className="sr-only">
           Search
         </label>
         <Input
           {...atr}
-          id="search-input"
-          name="search-input"
+          id={inputId}
+          name={name ?? 'search-input'}
           ref={ref}
           className={cn('w-full py-2 pl-9!', className)}
           type="search"
-          placeholder={
-            props.placeholder ? props.placeholder : 'Find resources..'
-          }
+          placeholder={placeholder ?? 'Find resources..'}
         />
-        <button
-          className="absolute inset-0 right-auto group flex items-center"
+        <IconOnlyButton
+          className="absolute inset-y-0 left-0 !h-full !min-h-0 !w-9 !p-0"
           type="submit"
-          aria-label="Search"
-        >
-          <Search
-            className={cn(
-              'w-3 h-3 shrink-0 fill-current mx-3 opacity-70',
-              iconClassName,
-            )}
-          />
-        </button>
+          kind="ghost"
+          size="sm"
+          iconDescription="Search"
+          renderIcon={SearchIcon}
+        />
       </div>
     );
   },
