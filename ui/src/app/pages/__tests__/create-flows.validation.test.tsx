@@ -514,6 +514,19 @@ describe('Requested create/update flow pages', () => {
     ).toBeInTheDocument();
   });
 
+  it('create assistant renders the template action with a Carbon icon', () => {
+    renderWithTheme(<CreateAssistantPage />);
+
+    expect(screen.getByText('Usecase Template')).toBeInTheDocument();
+    expect(screen.getByTestId('arrow-up-right-icon')).toHaveAttribute(
+      'data-size',
+      '16',
+    );
+    expect(screen.getByTestId('arrow-up-right-icon')).not.toHaveAttribute(
+      'data-stroke-width',
+    );
+  });
+
   it('create assistant moves forward after prompt content edit', () => {
     renderWithTheme(<CreateAssistantPage />);
 

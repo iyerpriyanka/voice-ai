@@ -48,7 +48,6 @@ import {
   getToolConditionSource,
   getToolConditionSourceLabel,
 } from '@/app/components/domain/tools/common';
-import { ArrowUpRight } from 'lucide-react';
 import { BUILDIN_TOOLS } from '@/llm-tools';
 import { EmptyState } from '@/app/components/ui/empty-state';
 import { ConfigureAssistantToolDialog } from '@/app/components/dialogs/assistant-configure-tool-modal';
@@ -62,7 +61,7 @@ import toast from 'react-hot-toast/headless';
 import { ConfigureAssistantNextDialog } from '@/app/components/dialogs/assistant-configure-next-modal';
 import { SectionDivider } from '@/app/components/layout/blocks/section-divider';
 import { CornerBorderOverlay } from '@/app/components/ui/corner-border';
-import { Add, Edit, ToolKit, TrashCan } from '@carbon/icons-react';
+import { Add, ArrowUpRight, Edit, ToolKit, TrashCan } from '@carbon/icons-react';
 import {
   AssistantTemplate,
   ConfigureAssistantTemplateDialog,
@@ -469,7 +468,6 @@ export function CreateAssistantPage() {
                     </div>
                     <ArrowUpRight
                       className="shrink-0 mt-0.5 text-gray-500 dark:text-gray-400 group-hover:text-primary transition-colors"
-                      strokeWidth={1.5}
                       size={16}
                     />
                   </button>
