@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { cn } from '@/utils';
 import { GhostButton } from '@/app/components/ui/button';
 import { ColumnPreferencesDialog } from '@/app/components/dialogs/column-preference-modal';
-import { SlidersHorizontal } from 'lucide-react';
+import { ChevronLeft, ChevronRight, SettingsAdjust } from '@carbon/icons-react';
 import TooltipPlus from '@/app/components/ui/tooltip-plus';
 
 interface TablePreferenceProps extends React.InputHTMLAttributes<HTMLElement> {
@@ -33,7 +33,7 @@ interface TablePreferenceProps extends React.InputHTMLAttributes<HTMLElement> {
   /**
    * onChange of page
    */
-  onChangePageSize: (number) => void;
+  onChangePageSize: (pageSize: number) => void;
 }
 
 interface TablePaginationProps extends TablePreferenceProps {
@@ -45,7 +45,7 @@ interface TablePaginationProps extends TablePreferenceProps {
   /**
    * change current page
    */
-  onChangeCurrentPage: (string) => void;
+  onChangeCurrentPage: (page: number) => void;
 
   /**
    * total Page size
@@ -53,21 +53,11 @@ interface TablePaginationProps extends TablePreferenceProps {
   totalItem: number;
 }
 
-/**
- *
- * @param props
- * @returns
- */
-
 export function TablePagination(props: TablePaginationProps) {
-  /**
-   * Column Perference
-   */
   const [columnPreferenceModel, setColumnPreferenceModel] = useState(false);
 
-  //   page start from 0
   const maxPage = Math.ceil(props.totalItem / props.pageSize);
-  let arr = generatePageArray(props);
+  const arr = generatePageArray(props);
   return (
     <>
       <ColumnPreferencesDialog
@@ -91,20 +81,7 @@ export function TablePagination(props: TablePaginationProps) {
             )}
           >
             <span className="sr-only">Previous</span>
-            <svg
-              className="w-4 h-4 rtl:rotate-180"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 6 10"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M5 1 1 5l4 4"
-              />
-            </svg>
+            <ChevronLeft size={16} className="rtl:rotate-180" />
           </GhostButton>
         </li>
         {/* page count start */}
@@ -151,20 +128,7 @@ export function TablePagination(props: TablePaginationProps) {
             )}
           >
             <span className="sr-only">Next</span>
-            <svg
-              className="w-4 h-4 rtl:rotate-180"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 6 10"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="m1 9 4-4-4-4"
-              />
-            </svg>
+            <ChevronRight size={16} className="rtl:rotate-180" />
           </GhostButton>
         </li>
 
@@ -186,7 +150,7 @@ export function TablePagination(props: TablePaginationProps) {
                 </div>
               }
             >
-              <SlidersHorizontal className="w-4 h-4" strokeWidth={1.5} />
+              <SettingsAdjust size={16} />
             </TooltipPlus>
           </GhostButton>
         </li>
@@ -198,12 +162,10 @@ export function TablePagination(props: TablePaginationProps) {
 function generatePageArray(props: TablePaginationProps) {
   const maxPage = Math.ceil(props.totalItem / props.pageSize);
 
-  //   props.currentPage >= maxPage;
   const prevPage = props.currentPage > 1 ? props.currentPage - 1 : undefined;
   const nextPage =
     props.currentPage < maxPage ? props.currentPage + 1 : undefined;
 
-  // Filter out undefined values
   return [prevPage, props.currentPage, nextPage];
 }
 
