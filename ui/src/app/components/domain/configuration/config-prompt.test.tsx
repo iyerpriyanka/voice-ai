@@ -19,7 +19,7 @@ jest.mock('@carbon/react', () => {
       renderIcon: Icon,
       ...props
     }: any) => (
-      <button type="button" data-carbon-button-kind={kind} {...props}>
+      <button type="button" data-design-system-button-kind={kind} {...props}>
         {children}
         {Icon ? <Icon /> : null}
       </button>
@@ -31,6 +31,14 @@ jest.mock('@carbon/react', () => {
       </button>
     ),
     ToggletipContent: ({ children }: any) => <span>{children}</span>,
+  };
+});
+
+jest.mock('@carbon/icons-react', () => {
+  const actual = jest.requireActual('@carbon/icons-react');
+  return {
+    ...actual,
+    Add: () => <svg data-testid="add-message-icon" />,
   };
 });
 
@@ -81,7 +89,7 @@ describe('ConfigPrompt argument hints', () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: /Reserved Variables/i }),
-    ).toHaveAttribute('data-carbon-button-kind', 'ghost');
+    ).toHaveAttribute('data-design-system-button-kind', 'ghost');
     expect(
       screen.getByText(
         /These variables are preserved and replaced at runtime/i,
@@ -226,5 +234,14 @@ describe('ConfigPrompt argument hints', () => {
       { name: 'customer_name', type: 'text', defaultvalue: '' },
       { name: 'args.city', type: 'text', defaultvalue: '' },
     ]);
+  });
+
+  it('uses the standard add icon for adding a prompt message', () => {
+    render(<ConfigPrompt existingPrompt={basePrompt} onChange={() => {}} />);
+
+    expect(screen.getByTestId('add-message-icon')).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Add new message' }),
+    ).toHaveAttribute('data-design-system-button-kind', 'tertiary');
   });
 });

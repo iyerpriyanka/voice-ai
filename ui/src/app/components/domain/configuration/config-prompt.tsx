@@ -6,7 +6,6 @@ import {
   SUPPORTED_PROMPT_VARIABLE_TYPE,
 } from '@/configs';
 import { TertiaryButton } from '@/app/components/ui/button';
-import { Plus } from 'lucide-react';
 import { FormLabel } from '@/app/components/ui/form-label';
 import { FieldSet } from '@/app/components/ui/fieldset';
 import { ScalableTextarea } from '@/app/components/ui/textarea';
@@ -23,7 +22,7 @@ import {
   ToggletipButton,
   ToggletipContent,
 } from '@carbon/react';
-import { ChevronDown, Information } from '@carbon/icons-react';
+import { Add, ChevronDown, Information } from '@carbon/icons-react';
 
 const isRapidaReservedRuntimeVariable = (variableName: string): boolean =>
   RAPIDA_RESERVED_RUNTIME_VARIABLE_KEYS.has(variableName) ||
@@ -224,7 +223,7 @@ export const ConfigPrompt: FC<IPromptProps> = ({
           {existingPrompt.prompt.length < MAX_PROMPT_MESSAGE_LENGTH && (
             <TertiaryButton
               size="md"
-              renderIcon={Plus}
+              renderIcon={Add}
               onClick={handleAddMessage}
               className="!w-full !max-w-none !justify-between !text-left"
             >
