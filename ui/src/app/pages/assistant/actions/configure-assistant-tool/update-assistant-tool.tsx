@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { CONFIG } from '@/configs';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { PrimaryButton, SecondaryButton } from '@/app/components/button';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
 import { ButtonSet } from '@carbon/react';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import {
@@ -11,14 +11,14 @@ import {
   GetDefaultToolConfigIfInvalid,
   GetDefaultToolDefintion,
   ValidateToolDefaultOptions,
-} from '@/app/components/tools';
-import { ToolDefinitionForm } from '@/app/components/tools/common';
+} from '@/app/components/domain/tools/tool-registry';
+import { ToolDefinitionForm } from '@/app/components/domain/tools/common';
 import { GetAssistantTool, UpdateAssistantTool } from '@rapidaai/react';
 import { useParams } from 'react-router-dom';
 import toast from 'react-hot-toast/headless';
 import { useRapidaStore } from '@/hooks';
 import { connectionConfig } from '@/configs';
-import { TabForm } from '@/app/components/form/tab-form';
+import { TabForm } from '@/app/components/ui/tab-form';
 
 export const UpdateTool: FC<{ assistantId: string }> = ({ assistantId }) => {
   const navigator = useGlobalNavigation();

@@ -1,15 +1,15 @@
-import { FormLabel } from '@/app/components/form-label';
-import { PrimaryButton } from '@/app/components/button';
+import { FormLabel } from '@/app/components/ui/form-label';
+import { PrimaryButton } from '@/app/components/ui/button';
 import { ChevronRight } from '@carbon/icons-react';
-import { InputCheckbox } from '@/app/components/form/input-checkbox';
-import { FieldSet } from '@/app/components/form/fieldset';
-import { InputHelper } from '@/app/components/input-helper';
+import { InputCheckbox } from '@/app/components/ui/input-checkbox';
+import { FieldSet } from '@/app/components/ui/fieldset';
+import { InputHelper } from '@/app/components/ui/input-helper';
 import { connectionConfig } from '@/configs';
 import { RAPIDA_SYSTEM_NOTIFICATION } from '@/models/notification';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { PageActionButtonBlock } from '@/app/components/blocks/page-action-button-block';
-import { SectionDivider } from '@/app/components/blocks/section-divider';
+import { PageActionButtonBlock } from '@/app/components/layout/blocks/page-action-button-block';
+import { SectionDivider } from '@/app/components/layout/blocks/section-divider';
 import {
   UpdateNotificationSettingRequest,
   NotificationSetting as Setting,

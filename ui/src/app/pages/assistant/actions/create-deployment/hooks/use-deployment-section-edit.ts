@@ -31,16 +31,16 @@ import {
   GetDefaultMicrophoneConfig,
   GetDefaultSpeechToTextIfInvalid,
   ValidateSpeechToTextIfInvalid,
-} from '@/app/components/providers/speech-to-text/provider';
+} from '@/app/components/domain/providers/speech-to-text/provider';
 import {
   GetDefaultSpeakerConfig,
   GetDefaultTextToSpeechIfInvalid,
   ValidateTextToSpeechIfInvalid,
-} from '@/app/components/providers/text-to-speech/provider';
+} from '@/app/components/domain/providers/text-to-speech/provider';
 import {
   GetDefaultTelephonyConfigIfInvalid,
   ValidateTelephonyOptions,
-} from '@/app/components/providers/telephony';
+} from '@/app/components/domain/providers/telephony';
 
 export type EditSection =
   | 'telephony'

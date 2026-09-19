@@ -1,6 +1,6 @@
 import { FC } from 'react';
-import { BrandedLogo } from '@/app/components/brand/branded-logo';
-import { CustomerOptions } from '@/app/components/navigation/actionable-header';
+import { BrandedLogo } from '@/app/components/layout/brand/branded-logo';
+import { CustomerOptions } from '@/app/components/layout/navigation/actionable-header';
 
 export const PreviewAgentHeader: FC = () => (
   <header className="flex h-12 shrink-0 items-center justify-between border-b border-border-subtle bg-shell">

@@ -2,16 +2,16 @@ import { useRapidaStore } from '@/hooks';
 import { useCredential } from '@/hooks/use-credential';
 import React, { useCallback, useEffect } from 'react';
 import toast from 'react-hot-toast/headless';
-import { BluredWrapper } from '@/app/components/wrapper/blured-wrapper';
-import { SearchIconInput } from '@/app/components/form/input/IconInput';
+import { BluredWrapper } from '@/app/components/layout/wrapper/blured-wrapper';
+import { SearchIconInput } from '@/app/components/ui/icon-input';
 import { KnowledgeDocument } from '@rapidaai/react';
 import { useKnowledgeDocumentPageStore } from '@/hooks/use-knowledge-document-page-store';
-import { TablePagination } from '@/app/components/tables/table-pagination';
+import { TablePagination } from '@/app/components/ui/table/table-pagination';
 import { SingleDocument } from '@/app/pages/knowledge-base/view/documents/single-document';
 import { Knowledge } from '@rapidaai/react';
-import { PageLoading } from '@/app/components/loading';
-import { EmptyState } from '@/app/components/empty-state';
-import { ScrollableResizableTable } from '@/app/components/data-table';
+import { PageLoading } from '@/app/components/ui/loading';
+import { EmptyState } from '@/app/components/ui/empty-state';
+import { ScrollableResizableTable } from '@/app/components/ui/data-table';
 
 export function Documents(props: {
   currentKnowledge: Knowledge;

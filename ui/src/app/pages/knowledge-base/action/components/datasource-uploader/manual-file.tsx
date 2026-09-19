@@ -1,5 +1,5 @@
-import { GhostButton } from '@/app/components/button';
-import SingleRowWrapper from '@/app/components/wrapper/single-row-wrapper';
+import { GhostButton } from '@/app/components/ui/button';
+import SingleRowWrapper from '@/app/components/layout/wrapper/single-row-wrapper';
 import { useCreateKnowledgeDocumentPageStore } from '@/hooks/use-create-knowledge-document-page-store';
 import { formatFileSize } from '@/utils/format';
 import { Close, Document, DotMark, Upload } from '@carbon/icons-react';

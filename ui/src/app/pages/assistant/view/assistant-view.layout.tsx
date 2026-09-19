@@ -1,4 +1,4 @@
-import { Helmet } from '@/app/components/helmet';
+import { Helmet } from '@/app/components/app-shell/helmet';
 import { useRapidaStore } from '@/hooks';
 import { useCredential } from '@/hooks/use-credential';
 import { FC, HTMLAttributes, useEffect, useState } from 'react';
@@ -13,7 +13,7 @@ import {
 } from '@rapidaai/react';
 import { useAssistantPageStore } from '@/hooks/use-assistant-page-store';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { ErrorContainer } from '@/app/components/error-container';
+import { ErrorContainer } from '@/app/components/ui/error-container';
 import { connectionConfig } from '@/configs';
 import { AssistantSideNav } from './assistant-side-nav';
 

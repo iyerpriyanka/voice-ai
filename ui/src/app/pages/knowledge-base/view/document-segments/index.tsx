@@ -1,19 +1,19 @@
 import { KnowledgeDocumentSegment } from '@rapidaai/react';
-import { TablePagination } from '@/app/components/tables/table-pagination';
-import { BluredWrapper } from '@/app/components/wrapper/blured-wrapper';
-import { BaseCard } from '@/app/components/cards';
+import { TablePagination } from '@/app/components/ui/table/table-pagination';
+import { BluredWrapper } from '@/app/components/layout/wrapper/blured-wrapper';
+import { BaseCard } from '@/app/components/ui/card';
 import { useRapidaStore } from '@/hooks';
 import { useKnowledgeDocumentSegmentPageStore } from '@/hooks/use-knowledge-document-segment-page-store';
 import { FC, useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast/headless';
 import { Knowledge } from '@rapidaai/react';
-import { EditButton } from '@/app/components/button/edit-button';
-import { DeleteButton } from '@/app/components/button/delete-button';
+import { EditButton } from '@/app/components/ui/buttons/edit-button';
+import { DeleteButton } from '@/app/components/ui/buttons/delete-button';
 import { useCurrentCredential } from '@/hooks/use-credential';
 
-import { EditKnowledgeDocumentSegmentDialog } from '@/app/components/modal/edit-knowledge-document-segment-modal';
-import { DeleteKnowledgeDocumentSegmentDialog } from '@/app/components/modal/delete-knowledge-document-segment-modal';
-import { EmptyState } from '@/app/components/empty-state';
+import { EditKnowledgeDocumentSegmentDialog } from '@/app/components/dialogs/edit-knowledge-document-segment-modal';
+import { DeleteKnowledgeDocumentSegmentDialog } from '@/app/components/dialogs/delete-knowledge-document-segment-modal';
+import { EmptyState } from '@/app/components/ui/empty-state';
 
 export const DocumentSegments: FC<{
   currentKnowledge: Knowledge;

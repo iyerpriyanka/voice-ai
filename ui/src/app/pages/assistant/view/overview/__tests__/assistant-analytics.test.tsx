@@ -99,11 +99,11 @@ jest.mock('recharts', () => {
   };
 });
 
-jest.mock('@/app/components/carbon-dropdown', () => ({
+jest.mock('@/app/components/ui/dropdown', () => ({
   Dropdown: ({ label }: any) => <div>{label}</div>,
 }));
 
-jest.mock('@/app/components/tile', () => ({
+jest.mock('@/app/components/ui/tile', () => ({
   Tile: ({ children }: any) => <div>{children}</div>,
 }));
 

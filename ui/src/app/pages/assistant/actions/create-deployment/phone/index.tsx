@@ -24,30 +24,30 @@ import {
 import { GetAssistantPhoneDeployment } from '@rapidaai/react';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import toast from 'react-hot-toast/headless';
-import { Helmet } from '@/app/components/helmet';
+import { Helmet } from '@/app/components/app-shell/helmet';
 import {
   GetDefaultMicrophoneConfig,
   GetDefaultSpeechToTextIfInvalid,
   ValidateSpeechToTextIfInvalid,
-} from '@/app/components/providers/speech-to-text/provider';
+} from '@/app/components/domain/providers/speech-to-text/provider';
 import {
   GetDefaultSpeakerConfig,
   GetDefaultTextToSpeechIfInvalid,
   ValidateTextToSpeechIfInvalid,
-} from '@/app/components/providers/text-to-speech/provider';
+} from '@/app/components/domain/providers/text-to-speech/provider';
 import { connectionConfig } from '@/configs';
 import {
   TelephonyProvider,
   GetDefaultTelephonyConfigIfInvalid,
   ValidateTelephonyOptions,
-} from '@/app/components/providers/telephony';
+} from '@/app/components/domain/providers/telephony';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
-import { TabForm } from '@/app/components/form/tab-form';
+import { TabForm } from '@/app/components/ui/tab-form';
 import {
   PrimaryButton,
   SecondaryButton,
   GhostButton,
-} from '@/app/components/button';
+} from '@/app/components/ui/button';
 import { ButtonSet } from '@carbon/react';
 
 const STEPS = [

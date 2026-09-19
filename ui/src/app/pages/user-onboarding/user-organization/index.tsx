@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useState } from 'react';
-import { Helmet } from '@/app/components/helmet';
+import { Helmet } from '@/app/components/app-shell/helmet';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { CreateOrganization } from '@rapidaai/react';
@@ -9,9 +9,9 @@ import { useRapidaStore } from '@/hooks';
 import { ServiceError } from '@rapidaai/react';
 import { AuthContext } from '@/context/auth-context';
 import { connectionConfig } from '@/configs';
-import { Stack, TextInput } from '@/app/components/form';
-import { PrimaryButton } from '@/app/components/button';
-import { Notification } from '@/app/components/notification';
+import { Stack, TextInput } from '@/app/components/ui/form';
+import { PrimaryButton } from '@/app/components/ui/button';
+import { Notification } from '@/app/components/ui/notification';
 import { ArrowRight } from '@carbon/icons-react';
 import { Select, SelectItem } from '@carbon/react';
 

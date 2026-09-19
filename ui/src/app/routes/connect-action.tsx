@@ -1,4 +1,4 @@
-import { ProtectedBox } from '@/app/components/container/protected-box';
+import { ProtectedBox } from '@/app/components/layout/container/protected-box';
 import { Outlet, Route, Routes } from 'react-router-dom';
 import { ConnectGmailAction, ConnectSlackAction } from '../pages/connect/index';
 

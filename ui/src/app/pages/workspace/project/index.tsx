@@ -1,18 +1,18 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { Helmet } from '@/app/components/helmet';
+import { Helmet } from '@/app/components/app-shell/helmet';
 import {
   ArchiveProjectResponse,
   GetAllProjectResponse,
   Project,
 } from '@rapidaai/react';
-import { CreateProjectDialog } from '@/app/components/modal/create-project-modal';
+import { CreateProjectDialog } from '@/app/components/dialogs/create-project-modal';
 import { GetAllProject, DeleteProject } from '@rapidaai/react';
 import { useCredential } from '@/hooks/use-credential';
 import toast from 'react-hot-toast/headless';
 import { useRapidaStore } from '@/hooks';
 import { ServiceError } from '@rapidaai/react';
-import { PrimaryButton } from '@/app/components/button';
-import { Pagination } from '@/app/components/pagination';
+import { PrimaryButton } from '@/app/components/ui/button';
+import { Pagination } from '@/app/components/ui/pagination';
 import { Add, Edit, Renew, TrashCan } from '@carbon/icons-react';
 import {
   Table,
@@ -29,17 +29,17 @@ import {
   Button,
   RadioButton,
 } from '@carbon/react';
-import { ProjectUserGroupAvatar } from '@/app/components/avatar/project-user-group-avatar';
+import { ProjectUserGroupAvatar } from '@/app/components/domain/avatar/project-user-group-avatar';
 import { toHumanReadableDate } from '@/utils/date';
-import { RoleIndicator } from '@/app/components/indicators/role';
-import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
-import { PageTitleWithCount } from '@/app/components/blocks/page-title-with-count';
-import { TableSection } from '@/app/components/sections/table-section';
+import { RoleIndicator } from '@/app/components/domain/indicators/role';
+import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
+import { PageTitleWithCount } from '@/app/components/layout/blocks/page-title-with-count';
+import { TableSection } from '@/app/components/layout/sections/table-section';
 import { connectionConfig } from '@/configs';
-import { ConfirmDeleteDialog } from '@/app/components/modal/confirm-delete';
+import { ConfirmDeleteDialog } from '@/app/components/dialogs/confirm-delete';
 import { AuthContext } from '@/context/auth-context';
-import { UpdateProjectDialog } from '@/app/components/modal/update-project-modal';
-import { CarbonIconIndicator } from '@/app/components/icon-indicator';
+import { UpdateProjectDialog } from '@/app/components/dialogs/update-project-modal';
+import { CarbonIconIndicator } from '@/app/components/ui/icon-indicator';
 
 const headers = [
   { key: 'name', header: 'Name' },

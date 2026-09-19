@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Helmet } from '@/app/components/helmet';
+import { Helmet } from '@/app/components/app-shell/helmet';
 import { useRapidaStore } from '@/hooks';
-import { TabForm } from '@/app/components/form/tab-form';
-import { PrimaryButton, SecondaryButton } from '@/app/components/button';
+import { TabForm } from '@/app/components/ui/tab-form';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
 import { ButtonSet, Slider } from '@carbon/react';
 import { ChevronDown } from '@carbon/icons-react';
 import {
@@ -15,23 +15,23 @@ import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confir
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { randomMeaningfullName } from '@/utils';
-import { FieldSet } from '@/app/components/form/fieldset';
-import { FormLabel } from '@/app/components/form-label';
-import { Input } from '@/app/components/form/input';
-import { Select } from '@/app/components/form/select';
-import { Textarea } from '@/app/components/form/textarea';
-import { TagInput } from '@/app/components/form/tag-input';
-import { AssistantTag } from '@/app/components/form/tag-input/assistant-tags';
+import { FieldSet } from '@/app/components/ui/fieldset';
+import { FormLabel } from '@/app/components/ui/form-label';
+import { Input } from '@/app/components/ui/input';
+import { Select } from '@/app/components/ui/select';
+import { Textarea } from '@/app/components/ui/textarea';
+import { TagInput } from '@/app/components/ui/tag-input';
+import { AssistantTag } from '@/app/components/domain/tags/assistant-tags';
 import { Bug, ChevronRight, Code, PhoneCall } from 'lucide-react';
-import { DocNoticeBlock } from '@/app/components/container/message/notice-block/doc-notice-block';
+import { DocNoticeBlock } from '@/app/components/layout/container/message/notice-block/doc-notice-block';
 import { CreateAssistant } from '@rapidaai/react';
 import { connectionConfig } from '@/configs';
 import { Globe } from 'lucide-react';
-import { APiParameter } from '@/app/components/external-api/api-parameter';
-import { InputHelper } from '@/app/components/input-helper';
-import { CodeEditor } from '@/app/components/form/editor/code-editor';
+import { APiParameter } from '@/app/components/domain/external-api/api-parameter';
+import { InputHelper } from '@/app/components/ui/input-helper';
+import { CodeEditor } from '@/app/components/ui/code-editor';
 import toast from 'react-hot-toast/headless';
-import { SectionDivider } from '@/app/components/blocks/section-divider';
+import { SectionDivider } from '@/app/components/layout/blocks/section-divider';
 import { useTheme } from '@/theme/theme-provider';
 
 const TRANSPORT_SECURITY_OPTIONS = [

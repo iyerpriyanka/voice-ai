@@ -27,7 +27,7 @@ const tenantTheme: ThemeManifest = {
   defaultMode: 'light',
 };
 
-jest.mock('@/app/components/navigation/actionable-header', () => ({
+jest.mock('@/app/components/layout/navigation/actionable-header', () => ({
   CustomerOptions: () => <div>Customer options</div>,
 }));
 

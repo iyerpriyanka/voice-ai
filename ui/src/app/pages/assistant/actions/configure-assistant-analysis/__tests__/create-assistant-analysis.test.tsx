@@ -103,7 +103,7 @@ jest.mock('@/app/pages/assistant/actions/hooks/use-confirmation', () => ({
   }),
 }));
 
-jest.mock('@/app/components/dropdown/endpoint-dropdown', () => ({
+jest.mock('@/app/components/domain/dropdowns/endpoint-dropdown', () => ({
   EndpointDropdown: ({ onChangeEndpoint }: any) => (
     <button
       type="button"
@@ -118,7 +118,7 @@ jest.mock('@/app/components/dropdown/endpoint-dropdown', () => ({
   ),
 }));
 
-jest.mock('@/app/components/form/tab-form', () => ({
+jest.mock('@/app/components/ui/tab-form', () => ({
   TabForm: ({ form, activeTab, errorMessage, formHeading }: any) => {
     const React = require('react');
     const active = form.find((f: any) => f.code === activeTab) || form[0];
@@ -139,7 +139,7 @@ jest.mock('@/app/components/form/tab-form', () => ({
   },
 }));
 
-jest.mock('@/app/components/form', () => ({
+jest.mock('@/app/components/ui/form', () => ({
   Stack: ({ children }: any) => <div>{children}</div>,
   TextInput: ({
     labelText: _l,
@@ -163,7 +163,7 @@ jest.mock('@/app/components/form', () => ({
   }: any) => <textarea {...props} />,
 }));
 
-jest.mock('@/app/components/button', () => ({
+jest.mock('@/app/components/ui/button', () => ({
   PrimaryButton: ({
     children,
     isLoading: _,

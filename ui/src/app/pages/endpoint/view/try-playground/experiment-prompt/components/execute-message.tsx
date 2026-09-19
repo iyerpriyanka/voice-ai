@@ -1,5 +1,5 @@
 import { Metric } from '@rapidaai/react';
-import { PlainWrapper } from '@/app/components/wrapper/alert-wrapper';
+import { PlainWrapper } from '@/app/components/layout/wrapper/alert-wrapper';
 import { cn } from '@/utils';
 import { Loading } from '@carbon/react';
 import { Checkmark, Play, WarningAlt } from '@carbon/icons-react';

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Switch } from '@headlessui/react';
-import { Helmet } from '@/app/components/helmet';
-import { DescriptiveHeading } from '@/app/components/heading/descriptive-heading';
+import { Helmet } from '@/app/components/app-shell/helmet';
+import { DescriptiveHeading } from '@/app/components/layout/heading/descriptive-heading';
 import { useDocumentationUrl } from '@/theme/documentation-url';
 
 export function AccessSecurityPage() {

@@ -2,8 +2,8 @@ import { FC, useEffect, useState } from 'react';
 import { useRapidaStore } from '@/hooks';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useParams } from 'react-router-dom';
-import { Helmet } from '@/app/components/helmet';
-import { PrimaryButton, SecondaryButton } from '@/app/components/button';
+import { Helmet } from '@/app/components/app-shell/helmet';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
 import {
   ButtonSet,
   Toggletip,
@@ -11,8 +11,8 @@ import {
   ToggletipContent,
 } from '@carbon/react';
 import { Information } from '@carbon/icons-react';
-import { TabForm } from '@/app/components/form/tab-form';
-import { FieldSet } from '@/app/components/form/fieldset';
+import { TabForm } from '@/app/components/ui/tab-form';
+import { FieldSet } from '@/app/components/ui/fieldset';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import {
@@ -25,21 +25,21 @@ import {
   Metadata,
   ConnectionConfig,
 } from '@rapidaai/react';
-import { FormLabel } from '@/app/components/form-label';
-import { Textarea } from '@/app/components/form/textarea';
-import { ConfigPrompt } from '@/app/components/configuration/config-prompt';
-import { ErrorContainer } from '@/app/components/error-container';
+import { FormLabel } from '@/app/components/ui/form-label';
+import { Textarea } from '@/app/components/ui/textarea';
+import { ConfigPrompt } from '@/app/components/domain/configuration/config-prompt';
+import { ErrorContainer } from '@/app/components/ui/error-container';
 import { ChatCompletePrompt, Prompt } from '@/utils/prompt';
 import {
   GetDefaultTextProviderConfigIfInvalid,
   GetDefaultTextProviderConfigOnProviderSwitch,
   TextProvider,
-} from '@/app/components/providers/text';
+} from '@/app/components/domain/providers/text';
 import { randomString } from '@/utils';
-import { ValidateTextProviderDefaultOptions } from '@/app/components/providers/text';
+import { ValidateTextProviderDefaultOptions } from '@/app/components/domain/providers/text';
 import { useAllProviderCredentials } from '@/hooks/use-model';
 import { connectionConfig } from '@/configs';
-import { DocNoticeBlock } from '@/app/components/container/message/notice-block/doc-notice-block';
+import { DocNoticeBlock } from '@/app/components/layout/container/message/notice-block/doc-notice-block';
 import toast from 'react-hot-toast/headless';
 
 /**

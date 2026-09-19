@@ -4,11 +4,11 @@ import { useCurrentCredential } from '@/hooks/use-credential';
 import { useAllProviderCredentials } from '@/hooks/use-model';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast/headless';
-import { Helmet } from '@/app/components/helmet';
+import { Helmet } from '@/app/components/app-shell/helmet';
 import {
   PrimaryButton,
   SecondaryButton,
-} from '@/app/components/button';
+} from '@/app/components/ui/button';
 import {
   ButtonSet,
   Toggletip,
@@ -16,7 +16,7 @@ import {
   ToggletipContent,
 } from '@carbon/react';
 import { Information } from '@carbon/icons-react';
-import { TabForm } from '@/app/components/form/tab-form';
+import { TabForm } from '@/app/components/ui/tab-form';
 import {
   ConnectionConfig,
   CreateEndpointResponse,
@@ -24,31 +24,31 @@ import {
   EndpointProviderModelAttribute,
   Metadata,
 } from '@rapidaai/react';
-import ConfirmDialog from '@/app/components/modal/confirm-ui';
+import ConfirmDialog from '@/app/components/dialogs/confirm-ui';
 import { create_endpoint_success_message } from '@/utils/messages';
 import {
   GetDefaultTextProviderConfigIfInvalid,
   GetDefaultTextProviderConfigOnProviderSwitch,
   TextProvider,
   ValidateTextProviderDefaultOptions,
-} from '@/app/components/providers/text';
-import { ConfigPrompt } from '@/app/components/configuration/config-prompt';
+} from '@/app/components/domain/providers/text';
+import { ConfigPrompt } from '@/app/components/domain/configuration/config-prompt';
 import { randomMeaningfullName, randomString } from '@/utils';
-import { FieldSet } from '@/app/components/form/fieldset';
-import { FormLabel } from '@/app/components/form-label';
-import { Input } from '@/app/components/form/input';
-import { TagInput } from '@/app/components/form/tag-input';
-import { EndpointTag } from '@/app/components/form/tag-input/endpoint-tags';
-import { Textarea } from '@/app/components/form/textarea';
+import { FieldSet } from '@/app/components/ui/fieldset';
+import { FormLabel } from '@/app/components/ui/form-label';
+import { Input } from '@/app/components/ui/input';
+import { TagInput } from '@/app/components/ui/tag-input';
+import { EndpointTag } from '@/app/components/domain/tags/endpoint-tags';
+import { Textarea } from '@/app/components/ui/textarea';
 import { CreateEndpoint } from '@rapidaai/react';
 import { ServiceError } from '@rapidaai/react';
 import { ChatCompletePrompt } from '@/utils/prompt';
 import { connectionConfig } from '@/configs';
-import { YellowNoticeBlock } from '@/app/components/container/message/notice-block';
-import { InputHelper } from '@/app/components/input-helper';
+import { YellowNoticeBlock } from '@/app/components/layout/container/message/notice-block';
+import { InputHelper } from '@/app/components/ui/input-helper';
 import { ArrowUpRight } from 'lucide-react';
-import { ConfigureEndpointPromptDialog } from '@/app/components/modal/configure-endpoint-prompt-modal';
-import { CornerBorderOverlay } from '@/app/components/corner-border';
+import { ConfigureEndpointPromptDialog } from '@/app/components/dialogs/configure-endpoint-prompt-modal';
+import { CornerBorderOverlay } from '@/app/components/ui/corner-border';
 
 export function CreateEndpointPage() {
   const { authId, token, projectId } = useCurrentCredential();

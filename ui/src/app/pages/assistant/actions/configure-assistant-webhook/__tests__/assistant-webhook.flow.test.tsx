@@ -173,7 +173,7 @@ jest.mock('@/app/pages/assistant/actions/hooks/use-confirmation', () => ({
   }),
 }));
 
-jest.mock('@/app/components/form/tab-form', () => ({
+jest.mock('@/app/components/ui/tab-form', () => ({
   TabForm: ({ form, activeTab, errorMessage, formHeading }: any) => {
     const React = require('react');
     const active = form.find((f: any) => f.code === activeTab) || form[0];
@@ -194,7 +194,7 @@ jest.mock('@/app/components/form/tab-form', () => ({
   },
 }));
 
-jest.mock('@/app/components/form', () => {
+jest.mock('@/app/components/ui/form', () => {
   const React = require('react');
   return {
     Stack: ({ children }: any) => React.createElement('div', null, children),
@@ -246,7 +246,7 @@ jest.mock('@/app/components/form', () => {
   };
 });
 
-jest.mock('@/app/components/input-group', () => {
+jest.mock('@/app/components/ui/input-group', () => {
   const React = require('react');
   return {
     InputGroup: ({ title, children }: any) =>
@@ -259,7 +259,7 @@ jest.mock('@/app/components/input-group', () => {
   };
 });
 
-jest.mock('@/app/components/form/slider', () => {
+jest.mock('@/app/components/ui/slider', () => {
   const React = require('react');
   return {
     Slider: ({ value, onSlide }: any) =>
@@ -272,7 +272,7 @@ jest.mock('@/app/components/form/slider', () => {
   };
 });
 
-jest.mock('@/app/components/button', () => {
+jest.mock('@/app/components/ui/button', () => {
   const React = require('react');
   return {
     PrimaryButton: ({

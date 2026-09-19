@@ -39,20 +39,20 @@ jest.mock('@/hooks', () => ({
   }),
 }));
 
-jest.mock('@/app/components/loader/section-loader', () => ({
+jest.mock('@/app/components/ui/loaders/section-loader', () => ({
   SectionLoader: () => <div>loading</div>,
 }));
 
-jest.mock('@/app/components/sections/table-section', () => ({
+jest.mock('@/app/components/layout/sections/table-section', () => ({
   TableSection: ({ children }: any) => <div>{children}</div>,
   ScrollableTableSection: ({ children }: any) => <div>{children}</div>,
 }));
 
-jest.mock('@/app/components/empty-state', () => ({
+jest.mock('@/app/components/ui/empty-state', () => ({
   EmptyState: ({ title }: any) => <div>{title}</div>,
 }));
 
-jest.mock('@/app/components/button', () => ({
+jest.mock('@/app/components/ui/button', () => ({
   IconOnlyButton: ({
     children,
     renderIcon: _renderIcon,
@@ -64,7 +64,7 @@ jest.mock('@/app/components/button', () => ({
   ),
 }));
 
-jest.mock('@/app/components/pagination', () => ({
+jest.mock('@/app/components/ui/pagination', () => ({
   Pagination: ({ onChange, pageSize }: any) => (
     <div>
       <button

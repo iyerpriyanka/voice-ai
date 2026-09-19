@@ -1,10 +1,10 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast/headless';
-import { Helmet } from '@/app/components/helmet';
-import { PrimaryButton, SecondaryButton } from '@/app/components/button';
+import { Helmet } from '@/app/components/app-shell/helmet';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
 import { ButtonSet } from '@carbon/react';
-import { TabForm } from '@/app/components/form/tab-form';
-import ConfirmDialog from '@/app/components/modal/confirm-ui';
+import { TabForm } from '@/app/components/ui/tab-form';
+import ConfirmDialog from '@/app/components/dialogs/confirm-ui';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/hooks';
 import { useAllProviderCredentials } from '@/hooks/use-model';
@@ -13,7 +13,7 @@ import {
   GetDefaultTextProviderConfigOnProviderSwitch,
   TextProvider,
   ValidateTextProviderDefaultOptions,
-} from '@/app/components/providers/text';
+} from '@/app/components/domain/providers/text';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   ConnectionConfig,
@@ -21,7 +21,7 @@ import {
   GetEndpoint,
   Metadata,
 } from '@rapidaai/react';
-import { ConfigPrompt } from '@/app/components/configuration/config-prompt';
+import { ConfigPrompt } from '@/app/components/domain/configuration/config-prompt';
 import {
   EndpointProviderModelAttribute,
   GetEndpointResponse,
@@ -30,12 +30,12 @@ import { ServiceError } from '@rapidaai/react';
 import { ChatCompletePrompt, Prompt } from '@/utils/prompt';
 import { CreateEndpointProviderModelResponse } from '@rapidaai/react';
 import { randomString } from '@/utils';
-import { FieldSet } from '@/app/components/form/fieldset';
-import { FormLabel } from '@/app/components/form-label';
-import { Textarea } from '@/app/components/form/textarea';
+import { FieldSet } from '@/app/components/ui/fieldset';
+import { FormLabel } from '@/app/components/ui/form-label';
+import { Textarea } from '@/app/components/ui/textarea';
 import { connectionConfig } from '@/configs';
-import { DocNoticeBlock } from '@/app/components/container/message/notice-block/doc-notice-block';
-import { InputHelper } from '@/app/components/input-helper';
+import { DocNoticeBlock } from '@/app/components/layout/container/message/notice-block/doc-notice-block';
+import { InputHelper } from '@/app/components/ui/input-helper';
 
 export const CreateNewVersionEndpointPage: FC = () => {
   /**

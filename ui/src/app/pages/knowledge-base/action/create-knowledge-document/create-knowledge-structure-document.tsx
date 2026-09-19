@@ -4,18 +4,18 @@ import { useCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/hooks/use-rapida-store';
 import { KnowledgeDocument } from '@rapidaai/react';
 import { useCreateKnowledgeDocumentPageStore } from '@/hooks/use-create-knowledge-document-page-store';
-import { PrimaryButton, SecondaryButton } from '@/app/components/button';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
 import { ButtonSet } from '@carbon/react';
 import { ManualFile } from '@/app/pages/knowledge-base/action/components/datasource-uploader/manual-file';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { ErrorMessage } from '@/app/components/form/error-message';
+import { ErrorMessage } from '@/app/components/ui/error-message';
 import { RapidaDocumentType } from '@/utils/rapida_document';
 import { ArrowLeft, UploadIcon } from 'lucide-react';
-import { Select } from '@/app/components/form/select';
-import { Helmet } from '@/app/components/helmet';
-import { FormLabel } from '@/app/components/form-label';
-import { DocNoticeBlock } from '@/app/components/container/message/notice-block/doc-notice-block';
-import { SectionDivider } from '@/app/components/blocks/section-divider';
+import { Select } from '@/app/components/ui/select';
+import { Helmet } from '@/app/components/app-shell/helmet';
+import { FormLabel } from '@/app/components/ui/form-label';
+import { DocNoticeBlock } from '@/app/components/layout/container/message/notice-block/doc-notice-block';
+import { SectionDivider } from '@/app/components/layout/blocks/section-divider';
 
 export function CreateKnowledgeStructureDocumentPage() {
   const { id } = useParams();

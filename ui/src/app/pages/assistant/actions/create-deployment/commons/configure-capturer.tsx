@@ -1,5 +1,5 @@
 import { Metadata } from '@rapidaai/react';
-import { CloudStorageProvider } from '@/app/components/providers/storage';
+import { CloudStorageProvider } from '@/app/components/domain/providers/storage';
 
 export interface StorageConfig {
   providerId: string;

@@ -136,41 +136,41 @@ jest.mock('@/app/pages/assistant/actions/hooks/use-confirmation', () => {
   };
 });
 
-jest.mock('@/app/components/modal/webhook-log-modal', () => ({
+jest.mock('@/app/components/dialogs/webhook-log-modal', () => ({
   RequestLogDialog: ({ modalOpen }: any) =>
     modalOpen ? <div>request-log-modal</div> : null,
 }));
 
-jest.mock('@/app/components/helmet', () => ({
+jest.mock('@/app/components/app-shell/helmet', () => ({
   Helmet: () => null,
 }));
 
-jest.mock('@/app/components/query-search', () => ({
+jest.mock('@/app/components/ui/query-search', () => ({
   QuerySearch: ({ placeholder }: any) => <input placeholder={placeholder} />,
   parseQuerySearchFilters: () => [],
 }));
 
-jest.mock('@/app/components/blocks/page-title-with-count', () => ({
+jest.mock('@/app/components/layout/blocks/page-title-with-count', () => ({
   PageTitleWithCount: ({ children }: any) => <div>{children}</div>,
 }));
 
-jest.mock('@/app/components/blocks/page-header-block', () => ({
+jest.mock('@/app/components/layout/blocks/page-header-block', () => ({
   PageHeaderBlock: ({ children }: any) => <div>{children}</div>,
 }));
 
-jest.mock('@/app/components/table-link', () => ({
+jest.mock('@/app/components/ui/table-link', () => ({
   TableLink: ({ children, href }: any) => <a href={href}>{children}</a>,
 }));
 
-jest.mock('@/app/components/pagination', () => ({
+jest.mock('@/app/components/ui/pagination', () => ({
   Pagination: () => <div>pagination</div>,
 }));
 
-jest.mock('@/app/components/empty-state', () => ({
+jest.mock('@/app/components/ui/empty-state', () => ({
   EmptyState: ({ title }: any) => <div>{title}</div>,
 }));
 
-jest.mock('@/app/components/button', () => ({
+jest.mock('@/app/components/ui/button', () => ({
   IconOnlyButton: ({
     iconDescription,
     children,
@@ -189,7 +189,7 @@ jest.mock('@/utils/date', () => ({
   toHumanReadableDateTime: () => 'May 10, 2026',
 }));
 
-jest.mock('@/app/components/indicators/http-status', () => ({
+jest.mock('@/app/components/domain/indicators/http-status', () => ({
   HttpStatusSpanIndicator: ({ status }: any) => <span>{status}</span>,
 }));
 

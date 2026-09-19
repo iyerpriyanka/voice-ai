@@ -12,7 +12,7 @@ import { CreateKnowledgeResponse } from '@rapidaai/react';
 import {
   GetDefaultEmbeddingConfigIfInvalid,
   ValidateEmbeddingDefaultOptions,
-} from '@/app/components/providers/embedding';
+} from '@/app/components/domain/providers/embedding';
 import { randomMeaningfullName } from '@/utils';
 import { connectionConfig } from '@/configs';
 

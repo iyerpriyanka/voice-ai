@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Helmet } from '@/app/components/helmet';
+import { Helmet } from '@/app/components/app-shell/helmet';
 import { useCredential } from '@/hooks/use-credential';
 import toast from 'react-hot-toast/headless';
 import { useRapidaStore } from '@/hooks';
@@ -10,17 +10,17 @@ import {
   toHumanReadableDateTime,
 } from '@/utils/date';
 import { getMetadataValue, getMetricValueOrDefault } from '@/utils/metadata';
-import { LLMLogDialog } from '@/app/components/modal/llm-log-modal';
-import { HttpStatusSpanIndicator } from '@/app/components/indicators/http-status';
-import { PageTitleWithCount } from '@/app/components/blocks/page-title-with-count';
-import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
-import { CarbonStatusIndicator } from '@/app/components/status-indicator';
-import { Pagination } from '@/app/components/pagination';
-import { IconOnlyButton } from '@/app/components/button';
+import { LLMLogDialog } from '@/app/components/dialogs/llm-log-modal';
+import { HttpStatusSpanIndicator } from '@/app/components/domain/indicators/http-status';
+import { PageTitleWithCount } from '@/app/components/layout/blocks/page-title-with-count';
+import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
+import { CarbonStatusIndicator } from '@/app/components/ui/status-indicator';
+import { Pagination } from '@/app/components/ui/pagination';
+import { IconOnlyButton } from '@/app/components/ui/button';
 import { Renew, View, Launch, Ai } from '@carbon/icons-react';
-import { ProviderTag } from '@/app/components/provider-tag';
-import { EmptyState } from '@/app/components/empty-state';
-import { ScrollableTableSection } from '@/app/components/sections/table-section';
+import { ProviderTag } from '@/app/components/domain/provider-tag';
+import { EmptyState } from '@/app/components/ui/empty-state';
+import { ScrollableTableSection } from '@/app/components/layout/sections/table-section';
 import { LLMLogQuerySearch } from './llm-query-search';
 import {
   Table,

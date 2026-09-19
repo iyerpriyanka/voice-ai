@@ -159,14 +159,14 @@ jest.mock('@/hooks/use-global-navigator', () => ({
   }),
 }));
 
-jest.mock('@/app/components/helmet', () => ({ Helmet: () => null }));
-jest.mock('@/app/components/modal/assistant-instruction-modal', () => ({
+jest.mock('@/app/components/app-shell/helmet', () => ({ Helmet: () => null }));
+jest.mock('@/app/components/dialogs/assistant-instruction-modal', () => ({
   AssistantWebwidgetDeploymentDialog: () => null,
 }));
-jest.mock('@/app/components/cards', () => ({
+jest.mock('@/app/components/ui/card', () => ({
   BaseCard: ({ children }: any) => <div>{children}</div>,
 }));
-jest.mock('@/app/components/form/input-checkbox', () => ({
+jest.mock('@/app/components/ui/input-checkbox', () => ({
   InputCheckbox: ({ children, ...props }: any) => (
     <label>
       <input type="checkbox" {...props} />
@@ -174,10 +174,10 @@ jest.mock('@/app/components/form/input-checkbox', () => ({
     </label>
   ),
 }));
-jest.mock('@/app/components/input-helper', () => ({
+jest.mock('@/app/components/ui/input-helper', () => ({
   InputHelper: ({ children }: any) => <div>{children}</div>,
 }));
-jest.mock('@/app/components/form/switch', () => ({
+jest.mock('@/app/components/ui/switch', () => ({
   SwitchWithLabel: ({ enable, setEnable, label }: any) => (
     <button type="button" onClick={() => setEnable(!enable)}>
       {label}
@@ -185,7 +185,7 @@ jest.mock('@/app/components/form/switch', () => ({
   ),
 }));
 
-jest.mock('@/app/components/form/tab-form', () => ({
+jest.mock('@/app/components/ui/tab-form', () => ({
   TabForm: ({ activeTab, form, errorMessage }: any) => {
     const active = form.find((x: any) => x.code === activeTab);
     return (
@@ -234,13 +234,13 @@ jest.mock(
   }),
 );
 
-jest.mock('@/app/components/providers/speech-to-text/provider', () => ({
+jest.mock('@/app/components/domain/providers/speech-to-text/provider', () => ({
   GetDefaultMicrophoneConfig: () => [],
   GetDefaultSpeechToTextIfInvalid: () => [],
   ValidateSpeechToTextIfInvalid: () => undefined,
 }));
 
-jest.mock('@/app/components/providers/text-to-speech/provider', () => ({
+jest.mock('@/app/components/domain/providers/text-to-speech/provider', () => ({
   GetDefaultSpeakerConfig: () => [],
   GetDefaultTextToSpeechIfInvalid: () => [],
   ValidateTextToSpeechIfInvalid: () => undefined,
@@ -278,7 +278,7 @@ jest.mock('@/app/pages/assistant/actions/hooks/use-confirmation', () => {
   };
 });
 
-jest.mock('@/app/components/button', () => ({
+jest.mock('@/app/components/ui/button', () => ({
   PrimaryButton: ({ children, isLoading, ...props }: any) => (
     <button {...props}>{children}</button>
   ),

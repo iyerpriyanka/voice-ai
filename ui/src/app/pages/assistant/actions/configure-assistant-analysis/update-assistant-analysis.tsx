@@ -1,12 +1,12 @@
 import React, { FC, useEffect, useState } from 'react';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { PrimaryButton, SecondaryButton } from '@/app/components/button';
-import { Stack, TextInput, TextArea } from '@/app/components/form';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
+import { Stack, TextInput, TextArea } from '@/app/components/ui/form';
 import { ButtonSet, NumberInput } from '@carbon/react';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { randomMeaningfullName } from '@/utils';
-import { EndpointDropdown } from '@/app/components/dropdown/endpoint-dropdown';
+import { EndpointDropdown } from '@/app/components/domain/dropdowns/endpoint-dropdown';
 import {
   Endpoint,
   GetAssistantConfiguration,
@@ -18,7 +18,7 @@ import {
 import { useParams } from 'react-router-dom';
 import toast from 'react-hot-toast/headless';
 import { connectionConfig } from '@/configs';
-import { TabForm } from '@/app/components/form/tab-form';
+import { TabForm } from '@/app/components/ui/tab-form';
 import {
   ASSISTANT_CONDITION_KEY_OPTIONS,
   ASSISTANT_CONDITION_OPERATOR_OPTIONS,
@@ -27,9 +27,9 @@ import {
   AssistantConditionEntry,
   AssistantMappingTable,
   normalizeAssistantConditionEntries,
-} from '@/app/components/tools/common';
-import { SourceConditionRule } from '@/app/components/conditions/source-condition-rule';
-import { InputGroup } from '@/app/components/input-group';
+} from '@/app/components/domain/tools/common';
+import { SourceConditionRule } from '@/app/components/domain/conditions/source-condition-rule';
+import { InputGroup } from '@/app/components/ui/input-group';
 
 type ParamType =
   | 'client'

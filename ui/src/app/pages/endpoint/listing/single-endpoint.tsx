@@ -4,12 +4,12 @@ import { useEndpointPageStore } from '@/hooks';
 import { nanoToMilli, toHumanReadableRelativeTime } from '@/utils/date';
 import { useNavigate } from 'react-router-dom';
 import { TableRow, TableCell, Tag, Link } from '@carbon/react';
-import { ProviderTag } from '@/app/components/provider-tag';
+import { ProviderTag } from '@/app/components/domain/provider-tag';
 import { Launch, View, SourceControl } from '@carbon/icons-react';
-import { RecordStatusIndicator } from '@/app/components/record-status-indicator';
-import { VersionIndicator } from '@/app/components/indicators/version';
-import { IconOnlyButton } from '@/app/components/button';
-import { CopyButton } from '@/app/components/button/copy-button';
+import { RecordStatusIndicator } from '@/app/components/ui/record-status-indicator';
+import { VersionIndicator } from '@/app/components/domain/indicators/version';
+import { IconOnlyButton } from '@/app/components/ui/button';
+import { CopyButton } from '@/app/components/ui/buttons/copy-button';
 import { cn } from '@/utils';
 import { auditActorLabel, createdAuditActor } from '@/utils/audit-actor';
 

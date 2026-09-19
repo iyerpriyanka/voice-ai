@@ -14,7 +14,7 @@ import { useParams } from 'react-router-dom';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { AssistantConversation } from '@rapidaai/react';
 import { useRapidaStore } from '@/hooks';
-import { PageLoader } from '@/app/components/loader/page-loader';
+import { PageLoader } from '@/app/components/ui/loaders/page-loader';
 import {
   ArrowLeft,
   Renew,
@@ -23,19 +23,19 @@ import {
   ChartLine,
 } from '@carbon/icons-react';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { GhostButton } from '@/app/components/button';
-import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
-import { Table } from '@/app/components/tables/table';
-import { TableHead } from '@/app/components/tables/table-head';
-import { TableBody } from '@/app/components/tables/table-body';
-import { TableRow } from '@/app/components/tables/table-row';
-import { TableCell } from '@/app/components/tables/table-cell';
-import { EmptyState } from '@/app/components/empty-state';
+import { GhostButton } from '@/app/components/ui/button';
+import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
+import { Table } from '@/app/components/ui/table/table';
+import { TableHead } from '@/app/components/ui/table/table-head';
+import { TableBody } from '@/app/components/ui/table/table-body';
+import { TableRow } from '@/app/components/ui/table/table-row';
+import { TableCell } from '@/app/components/ui/table/table-cell';
+import { EmptyState } from '@/app/components/ui/empty-state';
 import { connectionConfig } from '@/configs';
 import { cn } from '@/utils';
-import { CarbonStatusIndicator } from '@/app/components/status-indicator';
+import { CarbonStatusIndicator } from '@/app/components/ui/status-indicator';
 import { getStatusMetric } from '@/utils/metadata';
-import { Tabs } from '@/app/components/tabs';
+import { Tabs } from '@/app/components/ui/tabs';
 
 // ── Tab definitions ───────────────────────────────────────────────────────────
 

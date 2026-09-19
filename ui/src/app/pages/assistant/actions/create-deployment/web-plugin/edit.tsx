@@ -22,24 +22,24 @@ import {
 } from '@rapidaai/react';
 import { GetAssistantWebpluginDeployment } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
-import { Helmet } from '@/app/components/helmet';
+import { Helmet } from '@/app/components/app-shell/helmet';
 import {
   GetDefaultMicrophoneConfig,
   GetDefaultSpeechToTextIfInvalid,
   ValidateSpeechToTextIfInvalid,
-} from '@/app/components/providers/speech-to-text/provider';
+} from '@/app/components/domain/providers/speech-to-text/provider';
 import {
   GetDefaultSpeakerConfig,
   GetDefaultTextToSpeechIfInvalid,
   ValidateTextToSpeechIfInvalid,
-} from '@/app/components/providers/text-to-speech/provider';
+} from '@/app/components/domain/providers/text-to-speech/provider';
 import { connectionConfig } from '@/configs';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
-import { Tabs } from '@/app/components/tabs';
-import { PrimaryButton, SecondaryButton } from '@/app/components/button';
-import { InputCheckbox } from '@/app/components/form/input-checkbox';
+import { Tabs } from '@/app/components/ui/tabs';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
+import { InputCheckbox } from '@/app/components/ui/input-checkbox';
 import { ButtonSet, CheckboxGroup } from '@carbon/react';
-import { Notification } from '@/app/components/notification';
+import { Notification } from '@/app/components/ui/notification';
 
 const EDIT_TABS = [
   { code: 'experience', name: 'Experience' },

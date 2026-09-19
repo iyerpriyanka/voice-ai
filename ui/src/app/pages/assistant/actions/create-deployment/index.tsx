@@ -1,6 +1,6 @@
-import { Helmet } from '@/app/components/helmet';
-import { EmptyState } from '@/app/components/empty-state';
-import { IconOnlyButton } from '@/app/components/button';
+import { Helmet } from '@/app/components/app-shell/helmet';
+import { EmptyState } from '@/app/components/ui/empty-state';
+import { IconOnlyButton } from '@/app/components/ui/button';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import {
@@ -38,20 +38,20 @@ import toast from 'react-hot-toast/headless';
 import { connectionConfig } from '@/configs';
 import { useRapidaStore } from '@/hooks';
 import { toHumanReadableDateTime } from '@/utils/date';
-import { AssistantPhoneCallDeploymentDialog } from '@/app/components/modal/assistant-phone-call-deployment-modal';
-import { AssistantDebugDeploymentDialog } from '@/app/components/modal/assistant-debug-deployment-modal';
-import { AssistantWebWidgetlDeploymentDialog } from '@/app/components/modal/assistant-web-widget-deployment-modal';
-import { AssistantApiDeploymentDialog } from '@/app/components/modal/assistant-api-deployment-modal';
+import { AssistantPhoneCallDeploymentDialog } from '@/app/components/dialogs/assistant-phone-call-deployment-modal';
+import { AssistantDebugDeploymentDialog } from '@/app/components/dialogs/assistant-debug-deployment-modal';
+import { AssistantWebWidgetlDeploymentDialog } from '@/app/components/dialogs/assistant-web-widget-deployment-modal';
+import { AssistantApiDeploymentDialog } from '@/app/components/dialogs/assistant-api-deployment-modal';
 import {
   AssistantDeploymentType,
   AssistantDeploymentVersionsModal,
-} from '@/app/components/modal/assistant-deployment-versions-modal';
-import SourceIndicator from '@/app/components/indicators/source';
-import { RecordStatusIndicator } from '@/app/components/record-status-indicator';
+} from '@/app/components/dialogs/assistant-deployment-versions-modal';
+import SourceIndicator from '@/app/components/domain/indicators/source';
+import { RecordStatusIndicator } from '@/app/components/ui/record-status-indicator';
 import {
   OverflowMenu,
   OverflowMenuItem,
-} from '@/app/components/overflow-menu';
+} from '@/app/components/ui/overflow-menu';
 import {
   Breadcrumb,
   BreadcrumbItem,

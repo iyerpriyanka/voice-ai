@@ -7,7 +7,7 @@ import { useCredential } from '@/hooks/use-credential';
 import { FC, useCallback, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ServiceError } from '@rapidaai/react';
-import { PageLoader } from '@/app/components/loader/page-loader';
+import { PageLoader } from '@/app/components/ui/loaders/page-loader';
 import toast from 'react-hot-toast/headless';
 import { useProviderContext } from '@/context/provider-context';
 import { connectionConfig } from '@/configs';

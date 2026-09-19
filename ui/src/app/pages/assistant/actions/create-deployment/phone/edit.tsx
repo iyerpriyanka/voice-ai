@@ -22,27 +22,27 @@ import {
 import { GetAssistantPhoneDeployment } from '@rapidaai/react';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import toast from 'react-hot-toast/headless';
-import { Helmet } from '@/app/components/helmet';
+import { Helmet } from '@/app/components/app-shell/helmet';
 import {
   GetDefaultMicrophoneConfig,
   GetDefaultSpeechToTextIfInvalid,
   ValidateSpeechToTextIfInvalid,
-} from '@/app/components/providers/speech-to-text/provider';
+} from '@/app/components/domain/providers/speech-to-text/provider';
 import {
   GetDefaultSpeakerConfig,
   GetDefaultTextToSpeechIfInvalid,
   ValidateTextToSpeechIfInvalid,
-} from '@/app/components/providers/text-to-speech/provider';
+} from '@/app/components/domain/providers/text-to-speech/provider';
 import { connectionConfig } from '@/configs';
 import {
   TelephonyProvider,
   GetDefaultTelephonyConfigIfInvalid,
   ValidateTelephonyOptions,
-} from '@/app/components/providers/telephony';
+} from '@/app/components/domain/providers/telephony';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
-import { Tabs } from '@/app/components/tabs';
-import { PrimaryButton, SecondaryButton } from '@/app/components/button';
-import { Notification } from '@/app/components/notification';
+import { Tabs } from '@/app/components/ui/tabs';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
+import { Notification } from '@/app/components/ui/notification';
 import { ButtonSet } from '@carbon/react';
 
 const EDIT_TABS = [

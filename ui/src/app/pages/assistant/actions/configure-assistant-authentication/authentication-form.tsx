@@ -23,10 +23,10 @@ import { useCurrentCredential } from '@/hooks/use-credential';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { connectionConfig } from '@/configs';
-import { Notification } from '@/app/components/notification';
-import { PrimaryButton, SecondaryButton } from '@/app/components/button';
-import { InputGroup } from '@/app/components/input-group';
-import { APiStringHeader } from '@/app/components/external-api/api-header';
+import { Notification } from '@/app/components/ui/notification';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
+import { InputGroup } from '@/app/components/ui/input-group';
+import { APiStringHeader } from '@/app/components/domain/external-api/api-header';
 import {
   ASSISTANT_CONDITION_KEY_OPTIONS,
   ASSISTANT_CONDITION_OPERATOR_OPTIONS,
@@ -34,9 +34,9 @@ import {
   ASSISTANT_CONDITION_VALUE_OPTIONS_BY_KEY,
   ParameterEditor,
   normalizeAssistantConditionEntries,
-} from '@/app/components/tools/common';
-import { SourceConditionRule } from '@/app/components/conditions/source-condition-rule';
-import { Stack, TextInput } from '@/app/components/form';
+} from '@/app/components/domain/tools/common';
+import { SourceConditionRule } from '@/app/components/domain/conditions/source-condition-rule';
+import { Stack, TextInput } from '@/app/components/ui/form';
 
 import {
   AUTH_KEY_OPTIONS_BY_TYPE,

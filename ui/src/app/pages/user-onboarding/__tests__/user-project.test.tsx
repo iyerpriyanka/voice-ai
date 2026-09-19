@@ -40,11 +40,11 @@ jest.mock('@/hooks/use-credential', () => ({
   useCurrentCredential: () => mockCredential,
 }));
 
-jest.mock('@/app/components/helmet', () => ({
+jest.mock('@/app/components/app-shell/helmet', () => ({
   Helmet: () => null,
 }));
 
-jest.mock('@/app/components/form', () => ({
+jest.mock('@/app/components/ui/form', () => ({
   Stack: ({ children }: any) => <div>{children}</div>,
   TextInput: require('react').forwardRef(
     ({ labelText, helperText, ...props }: any, ref: any) => <input ref={ref} {...props} />,
@@ -54,13 +54,13 @@ jest.mock('@/app/components/form', () => ({
   ),
 }));
 
-jest.mock('@/app/components/button', () => ({
+jest.mock('@/app/components/ui/button', () => ({
   PrimaryButton: ({ children, isLoading, renderIcon, ...props }: any) => (
     <button {...props}>{children}</button>
   ),
 }));
 
-jest.mock('@/app/components/notification', () => ({
+jest.mock('@/app/components/ui/notification', () => ({
   Notification: ({ subtitle }: any) => <div>{subtitle}</div>,
 }));
 

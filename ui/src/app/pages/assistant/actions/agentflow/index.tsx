@@ -30,19 +30,19 @@ import type {
   ReactFlowInstance,
   SelectionDragHandler,
 } from 'reactflow';
-import { Helmet } from '@/app/components/helmet';
-import { ConfigPrompt } from '@/app/components/configuration/config-prompt';
-import { FormLabel } from '@/app/components/form-label';
-import { TagInput } from '@/app/components/form/tag-input';
-import { AssistantTag } from '@/app/components/form/tag-input/assistant-tags';
-import { CornerBorderOverlay } from '@/app/components/corner-border';
-import { PrimaryButton, SecondaryButton } from '@/app/components/button';
+import { Helmet } from '@/app/components/app-shell/helmet';
+import { ConfigPrompt } from '@/app/components/domain/configuration/config-prompt';
+import { FormLabel } from '@/app/components/ui/form-label';
+import { TagInput } from '@/app/components/ui/tag-input';
+import { AssistantTag } from '@/app/components/domain/tags/assistant-tags';
+import { CornerBorderOverlay } from '@/app/components/ui/corner-border';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
 import {
   Modal,
   ModalBody,
   ModalFooter,
   ModalHeader,
-} from '@/app/components/modal';
+} from '@/app/components/ui/modal';
 import { ReactSortable } from 'react-sortablejs';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
@@ -51,7 +51,7 @@ import {
   GetDefaultTextProviderConfigIfInvalid,
   GetDefaultTextProviderConfigOnProviderSwitch,
   TextProvider,
-} from '@/app/components/providers/text';
+} from '@/app/components/domain/providers/text';
 import {
   Button,
   Checkbox,

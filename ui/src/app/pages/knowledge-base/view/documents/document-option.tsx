@@ -1,4 +1,4 @@
-import { CardOptionMenu } from '@/app/components/menu';
+import { CardOptionMenu } from '@/app/components/ui/menu';
 import { cn } from '@/utils';
 import { KnowledgeDocument } from '@rapidaai/react';
 import { Renew } from '@carbon/icons-react';

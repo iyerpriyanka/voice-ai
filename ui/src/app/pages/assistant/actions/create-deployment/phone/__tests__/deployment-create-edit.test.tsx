@@ -173,9 +173,9 @@ jest.mock('@/hooks/use-global-navigator', () => ({
   }),
 }));
 
-jest.mock('@/app/components/helmet', () => ({ Helmet: () => null }));
+jest.mock('@/app/components/app-shell/helmet', () => ({ Helmet: () => null }));
 
-jest.mock('@/app/components/form/tab-form', () => ({
+jest.mock('@/app/components/ui/tab-form', () => ({
   TabForm: ({ activeTab, form, errorMessage, onChangeActiveTab }: any) => {
     const active = form.find((x: any) => x.code === activeTab);
     return (
@@ -203,7 +203,7 @@ jest.mock('@/app/components/form/tab-form', () => ({
   },
 }));
 
-jest.mock('@/app/components/tabs', () => ({
+jest.mock('@/app/components/ui/tabs', () => ({
   Tabs: ({ tabs = [], children, selectedIndex = 0, onChange }: any) => {
     const panels = Array.isArray(children) ? children : [children];
     return (
@@ -240,7 +240,7 @@ jest.mock(
   }),
 );
 
-jest.mock('@/app/components/providers/telephony', () => ({
+jest.mock('@/app/components/domain/providers/telephony', () => ({
   TelephonyProvider: () => <div>telephony</div>,
   GetDefaultTelephonyConfigIfInvalid: (_provider: string, parameters: any[]) =>
     parameters || [],
@@ -248,20 +248,20 @@ jest.mock('@/app/components/providers/telephony', () => ({
     mockValidateTelephonyOptions(...args),
 }));
 
-jest.mock('@/app/components/providers/speech-to-text/provider', () => ({
+jest.mock('@/app/components/domain/providers/speech-to-text/provider', () => ({
   GetDefaultMicrophoneConfig: () => [],
   GetDefaultSpeechToTextIfInvalid: () => [],
   ValidateSpeechToTextIfInvalid: (...args: any[]) =>
     mockValidateSpeechToTextIfInvalid(...args),
 }));
-jest.mock('@/app/components/providers/text-to-speech/provider', () => ({
+jest.mock('@/app/components/domain/providers/text-to-speech/provider', () => ({
   GetDefaultSpeakerConfig: () => [],
   GetDefaultTextToSpeechIfInvalid: () => [],
   ValidateTextToSpeechIfInvalid: (...args: any[]) =>
     mockValidateTextToSpeechIfInvalid(...args),
 }));
 
-jest.mock('@/app/components/button', () => ({
+jest.mock('@/app/components/ui/button', () => ({
   PrimaryButton: ({ children, isLoading, ...props }: any) => (
     <button {...props}>{children}</button>
   ),

@@ -1,6 +1,6 @@
-import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
-import { Helmet } from '@/app/components/helmet';
-import { Tab } from '@/app/components/tab';
+import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
+import { Helmet } from '@/app/components/app-shell/helmet';
+import { Tab } from '@/app/components/ui/legacy-tab';
 import { AccountSetting } from '@/app/pages/user/account-setting/account-setting';
 import { NotificationSetting } from '@/app/pages/user/account-setting/notification-setting';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';

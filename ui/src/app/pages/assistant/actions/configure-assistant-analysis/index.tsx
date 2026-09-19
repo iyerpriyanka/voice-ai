@@ -5,15 +5,15 @@ import { toHumanReadableDateTime } from '@/utils/date';
 import { Add, Renew, ChartLine } from '@carbon/icons-react';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/hooks';
-import { SectionLoader } from '@/app/components/loader/section-loader';
+import { SectionLoader } from '@/app/components/ui/loaders/section-loader';
 import toast from 'react-hot-toast/headless';
-import { EmptyState } from '@/app/components/empty-state';
+import { EmptyState } from '@/app/components/ui/empty-state';
 import { CreateAssistantAnalysis } from '@/app/pages/assistant/actions/configure-assistant-analysis/create-assistant-analysis';
 import { useAssistantAnalysisPageStore } from '@/app/pages/assistant/actions/store/use-analysis-page-store';
 import { UpdateAssistantAnalysis } from '@/app/pages/assistant/actions/configure-assistant-analysis/update-assistant-analysis';
-import { IconOnlyButton, PrimaryButton } from '@/app/components/button';
-import { RecordStatusIndicator } from '@/app/components/record-status-indicator';
-import { Pagination } from '@/app/components/pagination';
+import { IconOnlyButton, PrimaryButton } from '@/app/components/ui/button';
+import { RecordStatusIndicator } from '@/app/components/ui/record-status-indicator';
+import { Pagination } from '@/app/components/ui/pagination';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -34,7 +34,7 @@ import {
   OverflowMenu,
   OverflowMenuItem,
 } from '@carbon/react';
-import { TableSection } from '@/app/components/sections/table-section';
+import { TableSection } from '@/app/components/layout/sections/table-section';
 
 const getAnalysisOptionMap = (row: any): Map<string, string> => {
   const map = new Map<string, string>();

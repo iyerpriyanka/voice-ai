@@ -1,4 +1,4 @@
-import { ErrorContainer } from '@/app/components/error-container';
+import { ErrorContainer } from '@/app/components/ui/error-container';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { FC } from 'react';
 

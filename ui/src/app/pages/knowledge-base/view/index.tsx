@@ -1,25 +1,25 @@
-import { Helmet } from '@/app/components/helmet';
+import { Helmet } from '@/app/components/app-shell/helmet';
 import { useRapidaStore } from '@/hooks';
 import { useCredential } from '@/hooks/use-credential';
 import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast/headless';
 import { useParams } from 'react-router-dom';
-import { Tab } from '@/app/components/tab';
+import { Tab } from '@/app/components/ui/legacy-tab';
 import { Documents } from './documents';
 import { ConnectionConfig, GetKnowledgeBase } from '@rapidaai/react';
 import { GetKnowledgeResponse } from '@rapidaai/react';
 import { cn } from '@/utils';
 import { toHumanReadableRelativeTime } from '@/utils/date';
 import { useKnowledgePageStore } from '@/hooks/use-knowledge-page-store';
-import { CreateTagDialog } from '@/app/components/modal/create-tag-modal';
-import { UpdateDescriptionDialog } from '@/app/components/modal/update-description-modal';
+import { CreateTagDialog } from '@/app/components/dialogs/create-tag-modal';
+import { UpdateDescriptionDialog } from '@/app/components/dialogs/update-description-modal';
 import { Tag } from '@rapidaai/react';
 import { ServiceError } from '@rapidaai/react';
 import { DocumentSegments } from '@/app/pages/knowledge-base/view/document-segments';
-import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
-import { PageTitleBlock } from '@/app/components/blocks/page-title-block';
+import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
+import { PageTitleBlock } from '@/app/components/layout/blocks/page-title-block';
 import { connectionConfig } from '@/configs';
-import { CreateKnowledgeDocumentDialog } from '@/app/components/modal/create-knowledge-document-modal';
+import { CreateKnowledgeDocumentDialog } from '@/app/components/dialogs/create-knowledge-document-modal';
 import { Plus } from 'lucide-react';
 
 /**

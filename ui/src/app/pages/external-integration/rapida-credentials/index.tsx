@@ -10,12 +10,12 @@ import {
   ProjectCredential,
 } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
-import { Helmet } from '@/app/components/helmet';
-import { EmptyState } from '@/app/components/empty-state';
+import { Helmet } from '@/app/components/app-shell/helmet';
+import { EmptyState } from '@/app/components/ui/empty-state';
 import { AuthContext } from '@/context/auth-context';
-import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
-import { PageTitleBlock } from '@/app/components/blocks/page-title-block';
-import { PageTitleWithCount } from '@/app/components/blocks/page-title-with-count';
+import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
+import { PageTitleBlock } from '@/app/components/layout/blocks/page-title-block';
+import { PageTitleWithCount } from '@/app/components/layout/blocks/page-title-with-count';
 import {
   Add,
   Renew,
@@ -26,12 +26,12 @@ import {
 } from '@carbon/icons-react';
 import { connectionConfig } from '@/configs';
 import { toHumanReadableDate } from '@/utils/date';
-import { DocNoticeBlock } from '@/app/components/container/message/notice-block/doc-notice-block';
-import { FieldSet } from '@/app/components/form/fieldset';
-import { FormLabel } from '@/app/components/form-label';
-import { CopyButton } from '@/app/components/button/copy-button';
-import { GhostButton } from '@/app/components/button';
-import { BaseCard } from '@/app/components/cards';
+import { DocNoticeBlock } from '@/app/components/layout/container/message/notice-block/doc-notice-block';
+import { FieldSet } from '@/app/components/ui/fieldset';
+import { FormLabel } from '@/app/components/ui/form-label';
+import { CopyButton } from '@/app/components/ui/buttons/copy-button';
+import { GhostButton } from '@/app/components/ui/button';
+import { BaseCard } from '@/app/components/ui/card';
 
 /**
  *

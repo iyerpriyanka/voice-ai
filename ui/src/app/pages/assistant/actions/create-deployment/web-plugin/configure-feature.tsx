@@ -1,6 +1,6 @@
-import { InputCheckbox } from '@/app/components/form/input-checkbox';
-import { FormLabel } from '@/app/components/form-label';
-import { InputHelper } from '@/app/components/input-helper';
+import { InputCheckbox } from '@/app/components/ui/input-checkbox';
+import { FormLabel } from '@/app/components/ui/form-label';
+import { InputHelper } from '@/app/components/ui/input-helper';
 
 export interface FeatureConfig {
   qAListing: boolean;

@@ -1,4 +1,4 @@
-import { ProtectedBox } from '@/app/components/container/protected-box';
+import { ProtectedBox } from '@/app/components/layout/container/protected-box';
 import { Microphone, Globe, ChartLine } from '@carbon/icons-react';
 import React from 'react';
 import { Outlet, Route, Routes, useLocation } from 'react-router-dom';
@@ -8,7 +8,7 @@ import {
 } from '@/app/pages/user-onboarding';
 import { ProgressIndicator, ProgressStep, Tag } from '@carbon/react';
 import { useTheme } from '@/theme/theme-provider';
-import { BrandedLogo } from '@/app/components/brand/branded-logo';
+import { BrandedLogo } from '@/app/components/layout/brand/branded-logo';
 
 // ── Step definitions ──────────────────────────────────────────────────────────
 

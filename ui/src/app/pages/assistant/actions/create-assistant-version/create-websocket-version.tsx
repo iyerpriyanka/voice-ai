@@ -2,11 +2,11 @@ import { FC, useEffect, useState } from 'react';
 import { useRapidaStore } from '@/hooks';
 import { useCredential } from '@/hooks/use-credential';
 import { useParams } from 'react-router-dom';
-import { Helmet } from '@/app/components/helmet';
-import { PrimaryButton, SecondaryButton } from '@/app/components/button';
+import { Helmet } from '@/app/components/app-shell/helmet';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
 import { ButtonSet } from '@carbon/react';
-import { TabForm } from '@/app/components/form/tab-form';
-import { FieldSet } from '@/app/components/form/fieldset';
+import { TabForm } from '@/app/components/ui/tab-form';
+import { FieldSet } from '@/app/components/ui/fieldset';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import {
@@ -15,14 +15,14 @@ import {
   GetAssistantProviderResponse,
   GetAssistantRequest,
 } from '@rapidaai/react';
-import { FormLabel } from '@/app/components/form-label';
-import { Textarea } from '@/app/components/form/textarea';
-import { ErrorContainer } from '@/app/components/error-container';
+import { FormLabel } from '@/app/components/ui/form-label';
+import { Textarea } from '@/app/components/ui/textarea';
+import { ErrorContainer } from '@/app/components/ui/error-container';
 import { CreateAssistantProvider, GetAssistant } from '@rapidaai/react';
 import { connectionConfig } from '@/configs';
-import { DocNoticeBlock } from '@/app/components/container/message/notice-block/doc-notice-block';
-import { Input } from '@/app/components/form/input';
-import { APiParameter } from '@/app/components/external-api/api-parameter';
+import { DocNoticeBlock } from '@/app/components/layout/container/message/notice-block/doc-notice-block';
+import { Input } from '@/app/components/ui/input';
+import { APiParameter } from '@/app/components/domain/external-api/api-parameter';
 
 export function CreateWebsocketVersion() {
   const { assistantId } = useParams();

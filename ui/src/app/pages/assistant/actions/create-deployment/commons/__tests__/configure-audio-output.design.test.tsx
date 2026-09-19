@@ -14,11 +14,11 @@ jest.mock('lucide-react', () => ({
   ChevronDown: () => null,
 }));
 
-jest.mock('@/app/components/blocks/section-divider', () => ({
+jest.mock('@/app/components/layout/blocks/section-divider', () => ({
   SectionDivider: ({ label }: { label: string }) => <div>{label}</div>,
 }));
 
-jest.mock('@/app/components/providers/text-to-speech', () => ({
+jest.mock('@/app/components/domain/providers/text-to-speech', () => ({
   TextToSpeechProvider: ({
     onChangeProvider,
   }: {
@@ -35,7 +35,7 @@ jest.mock('@/providers', () => ({
   CONJUNCTION_BOUNDARIES: ['and', 'or'],
 }));
 
-jest.mock('@/app/components/form', () => {
+jest.mock('@/app/components/ui/form', () => {
   const React = require('react');
   return {
     TextInput: ({ id, labelText, value, onChange }: any) =>
@@ -108,7 +108,7 @@ jest.mock('@carbon/react', () => {
   };
 });
 
-jest.mock('@/app/components/providers/text-to-speech/provider', () => ({
+jest.mock('@/app/components/domain/providers/text-to-speech/provider', () => ({
   GetDefaultSpeakerConfig: (...args: any[]) => mockGetDefaultSpeakerConfig(...args),
   GetDefaultTextToSpeechIfInvalid: (...args: any[]) =>
     mockGetDefaultTextToSpeechIfInvalid(...args),

@@ -3,17 +3,17 @@ import { SingleEndpoint } from './single-endpoint';
 import { useCredential } from '@/hooks/use-credential';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useEndpointPageStore } from '@/hooks';
-import { Helmet } from '@/app/components/helmet';
+import { Helmet } from '@/app/components/app-shell/helmet';
 import { Endpoint } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
 import { useRapidaStore } from '@/hooks';
-import { PrimaryButton } from '@/app/components/button';
-import { Pagination } from '@/app/components/pagination';
-import { EmptyState } from '@/app/components/empty-state';
+import { PrimaryButton } from '@/app/components/ui/button';
+import { Pagination } from '@/app/components/ui/pagination';
+import { EmptyState } from '@/app/components/ui/empty-state';
 import { Add, Renew, Connect } from '@carbon/icons-react';
-import { PageLoading } from '@/app/components/loading';
-import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
-import { PageTitleBlock } from '@/app/components/blocks/page-title-block';
+import { PageLoading } from '@/app/components/ui/loading';
+import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
+import { PageTitleBlock } from '@/app/components/layout/blocks/page-title-block';
 import {
   Table,
   TableHead,

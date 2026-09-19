@@ -17,11 +17,11 @@ jest.mock('lucide-react', () => ({
   ChevronDown: () => null,
 }));
 
-jest.mock('@/app/components/blocks/section-divider', () => ({
+jest.mock('@/app/components/layout/blocks/section-divider', () => ({
   SectionDivider: ({ label }: { label: string }) => <div>{label}</div>,
 }));
 
-jest.mock('@/app/components/providers/speech-to-text', () => ({
+jest.mock('@/app/components/domain/providers/speech-to-text', () => ({
   SpeechToTextProvider: ({
     onChangeProvider,
   }: {
@@ -33,7 +33,7 @@ jest.mock('@/app/components/providers/speech-to-text', () => ({
   ),
 }));
 
-jest.mock('@/app/components/providers/vad', () => ({
+jest.mock('@/app/components/domain/providers/vad', () => ({
   VADProvider: ({
     onChangeProvider,
   }: {
@@ -45,12 +45,12 @@ jest.mock('@/app/components/providers/vad', () => ({
   ),
 }));
 
-jest.mock('@/app/components/providers/microphone/barge-in-trigger-control', () => ({
+jest.mock('@/app/components/domain/providers/microphone/barge-in-trigger-control', () => ({
   MICROPHONE_BARGE_IN_TRIGGER_KEY: 'microphone.barge_in_trigger',
   BargeInTriggerControl: () => <div>barge-in control</div>,
 }));
 
-jest.mock('@/app/components/providers/end-of-speech', () => ({
+jest.mock('@/app/components/domain/providers/end-of-speech', () => ({
   EndOfSpeechProvider: ({
     onChangeProvider,
   }: {
@@ -62,7 +62,7 @@ jest.mock('@/app/components/providers/end-of-speech', () => ({
   ),
 }));
 
-jest.mock('@/app/components/providers/noise-removal', () => ({
+jest.mock('@/app/components/domain/providers/noise-removal', () => ({
   NoiseCancellationProvider: ({
     onChangeNoiseCancellationProvider,
   }: {
@@ -77,22 +77,22 @@ jest.mock('@/app/components/providers/noise-removal', () => ({
   ),
 }));
 
-jest.mock('@/app/components/providers/speech-to-text/provider', () => ({
+jest.mock('@/app/components/domain/providers/speech-to-text/provider', () => ({
   GetDefaultMicrophoneConfig: (...args: any[]) =>
     mockGetDefaultMicrophoneConfig(...args),
   GetDefaultSpeechToTextIfInvalid: (...args: any[]) =>
     mockGetDefaultSpeechToTextIfInvalid(...args),
 }));
 
-jest.mock('@/app/components/providers/vad/provider', () => ({
+jest.mock('@/app/components/domain/providers/vad/provider', () => ({
   GetDefaultVADConfig: (...args: any[]) => mockGetDefaultVADConfig(...args),
 }));
 
-jest.mock('@/app/components/providers/end-of-speech/provider', () => ({
+jest.mock('@/app/components/domain/providers/end-of-speech/provider', () => ({
   GetDefaultEOSConfig: (...args: any[]) => mockGetDefaultEOSConfig(...args),
 }));
 
-jest.mock('@/app/components/providers/noise-removal/provider', () => ({
+jest.mock('@/app/components/domain/providers/noise-removal/provider', () => ({
   GetDefaultNoiseCancellationConfig: (...args: any[]) =>
     mockGetDefaultNoiseCancellationConfig(...args),
 }));

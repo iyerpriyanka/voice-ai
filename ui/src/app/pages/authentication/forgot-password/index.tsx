@@ -1,14 +1,14 @@
 import React, { useCallback, useState } from 'react';
-import { Helmet } from '@/app/components/helmet';
+import { Helmet } from '@/app/components/app-shell/helmet';
 import { ForgotPassword } from '@rapidaai/react';
 import { ForgotPasswordResponse } from '@rapidaai/react';
 import { useForm } from 'react-hook-form';
 import { useRapidaStore } from '@/hooks';
 import { ServiceError } from '@rapidaai/react';
 import { connectionConfig } from '@/configs';
-import { Stack, TextInput } from '@/app/components/form';
-import { PrimaryButton } from '@/app/components/button';
-import { Notification } from '@/app/components/notification';
+import { Stack, TextInput } from '@/app/components/ui/form';
+import { PrimaryButton } from '@/app/components/ui/button';
+import { Notification } from '@/app/components/ui/notification';
 import { ArrowRight } from '@carbon/icons-react';
 import { Link } from '@carbon/react';
 import { useTheme } from '@/theme/theme-provider';

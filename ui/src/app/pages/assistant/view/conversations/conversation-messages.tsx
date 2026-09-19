@@ -6,15 +6,15 @@ import {
 import { FC, useCallback, useContext, useEffect, useRef } from 'react';
 import { AssistantChatContext } from '@/hooks/use-assistant-chat';
 import { useBoolean } from 'ahooks';
-import { SectionLoader } from '@/app/components/loader/section-loader';
+import { SectionLoader } from '@/app/components/ui/loaders/section-loader';
 import { Renew, Download, Chat } from '@carbon/icons-react';
-import { GhostButton } from '@/app/components/button';
+import { GhostButton } from '@/app/components/ui/button';
 import { Tag, DefinitionTooltip } from '@carbon/react';
-import { EmptyState } from '@/app/components/empty-state';
+import { EmptyState } from '@/app/components/ui/empty-state';
 import { getStatusMetric } from '@/utils/metadata';
-import { CarbonStatusIndicator } from '@/app/components/status-indicator';
+import { CarbonStatusIndicator } from '@/app/components/ui/status-indicator';
 import { toHumanReadableDateTime } from '@/utils/date';
-import { AudioPlayer } from '@/app/components/audio-player';
+import { AudioPlayer } from '@/app/components/ui/audio-player';
 import { getRoleVisual } from '@/app/pages/assistant/view/conversations/conversation-messages.helpers';
 
 export const ConversationMessages: FC<{

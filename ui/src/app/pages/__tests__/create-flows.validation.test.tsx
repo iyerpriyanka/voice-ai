@@ -162,7 +162,7 @@ jest.mock('@/app/pages/assistant/actions/hooks/use-confirmation', () => ({
   }),
 }));
 
-jest.mock('@/app/components/form/tab-form', () => ({
+jest.mock('@/app/components/ui/tab-form', () => ({
   TabForm: ({ activeTab, errorMessage, form, formHeading }: any) => {
     const active = form.find((f: any) => f.code === activeTab) || form[0];
     return (
@@ -182,7 +182,7 @@ jest.mock('@/app/components/form/tab-form', () => ({
   },
 }));
 
-jest.mock('@/app/components/providers/text', () => ({
+jest.mock('@/app/components/domain/providers/text', () => ({
   GetDefaultTextProviderConfigIfInvalid: (...args: unknown[]) =>
     mockGetDefaultTextProviderConfigIfInvalid(...args),
   GetDefaultTextProviderConfigOnProviderSwitch: (...args: unknown[]) =>
@@ -195,14 +195,14 @@ jest.mock('@/app/components/providers/text', () => ({
   },
 }));
 
-jest.mock('@/app/components/configuration/config-prompt', () => ({
+jest.mock('@/app/components/domain/configuration/config-prompt', () => ({
   ConfigPrompt: (props: any) => {
     mockConfigPrompt(props);
     return null;
   },
 }));
 
-jest.mock('@/app/components/tools', () => ({
+jest.mock('@/app/components/domain/tools/tool-registry', () => ({
   BuildinToolConfig: {},
 }));
 
@@ -220,7 +220,7 @@ jest.mock('@/utils', () => {
   };
 });
 
-jest.mock('@/app/components/error-container', () => ({
+jest.mock('@/app/components/ui/error-container', () => ({
   ErrorContainer: ({ title, code }: any) => (
     <div>
       <span>{code}</span>
@@ -229,52 +229,52 @@ jest.mock('@/app/components/error-container', () => ({
   ),
 }));
 
-jest.mock('@/app/components/helmet', () => ({ Helmet: () => null }));
-jest.mock('@/app/components/button', () => ({
+jest.mock('@/app/components/app-shell/helmet', () => ({ Helmet: () => null }));
+jest.mock('@/app/components/ui/button', () => ({
   PrimaryButton: ({ children, isLoading: _, renderIcon: _r, hasIconOnly: _h, iconDescription: _d, ...props }: any) => <button {...props}>{children}</button>,
   SecondaryButton: ({ children, isLoading: _, renderIcon: _r, hasIconOnly: _h, iconDescription: _d, ...props }: any) => <button {...props}>{children}</button>,
   GhostButton: ({ children, isLoading: _, renderIcon: _r, hasIconOnly: _h, iconDescription: _d, ...props }: any) => <button {...props}>{children}</button>,
 }));
 
-jest.mock('@/app/components/modal/confirm-ui', () => () => null);
-jest.mock('@/app/components/modal/configure-endpoint-prompt-modal', () => ({
+jest.mock('@/app/components/dialogs/confirm-ui', () => () => null);
+jest.mock('@/app/components/dialogs/configure-endpoint-prompt-modal', () => ({
   ConfigureEndpointPromptDialog: () => null,
 }));
-jest.mock('@/app/components/modal/assistant-configure-next-modal', () => ({
+jest.mock('@/app/components/dialogs/assistant-configure-next-modal', () => ({
   ConfigureAssistantNextDialog: () => null,
 }));
-jest.mock('@/app/components/modal/assistant-configure-tool-modal', () => ({
+jest.mock('@/app/components/dialogs/assistant-configure-tool-modal', () => ({
   ConfigureAssistantToolDialog: () => null,
 }));
-jest.mock('@/app/components/modal/configure-assistant-template-modal', () => ({
+jest.mock('@/app/components/dialogs/configure-assistant-template-modal', () => ({
   ConfigureAssistantTemplateDialog: () => null,
 }));
 
-jest.mock('@/app/components/container/message/notice-block', () => ({
+jest.mock('@/app/components/layout/container/message/notice-block', () => ({
   YellowNoticeBlock: () => null,
 }));
-jest.mock('@/app/components/container/message/notice-block/doc-notice-block', () => ({
+jest.mock('@/app/components/layout/container/message/notice-block/doc-notice-block', () => ({
   DocNoticeBlock: ({ children }: any) => <div>{children}</div>,
 }));
-jest.mock('@/app/components/empty-state', () => ({
+jest.mock('@/app/components/ui/empty-state', () => ({
   EmptyState: () => null,
 }));
 
-jest.mock('@/app/components/blocks/section-divider', () => ({
+jest.mock('@/app/components/layout/blocks/section-divider', () => ({
   SectionDivider: () => null,
 }));
-jest.mock('@/app/components/corner-border', () => ({
+jest.mock('@/app/components/ui/corner-border', () => ({
   CornerBorderOverlay: () => null,
 }));
 
-jest.mock('@/app/components/form/input', () => ({
+jest.mock('@/app/components/ui/input', () => ({
   Input: require('react').forwardRef((props: any, ref: any) => <input ref={ref} {...props} />),
 }));
-jest.mock('@/app/components/form/error-message', () => ({
+jest.mock('@/app/components/ui/error-message', () => ({
   ErrorMessage: ({ message }: any) => (message ? <div>{message}</div> : null),
 }));
-jest.mock('@/app/components/form/fieldset', () => ({ FieldSet: ({ children }: any) => <div>{children}</div> }));
-jest.mock('@/app/components/form-label', () => ({ FormLabel: ({ children }: any) => <label>{children}</label> }));
+jest.mock('@/app/components/ui/fieldset', () => ({ FieldSet: ({ children }: any) => <div>{children}</div> }));
+jest.mock('@/app/components/ui/form-label', () => ({ FormLabel: ({ children }: any) => <label>{children}</label> }));
 
 const getLatestConfigPromptProps = () =>
   mockConfigPrompt.mock.calls[mockConfigPrompt.mock.calls.length - 1]?.[0];

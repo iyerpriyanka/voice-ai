@@ -1,4 +1,4 @@
-import { ErrorContainer } from '@/app/components/error-container';
+import { ErrorContainer } from '@/app/components/ui/error-container';
 
 import { ProviderAzureSpeechServiceModelInformationPage } from '@/app/pages/external-integration/provider-models/information/azure-speech-service';
 import { CartesiaModelInformationPage } from '@/app/pages/external-integration/provider-models/information/cartesia';

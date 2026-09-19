@@ -4,14 +4,14 @@ import { toHumanReadableRelativeTime } from '@/utils/date';
 import { KnowledgeDocument } from '@rapidaai/react';
 import { useKnowledgeDocumentPageStore } from '@/hooks/use-knowledge-document-page-store';
 import { formatFileSize, formatNumber } from '@/utils/format';
-import { DocumentSourcePill } from '@/app/components/pill/document-source-pill';
+import { DocumentSourcePill } from '@/app/components/domain/pills/document-source-pill';
 import { DocumentOption } from '@/app/pages/knowledge-base/view/documents/document-option';
 import { useCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/hooks/use-rapida-store';
 import toast from 'react-hot-toast/headless';
-import { TableRow } from '@/app/components/tables/table-row';
-import { TableCell } from '@/app/components/tables/table-cell';
-import { LabelCell } from '@/app/components/tables/label-cell';
+import { TableRow } from '@/app/components/ui/table/table-row';
+import { TableCell } from '@/app/components/ui/table/table-cell';
+import { LabelCell } from '@/app/components/ui/table/label-cell';
 import { Checkmark, Document, WarningAlt } from '@carbon/icons-react';
 
 /**

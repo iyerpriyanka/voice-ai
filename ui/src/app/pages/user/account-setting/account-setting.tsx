@@ -1,12 +1,12 @@
-import { RedNoticeBlock } from '@/app/components/container/message/notice-block';
-import { FormLabel } from '@/app/components/form-label';
-import { PrimaryButton } from '@/app/components/button';
+import { RedNoticeBlock } from '@/app/components/layout/container/message/notice-block';
+import { FormLabel } from '@/app/components/ui/form-label';
+import { PrimaryButton } from '@/app/components/ui/button';
 import { ChevronRight } from '@carbon/icons-react';
-import { FieldSet } from '@/app/components/form/fieldset';
-import { Input } from '@/app/components/form/input';
-import { InputHelper } from '@/app/components/input-helper';
-import { PageActionButtonBlock } from '@/app/components/blocks/page-action-button-block';
-import { SectionDivider } from '@/app/components/blocks/section-divider';
+import { FieldSet } from '@/app/components/ui/fieldset';
+import { Input } from '@/app/components/ui/input';
+import { InputHelper } from '@/app/components/ui/input-helper';
+import { PageActionButtonBlock } from '@/app/components/layout/blocks/page-action-button-block';
+import { SectionDivider } from '@/app/components/layout/blocks/section-divider';
 import { connectionConfig } from '@/configs';
 import { useRapidaStore } from '@/hooks';
 import {

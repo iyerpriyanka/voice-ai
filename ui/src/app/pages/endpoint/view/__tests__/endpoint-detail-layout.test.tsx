@@ -114,19 +114,19 @@ jest.mock('@/app/pages/endpoint/view/version-list', () => ({
   Version: () => <section>Endpoint versions</section>,
 }));
 
-jest.mock('@/app/components/modal/endpoint-instruction-modal', () => ({
+jest.mock('@/app/components/dialogs/endpoint-instruction-modal', () => ({
   EndpointInstructionDialog: () => null,
 }));
 
-jest.mock('@/app/components/modal/create-tag-modal', () => ({
+jest.mock('@/app/components/dialogs/create-tag-modal', () => ({
   CreateTagDialog: () => null,
 }));
 
-jest.mock('@/app/components/modal/update-description-modal', () => ({
+jest.mock('@/app/components/dialogs/update-description-modal', () => ({
   UpdateDescriptionDialog: () => null,
 }));
 
-jest.mock('@/app/components/helmet', () => ({
+jest.mock('@/app/components/app-shell/helmet', () => ({
   Helmet: () => null,
 }));
 

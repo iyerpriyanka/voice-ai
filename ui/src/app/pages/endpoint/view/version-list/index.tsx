@@ -8,8 +8,8 @@ import {
   toHumanReadableDateTime,
   toHumanReadableRelativeTime,
 } from '@/utils/date';
-import { TableSection } from '@/app/components/sections/table-section';
-import { Pagination } from '@/app/components/pagination';
+import { TableSection } from '@/app/components/layout/sections/table-section';
+import { Pagination } from '@/app/components/ui/pagination';
 import IconIndicator from '@carbon/react/es/components/IconIndicator';
 import { auditActorLabel, createdAuditActor } from '@/utils/audit-actor';
 import {
@@ -28,7 +28,7 @@ import {
   RadioButton,
 } from '@carbon/react';
 import { Copy, Checkmark, Rocket, Renew } from '@carbon/icons-react';
-import { EmptyState } from '@/app/components/empty-state';
+import { EmptyState } from '@/app/components/ui/empty-state';
 
 const headers = [
   { key: 'description', header: 'Description' },

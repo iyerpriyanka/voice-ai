@@ -1,20 +1,20 @@
 import { CreateAssistantKnowledge } from '@rapidaai/react';
-import { Card } from '@/app/components/cards';
-import { PageActionButtonBlock } from '@/app/components/blocks/page-action-button-block';
-import { KnowledgeDropdown } from '@/app/components/dropdown/knowledge-dropdown';
-import { FormLabel } from '@/app/components/form-label';
-import { PrimaryButton, GhostButton } from '@/app/components/button';
-import CheckboxCard from '@/app/components/form/checkbox-card';
-import { FieldSet } from '@/app/components/form/fieldset';
-import { Input } from '@/app/components/form/input';
-import { Slider } from '@/app/components/form/slider';
-import { SwitchWithLabel } from '@/app/components/form/switch';
-import { InputHelper } from '@/app/components/input-helper';
+import { Card } from '@/app/components/ui/card';
+import { PageActionButtonBlock } from '@/app/components/layout/blocks/page-action-button-block';
+import { KnowledgeDropdown } from '@/app/components/domain/dropdowns/knowledge-dropdown';
+import { FormLabel } from '@/app/components/ui/form-label';
+import { PrimaryButton, GhostButton } from '@/app/components/ui/button';
+import CheckboxCard from '@/app/components/ui/checkbox-card';
+import { FieldSet } from '@/app/components/ui/fieldset';
+import { Input } from '@/app/components/ui/input';
+import { Slider } from '@/app/components/ui/slider';
+import { SwitchWithLabel } from '@/app/components/ui/switch';
+import { InputHelper } from '@/app/components/ui/input-helper';
 import {
   GetDefaultRerankerConfigIfInvalid,
   RerankerProvider,
-} from '@/app/components/providers/reranker';
-import { Tooltip } from '@/app/components/tooltip';
+} from '@/app/components/domain/providers/reranker';
+import { Tooltip } from '@/app/components/ui/tooltip';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';

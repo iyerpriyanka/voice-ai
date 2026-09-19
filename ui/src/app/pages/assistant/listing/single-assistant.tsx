@@ -1,14 +1,14 @@
 import React, { FC } from 'react';
 import { Assistant } from '@rapidaai/react';
 import { toHumanReadableDateTime } from '@/utils/date';
-import SourceIndicator from '@/app/components/indicators/source';
+import SourceIndicator from '@/app/components/domain/indicators/source';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { Launch, Rocket, SourceControl, View } from '@carbon/icons-react';
 import { Link, TableRow, TableCell, Tag } from '@carbon/react';
-import { RecordStatusIndicator } from '@/app/components/record-status-indicator';
-import { IconOnlyButton } from '@/app/components/button';
-import { CopyButton } from '@/app/components/button/copy-button';
-import { VersionIndicator } from '@/app/components/indicators/version';
+import { RecordStatusIndicator } from '@/app/components/ui/record-status-indicator';
+import { IconOnlyButton } from '@/app/components/ui/button';
+import { CopyButton } from '@/app/components/ui/buttons/copy-button';
+import { VersionIndicator } from '@/app/components/domain/indicators/version';
 
 const SingleAssistant: FC<{ assistant: Assistant }> = ({ assistant }) => {
   const gn = useGlobalNavigation();

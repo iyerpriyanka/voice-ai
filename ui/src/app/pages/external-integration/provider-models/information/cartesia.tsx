@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react';
-import { SearchIconInput } from '@/app/components/form/input/IconInput';
-import { Helmet } from '@/app/components/helmet';
-import { BluredWrapper } from '@/app/components/wrapper/blured-wrapper';
-import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
-import { PageTitleBlock } from '@/app/components/blocks/page-title-block';
+import { SearchIconInput } from '@/app/components/ui/icon-input';
+import { Helmet } from '@/app/components/app-shell/helmet';
+import { BluredWrapper } from '@/app/components/layout/wrapper/blured-wrapper';
+import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
+import { PageTitleBlock } from '@/app/components/layout/blocks/page-title-block';
 import { TEXT_TO_SPEECH, CARTESIA_VOICE } from '@/providers';
-import { PaginationButtonBlock } from '@/app/components/blocks/pagination-button-block';
+import { PaginationButtonBlock } from '@/app/components/layout/blocks/pagination-button-block';
 import { cn } from '@/utils';
-import { CreateProviderCredentialDialog } from '@/app/components/modal/create-provider-credential-modal';
-import { ViewProviderCredentialDialog } from '@/app/components/modal/view-provider-credential-modal';
+import { CreateProviderCredentialDialog } from '@/app/components/dialogs/create-provider-credential-modal';
+import { ViewProviderCredentialDialog } from '@/app/components/dialogs/view-provider-credential-modal';
 import { useAllProviderCredentials } from '@/hooks/use-model';
 import { Check, Plus } from 'lucide-react';
-import { Tooltip } from '@/app/components/tooltip';
-import { PrimaryButton, GhostButton } from '@/app/components/button';
+import { Tooltip } from '@/app/components/ui/tooltip';
+import { PrimaryButton, GhostButton } from '@/app/components/ui/button';
 import { VoiceCard } from '@/app/pages/external-integration/provider-models/information/voice-card';
 import { useLocation } from 'react-router-dom';
 

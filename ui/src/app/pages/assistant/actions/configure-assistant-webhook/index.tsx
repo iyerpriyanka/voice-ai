@@ -4,16 +4,16 @@ import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { toHumanReadableDateTime } from '@/utils/date';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/hooks';
-import { SectionLoader } from '@/app/components/loader/section-loader';
+import { SectionLoader } from '@/app/components/ui/loaders/section-loader';
 import { CreateAssistantWebhook } from './create-assistant-webhook';
 import toast from 'react-hot-toast/headless';
-import { EmptyState } from '@/app/components/empty-state';
+import { EmptyState } from '@/app/components/ui/empty-state';
 import { UpdateAssistantWebhook } from '@/app/pages/assistant/actions/configure-assistant-webhook/update-assistant-webhook';
 import { useAssistantWebhookPageStore } from '@/app/pages/assistant/actions/store/use-webhook-page-store';
-import { IconOnlyButton, PrimaryButton } from '@/app/components/button';
-import { RecordStatusIndicator } from '@/app/components/record-status-indicator';
-import { UrlTableCell } from '@/app/components/url-table-cell';
-import { Pagination } from '@/app/components/pagination';
+import { IconOnlyButton, PrimaryButton } from '@/app/components/ui/button';
+import { RecordStatusIndicator } from '@/app/components/ui/record-status-indicator';
+import { UrlTableCell } from '@/app/components/ui/url-table-cell';
+import { Pagination } from '@/app/components/ui/pagination';
 import { Add, Renew, Webhook } from '@carbon/icons-react';
 import { Tag } from '@carbon/react';
 import {
@@ -39,7 +39,7 @@ import {
 import {
   ScrollableTableSection,
   TableSection,
-} from '@/app/components/sections/table-section';
+} from '@/app/components/layout/sections/table-section';
 
 const getWebhookOptionMap = (row: any): Map<string, string> => {
   const map = new Map<string, string>();

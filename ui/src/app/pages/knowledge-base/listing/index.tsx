@@ -1,24 +1,24 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Helmet } from '@/app/components/helmet';
+import { Helmet } from '@/app/components/app-shell/helmet';
 import { useCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/hooks';
-import { TablePagination } from '@/app/components/tables/table-pagination';
-import { SearchIconInput } from '@/app/components/form/input/IconInput';
-import { BluredWrapper } from '@/app/components/wrapper/blured-wrapper';
+import { TablePagination } from '@/app/components/ui/table/table-pagination';
+import { SearchIconInput } from '@/app/components/ui/icon-input';
+import { BluredWrapper } from '@/app/components/layout/wrapper/blured-wrapper';
 import toast from 'react-hot-toast/headless';
 import { useKnowledgePageStore } from '@/hooks/use-knowledge-page-store';
 import { Knowledge } from '@rapidaai/react';
-import { PageLoading } from '@/app/components/loading';
-import { ClickableKnowledgeCard } from '@/app/components/cards/knowledge-card';
-import { EmptyState } from '@/app/components/empty-state';
-import { HowKnowledgeWorksDialog } from '@/app/components/modal/how-it-works-modal/how-knowledge-works';
+import { PageLoading } from '@/app/components/ui/loading';
+import { ClickableKnowledgeCard } from '@/app/components/domain/cards/knowledge-card';
+import { EmptyState } from '@/app/components/ui/empty-state';
+import { HowKnowledgeWorksDialog } from '@/app/components/dialogs/how-it-works-modal/how-knowledge-works';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { GhostButton } from '@/app/components/button';
+import { GhostButton } from '@/app/components/ui/button';
 import { Plus, RotateCw } from 'lucide-react';
-import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
-import { PageTitleBlock } from '@/app/components/blocks/page-title-block';
+import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
+import { PageTitleBlock } from '@/app/components/layout/blocks/page-title-block';
 import { cn } from '@/utils';
-import { PaginationButtonBlock } from '@/app/components/blocks/pagination-button-block';
+import { PaginationButtonBlock } from '@/app/components/layout/blocks/pagination-button-block';
 
 /**
  * Knowledge base page

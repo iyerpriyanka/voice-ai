@@ -24,28 +24,28 @@ import {
 } from '@rapidaai/react';
 import { GetAssistantDebuggerDeployment } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
-import { Helmet } from '@/app/components/helmet';
+import { Helmet } from '@/app/components/app-shell/helmet';
 import {
   GetDefaultMicrophoneConfig,
   GetDefaultSpeechToTextIfInvalid,
   ValidateSpeechToTextIfInvalid,
-} from '@/app/components/providers/speech-to-text/provider';
+} from '@/app/components/domain/providers/speech-to-text/provider';
 import {
   GetDefaultSpeakerConfig,
   GetDefaultTextToSpeechIfInvalid,
   ValidateTextToSpeechIfInvalid,
-} from '@/app/components/providers/text-to-speech/provider';
+} from '@/app/components/domain/providers/text-to-speech/provider';
 import { connectionConfig } from '@/configs';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
-import { DebuggerDeploymentSuccessDialog } from '@/app/components/modal/debugger-deployment-success-modal';
-import { TabForm } from '@/app/components/form/tab-form';
+import { DebuggerDeploymentSuccessDialog } from '@/app/components/dialogs/debugger-deployment-success-modal';
+import { TabForm } from '@/app/components/ui/tab-form';
 import {
   PrimaryButton,
   SecondaryButton,
   GhostButton,
-} from '@/app/components/button';
+} from '@/app/components/ui/button';
 import { ButtonSet, CheckboxGroup } from '@carbon/react';
-import { InputCheckbox } from '@/app/components/form/input-checkbox';
+import { InputCheckbox } from '@/app/components/ui/input-checkbox';
 
 type SectionCode = 'experience' | 'stt' | 'tts';
 type ExistingDebuggerConfig = {

@@ -33,20 +33,20 @@ jest.mock('@carbon/react', () => ({
   ),
 }));
 
-jest.mock('@/app/components/indicators/source', () => ({
+jest.mock('@/app/components/domain/indicators/source', () => ({
   __esModule: true,
   default: ({ source }: any) => <span>Deployment: {source}</span>,
 }));
 
-jest.mock('@/app/components/record-status-indicator', () => ({
+jest.mock('@/app/components/ui/record-status-indicator', () => ({
   RecordStatusIndicator: ({ state }: any) => <span>Status: {state}</span>,
 }));
 
-jest.mock('@/app/components/button/copy-button', () => ({
+jest.mock('@/app/components/ui/buttons/copy-button', () => ({
   CopyButton: ({ children }: any) => <button>Copy {children}</button>,
 }));
 
-jest.mock('@/app/components/indicators/version', () => ({
+jest.mock('@/app/components/domain/indicators/version', () => ({
   VersionIndicator: ({ id }: any) => (
     <span>
       Version: vrsn_{id}
@@ -55,7 +55,7 @@ jest.mock('@/app/components/indicators/version', () => ({
   ),
 }));
 
-jest.mock('@/app/components/button', () => ({
+jest.mock('@/app/components/ui/button', () => ({
   IconOnlyButton: ({ iconDescription, onClick }: any) => (
     <button aria-label={iconDescription} onClick={onClick}>
       {iconDescription}

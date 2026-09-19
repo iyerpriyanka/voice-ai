@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Helmet } from '@/app/components/helmet';
-import { DescriptiveHeading } from '@/app/components/heading/descriptive-heading';
-import { Input } from '@/app/components/form/input';
-import { Label } from '@/app/components/form/label';
-import { ArrowButton } from '@/app/components/button/arrow-button';
-import { DangerTertiaryButton } from '@/app/components/button';
+import { Helmet } from '@/app/components/app-shell/helmet';
+import { DescriptiveHeading } from '@/app/components/layout/heading/descriptive-heading';
+import { Input } from '@/app/components/ui/input';
+import { Label } from '@/app/components/ui/label';
+import { ArrowButton } from '@/app/components/ui/buttons/arrow-button';
+import { DangerTertiaryButton } from '@/app/components/ui/button';
 import { ServiceError } from '@rapidaai/react';
 import { UpdateOrganization, GetOrganization } from '@rapidaai/react';
 

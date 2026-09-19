@@ -1,9 +1,9 @@
 import React, { FC, useState } from 'react';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { PrimaryButton, SecondaryButton } from '@/app/components/button';
-import { TextInput, TextArea, Stack } from '@/app/components/form';
-import { InputGroup } from '@/app/components/input-group';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
+import { TextInput, TextArea, Stack } from '@/app/components/ui/form';
+import { InputGroup } from '@/app/components/ui/input-group';
 import {
   ButtonSet,
   Select as CarbonSelect,
@@ -13,8 +13,8 @@ import {
   Tooltip,
 } from '@carbon/react';
 import { Information } from '@carbon/icons-react';
-import { Slider } from '@/app/components/form/slider';
-import { APiHeader } from '@/app/components/external-api/api-header';
+import { Slider } from '@/app/components/ui/slider';
+import { APiHeader } from '@/app/components/domain/external-api/api-header';
 import {
   CreateAssistantConfiguration,
   CreateAssistantConfigurationRequest,
@@ -24,7 +24,7 @@ import { useCurrentCredential } from '@/hooks/use-credential';
 import toast from 'react-hot-toast/headless';
 import { useRapidaStore } from '@/hooks';
 import { connectionConfig } from '@/configs';
-import { TabForm } from '@/app/components/form/tab-form';
+import { TabForm } from '@/app/components/ui/tab-form';
 import { WebhookEventSelector } from './webhook-event-selector';
 import { WebhookEventGroup, webhookEvents } from './webhook-events';
 

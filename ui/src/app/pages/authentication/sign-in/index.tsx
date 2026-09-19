@@ -1,6 +1,6 @@
 import { useState, useContext, useEffect, useCallback } from 'react';
-import { Helmet } from '@/app/components/helmet';
-import { SocialButtonGroup } from '@/app/components/button/social-button-group';
+import { Helmet } from '@/app/components/app-shell/helmet';
+import { SocialButtonGroup } from '@/app/components/ui/buttons/social-button-group';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import {
@@ -15,9 +15,9 @@ import { ServiceError } from '@rapidaai/react';
 import { AuthContext } from '@/context/auth-context';
 import { useWorkspace } from '@/workspace';
 import { connectionConfig } from '@/configs';
-import { Stack, TextInput } from '@/app/components/form';
-import { PrimaryButton } from '@/app/components/button';
-import { Notification } from '@/app/components/notification';
+import { Stack, TextInput } from '@/app/components/ui/form';
+import { PrimaryButton } from '@/app/components/ui/button';
+import { Notification } from '@/app/components/ui/notification';
 import { ArrowRight } from '@carbon/icons-react';
 import { Link, PasswordInput } from '@carbon/react';
 

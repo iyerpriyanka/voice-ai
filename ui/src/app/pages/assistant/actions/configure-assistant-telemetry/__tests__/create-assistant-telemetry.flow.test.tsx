@@ -6,7 +6,7 @@ import { CreateAssistantConfiguration, Metadata } from '@rapidaai/react';
 import {
   GetDefaultTelemetryIfInvalid,
   ValidateTelemetry,
-} from '@/app/components/providers/telemetry/provider';
+} from '@/app/components/domain/providers/telemetry/provider';
 
 const mockShowLoader = jest.fn();
 const mockHideLoader = jest.fn();
@@ -104,12 +104,12 @@ jest.mock('@/app/pages/assistant/actions/hooks/use-confirmation', () => ({
   }),
 }));
 
-jest.mock('@/app/components/providers/telemetry/provider', () => ({
+jest.mock('@/app/components/domain/providers/telemetry/provider', () => ({
   GetDefaultTelemetryIfInvalid: jest.fn(),
   ValidateTelemetry: jest.fn(),
 }));
 
-jest.mock('@/app/components/providers/telemetry', () => ({
+jest.mock('@/app/components/domain/providers/telemetry', () => ({
   TelemetryProvider: ({ onChangeProvider }: any) => (
     <button type="button" onClick={() => onChangeProvider('otlp_grpc')}>
       Switch provider
@@ -117,7 +117,7 @@ jest.mock('@/app/components/providers/telemetry', () => ({
   ),
 }));
 
-jest.mock('@/app/components/button', () => ({
+jest.mock('@/app/components/ui/button', () => ({
   PrimaryButton: ({ children, isLoading: _, ...props }: any) => (
     <button {...props}>{children}</button>
   ),
@@ -126,15 +126,15 @@ jest.mock('@/app/components/button', () => ({
   ),
 }));
 
-jest.mock('@/app/components/form', () => ({
+jest.mock('@/app/components/ui/form', () => ({
   Stack: ({ children }: any) => <div>{children}</div>,
 }));
 
-jest.mock('@/app/components/notification', () => ({
+jest.mock('@/app/components/ui/notification', () => ({
   Notification: ({ subtitle }: any) => <div>{subtitle}</div>,
 }));
 
-jest.mock('@/app/components/input-group', () => ({
+jest.mock('@/app/components/ui/input-group', () => ({
   InputGroup: ({ children }: any) => <div>{children}</div>,
 }));
 
