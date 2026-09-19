@@ -3,7 +3,8 @@ import { ModalProps } from '@/app/components/ui/modal';
 import { FC, HTMLAttributes, memo, useState } from 'react';
 import { ModalBody } from '@/app/components/dialogs/modal-body';
 import { AssistantConversationTelephonyEvent } from '@rapidaai/react';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { Button } from '@carbon/react';
+import { ChevronDown, ChevronRight } from '@carbon/icons-react';
 import { toHumanReadableDateTime } from '@/utils/date';
 import { CodeHighlighting } from '@/app/components/ui/code-highlighting';
 
@@ -68,31 +69,37 @@ export const AssistantConversationTelephonyEventDialog: FC<AssistantConversation
                 const createdDate = event.getCreateddate();
                 return (
                   <div key={event.getId()} className="flex flex-col">
-                    <button
+                    <Button
+                      type="button"
+                      kind="ghost"
+                      size="sm"
                       onClick={() =>
                         setExpandedRow(
                           expandedRow === event.getId() ? null : event.getId(),
                         )
                       }
-                      className="w-full grid grid-cols-7 gap-2 px-4 py-3 text-left border-b hover:bg-gray-50 dark:hover:bg-gray-950 transition-colors text-sm"
+                      className="!h-auto !min-h-0 !w-full !max-w-none !p-0 !text-left !text-sm"
                     >
-                      <div className="col-span-2 font-mono text-xs truncate">
-                        {event.getId()}
+                      <div className="w-full grid grid-cols-7 gap-2 px-4 py-3 border-b hover:bg-gray-50 dark:hover:bg-gray-950 transition-colors">
+                        <div className="col-span-2 font-mono text-xs truncate">
+                          {event.getId()}
+                        </div>
+                        <div className="col-span-2 font-medium capitalize">
+                          {event.getEventtype()}
+                        </div>
+                        <div className="col-span-2 text-xs">
+                          {createdDate
+                            ? toHumanReadableDateTime(createdDate)
+                            : 'N/A'}
+                        </div>
+                        <div className="col-span-1 flex justify-end">
+                          <ChevronDown
+                            size={16}
+                            className="text-gray-400 transition-transform"
+                          />
+                        </div>
                       </div>
-                      <div className="col-span-2 font-medium capitalize">
-                        {event.getEventtype()}
-                      </div>
-                      <div className="col-span-2  text-xs">
-                        {createdDate
-                          ? toHumanReadableDateTime(createdDate)
-                          : 'N/A'}
-                      </div>
-                      <div className="col-span-1 flex justify-end">
-                        <ChevronDown
-                          className={`w-4 h-4 text-gray-400 transition-transform`}
-                        />
-                      </div>
-                    </button>
+                    </Button>
 
                     {expandedRow === event.getId() && (
                       <>

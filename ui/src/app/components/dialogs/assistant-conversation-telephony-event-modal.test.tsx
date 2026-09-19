@@ -8,6 +8,19 @@ jest.mock('@/app/components/dialogs/right-side-modal', () => ({
     modalOpen ? <div>{children}</div> : null,
 }));
 
+jest.mock('@carbon/react', () => ({
+  Button: ({ children, kind, ...props }: any) => (
+    <button data-carbon-button-kind={kind} {...props}>
+      {children}
+    </button>
+  ),
+}));
+
+jest.mock('@carbon/icons-react', () => ({
+  ChevronDown: () => <svg data-testid="chevron-down" />,
+  ChevronRight: () => <svg data-testid="chevron-right" />,
+}));
+
 jest.mock('@/app/components/ui/code-highlighting', () => ({
   CodeHighlighting: ({ language, code }: any) => (
     <div data-testid="payload" data-language={language}>
@@ -49,6 +62,10 @@ describe('AssistantConversationTelephonyEventDialog', () => {
 
     fireEvent.click(screen.getByText('evt_1').closest('button')!);
 
+    expect(screen.getByText('evt_1').closest('button')).toHaveAttribute(
+      'data-carbon-button-kind',
+      'ghost',
+    );
     expect(screen.getByTestId('payload')).toHaveAttribute(
       'data-language',
       'json',
