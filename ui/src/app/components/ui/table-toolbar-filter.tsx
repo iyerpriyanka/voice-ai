@@ -1,6 +1,6 @@
 import { FC, ReactNode, useState } from 'react';
 import { Filter } from '@carbon/icons-react';
-import { Button, Checkbox } from '@carbon/react';
+import { Button, Checkbox, Popover, PopoverContent } from '@carbon/react';
 import { cn } from '@/utils';
 
 export interface FilterOption {
@@ -63,7 +63,14 @@ export const TableToolbarFilter: FC<TableToolbarFilterProps> = ({
   };
 
   return (
-    <div className={cn('relative flex items-center', className)}>
+    <Popover
+      as="div"
+      align="bottom-end"
+      caret={false}
+      className={cn('relative flex items-center', className)}
+      onRequestClose={() => setOpen(false)}
+      open={open}
+    >
       <Button
         hasIconOnly
         renderIcon={Filter}
@@ -77,14 +84,8 @@ export const TableToolbarFilter: FC<TableToolbarFilterProps> = ({
         tooltipPosition="bottom"
       />
       {open && (
-        <>
-          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div
-            className={cn(
-              'absolute right-0 top-full z-50 w-72 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-lg',
-              panelClassName,
-            )}
-          >
+        <PopoverContent className={cn('w-72 p-0', panelClassName)}>
+          <div>
             {extraContent && (
               <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
                 {extraContent}
@@ -130,8 +131,8 @@ export const TableToolbarFilter: FC<TableToolbarFilterProps> = ({
               </Button>
             </div>
           </div>
-        </>
+        </PopoverContent>
       )}
-    </div>
+    </Popover>
   );
 };
