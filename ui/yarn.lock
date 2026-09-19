@@ -5326,6 +5326,25 @@ ajv@^8.20.0:
     json-schema-traverse "^1.0.0"
     require-from-string "^2.0.2"
 
+allure-commandline@2.46.1:
+  version "2.46.1"
+  resolved "https://registry.yarnpkg.com/allure-commandline/-/allure-commandline-2.46.1.tgz#1b578c6d990f646af852f628f2a4dd82b9c22cef"
+  integrity sha512-4HTxbXR9D2+cJV9z4MO/IUa7sfYiLLXBP3/4MWSqC63ey55wBMvXAk83yZYwJ2t+jKU1Z7QW6LgCUx0BhPy9EQ==
+
+allure-jest@3.12.2:
+  version "3.12.2"
+  resolved "https://registry.yarnpkg.com/allure-jest/-/allure-jest-3.12.2.tgz#f6148cf8736aabf568af8848d04da84561e92e71"
+  integrity sha512-XMXESpS3ZdVU3dnFY2isdt91A2PhQf3qVgeL3KYrkLPtV18iRfzc3b6hHMlpKNcB8ei0g/mPZHXDI5mKu6GyTQ==
+  dependencies:
+    allure-js-commons "3.12.2"
+
+allure-js-commons@3.12.2:
+  version "3.12.2"
+  resolved "https://registry.yarnpkg.com/allure-js-commons/-/allure-js-commons-3.12.2.tgz#9e8e261fad9837f3a18288491f2967083c3eeabe"
+  integrity sha512-5gVM4Fedf5q19tQ6zussSIaNC5tooTbtvJMBZFu1c7Zm35qfiBAPayMgxxHm5rOTwkyRInj+XShQPAG8ixrGeg==
+  dependencies:
+    md5 "^2.3.0"
+
 ansi-align@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/ansi-align/-/ansi-align-3.0.1.tgz#0cdf12e111ace773a86e9a1fad1225c43cb19a59"
@@ -6682,6 +6701,11 @@ chardet@^0.7.0:
   resolved "https://registry.yarnpkg.com/chardet/-/chardet-0.7.0.tgz#90094849f0937f2eedc2425d0d28a9e5f0cbad9e"
   integrity sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==
 
+charenc@0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/charenc/-/charenc-0.0.2.tgz#c0a1d2f3a7092e03774bfa83f14c0fc5790a8667"
+  integrity sha512-yrLQ/yVUFXkzg7EDQsPieE/53+0RlaWTs+wBrvW36cyilJ2SaDWfl4Yj7MtLTXleV9uEKefbAGUPv2/iWSooRA==
+
 chart.js@4.4.2:
   version "4.4.2"
   resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-4.4.2.tgz#95962fa6430828ed325a480cc2d5f2b4e385ac31"
@@ -7328,6 +7352,11 @@ cross-spawn@^7.0.1, cross-spawn@^7.0.2, cross-spawn@^7.0.3, cross-spawn@^7.0.6:
     path-key "^3.1.0"
     shebang-command "^2.0.0"
     which "^2.0.1"
+
+crypt@0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/crypt/-/crypt-0.0.2.tgz#88d7ff7ec0dfb86f713dc87bbb42d044d3e6c41b"
+  integrity sha512-mCxBlsHFYh9C+HVpiEacem8FEBnMXgU9gy4zmNC+SXAZNB/1idgp/aulFJ4FgCi7GPEVbfyng092GqL2k2rmow==
 
 crypto-random-string@^2.0.0:
   version "2.0.0"
@@ -11066,7 +11095,7 @@ is-boolean-object@^1.2.1:
     call-bound "^1.0.3"
     has-tostringtag "^1.0.2"
 
-is-buffer@^1.1.5:
+is-buffer@^1.1.5, is-buffer@~1.1.6:
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/is-buffer/-/is-buffer-1.1.6.tgz#efaa2ea9daa0d7ab2ea13a97b2b8ad51fefbe8be"
   integrity sha512-NcdALwpXkTm5Zvvbk7owOUSvVvBKDgKP5/ewfXEznmQFfs4ZRmanOeKBTjRVjka3QFoN6XJ+9F3USqfHqTaU5w==
@@ -12949,6 +12978,15 @@ mathml-tag-names@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/mathml-tag-names/-/mathml-tag-names-4.0.0.tgz#295494906312f849a9236e6cd9accc902814d477"
   integrity sha512-aa6AU2Pcx0VP/XWnh8IGL0SYSgQHDT6Ucror2j2mXeFAlN3ahaNs8EZtG1YiticMkSLj3Gt6VPFfZogt7G5iFQ==
+
+md5@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/md5/-/md5-2.3.0.tgz#c3da9a6aae3a30b46b7b0c349b87b110dc3bda4f"
+  integrity sha512-T1GITYmFaKuO91vxyoQMFETst+O71VUPEU3ze5GNzDm0OWdP8v1ziTaAEPUr/3kLsY3Sftgz242A1SetQiDL7g==
+  dependencies:
+    charenc "0.0.2"
+    crypt "0.0.2"
+    is-buffer "~1.1.6"
 
 mdast-util-find-and-replace@^3.0.0:
   version "3.0.2"

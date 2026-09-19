@@ -1,8 +1,5 @@
 import { FC } from 'react';
 
-/**
- * Flex box usually a parent container for all the page objects
- */
 interface CenterBoxProps extends React.HTMLAttributes<HTMLElement> {}
 
 export const CenterBox: FC<CenterBoxProps> = props => {

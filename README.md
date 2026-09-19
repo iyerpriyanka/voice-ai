@@ -215,14 +215,21 @@ Requires PostgreSQL, Redis, OpenSearch running separately.
 ### React UI
 
 ```bash
-cd ui
+# Complete local UI setup, test report, and Storybook build
+just ui
 
-# Install & run
-yarn install
-yarn start:dev
+# Run the UI app
+just ui-dev
+
+# Run Storybook
+just ui-storybook
+
+# Generate and view the Allure report
+just ui-report
+just ui-report-open
 
 # Build for production
-yarn build
+cd ui && yarn build
 ```
 
 ---

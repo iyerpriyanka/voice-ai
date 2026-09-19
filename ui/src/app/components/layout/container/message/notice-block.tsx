@@ -1,7 +1,7 @@
 import { cn } from '@/utils';
 import { HTMLAttributes } from 'react';
 
-// Carbon inline notification — info (blue)
+// Carbon inline notification: info.
 export const BlueNoticeBlock: React.FC<HTMLAttributes<HTMLDivElement>> = ({
   className,
   onClick,
@@ -20,7 +20,7 @@ export const BlueNoticeBlock: React.FC<HTMLAttributes<HTMLDivElement>> = ({
   </div>
 );
 
-// Carbon inline notification — success (green)
+// Carbon inline notification: success.
 export const GreenNoticeBlock: React.FC<HTMLAttributes<HTMLDivElement>> = ({
   className,
   children,
@@ -37,7 +37,7 @@ export const GreenNoticeBlock: React.FC<HTMLAttributes<HTMLDivElement>> = ({
   </div>
 );
 
-// Carbon inline notification — error (red)
+// Carbon inline notification: error.
 export const RedNoticeBlock: React.FC<HTMLAttributes<HTMLDivElement>> = ({
   className,
   children,
@@ -54,7 +54,7 @@ export const RedNoticeBlock: React.FC<HTMLAttributes<HTMLDivElement>> = ({
   </div>
 );
 
-// Carbon inline notification — warning (yellow)
+// Carbon inline notification: warning.
 export const YellowNoticeBlock: React.FC<HTMLAttributes<HTMLDivElement>> = ({
   className,
   children,

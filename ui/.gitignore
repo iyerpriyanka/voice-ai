@@ -6,6 +6,8 @@ src/styles/generated/tailwindcss.css
 coverage
 build
 storybook-static
+allure-results
+allure-report
 node_modules
 stats.json
 .pnp

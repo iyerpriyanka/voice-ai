@@ -6,11 +6,6 @@ import { Toast } from '@/app/components/ui/feedback';
 import { ProviderContextProvider } from '@/context/provider-context';
 import { SidebarProvider } from '@/context/sidebar-context';
 
-/**
- *
- * @param props
- * @returns
- */
 export function MissionBox(props: { children?: any }) {
   useRapidaStore();
   return (

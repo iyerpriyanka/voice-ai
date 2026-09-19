@@ -82,6 +82,13 @@ describe('GA', () => {
       }),
     ).toBe(false);
     expect(
+      isGoogleAnalyticsEnabled({
+        env: 'production',
+        hostname: 'app.rapida.ai',
+        measurementId: '',
+      }),
+    ).toBe(false);
+    expect(
       getAnalyticsPagePath({
         pathname: '/logs',
         search: '?source=endpoint',

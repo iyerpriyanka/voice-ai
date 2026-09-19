@@ -11,17 +11,12 @@ import { BrandedLogo } from '@/app/components/layout/brand/branded-logo';
 import { SidePanelClose, SidePanelOpen } from '@carbon/icons-react';
 import { Button } from '@carbon/react';
 import { useSidebar } from '@/context/sidebar-context';
-import { cn } from '@/utils/index';
+import { cn } from '@/utils';
 import { useRapidaStore } from '@/hooks';
 import { Text } from '@/app/components/ui/primitives';
 import { useWorkspace } from '@/workspace';
 
-/**
- * Carbon UI Shell: Side Navigation
- * Spec: h-8 nav items, 4px left accent on active, 48px logo header,
- *       label-01 group headers, lock/collapse button in footer.
- */
-export function SidebarNavigation(props: {}) {
+export function SidebarNavigation() {
   const workspace = useWorkspace();
   const { locked, setLocked, open } = useSidebar();
   const { loading, loadingType } = useRapidaStore();
@@ -29,7 +24,6 @@ export function SidebarNavigation(props: {}) {
 
   return (
     <Aside className="relative shrink-0 flex flex-col">
-      {/* Logo row: Carbon UI Shell header, h-12 with bottom border. */}
       <div
         className={cn(
           'h-12 flex shrink-0 items-center border-b border-border-subtle px-3',
@@ -48,9 +42,7 @@ export function SidebarNavigation(props: {}) {
         />
       </div>
 
-      {/* Nav groups: scrollable. */}
       <nav className="flex-1 overflow-y-auto no-scrollbar py-2">
-        {/* Group 1: primary nav. */}
         <ul>
           <Dashboard isLoading={isLoading} />
           <Deployment isLoading={isLoading} />
@@ -59,7 +51,6 @@ export function SidebarNavigation(props: {}) {
           )}
         </ul>
 
-        {/* Group 2: Observability. */}
         <div className="mt-2">
           <div
             className={cn(
@@ -85,7 +76,6 @@ export function SidebarNavigation(props: {}) {
           </ul>
         </div>
 
-        {/* Group 3: Integrations. */}
         <div className="mt-2">
           <div
             className={cn(
@@ -112,7 +102,6 @@ export function SidebarNavigation(props: {}) {
           </ul>
         </div>
 
-        {/* Group 4: Organizations. */}
         <div className="mt-2">
           <div
             className={cn(
@@ -140,7 +129,6 @@ export function SidebarNavigation(props: {}) {
         </div>
       </nav>
 
-      {/* Footer: collapse and expand control. */}
       <div className="shrink-0 border-t border-border-subtle">
         <Button
           type="button"

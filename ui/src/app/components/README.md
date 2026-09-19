@@ -16,8 +16,9 @@ Use the narrowest owner that matches the component:
   `domain`.
 - Modal workflows belong in the matching `dialogs` domain folder.
 
-See `domain/README.md`, `dialogs/README.md`, and `ui/README.md` for group-level
-contracts and import rules.
+See `app-shell/README.md`, `layout/README.md`, `domain/README.md`,
+`dialogs/README.md`, and `ui/README.md` for group-level contracts and import
+rules.
 
 Production consumers outside a component group should prefer group indexes such as
 `components/ui/primitives` or `components/dialogs/assistant`. Files inside

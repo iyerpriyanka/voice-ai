@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import developmentConfig from '@/configs/config.development.json';
 import { ThemeProvider } from '@/theme/theme-provider';
 import { ThemeManifest } from '@/theme/types';
-import { Header } from '../header';
+import { Header } from './header';
 
 const theme = developmentConfig.theme as unknown as ThemeManifest;
 

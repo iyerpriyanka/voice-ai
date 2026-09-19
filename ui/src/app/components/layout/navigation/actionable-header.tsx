@@ -83,7 +83,6 @@ export const CustomerOptions: FC<{
 
   return (
     <HeaderGlobalBar>
-      {/* Project selector — Carbon Dropdown */}
       {showProjectSelector && projectRoles && setCurrentProjectRole && (
         <Dropdown
           id="project-selector"
@@ -115,7 +114,6 @@ export const CustomerOptions: FC<{
         </HeaderGlobalAction>
       )}
 
-      {/* Profile avatar */}
       <HeaderGlobalAction
         aria-label="Account"
         isActive={accountDropdownOpen}
@@ -125,7 +123,6 @@ export const CustomerOptions: FC<{
         <UserAvatar size={20} />
       </HeaderGlobalAction>
 
-      {/* Account panel — Carbon Switcher */}
       <HeaderPanel expanded={accountDropdownOpen}>
         <Switcher
           aria-label={`${theme.brand.name} account`}
