@@ -80,7 +80,11 @@ const makeEndpoint = ({
       getId: () => 'model-1',
       getStatus: () => 'DEPLOYED',
       getModelprovidername: () => 'openai',
-      getCreatedactor: () => ({ getType: () => 'user', getId: () => '42', getDisplayname: () => 'Prashant' }),
+      getCreatedactor: () => ({
+        getType: () => 'user',
+        getId: () => '42',
+        getDisplayname: () => 'Prashant',
+      }),
     }),
     getEndpointanalytics: () => ({
       getCount: () => totalCount,

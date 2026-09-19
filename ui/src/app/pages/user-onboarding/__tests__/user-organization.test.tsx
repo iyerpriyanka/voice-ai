@@ -47,7 +47,9 @@ jest.mock('@/app/components/app-shell/helmet', () => ({
 jest.mock('@/app/components/ui/primitives/form', () => ({
   Stack: ({ children }: any) => <div>{children}</div>,
   TextInput: require('react').forwardRef(
-    ({ labelText, helperText, ...props }: any, ref: any) => <input ref={ref} {...props} />,
+    ({ labelText, helperText, ...props }: any, ref: any) => (
+      <input ref={ref} {...props} />
+    ),
   ),
 }));
 
@@ -97,7 +99,9 @@ describe('CreateOrganizationPage', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
 
-    expect(await screen.findByText('Please provide an industry.')).toBeInTheDocument();
+    expect(
+      await screen.findByText('Please provide an industry.'),
+    ).toBeInTheDocument();
     expect(CreateOrganization).not.toHaveBeenCalled();
   });
 
@@ -114,9 +118,12 @@ describe('CreateOrganizationPage', () => {
     fireEvent.change(screen.getByPlaceholderText('eg: Acme Voice Studio'), {
       target: { value: 'My Org' },
     });
-    fireEvent.change(screen.getByPlaceholderText('eg: Agency services, healthcare, finance'), {
-      target: { value: 'Software' },
-    });
+    fireEvent.change(
+      screen.getByPlaceholderText('eg: Agency services, healthcare, finance'),
+      {
+        target: { value: 'Software' },
+      },
+    );
     fireEvent.change(screen.getByRole('combobox'), {
       target: { value: 'agency' },
     });
@@ -144,13 +151,18 @@ describe('CreateOrganizationPage', () => {
     fireEvent.change(screen.getByPlaceholderText('eg: Acme Voice Studio'), {
       target: { value: 'My Org' },
     });
-    fireEvent.change(screen.getByPlaceholderText('eg: Agency services, healthcare, finance'), {
-      target: { value: 'Software' },
-    });
+    fireEvent.change(
+      screen.getByPlaceholderText('eg: Agency services, healthcare, finance'),
+      {
+        target: { value: 'Software' },
+      },
+    );
     fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
 
     expect(
-      await screen.findByText('Unable to process your request. Please try again later.'),
+      await screen.findByText(
+        'Unable to process your request. Please try again later.',
+      ),
     ).toBeInTheDocument();
   });
 
@@ -166,11 +178,16 @@ describe('CreateOrganizationPage', () => {
     fireEvent.change(screen.getByPlaceholderText('eg: Acme Voice Studio'), {
       target: { value: 'My Org' },
     });
-    fireEvent.change(screen.getByPlaceholderText('eg: Agency services, healthcare, finance'), {
-      target: { value: 'Software' },
-    });
+    fireEvent.change(
+      screen.getByPlaceholderText('eg: Agency services, healthcare, finance'),
+      {
+        target: { value: 'Software' },
+      },
+    );
     fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
 
-    expect(await screen.findByText('Please provide valid credentials to sign in.')).toBeInTheDocument();
+    expect(
+      await screen.findByText('Please provide valid credentials to sign in.'),
+    ).toBeInTheDocument();
   });
 });

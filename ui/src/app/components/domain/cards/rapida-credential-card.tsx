@@ -7,9 +7,9 @@ import {
   GetAllProjectCredentialResponse,
   ProjectCredential,
 } from '@rapidaai/react';
-import { EmptyState } from '@/app/components/ui/feedback/empty-state';
-import { CopyButton } from '@/app/components/ui/primitives/buttons/copy-button';
-import { ReloadButton } from '@/app/components/ui/primitives/buttons/reload-button';
+import { EmptyState } from '@/app/components/ui/feedback';
+import { CopyButton } from '@/app/components/ui/primitives';
+import { ReloadButton } from '@/app/components/ui/primitives';
 import { useRapidaStore } from '@/hooks';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { toHumanReadableRelativeDay } from '@/utils/date';

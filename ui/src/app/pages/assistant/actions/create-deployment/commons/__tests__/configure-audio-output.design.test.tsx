@@ -38,7 +38,9 @@ jest.mock('@/app/components/ui/primitives/form', () => {
       React.createElement(
         'div',
         null,
-        labelText ? React.createElement('label', { htmlFor: id }, labelText) : null,
+        labelText
+          ? React.createElement('label', { htmlFor: id }, labelText)
+          : null,
         React.createElement('input', {
           id,
           value: value ?? '',
@@ -86,7 +88,11 @@ jest.mock('@carbon/react', () => {
               }),
           },
           items.map((item: any) =>
-            React.createElement('option', { key: item.id, value: item.id }, item.label),
+            React.createElement(
+              'option',
+              { key: item.id, value: item.id },
+              item.label,
+            ),
           ),
         ),
       ),
@@ -105,7 +111,8 @@ jest.mock('@carbon/react', () => {
 });
 
 jest.mock('@/app/components/domain/providers/text-to-speech/provider', () => ({
-  GetDefaultSpeakerConfig: (...args: any[]) => mockGetDefaultSpeakerConfig(...args),
+  GetDefaultSpeakerConfig: (...args: any[]) =>
+    mockGetDefaultSpeakerConfig(...args),
   GetDefaultTextToSpeechIfInvalid: (...args: any[]) =>
     mockGetDefaultTextToSpeechIfInvalid(...args),
 }));
@@ -135,7 +142,9 @@ describe('ConfigureAudioOutputProvider design integration', () => {
       createMetadata('speaker.pronunciation.dictionaries', 'medical'),
     ];
 
-    const speakerDefaults = [createMetadata('speaker.model', 'gpt-4o-mini-tts')];
+    const speakerDefaults = [
+      createMetadata('speaker.model', 'gpt-4o-mini-tts'),
+    ];
     const ttsDefaults = [createMetadata('speaker.voice', 'alloy')];
     mockGetDefaultSpeakerConfig.mockReturnValue(speakerDefaults);
     mockGetDefaultTextToSpeechIfInvalid.mockReturnValue(ttsDefaults);
@@ -143,17 +152,19 @@ describe('ConfigureAudioOutputProvider design integration', () => {
     const setAudioOutputConfig = jest.fn();
     render(
       <ConfigureAudioOutputProvider
-        audioOutputConfig={{ provider: 'cartesia', parameters: inputParameters }}
+        audioOutputConfig={{
+          provider: 'cartesia',
+          parameters: inputParameters,
+        }}
         setAudioOutputConfig={setAudioOutputConfig}
       />,
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'change tts' }));
 
-    const keptParams = mockGetDefaultSpeakerConfig.mock.calls[0][0] as Metadata[];
-    expect(
-      keptParams.map(p => `${p.getKey()}=${p.getValue()}`).sort(),
-    ).toEqual(
+    const keptParams = mockGetDefaultSpeakerConfig.mock
+      .calls[0][0] as Metadata[];
+    expect(keptParams.map(p => `${p.getKey()}=${p.getValue()}`).sort()).toEqual(
       [
         'speaker.ambient=office',
         'speaker.ambient_volume=24',
@@ -213,17 +224,16 @@ describe('ConfigureAudioOutputProvider design integration', () => {
       ),
     );
 
-    expect(
-      allMaps.some(values => values['speaker.ambient'] === 'cafe'),
-    ).toBe(true);
+    expect(allMaps.some(values => values['speaker.ambient'] === 'cafe')).toBe(
+      true,
+    );
     expect(
       allMaps.some(values => values['speaker.ambient_volume'] === '34'),
     ).toBe(true);
     expect(
       allMaps.some(
         values =>
-          values['speaker.pronunciation.dictionaries'] ===
-          'medical<|||>retail',
+          values['speaker.pronunciation.dictionaries'] === 'medical<|||>retail',
       ),
     ).toBe(true);
     expect(

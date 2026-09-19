@@ -3,7 +3,7 @@ import {
   AgentflowDefinition,
   AgentflowVersionBuilder,
 } from '@/app/pages/assistant/actions/create-assistant-version/agentflow-version-builder';
-import { ErrorContainer } from '@/app/components/ui/feedback/error-container';
+import { ErrorContainer } from '@/app/components/ui/feedback';
 import { connectionConfig } from '@/configs';
 import { useRapidaStore } from '@/hooks';
 import { useCurrentCredential } from '@/hooks/use-credential';

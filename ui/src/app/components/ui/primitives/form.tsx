@@ -19,12 +19,12 @@ import {
 } from '@carbon/react';
 import { cn } from '@/utils';
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// Types
 
 type InputSize = 'sm' | 'md' | 'lg' | 'xl';
 type StackOrientation = 'horizontal' | 'vertical';
 
-// ─── Form ────────────────────────────────────────────────────────────────────
+// Form
 
 export interface CarbonFormProps {
   children: ReactNode;
@@ -45,7 +45,7 @@ export const Form: FC<CarbonFormProps> = ({
   );
 };
 
-// ─── Stack ───────────────────────────────────────────────────────────────────
+// Stack
 
 export interface CarbonStackProps {
   children: ReactNode;
@@ -68,7 +68,7 @@ export const Stack: FC<CarbonStackProps> = ({
   );
 };
 
-// ─── FormGroup ───────────────────────────────────────────────────────────────
+// FormGroup
 
 export interface CarbonFormGroupProps {
   children: ReactNode;
@@ -104,7 +104,7 @@ export const FormGroup: FC<CarbonFormGroupProps> = ({
   );
 };
 
-// ─── TextInput ───────────────────────────────────────────────────────────────
+// TextInput
 
 export interface CarbonTextInputProps {
   id: string;
@@ -160,7 +160,7 @@ export const TextInputSkeleton: FC<{
   );
 };
 
-// ─── TextArea ────────────────────────────────────────────────────────────────
+// TextArea
 
 export interface CarbonTextAreaProps {
   labelText: ReactNode;
@@ -213,7 +213,7 @@ export const TextAreaSkeleton: FC<{
   );
 };
 
-// ─── Checkbox ────────────────────────────────────────────────────────────────
+// Checkbox
 
 export interface CarbonCheckboxProps {
   id: string;

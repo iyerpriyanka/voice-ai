@@ -6,13 +6,7 @@ import { StatusIndicator } from './status';
 
 const makeIcon = (name: string) =>
   function MockIcon({ size, className }: any) {
-    return (
-      <svg
-        data-icon={name}
-        data-size={size}
-        className={className}
-      />
-    );
+    return <svg data-icon={name} data-size={size} className={className} />;
   };
 
 jest.mock('@carbon/icons-react', () => ({
@@ -33,10 +27,9 @@ describe('StatusIndicator', () => {
     render(<StatusIndicator state="SUCCESS" size="small" />);
 
     expect(screen.getByText('Success')).toBeInTheDocument();
-    expect(document.querySelector('[data-icon="checkmark-filled"]')).toHaveAttribute(
-      'data-size',
-      '12',
-    );
+    expect(
+      document.querySelector('[data-icon="checkmark-filled"]'),
+    ).toHaveAttribute('data-size', '12');
   });
 
   it('renders progress states with the standard progress icon', () => {
@@ -53,9 +46,8 @@ describe('StatusIndicator', () => {
     render(<StatusIndicator state="UNKNOWN" size="large" />);
 
     expect(screen.getByText('Inactive')).toBeInTheDocument();
-    expect(document.querySelector('[data-icon="subtract-alt"]')).toHaveAttribute(
-      'data-size',
-      '18',
-    );
+    expect(
+      document.querySelector('[data-icon="subtract-alt"]'),
+    ).toHaveAttribute('data-size', '18');
   });
 });

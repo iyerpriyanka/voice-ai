@@ -136,7 +136,7 @@ jest.mock('@/app/pages/assistant/actions/hooks/use-confirmation', () => {
   };
 });
 
-jest.mock('@/app/components/dialogs/webhook-log-modal', () => ({
+jest.mock('@/app/components/dialogs/activity/webhook-log-modal', () => ({
   RequestLogDialog: ({ modalOpen }: any) =>
     modalOpen ? <div>request-log-modal</div> : null,
 }));

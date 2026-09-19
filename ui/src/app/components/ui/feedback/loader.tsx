@@ -1,5 +1,5 @@
-import { LineLoader } from '@/app/components/ui/feedback/loaders/line-loader';
-import { PageLoader } from '@/app/components/ui/feedback/loaders/page-loader';
+import { LineLoader } from './loaders/line-loader';
+import { PageLoader } from './loaders/page-loader';
 import { useRapidaStore } from '@/hooks';
 
 /**

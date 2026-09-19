@@ -1,4 +1,4 @@
-import { TertiaryButton, GhostButton } from '@/app/components/ui/primitives/button';
+import { TertiaryButton, GhostButton } from '@/app/components/ui/primitives';
 import { Checkmark, Copy, Pause, Play } from '@carbon/icons-react';
 import { FC, useRef, useState } from 'react';
 

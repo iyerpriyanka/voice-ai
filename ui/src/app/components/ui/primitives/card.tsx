@@ -9,7 +9,7 @@ import { FC, HTMLAttributes, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { CornerBorderOverlay } from '@/app/components/ui/primitives/corner-border';
 
-// ─── Unified card primitives ───────────────────────────────────────────────
+// Shared card primitives.
 
 /** Static card: background + corner-bracket hover, no interactivity. */
 export const BaseCard: FC<HTMLAttributes<HTMLDivElement>> = ({
@@ -79,7 +79,7 @@ export const ActionCard: FC<HTMLAttributes<HTMLDivElement>> = ({
   );
 };
 
-// ─── Legacy card primitives (kept for backwards compatibility) ─────────────
+// Existing card primitives kept for compatibility.
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {}
 export const Card: FC<CardProps> = ({ children, className, ...props }) => {

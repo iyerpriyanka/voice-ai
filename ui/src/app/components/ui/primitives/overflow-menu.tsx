@@ -5,7 +5,7 @@ import {
 } from '@carbon/react';
 import { cn } from '@/utils';
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// Types
 
 type OverflowMenuSize = 'xs' | 'sm' | 'md' | 'lg';
 type MenuDirection = 'top' | 'bottom';
@@ -42,7 +42,7 @@ export interface OverflowMenuItemProps {
   wrapperClassName?: string;
 }
 
-// ─── OverflowMenu ────────────────────────────────────────────────────────────
+// OverflowMenu
 
 /**
  * Carbon OverflowMenu: a vertical dot menu that reveals a list of actions.
@@ -86,7 +86,7 @@ export const OverflowMenu: FC<OverflowMenuProps> = ({
   );
 };
 
-// ─── OverflowMenuItem ────────────────────────────────────────────────────────
+// OverflowMenuItem
 
 /**
  * Carbon OverflowMenuItem: a single action inside an OverflowMenu.

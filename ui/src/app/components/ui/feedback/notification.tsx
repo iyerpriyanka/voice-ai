@@ -2,11 +2,11 @@ import type { FC, ReactNode } from 'react';
 import { InlineNotification, ActionableNotification } from '@carbon/react';
 import { cn } from '@/utils';
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// Types
 
 type NotificationKind = 'info' | 'success' | 'warning' | 'error';
 
-// ─── Inline Notification ─────────────────────────────────────────────────────
+// Inline Notification
 
 export interface CarbonNotificationProps {
   kind: NotificationKind;
@@ -39,7 +39,7 @@ export const Notification: FC<CarbonNotificationProps> = ({
   />
 );
 
-// ─── Actionable Notification ─────────────────────────────────────────────────
+// Actionable Notification
 
 export interface ActionableNotificationProps {
   kind: NotificationKind;
@@ -81,7 +81,7 @@ export const ActionNotification: FC<ActionableNotificationProps> = ({
   />
 );
 
-// ─── Link-style Actionable Notification ──────────────────────────────────────
+// Link-style Actionable Notification
 
 export interface LinkNotificationProps {
   kind: NotificationKind;

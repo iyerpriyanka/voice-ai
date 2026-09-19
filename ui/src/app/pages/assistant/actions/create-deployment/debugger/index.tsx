@@ -37,15 +37,15 @@ import {
 } from '@/app/components/domain/providers/text-to-speech/provider';
 import { connectionConfig } from '@/configs';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
-import { DebuggerDeploymentSuccessDialog } from '@/app/components/dialogs/debugger-deployment-success-modal';
-import { TabForm } from '@/app/components/ui/composites/tab-form';
+import { DebuggerDeploymentSuccessDialog } from '@/app/components/dialogs/assistant';
+import { TabForm } from '@/app/components/ui/composites';
 import {
   PrimaryButton,
   SecondaryButton,
   GhostButton,
-} from '@/app/components/ui/primitives/button';
+} from '@/app/components/ui/primitives';
 import { ButtonSet, CheckboxGroup } from '@carbon/react';
-import { InputCheckbox } from '@/app/components/ui/primitives/input-checkbox';
+import { InputCheckbox } from '@/app/components/ui/primitives';
 
 type SectionCode = 'experience' | 'stt' | 'tts';
 type ExistingDebuggerConfig = {

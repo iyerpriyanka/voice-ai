@@ -1,8 +1,8 @@
 import type { FC } from 'react';
 import React from 'react';
 import { ReactSortable } from 'react-sortablejs';
-import { TextInput } from '@/app/components/ui/primitives/form';
-import { TertiaryButton } from '@/app/components/ui/primitives/button';
+import { TextInput } from '@/app/components/ui/primitives';
+import { TertiaryButton } from '@/app/components/ui/primitives';
 import { Add, TrashCan, Draggable } from '@carbon/icons-react';
 import { Button } from '@carbon/react';
 

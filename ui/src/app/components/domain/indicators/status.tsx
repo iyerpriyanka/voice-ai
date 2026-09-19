@@ -131,10 +131,7 @@ export const StatusIndicator = ({ state, size = 'medium' }) => {
     <span
       className={`shrink-0 inline-flex items-center ${config.bgColor} ${config.textColor} font-medium ${sizeClass.container} ring-none ring-inset ${config.ringColor}`}
     >
-      <Icon
-        className={`${config.iconColor}`}
-        size={sizeClass.icon}
-      />
+      <Icon className={`${config.iconColor}`} size={sizeClass.icon} />
       {config.display}
     </span>
   );

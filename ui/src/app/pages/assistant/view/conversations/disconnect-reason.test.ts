@@ -49,8 +49,8 @@ describe('getDisconnectReasonDisplay', () => {
   });
 
   it('humanizes raw backend reasons', () => {
-    expect(getDisconnectReasonDisplay('outbound_rejected', 'FAILED').label).toBe(
-      'Outbound Rejected',
-    );
+    expect(
+      getDisconnectReasonDisplay('outbound_rejected', 'FAILED').label,
+    ).toBe('Outbound Rejected');
   });
 });

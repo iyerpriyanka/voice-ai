@@ -1,4 +1,4 @@
-import { GhostButton } from '@/app/components/ui/primitives/button';
+import { GhostButton } from '@/app/components/ui/primitives';
 import SingleRowWrapper from '@/app/components/layout/wrapper/single-row-wrapper';
 import { useCreateKnowledgeDocumentPageStore } from '@/hooks/use-create-knowledge-document-page-store';
 import { formatFileSize } from '@/utils/format';

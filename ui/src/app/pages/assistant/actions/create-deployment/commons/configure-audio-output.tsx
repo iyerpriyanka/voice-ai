@@ -11,7 +11,7 @@ import {
 } from '@/providers';
 import { ChevronDown } from '@carbon/icons-react';
 import { cn } from '@/utils';
-import { TextInput } from '@/app/components/ui/primitives/form';
+import { TextInput } from '@/app/components/ui/primitives';
 import { Dropdown, MultiSelect, Slider } from '@carbon/react';
 
 const AMBIENT_OPTIONS = [

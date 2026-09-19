@@ -10,7 +10,10 @@ import {
 } from '@/providers/config-loader';
 import { Struct } from 'google-protobuf/google/protobuf/struct_pb';
 
-jest.mock('@/app/components/domain/providers/provider-component-props', () => ({}));
+jest.mock(
+  '@/app/components/domain/providers/provider-component-props',
+  () => ({}),
+);
 jest.mock('@/app/components/domain/providers/config-renderer', () => ({
   ConfigRenderer: () => null,
 }));

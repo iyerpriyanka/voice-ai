@@ -3,15 +3,15 @@ import { FC, useEffect, useState } from 'react';
 import toast from 'react-hot-toast/headless';
 import { useParams } from 'react-router-dom';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { EmptyState } from '@/app/components/ui/feedback/empty-state';
+import { EmptyState } from '@/app/components/ui/feedback';
 import { Add, Renew, Edit, TrashCan, ToolKit } from '@carbon/icons-react';
 import { CreateTool } from '@/app/pages/assistant/actions/configure-assistant-tool/create-assistant-tool';
-import { SectionLoader } from '@/app/components/ui/feedback/loaders/section-loader';
+import { SectionLoader } from '@/app/components/ui/feedback';
 import { useAssistantToolPageStore } from '@/app/pages/assistant/actions/store/use-tool-page-store';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { UpdateTool } from '@/app/pages/assistant/actions/configure-assistant-tool/update-assistant-tool';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
-import { IconOnlyButton, PrimaryButton } from '@/app/components/ui/primitives/button';
+import { IconOnlyButton, PrimaryButton } from '@/app/components/ui/primitives';
 import { BUILDIN_TOOLS } from '@/llm-tools';
 import {
   getToolConditionSource,
@@ -290,7 +290,10 @@ const ConfigureAssistantTool: FC<{ assistantId: string }> = ({
                         ? toHumanReadableDateTime(itm.getCreateddate()!)
                         : '—'}
                     </TableCell>
-                    <TableCell className="text-sm" onClick={e => e.stopPropagation()}>
+                    <TableCell
+                      className="text-sm"
+                      onClick={e => e.stopPropagation()}
+                    >
                       <div className="flex items-center gap-0">
                         <Button
                           hasIconOnly

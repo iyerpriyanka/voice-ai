@@ -9,9 +9,9 @@ import { useRapidaStore } from '@/hooks';
 import { ServiceError } from '@rapidaai/react';
 import { AuthContext } from '@/context/auth-context';
 import { connectionConfig } from '@/configs';
-import { Stack, TextInput } from '@/app/components/ui/primitives/form';
-import { PrimaryButton } from '@/app/components/ui/primitives/button';
-import { Notification } from '@/app/components/ui/feedback/notification';
+import { Stack, TextInput } from '@/app/components/ui/primitives';
+import { PrimaryButton } from '@/app/components/ui/primitives';
+import { Notification } from '@/app/components/ui/feedback';
 import { ArrowRight } from '@carbon/icons-react';
 import { Select, SelectItem } from '@carbon/react';
 
@@ -37,8 +37,14 @@ export function CreateOrganizationPage() {
       if (org?.getSuccess()) {
         authorize &&
           authorize(
-            () => { hideLoader(); return navigate('/onboarding/project'); },
-            () => { hideLoader(); setError('Please provide valid credentials to sign in.'); },
+            () => {
+              hideLoader();
+              return navigate('/onboarding/project');
+            },
+            () => {
+              hideLoader();
+              setError('Please provide valid credentials to sign in.');
+            },
           );
       } else {
         hideLoader();
@@ -70,7 +76,9 @@ export function CreateOrganizationPage() {
     <>
       <Helmet title="Onboarding: Create an organization" />
       <div className="mb-4">
-        <h1 className="text-xl font-light tracking-tight">Set up your organization</h1>
+        <h1 className="text-xl font-light tracking-tight">
+          Set up your organization
+        </h1>
         <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
           Create the top-level workspace that owns assistants, credentials,
           client programs, and governance settings.
@@ -87,7 +95,9 @@ export function CreateOrganizationPage() {
             defaultValue={`${user?.name}'s Organization`}
             placeholder="eg: Acme Voice Studio"
             helperText="Use your agency, brand, or operating company name."
-            {...register('organizationName', { required: 'Please enter the organization name.' })}
+            {...register('organizationName', {
+              required: 'Please enter the organization name.',
+            })}
           />
           <Select
             id="org-size"
@@ -107,7 +117,9 @@ export function CreateOrganizationPage() {
             required
             placeholder="eg: Agency services, healthcare, finance"
             helperText="Used to suggest integrations and assistant templates for your market."
-            {...register('organizationIndustry', { required: 'Please provide an industry.' })}
+            {...register('organizationIndustry', {
+              required: 'Please provide an industry.',
+            })}
           />
           {formError && (
             <Notification kind="error" title="Error" subtitle={formError} />

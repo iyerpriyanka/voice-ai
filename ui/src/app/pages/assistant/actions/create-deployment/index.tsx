@@ -1,6 +1,6 @@
 import { Helmet } from '@/app/components/app-shell/helmet';
-import { EmptyState } from '@/app/components/ui/feedback/empty-state';
-import { IconOnlyButton } from '@/app/components/ui/primitives/button';
+import { EmptyState } from '@/app/components/ui/feedback';
+import { IconOnlyButton } from '@/app/components/ui/primitives';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import {
@@ -38,20 +38,17 @@ import toast from 'react-hot-toast/headless';
 import { connectionConfig } from '@/configs';
 import { useRapidaStore } from '@/hooks';
 import { toHumanReadableDateTime } from '@/utils/date';
-import { AssistantPhoneCallDeploymentDialog } from '@/app/components/dialogs/assistant-phone-call-deployment-modal';
-import { AssistantDebugDeploymentDialog } from '@/app/components/dialogs/assistant-debug-deployment-modal';
-import { AssistantWebWidgetlDeploymentDialog } from '@/app/components/dialogs/assistant-web-widget-deployment-modal';
-import { AssistantApiDeploymentDialog } from '@/app/components/dialogs/assistant-api-deployment-modal';
+import { AssistantPhoneCallDeploymentDialog } from '@/app/components/dialogs/assistant';
+import { AssistantDebugDeploymentDialog } from '@/app/components/dialogs/assistant';
+import { AssistantWebWidgetlDeploymentDialog } from '@/app/components/dialogs/assistant';
+import { AssistantApiDeploymentDialog } from '@/app/components/dialogs/assistant';
 import {
   AssistantDeploymentType,
   AssistantDeploymentVersionsModal,
-} from '@/app/components/dialogs/assistant-deployment-versions-modal';
+} from '@/app/components/dialogs/assistant';
 import SourceIndicator from '@/app/components/domain/indicators/source';
-import { RecordStatusIndicator } from '@/app/components/ui/feedback/record-status-indicator';
-import {
-  OverflowMenu,
-  OverflowMenuItem,
-} from '@/app/components/ui/primitives/overflow-menu';
+import { RecordStatusIndicator } from '@/app/components/ui/feedback';
+import { OverflowMenu, OverflowMenuItem } from '@/app/components/ui/primitives';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -426,7 +423,6 @@ export const ConfigureAssistantDeploymentPage = () => {
             <>
               <TableBatchAction
                 renderIcon={Edit}
-                kind="ghost"
                 onClick={() => {
                   selectedDeployment.onEdit();
                   setSelectedDeploymentType(null);

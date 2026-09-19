@@ -35,10 +35,13 @@ jest.mock('@/app/components/app-shell/helmet', () => ({
   Helmet: ({ title }: any) => <div data-testid="helmet">{title}</div>,
 }));
 
-jest.mock('@/app/components/dialogs/how-knowledge-works-modal', () => ({
-  HowKnowledgeWorksDialog: ({ modalOpen }: any) =>
-    modalOpen ? <div data-testid="how-knowledge-works-dialog" /> : null,
-}));
+jest.mock(
+  '@/app/components/dialogs/knowledge/how-knowledge-works-modal',
+  () => ({
+    HowKnowledgeWorksDialog: ({ modalOpen }: any) =>
+      modalOpen ? <div data-testid="how-knowledge-works-dialog" /> : null,
+  }),
+);
 
 jest.mock('@/app/components/domain/cards/knowledge-card', () => ({
   ClickableKnowledgeCard: ({ knowledge }: any) => (

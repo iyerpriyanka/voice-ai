@@ -1,6 +1,6 @@
 import { KnowledgeConnect } from '@rapidaai/react';
 import { FC } from 'react';
-import { PageLoader } from '@/app/components/ui/feedback/loaders/page-loader';
+import { PageLoader } from '@/app/components/ui/feedback';
 import { useOAuthCallback } from '@/hooks/use-oauth-callback';
 
 export const ConnectConfluencePage: FC = () => {

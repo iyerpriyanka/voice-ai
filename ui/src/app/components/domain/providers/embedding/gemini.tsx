@@ -1,5 +1,5 @@
 import { Metadata } from '@rapidaai/react';
-import { Dropdown } from '@/app/components/ui/primitives/listbox-dropdown';
+import { ListboxDropdown as Dropdown } from '@/app/components/ui/primitives';
 import { GEMINI_EMBEDDING_MODEL } from '@/providers';
 
 export const ConfigureGeminiEmbeddingModel: React.FC<{

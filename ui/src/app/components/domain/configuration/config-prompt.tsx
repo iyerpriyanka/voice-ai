@@ -5,13 +5,13 @@ import {
   MAX_PROMPT_MESSAGE_LENGTH,
   SUPPORTED_PROMPT_VARIABLE_TYPE,
 } from '@/configs';
-import { TertiaryButton } from '@/app/components/ui/primitives/button';
-import { FormLabel } from '@/app/components/ui/primitives/form-label';
-import { FieldSet } from '@/app/components/ui/primitives/fieldset';
-import { ScalableTextarea } from '@/app/components/ui/primitives/textarea';
+import { TertiaryButton } from '@/app/components/ui/primitives';
+import { FormLabel } from '@/app/components/ui/primitives';
+import { FieldSet } from '@/app/components/ui/primitives';
+import { ScalableTextarea } from '@/app/components/ui/primitives';
 import { getNewVar, getVars } from '@/utils/var';
 import { TypeOfVariable } from '@/app/components/domain/configuration/config-prompt/type-of-variable';
-import { InputHelper } from '@/app/components/ui/primitives/input-helper';
+import { InputHelper } from '@/app/components/ui/primitives';
 import {
   RAPIDA_RESERVED_RUNTIME_VARIABLE_KEYS,
   RAPIDA_RESERVED_RUNTIME_VARIABLES,

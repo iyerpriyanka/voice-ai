@@ -2,9 +2,9 @@ import React, { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
-import { TextInput, TextArea, Stack } from '@/app/components/ui/primitives/form';
-import { InputGroup } from '@/app/components/ui/primitives/input-group';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
+import { TextInput, TextArea, Stack } from '@/app/components/ui/primitives';
+import { InputGroup } from '@/app/components/ui/primitives';
 import {
   ButtonSet,
   Select as CarbonSelect,
@@ -14,7 +14,7 @@ import {
   Tooltip,
 } from '@carbon/react';
 import { Information } from '@carbon/icons-react';
-import { Slider } from '@/app/components/ui/primitives/slider';
+import { Slider } from '@/app/components/ui/primitives';
 import { APiHeader } from '@/app/components/domain/external-api/api-header';
 import {
   GetAssistantConfiguration,
@@ -27,7 +27,7 @@ import { useCurrentCredential } from '@/hooks/use-credential';
 import toast from 'react-hot-toast/headless';
 import { useRapidaStore } from '@/hooks';
 import { connectionConfig } from '@/configs';
-import { TabForm } from '@/app/components/ui/composites/tab-form';
+import { TabForm } from '@/app/components/ui/composites';
 import { WebhookEventSelector } from './webhook-event-selector';
 import { WebhookEventGroup, webhookEvents } from './webhook-events';
 

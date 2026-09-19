@@ -40,19 +40,24 @@ jest.mock('@/app/components/app-shell/helmet', () => ({
   Helmet: ({ title }: any) => <div data-testid="helmet">{title}</div>,
 }));
 
-jest.mock('@/app/components/dialogs/create-knowledge-document-modal', () => ({
-  CreateKnowledgeDocumentDialog: ({ knowledgeId, modalOpen }: any) =>
-    modalOpen ? (
-      <div data-testid="create-document-dialog">{knowledgeId}</div>
-    ) : null,
-}));
+jest.mock(
+  '@/app/components/dialogs/knowledge/create-knowledge-document-modal',
+  () => ({
+    CreateKnowledgeDocumentDialog: ({ knowledgeId, modalOpen }: any) =>
+      modalOpen ? (
+        <div data-testid="create-document-dialog">{knowledgeId}</div>
+      ) : null,
+  }),
+);
 
-jest.mock('@/app/components/dialogs/create-tag-modal', () => ({
+jest.mock('@/app/components/dialogs/shared/create-tag-modal', () => ({
   CreateTagDialog: () => <div data-testid="create-tag-dialog" />,
 }));
 
-jest.mock('@/app/components/dialogs/update-description-modal', () => ({
-  UpdateDescriptionDialog: () => <div data-testid="update-description-dialog" />,
+jest.mock('@/app/components/dialogs/shared/update-description-modal', () => ({
+  UpdateDescriptionDialog: () => (
+    <div data-testid="update-description-dialog" />
+  ),
 }));
 
 jest.mock('@/app/components/layout/blocks/page-header-block', () => ({

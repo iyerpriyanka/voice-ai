@@ -47,10 +47,14 @@ jest.mock('@/app/components/app-shell/helmet', () => ({
 jest.mock('@/app/components/ui/primitives/form', () => ({
   Stack: ({ children }: any) => <div>{children}</div>,
   TextInput: require('react').forwardRef(
-    ({ labelText, helperText, ...props }: any, ref: any) => <input ref={ref} {...props} />,
+    ({ labelText, helperText, ...props }: any, ref: any) => (
+      <input ref={ref} {...props} />
+    ),
   ),
   TextArea: require('react').forwardRef(
-    ({ labelText, helperText, ...props }: any, ref: any) => <textarea ref={ref} {...props} />,
+    ({ labelText, helperText, ...props }: any, ref: any) => (
+      <textarea ref={ref} {...props} />
+    ),
   ),
 }));
 
@@ -91,9 +95,12 @@ describe('CreateProjectPage', () => {
 
     renderWithAuth(authorize);
 
-    fireEvent.change(screen.getByPlaceholderText('eg: Acme Support Operations'), {
-      target: { value: 'Support Bot' },
-    });
+    fireEvent.change(
+      screen.getByPlaceholderText('eg: Acme Support Operations'),
+      {
+        target: { value: 'Support Bot' },
+      },
+    );
     fireEvent.change(
       screen.getByPlaceholderText(
         'eg: White-label inbound voice agents for healthcare support across US and UK',
@@ -121,13 +128,18 @@ describe('CreateProjectPage', () => {
 
     renderWithAuth();
 
-    fireEvent.change(screen.getByPlaceholderText('eg: Acme Support Operations'), {
-      target: { value: 'Support Bot' },
-    });
+    fireEvent.change(
+      screen.getByPlaceholderText('eg: Acme Support Operations'),
+      {
+        target: { value: 'Support Bot' },
+      },
+    );
     fireEvent.click(screen.getByRole('button', { name: 'Go to dashboard' }));
 
     expect(
-      await screen.findByText('Unable to process your request. Please try again later.'),
+      await screen.findByText(
+        'Unable to process your request. Please try again later.',
+      ),
     ).toBeInTheDocument();
   });
 
@@ -140,13 +152,18 @@ describe('CreateProjectPage', () => {
 
     renderWithAuth();
 
-    fireEvent.change(screen.getByPlaceholderText('eg: Acme Support Operations'), {
-      target: { value: 'Support Bot' },
-    });
+    fireEvent.change(
+      screen.getByPlaceholderText('eg: Acme Support Operations'),
+      {
+        target: { value: 'Support Bot' },
+      },
+    );
     fireEvent.click(screen.getByRole('button', { name: 'Go to dashboard' }));
 
     expect(
-      await screen.findByText('Unable to create project. Please check the details.'),
+      await screen.findByText(
+        'Unable to create project. Please check the details.',
+      ),
     ).toBeInTheDocument();
   });
 });

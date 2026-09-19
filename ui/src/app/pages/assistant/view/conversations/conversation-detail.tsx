@@ -14,7 +14,7 @@ import { useParams } from 'react-router-dom';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { AssistantConversation } from '@rapidaai/react';
 import { useRapidaStore } from '@/hooks';
-import { PageLoader } from '@/app/components/ui/feedback/loaders/page-loader';
+import { PageLoader } from '@/app/components/ui/feedback';
 import {
   ArrowLeft,
   Renew,
@@ -23,19 +23,19 @@ import {
   ChartLine,
 } from '@carbon/icons-react';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { GhostButton } from '@/app/components/ui/primitives/button';
+import { GhostButton } from '@/app/components/ui/primitives';
 import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
-import { Table } from '@/app/components/ui/table/table';
-import { TableHead } from '@/app/components/ui/table/table-head';
-import { TableBody } from '@/app/components/ui/table/table-body';
-import { TableRow } from '@/app/components/ui/table/table-row';
-import { TableCell } from '@/app/components/ui/table/table-cell';
-import { EmptyState } from '@/app/components/ui/feedback/empty-state';
+import { Table } from '@/app/components/ui/table';
+import { TableHead } from '@/app/components/ui/table';
+import { TableBody } from '@/app/components/ui/table';
+import { TableRow } from '@/app/components/ui/table';
+import { TableCell } from '@/app/components/ui/table';
+import { EmptyState } from '@/app/components/ui/feedback';
 import { connectionConfig } from '@/configs';
 import { cn } from '@/utils';
-import { CarbonStatusIndicator } from '@/app/components/ui/feedback/status-indicator';
+import { CarbonStatusIndicator } from '@/app/components/ui/feedback';
 import { getStatusMetric } from '@/utils/metadata';
-import { Tabs } from '@/app/components/ui/primitives/tabs';
+import { Tabs } from '@/app/components/ui/primitives';
 
 // ── Tab definitions ───────────────────────────────────────────────────────────
 

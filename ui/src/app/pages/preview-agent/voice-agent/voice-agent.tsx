@@ -13,18 +13,15 @@ import { ConversationMessages } from '@/app/pages/preview-agent/voice-agent/text
 import { cn } from '@/utils';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import { InputVarType } from '@/models/common';
-import {
-  Notification,
-  LinkNotification,
-} from '@/app/components/ui/feedback/notification';
-import { GhostButton, IconOnlyButton } from '@/app/components/ui/primitives/button';
-import { EmptyState } from '@/app/components/ui/feedback/empty-state';
+import { Notification, LinkNotification } from '@/app/components/ui/feedback';
+import { GhostButton, IconOnlyButton } from '@/app/components/ui/primitives';
+import { EmptyState } from '@/app/components/ui/feedback';
 import { Activity, Copy, FilterRemove } from '@carbon/icons-react';
 import { DismissibleTag, Tag } from '@carbon/react';
-import { Tabs } from '@/app/components/ui/primitives/tabs';
-import { Text } from '@/app/components/ui/primitives/text';
+import { Tabs } from '@/app/components/ui/primitives';
+import { Text } from '@/app/components/ui/primitives';
 import { ArrowLeft } from '@carbon/icons-react';
-import { TextArea } from '@/app/components/ui/primitives/form';
+import { TextArea } from '@/app/components/ui/primitives';
 import { PreviewAgentHeader } from './preview-agent-header';
 
 export { PreviewAgentHeader } from './preview-agent-header';
@@ -613,9 +610,9 @@ export const VoiceAgentDebugger: FC<{
   const metricCount = Object.keys(metrics).length;
 
   const deployment = assistant
-    ? ((debug
+    ? (debug
         ? assistant.getDebuggerdeployment()
-        : assistant.getApideployment()) ?? null)
+        : assistant.getApideployment()) ?? null
     : null;
   const stt = deployment?.getInputaudio() ?? null;
   const tts = deployment?.getOutputaudio() ?? null;

@@ -397,6 +397,14 @@ describe('CreateAssistantAuthenticationPage', () => {
     );
   };
 
+  const clickSaveAuthentication = async () => {
+    const saveButton = screen.getByRole('button', {
+      name: 'Save authentication',
+    });
+    fireEvent.click(saveButton);
+    await waitFor(() => expect(saveButton).not.toBeDisabled());
+  };
+
   it('keeps save enabled and validates on click', async () => {
     render(<CreateAssistantAuthenticationPage />);
     await waitUntilReady();
@@ -469,9 +477,7 @@ describe('CreateAssistantAuthenticationPage', () => {
       target: { value: 'providerCallIdValue' },
     });
 
-    fireEvent.click(
-      screen.getByRole('button', { name: 'Save authentication' }),
-    );
+    await clickSaveAuthentication();
 
     await waitFor(() =>
       expect(CreateAssistantConfiguration).toHaveBeenCalledTimes(1),
@@ -504,9 +510,7 @@ describe('CreateAssistantAuthenticationPage', () => {
 
     render(<UpdateAssistantAuthenticationPage />);
     await waitUntilReady();
-    fireEvent.click(
-      screen.getByRole('button', { name: 'Save authentication' }),
-    );
+    await clickSaveAuthentication();
 
     await waitFor(() =>
       expect(UpdateAssistantConfiguration).toHaveBeenCalledTimes(1),
@@ -532,9 +536,7 @@ describe('CreateAssistantAuthenticationPage', () => {
     fireEvent.change(screen.getByTestId('assistant-auth-endpoint'), {
       target: { value: 'https://auth.example.com/resolve' },
     });
-    fireEvent.click(
-      screen.getByRole('button', { name: 'Save authentication' }),
-    );
+    await clickSaveAuthentication();
 
     await waitFor(() =>
       expect(CreateAssistantConfiguration).toHaveBeenCalledTimes(1),
@@ -593,9 +595,7 @@ describe('CreateAssistantAuthenticationPage', () => {
     fireEvent.change(screen.getByTestId('assistant-auth-fail-behavior'), {
       target: { value: 'do_nothing' },
     });
-    fireEvent.click(
-      screen.getByRole('button', { name: 'Save authentication' }),
-    );
+    await clickSaveAuthentication();
 
     await waitFor(() =>
       expect(CreateAssistantConfiguration).toHaveBeenCalledTimes(1),
@@ -663,9 +663,7 @@ describe('CreateAssistantAuthenticationPage', () => {
     fireEvent.change(screen.getByTestId('assistant-auth-endpoint'), {
       target: { value: 'https://auth.example.com/resolve' },
     });
-    fireEvent.click(
-      screen.getByRole('button', { name: 'Save authentication' }),
-    );
+    await clickSaveAuthentication();
 
     await waitFor(() =>
       expect(UpdateAssistantConfiguration).toHaveBeenCalledTimes(1),

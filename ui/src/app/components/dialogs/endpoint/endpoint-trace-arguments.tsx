@@ -1,0 +1,43 @@
+import { Argument } from '@rapidaai/react';
+import { Table } from '@/app/components/ui/table';
+import { TableBody } from '@/app/components/ui/table';
+import { TableCell } from '@/app/components/ui/table';
+import { TableHead } from '@/app/components/ui/table';
+import { TableRow } from '@/app/components/ui/table';
+import { FC } from 'react';
+import { EmptyState } from '@/app/components/ui/feedback';
+import { DataCheck } from '@carbon/icons-react';
+
+export const EndpointArguments: FC<{ args: Array<Argument> }> = ({ args }) => {
+  if (args.length <= 0)
+    return (
+      <EmptyState
+        className="h-full min-h-[420px]"
+        icon={DataCheck}
+        title="No arguments found"
+        subtitle="No runtime arguments were recorded for this trace."
+      />
+    );
+  return (
+    <Table className="w-full">
+      <TableHead
+        columns={[
+          { name: 'Name', key: 'Name' },
+          { name: 'Value', key: 'Value' },
+        ]}
+      />
+      <TableBody>
+        {args.map((ar, index) => {
+          return (
+            <TableRow key={index}>
+              <TableCell>{ar.getName()}</TableCell>
+              <TableCell className="break-words break-all">
+                {ar.getValue()}
+              </TableCell>
+            </TableRow>
+          );
+        })}
+      </TableBody>
+    </Table>
+  );
+};

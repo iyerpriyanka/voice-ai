@@ -42,7 +42,7 @@ export const Toast = () => {
   );
 };
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// Types
 
 type ToastKind =
   | 'info'
@@ -52,7 +52,7 @@ type ToastKind =
   | 'info-square'
   | 'warning-alt';
 
-// ─── Toast Notification ─────────────────────────────────────────────────────
+// Toast Notification
 
 export interface ToastNotificationProps {
   kind?: ToastKind;

@@ -1,5 +1,5 @@
-import { TableCell } from '@/app/components/ui/table/table-cell';
-import { TableRow } from '@/app/components/ui/table/table-row';
+import { TableCell } from './table-cell';
+import { TableRow } from './table-row';
 import { InputCheckbox } from '@/app/components/ui/primitives/input-checkbox';
 import {
   useState,
@@ -38,7 +38,7 @@ export const ScrollableResizableTable: FC<ScrollableResizableTableProps> = ({
       clms.map(x => ({
         name: x.name,
         key: x.key,
-        width: 200,
+        width: x.width ?? 200,
       })),
     );
   }, [clms]);
@@ -55,10 +55,12 @@ export const ScrollableResizableTable: FC<ScrollableResizableTableProps> = ({
     updateTableWidth();
   }, [columns]);
 
-  const handleResize = useCallback((index, newWidth) => {
-    setColumns(prevColumns =>
-      prevColumns.map((column, i) =>
-        i === index ? { ...column, width: Math.max(100, newWidth) } : column,
+  const handleResize = useCallback((index: number, newWidth: number) => {
+    setColumns(previousColumns =>
+      previousColumns.map((column, columnIndex) =>
+        columnIndex === index
+          ? { ...column, width: Math.max(100, newWidth) }
+          : column,
       ),
     );
   }, []);

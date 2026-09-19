@@ -13,7 +13,7 @@ import type {
   ReactNode,
 } from 'react';
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// Types
 
 type ButtonKind =
   | 'primary'
@@ -57,7 +57,7 @@ interface ButtonSkeletonProps {
   href?: string;
 }
 
-// ─── Internal helper ─────────────────────────────────────────────────────────
+// Internal helper
 
 function CarbonBtn({
   kind,
@@ -99,56 +99,56 @@ function CarbonBtn({
   );
 }
 
-// ─── Default / Primary ───────────────────────────────────────────────────────
+// Default / Primary
 
 /** Carbon Primary button: the main CTA on a page. */
 export function PrimaryButton(props: CarbonButtonProps) {
   return <CarbonBtn kind="primary" {...props} />;
 }
 
-// ─── Secondary ───────────────────────────────────────────────────────────────
+// Secondary
 
 /** Carbon Secondary button: pairs with Primary as a less prominent action. */
 export function SecondaryButton(props: CarbonButtonProps) {
   return <CarbonBtn kind="secondary" {...props} />;
 }
 
-// ─── Tertiary ────────────────────────────────────────────────────────────────
+// Tertiary
 
 /** Carbon Tertiary button: bordered, transparent bg, fills on hover. */
 export function TertiaryButton(props: CarbonButtonProps) {
   return <CarbonBtn kind="tertiary" {...props} />;
 }
 
-// ─── Ghost ───────────────────────────────────────────────────────────────────
+// Ghost
 
 /** Carbon Ghost button: no border or bg, text only. Low emphasis actions. */
 export function GhostButton(props: CarbonButtonProps) {
   return <CarbonBtn kind="ghost" {...props} />;
 }
 
-// ─── Danger ──────────────────────────────────────────────────────────────────
+// Danger
 
 /** Carbon Danger button: red filled. Destructive/irreversible actions. */
 export function DangerButton(props: CarbonButtonProps) {
   return <CarbonBtn kind="danger" {...props} />;
 }
 
-// ─── Danger Tertiary ─────────────────────────────────────────────────────────
+// Danger Tertiary
 
 /** Carbon Danger Tertiary: red bordered, transparent bg, fills red on hover. */
 export function DangerTertiaryButton(props: CarbonButtonProps) {
   return <CarbonBtn kind="danger--tertiary" {...props} />;
 }
 
-// ─── Danger Ghost ────────────────────────────────────────────────────────────
+// Danger Ghost
 
 /** Carbon Danger Ghost: red text only, no border or bg. */
 export function DangerGhostButton(props: CarbonButtonProps) {
   return <CarbonBtn kind="danger--ghost" {...props} />;
 }
 
-// ─── Icon Button ─────────────────────────────────────────────────────────────
+// Icon Button
 
 /** Carbon Icon-only button: square button with just an icon. */
 export function IconOnlyButton({
@@ -189,7 +189,7 @@ export function IconOnlyButton({
   );
 }
 
-// ─── Icon Button With Badge ──────────────────────────────────────────────────
+// Icon Button With Badge
 
 /** Carbon Icon button with a notification badge count overlay. */
 export function IconButtonWithBadge({
@@ -243,7 +243,7 @@ export function IconButtonWithBadge({
   );
 }
 
-// ─── Labeled Icon Button ─────────────────────────────────────────────────────
+// Labeled Icon Button
 
 /** Carbon button with a leading icon and a text label. */
 export function LabeledIconButton({
@@ -274,7 +274,7 @@ export function LabeledIconButton({
   );
 }
 
-// ─── Skeleton ────────────────────────────────────────────────────────────────
+// Skeleton
 
 /** Carbon ButtonSkeleton: placeholder shimmer while content loads. */
 export function ButtonSkeleton({

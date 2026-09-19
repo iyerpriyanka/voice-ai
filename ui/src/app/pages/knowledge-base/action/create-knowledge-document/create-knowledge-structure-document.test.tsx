@@ -36,9 +36,12 @@ jest.mock('@/app/components/layout/blocks/section-divider', () => ({
   SectionDivider: ({ label }: any) => <h2>{label}</h2>,
 }));
 
-jest.mock('@/app/components/layout/container/message/notice-block/doc-notice-block', () => ({
-  DocNoticeBlock: ({ children }: any) => <aside>{children}</aside>,
-}));
+jest.mock(
+  '@/app/components/layout/container/message/notice-block/doc-notice-block',
+  () => ({
+    DocNoticeBlock: ({ children }: any) => <aside>{children}</aside>,
+  }),
+);
 
 jest.mock('@/app/components/ui/primitives/button', () => ({
   PrimaryButton: ({
@@ -152,7 +155,9 @@ describe('CreateKnowledgeStructureDocumentPage', () => {
   it('blocks upload until a structured document type is selected', () => {
     render(<CreateKnowledgeStructureDocumentPage />);
 
-    fireEvent.click(screen.getByRole('button', { name: /upload new document/i }));
+    fireEvent.click(
+      screen.getByRole('button', { name: /upload new document/i }),
+    );
 
     expect(screen.getByRole('alert')).toHaveTextContent(
       'Please select document type of the file and try again.',
@@ -166,7 +171,9 @@ describe('CreateKnowledgeStructureDocumentPage', () => {
 
     render(<CreateKnowledgeStructureDocumentPage />);
 
-    expect(screen.getByText('Please check the url and try again.')).toBeInTheDocument();
+    expect(
+      screen.getByText('Please check the url and try again.'),
+    ).toBeInTheDocument();
     expect(screen.queryByTestId('arrow-left-icon')).not.toBeInTheDocument();
   });
 });

@@ -2,7 +2,7 @@ import type { FC, ReactNode } from 'react';
 import { SkeletonText } from '@carbon/react';
 import { cn } from '@/utils';
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// Types
 
 export interface CarbonTextProps {
   children: ReactNode;

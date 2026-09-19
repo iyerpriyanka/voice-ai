@@ -1,5 +1,5 @@
 import { lazyLoad } from '@/utils/loadable';
-import { LineLoader } from '@/app/components/ui/feedback/loaders/line-loader';
+import { LineLoader } from '@/app/components/ui/feedback';
 
 export const KnowledgePage = lazyLoad(
   () => import('./listing'),

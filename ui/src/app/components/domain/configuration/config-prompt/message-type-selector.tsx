@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import React from 'react';
 import cn from 'classnames';
 import { PromptRole } from '@/models/prompt';
-import { Dropdown } from '@/app/components/ui/primitives/listbox-dropdown';
+import { ListboxDropdown as Dropdown } from '@/app/components/ui/primitives';
 type Props = {
   value?: PromptRole;
   onChange: (value: PromptRole) => void;

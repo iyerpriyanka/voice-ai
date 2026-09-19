@@ -6,7 +6,7 @@ import {
 } from '@carbon/react';
 import { cn } from '@/utils';
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// Types
 
 export interface BreadcrumbItemData {
   label: ReactNode;
@@ -22,7 +22,7 @@ export interface CarbonBreadcrumbProps {
   isLoading?: boolean;
 }
 
-// ─── Breadcrumb ──────────────────────────────────────────────────────────────
+// Breadcrumb
 
 /** Carbon Breadcrumb: renders items or a skeleton placeholder when loading. */
 export const Breadcrumb: FC<CarbonBreadcrumbProps> = ({

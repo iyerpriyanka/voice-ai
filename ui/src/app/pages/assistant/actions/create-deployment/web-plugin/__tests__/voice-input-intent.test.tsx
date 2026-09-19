@@ -160,9 +160,12 @@ jest.mock('@/hooks/use-global-navigator', () => ({
 }));
 
 jest.mock('@/app/components/app-shell/helmet', () => ({ Helmet: () => null }));
-jest.mock('@/app/components/dialogs/assistant-instruction-modal', () => ({
-  AssistantWebwidgetDeploymentDialog: () => null,
-}));
+jest.mock(
+  '@/app/components/dialogs/assistant/assistant-instruction-modal',
+  () => ({
+    AssistantWebwidgetDeploymentDialog: () => null,
+  }),
+);
 jest.mock('@/app/components/ui/primitives/card', () => ({
   BaseCard: ({ children }: any) => <div>{children}</div>,
 }));

@@ -26,10 +26,10 @@ describe('authentication/index lazy wiring', () => {
     const importers = calls.map(call => call[0] as () => Promise<unknown>);
     const selectors = calls.map(call => call[1] as (module: any) => any);
 
-    expect(importers[0].toString()).toContain("./sign-up");
-    expect(importers[1].toString()).toContain("./sign-in");
-    expect(importers[2].toString()).toContain("./forgot-password");
-    expect(importers[3].toString()).toContain("./change-password");
+    expect(importers[0].toString()).toContain('./sign-up');
+    expect(importers[1].toString()).toContain('./sign-in');
+    expect(importers[2].toString()).toContain('./forgot-password');
+    expect(importers[3].toString()).toContain('./change-password');
 
     expect(selectors[0]({ SignUpPage: 'signup' })).toBe('signup');
     expect(selectors[1]({ SignInPage: 'signin' })).toBe('signin');

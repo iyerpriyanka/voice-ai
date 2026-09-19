@@ -5,9 +5,9 @@ import SourceIndicator from '@/app/components/domain/indicators/source';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { Launch, Rocket, SourceControl, View } from '@carbon/icons-react';
 import { Link, TableRow, TableCell, Tag } from '@carbon/react';
-import { RecordStatusIndicator } from '@/app/components/ui/feedback/record-status-indicator';
-import { IconOnlyButton } from '@/app/components/ui/primitives/button';
-import { CopyButton } from '@/app/components/ui/primitives/buttons/copy-button';
+import { RecordStatusIndicator } from '@/app/components/ui/feedback';
+import { IconOnlyButton } from '@/app/components/ui/primitives';
+import { CopyButton } from '@/app/components/ui/primitives';
 import { VersionIndicator } from '@/app/components/domain/indicators/version';
 
 const SingleAssistant: FC<{ assistant: Assistant }> = ({ assistant }) => {
@@ -150,9 +150,9 @@ const SingleAssistant: FC<{ assistant: Assistant }> = ({ assistant }) => {
 const hasAssistantDeployment = (assistant: Assistant): boolean =>
   Boolean(
     assistant.getApideployment() ||
-    assistant.getDebuggerdeployment() ||
-    assistant.getWebplugindeployment() ||
-    assistant.getPhonedeployment(),
+      assistant.getDebuggerdeployment() ||
+      assistant.getWebplugindeployment() ||
+      assistant.getPhonedeployment(),
   );
 
 const formatProvider = (assistant: Assistant): string => {

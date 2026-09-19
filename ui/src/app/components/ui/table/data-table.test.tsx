@@ -50,4 +50,24 @@ describe('ScrollableResizableTable', () => {
 
     expect(ontoggle).toHaveBeenCalledWith(true);
   });
+
+  it('uses configured column widths instead of the default width', () => {
+    render(
+      <ScrollableResizableTable
+        clms={[
+          { name: 'Name', key: 'name', width: 320 },
+          { name: 'Status', key: 'status' },
+        ]}
+        ontoggle={jest.fn()}
+      >
+        <tr>
+          <td>Assistant</td>
+          <td>Ready</td>
+        </tr>
+      </ScrollableResizableTable>,
+    );
+
+    expect(screen.getByText('Name')).toHaveStyle({ width: '320px' });
+    expect(screen.getByText('Status')).toHaveStyle({ width: '200px' });
+  });
 });

@@ -42,14 +42,17 @@ jest.mock('@/providers', () => ({
   allProvider: () => mockAllProvider(),
 }));
 
-jest.mock('@/app/components/dialogs/create-provider-credential-modal', () => ({
-  CreateProviderCredentialDialog: (props: any) => {
-    mockCreateProviderCredentialDialog(props);
-    return props.modalOpen ? (
-      <div data-testid="create-provider-credential-modal" />
-    ) : null;
-  },
-}));
+jest.mock(
+  '@/app/components/dialogs/provider/create-provider-credential-modal',
+  () => ({
+    CreateProviderCredentialDialog: (props: any) => {
+      mockCreateProviderCredentialDialog(props);
+      return props.modalOpen ? (
+        <div data-testid="create-provider-credential-modal" />
+      ) : null;
+    },
+  }),
+);
 
 jest.mock('@/app/components/ui/primitives/dropdown', () => ({
   Dropdown: ({

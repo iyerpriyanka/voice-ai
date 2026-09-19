@@ -96,7 +96,9 @@ describe('ChangePasswordPage', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Change Password' }));
 
     expect(
-      await screen.findByText('Passwords entered do not match, please check and try again.'),
+      await screen.findByText(
+        'Passwords entered do not match, please check and try again.',
+      ),
     ).toBeInTheDocument();
     expect(CreatePassword).not.toHaveBeenCalled();
   });
@@ -146,7 +148,9 @@ describe('ChangePasswordPage', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Change Password' }));
 
     expect(
-      await screen.findByText('Unable to process your request. Please try again later.'),
+      await screen.findByText(
+        'Unable to process your request. Please try again later.',
+      ),
     ).toBeInTheDocument();
     expect(mockHideLoader).toHaveBeenCalled();
   });
@@ -197,7 +201,9 @@ describe('ChangePasswordPage', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Change Password' }));
 
     expect(
-      await screen.findByText('Unable to process your request. Please try again later.'),
+      await screen.findByText(
+        'Unable to process your request. Please try again later.',
+      ),
     ).toBeInTheDocument();
   });
 });

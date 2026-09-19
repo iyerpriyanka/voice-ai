@@ -1,7 +1,7 @@
 import React from 'react';
 import { Metadata } from '@rapidaai/react';
 import { Select as CarbonSelect, SelectItem } from '@carbon/react';
-import { FormLabel } from '@/app/components/ui/primitives/form-label';
+import { FormLabel } from '@/app/components/ui/primitives';
 import { HelpToggletip } from '@/app/components/domain/providers/help-label';
 
 export const MICROPHONE_BARGE_IN_TRIGGER_KEY = 'microphone.barge_in_trigger';

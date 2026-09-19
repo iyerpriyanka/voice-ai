@@ -10,10 +10,10 @@ import {
 import { PageTitleWithCount } from '@/app/components/layout/blocks/page-title-with-count';
 import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
 import { useToolActivityLogPage } from '@/hooks/use-tool-activity-log-page-store';
-import { ToolLogDialog } from '@/app/components/dialogs/tool-log-modal';
-import { CarbonStatusIndicator } from '@/app/components/ui/feedback/status-indicator';
-import { Pagination } from '@/app/components/ui/primitives/pagination';
-import { IconOnlyButton } from '@/app/components/ui/primitives/button';
+import { ToolLogDialog } from '@/app/components/dialogs/activity';
+import { CarbonStatusIndicator } from '@/app/components/ui/feedback';
+import { Pagination } from '@/app/components/ui/primitives';
+import { IconOnlyButton } from '@/app/components/ui/primitives';
 
 import {
   Table,
@@ -28,7 +28,7 @@ import {
   Link,
 } from '@carbon/react';
 import { Renew, View, Launch, ToolKit } from '@carbon/icons-react';
-import { EmptyState } from '@/app/components/ui/feedback/empty-state';
+import { EmptyState } from '@/app/components/ui/feedback';
 import { ScrollableTableSection } from '@/app/components/layout/sections/table-section';
 import { ToolLogQuerySearch } from './tool-query-search';
 

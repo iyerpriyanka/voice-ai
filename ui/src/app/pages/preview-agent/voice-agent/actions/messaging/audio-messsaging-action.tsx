@@ -8,7 +8,7 @@ import {
   Chat,
   StopFilledAlt,
 } from '@carbon/icons-react';
-import { GhostButton } from '@/app/components/ui/primitives/button';
+import { GhostButton } from '@/app/components/ui/primitives';
 import {
   useConnectAgent,
   MultibandAudioVisualizerComponent,
@@ -156,9 +156,7 @@ export const AudioMessagingAction: FC<AudioMessagingActionProps> = ({
                             </span>
                           </div>
                           {isActive && (
-                            <Checkmark
-                              className="w-4 h-4 shrink-0 text-white"
-                            />
+                            <Checkmark className="w-4 h-4 shrink-0 text-white" />
                           )}
                         </button>
                       );

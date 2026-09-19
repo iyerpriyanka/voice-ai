@@ -36,7 +36,7 @@ jest.mock('@/app/components/ui/primitives/floating-tooltip', () => ({
   Tooltip: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-jest.mock('@/app/components/dialogs/message-feedback-modal', () => ({
+jest.mock('@/app/components/dialogs/shared/message-feedback-modal', () => ({
   MessageFeedbackDialog: () => null,
 }));
 

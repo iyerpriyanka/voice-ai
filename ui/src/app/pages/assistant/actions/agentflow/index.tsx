@@ -32,17 +32,17 @@ import type {
 } from 'reactflow';
 import { Helmet } from '@/app/components/app-shell/helmet';
 import { ConfigPrompt } from '@/app/components/domain/configuration/config-prompt';
-import { FormLabel } from '@/app/components/ui/primitives/form-label';
-import { TagInput } from '@/app/components/ui/composites/tag-input';
+import { FormLabel } from '@/app/components/ui/primitives';
+import { TagInput } from '@/app/components/ui/composites';
 import { AssistantTag } from '@/app/components/domain/tags/assistant-tags';
-import { CornerBorderOverlay } from '@/app/components/ui/primitives/corner-border';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
+import { CornerBorderOverlay } from '@/app/components/ui/primitives';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
 import {
   Modal,
   ModalBody,
   ModalFooter,
   ModalHeader,
-} from '@/app/components/ui/primitives/modal';
+} from '@/app/components/ui/primitives';
 import { ReactSortable } from 'react-sortablejs';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
@@ -2492,14 +2492,6 @@ const getNodeHeight = (type: AgentflowNodeType) => {
     return GENERIC_NODE_HEADER_HEIGHT;
   }
 
-  if (type === 'chat-output') {
-    return (
-      GENERIC_NODE_HEADER_HEIGHT +
-      connectorCount * GENERIC_NODE_CONNECTION_ROW_HEIGHT +
-      GENERIC_NODE_BOTTOM_PADDING
-    );
-  }
-
   return (
     GENERIC_NODE_HEADER_HEIGHT +
     GENERIC_NODE_SECTION_TOP +
@@ -2653,11 +2645,11 @@ const AgentflowCanvasNode = ({
   const cardClass = getNodeCardClass(selected, hasValidationError);
   const updateNodeInternals = useUpdateNodeInternals();
   const isActionGenericNode = isActionNodeType(node.type);
+  const isChatOutputNode = (node.type as AgentflowNodeType) === 'chat-output';
   const isAnnotationNode = isAnnotationNodeType(node.type);
-  const isCompactGenericNode =
-    isActionGenericNode || node.type === 'chat-output';
+  const isCompactGenericNode = isActionGenericNode || isChatOutputNode;
   const getGenericConnectorTop = (index: number) => {
-    if (isActionGenericNode || node.type === 'chat-output') {
+    if (isActionGenericNode || isChatOutputNode) {
       return GENERIC_NODE_HEADER_HEIGHT / 2;
     }
 

@@ -159,7 +159,7 @@ jest.mock('@/hooks/use-global-navigator', () => ({
 
 jest.mock('@/app/components/app-shell/helmet', () => ({ Helmet: () => null }));
 jest.mock(
-  '@/app/components/dialogs/debugger-deployment-success-modal',
+  '@/app/components/dialogs/assistant/debugger-deployment-success-modal',
   () => ({
     DebuggerDeploymentSuccessDialog: () => null,
   }),

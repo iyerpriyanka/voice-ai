@@ -1,6 +1,6 @@
 import React, { HTMLAttributes } from 'react';
 import { cn } from '@/utils';
-import { TableCell } from '@/app/components/ui/table/table-cell';
+import { TableCell } from './table-cell';
 
 /**
  *

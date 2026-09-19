@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { cn } from '@/utils';
 import { IconOnlyButton } from '@/app/components/ui/primitives/button';
-import { ColumnPreferencesDialog } from '@/app/components/dialogs/column-preference-modal';
+import { ColumnPreferencesDialog } from '@/app/components/dialogs/shared/column-preference-modal';
 import { SettingsAdjust } from '@carbon/icons-react';
 import { Pagination } from '@/app/components/ui/primitives/pagination';
 

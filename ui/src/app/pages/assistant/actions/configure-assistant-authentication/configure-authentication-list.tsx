@@ -34,12 +34,12 @@ import toast from 'react-hot-toast/headless';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { connectionConfig } from '@/configs';
-import { PrimaryButton, IconOnlyButton } from '@/app/components/ui/primitives/button';
-import { UrlTableCell } from '@/app/components/ui/table/url-table-cell';
-import { SectionLoader } from '@/app/components/ui/feedback/loaders/section-loader';
+import { PrimaryButton, IconOnlyButton } from '@/app/components/ui/primitives';
+import { UrlTableCell } from '@/app/components/ui/table';
+import { SectionLoader } from '@/app/components/ui/feedback';
 import { TableSection } from '@/app/components/layout/sections/table-section';
-import { EmptyState } from '@/app/components/ui/feedback/empty-state';
-import { RecordStatusIndicator } from '@/app/components/ui/feedback/record-status-indicator';
+import { EmptyState } from '@/app/components/ui/feedback';
+import { RecordStatusIndicator } from '@/app/components/ui/feedback';
 import { toHumanReadableDateTime } from '@/utils/date';
 
 import {

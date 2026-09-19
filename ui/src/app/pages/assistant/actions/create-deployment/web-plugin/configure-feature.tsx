@@ -1,6 +1,6 @@
-import { InputCheckbox } from '@/app/components/ui/primitives/input-checkbox';
-import { FormLabel } from '@/app/components/ui/primitives/form-label';
-import { InputHelper } from '@/app/components/ui/primitives/input-helper';
+import { InputCheckbox } from '@/app/components/ui/primitives';
+import { FormLabel } from '@/app/components/ui/primitives';
+import { InputHelper } from '@/app/components/ui/primitives';
 
 export interface FeatureConfig {
   qAListing: boolean;

@@ -1,7 +1,7 @@
 import { VaultCredential } from '@rapidaai/react';
 import { Renew, Add, Information } from '@carbon/icons-react';
 import { FC, useEffect, useState } from 'react';
-import { CreateProviderCredentialDialog } from '@/app/components/dialogs/create-provider-credential-modal';
+import { CreateProviderCredentialDialog } from '@/app/components/dialogs/provider';
 import { useAllProviderCredentials } from '@/hooks/use-model';
 import { useProviderContext } from '@/context/provider-context';
 import { allProvider } from '@/providers';
@@ -11,8 +11,8 @@ import {
   ToggletipButton,
   ToggletipContent,
 } from '@carbon/react';
-import { Dropdown } from '@/app/components/ui/primitives/dropdown';
-import { FormLabel } from '@/app/components/ui/primitives/form-label';
+import { Dropdown } from '@/app/components/ui/primitives';
+import { FormLabel } from '@/app/components/ui/primitives';
 
 interface CredentialDropdownProps {
   className?: string;

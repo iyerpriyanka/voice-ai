@@ -1,11 +1,11 @@
 import {
   QuerySearch,
   parseQuerySearchFilters,
-} from '@/app/components/ui/composites/query-search';
+} from '@/app/components/ui/composites';
 import type {
   QuerySearchField,
   QuerySearchOption,
-} from '@/app/components/ui/composites/query-search';
+} from '@/app/components/ui/composites';
 import { TEXT_PROVIDERS } from '@/providers';
 
 type LLMLogSearchCriteria = {

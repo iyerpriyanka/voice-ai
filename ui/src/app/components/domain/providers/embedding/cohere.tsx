@@ -1,5 +1,5 @@
 import { Metadata } from '@rapidaai/react';
-import { Dropdown } from '@/app/components/ui/primitives/listbox-dropdown';
+import { ListboxDropdown as Dropdown } from '@/app/components/ui/primitives';
 import { COHERE_EMBEDDING_MODEL } from '@/app/components/domain/providers/embedding/cohere/constants';
 
 export const ConfigureCohereEmbeddingModel: React.FC<{

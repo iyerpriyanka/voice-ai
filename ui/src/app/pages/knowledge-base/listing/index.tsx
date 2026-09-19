@@ -2,18 +2,18 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Helmet } from '@/app/components/app-shell/helmet';
 import { useCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/hooks';
-import { TablePagination } from '@/app/components/ui/table/table-pagination';
-import { SearchIconInput } from '@/app/components/ui/composites/icon-input';
+import { TablePagination } from '@/app/components/ui/table';
+import { SearchIconInput } from '@/app/components/ui/composites';
 import { BluredWrapper } from '@/app/components/layout/wrapper/blured-wrapper';
 import toast from 'react-hot-toast/headless';
 import { useKnowledgePageStore } from '@/hooks/use-knowledge-page-store';
 import { Knowledge } from '@rapidaai/react';
-import { PageLoading } from '@/app/components/ui/feedback/loading';
+import { PageLoading } from '@/app/components/ui/feedback';
 import { ClickableKnowledgeCard } from '@/app/components/domain/cards/knowledge-card';
-import { EmptyState } from '@/app/components/ui/feedback/empty-state';
-import { HowKnowledgeWorksDialog } from '@/app/components/dialogs/how-knowledge-works-modal';
+import { EmptyState } from '@/app/components/ui/feedback';
+import { HowKnowledgeWorksDialog } from '@/app/components/dialogs/knowledge';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { GhostButton } from '@/app/components/ui/primitives/button';
+import { GhostButton } from '@/app/components/ui/primitives';
 import { Add, Renew } from '@carbon/icons-react';
 import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
 import { PageTitleBlock } from '@/app/components/layout/blocks/page-title-block';
@@ -120,7 +120,7 @@ export function KnowledgePage() {
       {loading ? (
         <PageLoading className="h-full" />
       ) : knowledgeActions.knowledgeBases &&
-      knowledgeActions.knowledgeBases.length > 0 ? (
+        knowledgeActions.knowledgeBases.length > 0 ? (
         <section className="grid content-start grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 grow shrink-0 m-4">
           {knowledgeActions.knowledgeBases.map((kf, idx) => (
             <ClickableKnowledgeCard key={idx} knowledge={kf} />

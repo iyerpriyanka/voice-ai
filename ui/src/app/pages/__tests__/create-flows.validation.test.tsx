@@ -104,9 +104,13 @@ jest.mock('@rapidaai/react', () => {
     CreateEndpoint: jest.fn(),
     GetEndpoint: jest.fn(),
     CreateEndpointProviderModel: jest.fn(),
-    CreateAssistant: jest.fn(() => Promise.resolve({ getSuccess: () => false })),
+    CreateAssistant: jest.fn(() =>
+      Promise.resolve({ getSuccess: () => false }),
+    ),
     GetAssistant: jest.fn(() => Promise.resolve({ getSuccess: () => false })),
-    CreateAssistantProvider: jest.fn(() => Promise.resolve({ getSuccess: () => false })),
+    CreateAssistantProvider: jest.fn(() =>
+      Promise.resolve({ getSuccess: () => false }),
+    ),
   };
 });
 
@@ -231,24 +235,57 @@ jest.mock('@/app/components/ui/feedback/error-container', () => ({
 
 jest.mock('@/app/components/app-shell/helmet', () => ({ Helmet: () => null }));
 jest.mock('@/app/components/ui/primitives/button', () => ({
-  PrimaryButton: ({ children, isLoading: _, renderIcon: _r, hasIconOnly: _h, iconDescription: _d, ...props }: any) => <button {...props}>{children}</button>,
-  SecondaryButton: ({ children, isLoading: _, renderIcon: _r, hasIconOnly: _h, iconDescription: _d, ...props }: any) => <button {...props}>{children}</button>,
-  GhostButton: ({ children, isLoading: _, renderIcon: _r, hasIconOnly: _h, iconDescription: _d, ...props }: any) => <button {...props}>{children}</button>,
+  PrimaryButton: ({
+    children,
+    isLoading: _,
+    renderIcon: _r,
+    hasIconOnly: _h,
+    iconDescription: _d,
+    ...props
+  }: any) => <button {...props}>{children}</button>,
+  SecondaryButton: ({
+    children,
+    isLoading: _,
+    renderIcon: _r,
+    hasIconOnly: _h,
+    iconDescription: _d,
+    ...props
+  }: any) => <button {...props}>{children}</button>,
+  GhostButton: ({
+    children,
+    isLoading: _,
+    renderIcon: _r,
+    hasIconOnly: _h,
+    iconDescription: _d,
+    ...props
+  }: any) => <button {...props}>{children}</button>,
 }));
 
-jest.mock('@/app/components/dialogs/confirm-ui', () => () => null);
-jest.mock('@/app/components/dialogs/configure-endpoint-prompt-modal', () => ({
-  ConfigureEndpointPromptDialog: () => null,
-}));
-jest.mock('@/app/components/dialogs/assistant-configure-next-modal', () => ({
-  ConfigureAssistantNextDialog: () => null,
-}));
-jest.mock('@/app/components/dialogs/assistant-configure-tool-modal', () => ({
-  ConfigureAssistantToolDialog: () => null,
-}));
-jest.mock('@/app/components/dialogs/configure-assistant-template-modal', () => ({
-  ConfigureAssistantTemplateDialog: () => null,
-}));
+jest.mock('@/app/components/dialogs/shared/confirm-ui', () => () => null);
+jest.mock(
+  '@/app/components/dialogs/endpoint/configure-endpoint-prompt-modal',
+  () => ({
+    ConfigureEndpointPromptDialog: () => null,
+  }),
+);
+jest.mock(
+  '@/app/components/dialogs/assistant/assistant-configure-next-modal',
+  () => ({
+    ConfigureAssistantNextDialog: () => null,
+  }),
+);
+jest.mock(
+  '@/app/components/dialogs/assistant/assistant-configure-tool-modal',
+  () => ({
+    ConfigureAssistantToolDialog: () => null,
+  }),
+);
+jest.mock(
+  '@/app/components/dialogs/assistant/configure-assistant-template-modal',
+  () => ({
+    ConfigureAssistantTemplateDialog: () => null,
+  }),
+);
 
 jest.mock('@carbon/icons-react', () => {
   const actual = jest.requireActual('@carbon/icons-react');
@@ -271,9 +308,12 @@ jest.mock('@carbon/icons-react', () => {
 jest.mock('@/app/components/layout/container/message/notice-block', () => ({
   YellowNoticeBlock: () => null,
 }));
-jest.mock('@/app/components/layout/container/message/notice-block/doc-notice-block', () => ({
-  DocNoticeBlock: ({ children }: any) => <div>{children}</div>,
-}));
+jest.mock(
+  '@/app/components/layout/container/message/notice-block/doc-notice-block',
+  () => ({
+    DocNoticeBlock: ({ children }: any) => <div>{children}</div>,
+  }),
+);
 jest.mock('@/app/components/ui/feedback/empty-state', () => ({
   EmptyState: () => null,
 }));
@@ -286,13 +326,19 @@ jest.mock('@/app/components/ui/primitives/corner-border', () => ({
 }));
 
 jest.mock('@/app/components/ui/primitives/input', () => ({
-  Input: require('react').forwardRef((props: any, ref: any) => <input ref={ref} {...props} />),
+  Input: require('react').forwardRef((props: any, ref: any) => (
+    <input ref={ref} {...props} />
+  )),
 }));
 jest.mock('@/app/components/ui/feedback/error-message', () => ({
   ErrorMessage: ({ message }: any) => (message ? <div>{message}</div> : null),
 }));
-jest.mock('@/app/components/ui/primitives/fieldset', () => ({ FieldSet: ({ children }: any) => <div>{children}</div> }));
-jest.mock('@/app/components/ui/primitives/form-label', () => ({ FormLabel: ({ children }: any) => <label>{children}</label> }));
+jest.mock('@/app/components/ui/primitives/fieldset', () => ({
+  FieldSet: ({ children }: any) => <div>{children}</div>,
+}));
+jest.mock('@/app/components/ui/primitives/form-label', () => ({
+  FormLabel: ({ children }: any) => <label>{children}</label>,
+}));
 
 const getLatestConfigPromptProps = () =>
   mockConfigPrompt.mock.calls[mockConfigPrompt.mock.calls.length - 1]?.[0];
@@ -353,12 +399,16 @@ describe('Requested create/update flow pages', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: 'Send Email' }));
 
-    expect(await screen.findByText(/Thanks! An email was sent/i)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/Thanks! An email was sent/i),
+    ).toBeInTheDocument();
   });
 
   it('create endpoint blocks continue when prompt template variables are missing', () => {
     render(<CreateEndpointPage />);
-    fireEvent.click(screen.getByRole('button', { name: 'Configure instruction' }));
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Configure instruction' }),
+    );
     expect(
       screen.getByText(
         'Please provide a valid prompt template, it should at least have one variable.',
@@ -394,8 +444,12 @@ describe('Requested create/update flow pages', () => {
       screen.getByRole('button', { name: 'Configure instruction' }),
     );
 
-    expect(screen.queryByText('Please define at least one variable.')).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Create endpoint' })).toBeInTheDocument();
+    expect(
+      screen.queryByText('Please define at least one variable.'),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Create endpoint' }),
+    ).toBeInTheDocument();
     expect(screen.getByText('Endpoint name')).toBeInTheDocument();
     expect(screen.queryByText('Endpoint name *')).not.toBeInTheDocument();
     expect(
@@ -422,16 +476,24 @@ describe('Requested create/update flow pages', () => {
       });
     });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Configure instruction' }));
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Configure instruction' }),
+    );
 
     expect(mockValidateTextProviderDefaultOptions).toHaveBeenCalled();
-    expect(mockValidateTextProviderDefaultOptions.mock.calls.at(-1)?.[0]).toBe('openai');
+    expect(mockValidateTextProviderDefaultOptions.mock.calls.at(-1)?.[0]).toBe(
+      'openai',
+    );
   });
 
   it('create endpoint version blocks continue when variables are missing', () => {
     render(<CreateNewVersionEndpointPage />);
-    fireEvent.click(screen.getByRole('button', { name: 'Configure instruction' }));
-    expect(screen.getByText('Please define at least one variable.')).toBeInTheDocument();
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Configure instruction' }),
+    );
+    expect(
+      screen.getByText('Please define at least one variable.'),
+    ).toBeInTheDocument();
   });
 
   it('create endpoint version moves to commit step after prompt variable edit', () => {
@@ -445,7 +507,9 @@ describe('Requested create/update flow pages', () => {
       });
     });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Configure instruction' }));
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Configure instruction' }),
+    );
 
     expect(screen.getByText('Version note')).toBeInTheDocument();
   });
@@ -466,10 +530,14 @@ describe('Requested create/update flow pages', () => {
       });
     });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Configure instruction' }));
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Configure instruction' }),
+    );
 
     expect(mockValidateTextProviderDefaultOptions).toHaveBeenCalled();
-    expect(mockValidateTextProviderDefaultOptions.mock.calls.at(-1)?.[0]).toBe('anthropic');
+    expect(mockValidateTextProviderDefaultOptions.mock.calls.at(-1)?.[0]).toBe(
+      'anthropic',
+    );
   });
 
   it('redirects to endpoint versions after creating a new endpoint version', () => {
@@ -495,7 +563,9 @@ describe('Requested create/update flow pages', () => {
       });
     });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Configure instruction' }));
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Configure instruction' }),
+    );
     fireEvent.click(screen.getByRole('button', { name: 'Create new version' }));
 
     expect(CreateEndpointProviderModel).toHaveBeenCalled();
@@ -510,7 +580,9 @@ describe('Requested create/update flow pages', () => {
     expect(assistantConfigPrompt.showRuntimeReplacementHint).toBe(true);
     fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
     expect(
-      screen.getByText('Each prompt message must have a valid role and non-empty content.'),
+      screen.getByText(
+        'Each prompt message must have a valid role and non-empty content.',
+      ),
     ).toBeInTheDocument();
   });
 
@@ -540,7 +612,9 @@ describe('Requested create/update flow pages', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
 
-    expect(screen.getByRole('button', { name: 'Skip for now' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Skip for now' }),
+    ).toBeInTheDocument();
   });
 
   it('create assistant validates using changed provider', () => {
@@ -562,7 +636,9 @@ describe('Requested create/update flow pages', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
 
     expect(mockValidateTextProviderDefaultOptions).toHaveBeenCalled();
-    expect(mockValidateTextProviderDefaultOptions.mock.calls.at(-1)?.[0]).toBe('openai');
+    expect(mockValidateTextProviderDefaultOptions.mock.calls.at(-1)?.[0]).toBe(
+      'openai',
+    );
   });
 
   it('create endpoint does not attach assistant runtime argument hints', () => {
@@ -635,7 +711,9 @@ describe('Requested create/update flow pages', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
 
     expect(mockValidateTextProviderDefaultOptions).toHaveBeenCalled();
-    expect(mockValidateTextProviderDefaultOptions.mock.calls.at(-1)?.[0]).toBe('meta');
+    expect(mockValidateTextProviderDefaultOptions.mock.calls.at(-1)?.[0]).toBe(
+      'meta',
+    );
     await act(async () => {});
   });
 });

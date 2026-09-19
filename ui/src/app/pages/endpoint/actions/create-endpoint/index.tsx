@@ -5,10 +5,7 @@ import { useAllProviderCredentials } from '@/hooks/use-model';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast/headless';
 import { Helmet } from '@/app/components/app-shell/helmet';
-import {
-  PrimaryButton,
-  SecondaryButton,
-} from '@/app/components/ui/primitives/button';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
 import {
   ButtonSet,
   Toggletip,
@@ -16,7 +13,7 @@ import {
   ToggletipContent,
 } from '@carbon/react';
 import { ArrowUpRight, Information } from '@carbon/icons-react';
-import { TabForm } from '@/app/components/ui/composites/tab-form';
+import { TabForm } from '@/app/components/ui/composites';
 import {
   ConnectionConfig,
   CreateEndpointResponse,
@@ -24,7 +21,7 @@ import {
   EndpointProviderModelAttribute,
   Metadata,
 } from '@rapidaai/react';
-import ConfirmDialog from '@/app/components/dialogs/confirm-ui';
+import { ConfirmDialog } from '@/app/components/dialogs/shared';
 import { create_endpoint_success_message } from '@/utils/messages';
 import {
   GetDefaultTextProviderConfigIfInvalid,
@@ -34,20 +31,20 @@ import {
 } from '@/app/components/domain/providers/text';
 import { ConfigPrompt } from '@/app/components/domain/configuration/config-prompt';
 import { randomMeaningfullName, randomString } from '@/utils';
-import { FieldSet } from '@/app/components/ui/primitives/fieldset';
-import { FormLabel } from '@/app/components/ui/primitives/form-label';
-import { Input } from '@/app/components/ui/primitives/input';
-import { TagInput } from '@/app/components/ui/composites/tag-input';
+import { FieldSet } from '@/app/components/ui/primitives';
+import { FormLabel } from '@/app/components/ui/primitives';
+import { Input } from '@/app/components/ui/primitives';
+import { TagInput } from '@/app/components/ui/composites';
 import { EndpointTag } from '@/app/components/domain/tags/endpoint-tags';
-import { Textarea } from '@/app/components/ui/primitives/textarea';
+import { Textarea } from '@/app/components/ui/primitives';
 import { CreateEndpoint } from '@rapidaai/react';
 import { ServiceError } from '@rapidaai/react';
 import { ChatCompletePrompt } from '@/utils/prompt';
 import { connectionConfig } from '@/configs';
 import { YellowNoticeBlock } from '@/app/components/layout/container/message/notice-block';
-import { InputHelper } from '@/app/components/ui/primitives/input-helper';
-import { ConfigureEndpointPromptDialog } from '@/app/components/dialogs/configure-endpoint-prompt-modal';
-import { CornerBorderOverlay } from '@/app/components/ui/primitives/corner-border';
+import { InputHelper } from '@/app/components/ui/primitives';
+import { ConfigureEndpointPromptDialog } from '@/app/components/dialogs/endpoint';
+import { CornerBorderOverlay } from '@/app/components/ui/primitives';
 
 export function CreateEndpointPage() {
   const { authId, token, projectId } = useCurrentCredential();
@@ -314,63 +311,63 @@ export function CreateEndpointPage() {
         form={[
           {
             name: 'Choose Model',
-            description: 'Select the LLM provider and configure your prompt template.',
+            description:
+              'Select the LLM provider and configure your prompt template.',
             code: 'choose-model',
             body: (
               <div className="px-8 pt-6 pb-8 max-w-4xl flex flex-col gap-8">
-                  {/* Carbon Clickable Tile — Usecase Template slot */}
-                  <button
-                    type="button"
-                    className="group relative w-full flex items-start justify-between gap-4 p-4 text-left bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-100"
-                    onClick={() => setIsConfigureEndpointPromptOpen(true)}
-                  >
-                    {/* Corner accent brackets */}
-                    <CornerBorderOverlay />
-                    <div className="flex flex-col gap-1 min-w-0">
-                      <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-gray-500 dark:text-gray-400">
-                        Quick start
-                      </span>
-                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                        Usecase Template
-                      </span>
-                      <span className="text-xs text-gray-500 dark:text-gray-500 leading-relaxed">
-                        Browse pre-configured templates and auto-fill your form.
-                      </span>
-                    </div>
-                    <ArrowUpRight
-                      className="shrink-0 mt-0.5 text-gray-500 dark:text-gray-400 group-hover:text-primary transition-colors"
-                      size={16}
-                    />
-                  </button>
-
-                  {/* Model configuration section */}
-                  <div className="flex flex-col gap-6">
-                    <TextProvider
-                      onChangeProvider={onChangeTextProvider}
-                      onChangeParameter={onChangeTextProviderParameter}
-                      parameters={textProviderModel.parameters}
-                      provider={textProviderModel.provider}
-                    />
+                {/* Carbon Clickable Tile — Usecase Template slot */}
+                <button
+                  type="button"
+                  className="group relative w-full flex items-start justify-between gap-4 p-4 text-left bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-100"
+                  onClick={() => setIsConfigureEndpointPromptOpen(true)}
+                >
+                  {/* Corner accent brackets */}
+                  <CornerBorderOverlay />
+                  <div className="flex flex-col gap-1 min-w-0">
+                    <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-gray-500 dark:text-gray-400">
+                      Quick start
+                    </span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      Usecase Template
+                    </span>
+                    <span className="text-xs text-gray-500 dark:text-gray-500 leading-relaxed">
+                      Browse pre-configured templates and auto-fill your form.
+                    </span>
                   </div>
+                  <ArrowUpRight
+                    className="shrink-0 mt-0.5 text-gray-500 dark:text-gray-400 group-hover:text-primary transition-colors"
+                    size={16}
+                  />
+                </button>
 
-                  {/* Prompt template section */}
-                  <div className="flex flex-col gap-6">
-                    <ConfigPrompt
-                      instanceId={randomString(10)}
-                      existingPrompt={promptConfig}
-                      onChange={prompt => setPromptConfig(prompt)}
-                    />
-                  </div>
+                {/* Model configuration section */}
+                <div className="flex flex-col gap-6">
+                  <TextProvider
+                    onChangeProvider={onChangeTextProvider}
+                    onChangeParameter={onChangeTextProviderParameter}
+                    parameters={textProviderModel.parameters}
+                    provider={textProviderModel.provider}
+                  />
                 </div>
+
+                {/* Prompt template section */}
+                <div className="flex flex-col gap-6">
+                  <ConfigPrompt
+                    instanceId={randomString(10)}
+                    existingPrompt={promptConfig}
+                    onChange={prompt => setPromptConfig(prompt)}
+                  />
+                </div>
+              </div>
             ),
             actions: [
               <ButtonSet className="!w-full [&>button]:!flex-1 [&>button]:!max-w-none">
-                <SecondaryButton size="lg"
-                  onClick={() => setIsShow(true)}
-                >
+                <SecondaryButton size="lg" onClick={() => setIsShow(true)}>
                   Cancel
                 </SecondaryButton>
-                <PrimaryButton size="lg"
+                <PrimaryButton
+                  size="lg"
                   isLoading={loading}
                   onClick={onvalidateEndpointInstruction}
                 >
@@ -386,12 +383,11 @@ export function CreateEndpointPage() {
               'Give your endpoint a name, description, and labels to make it easy to find and manage.',
             actions: [
               <ButtonSet className="!w-full [&>button]:!flex-1 [&>button]:!max-w-none">
-                <SecondaryButton size="lg"
-                  onClick={() => setIsShow(true)}
-                >
+                <SecondaryButton size="lg" onClick={() => setIsShow(true)}>
                   Cancel
                 </SecondaryButton>
-                <PrimaryButton size="lg"
+                <PrimaryButton
+                  size="lg"
                   isLoading={loading}
                   onClick={createEndpoint}
                 >

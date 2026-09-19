@@ -1,10 +1,10 @@
 import { RedNoticeBlock } from '@/app/components/layout/container/message/notice-block';
-import { FormLabel } from '@/app/components/ui/primitives/form-label';
-import { PrimaryButton } from '@/app/components/ui/primitives/button';
+import { FormLabel } from '@/app/components/ui/primitives';
+import { PrimaryButton } from '@/app/components/ui/primitives';
 import { ChevronRight } from '@carbon/icons-react';
-import { FieldSet } from '@/app/components/ui/primitives/fieldset';
-import { Input } from '@/app/components/ui/primitives/input';
-import { InputHelper } from '@/app/components/ui/primitives/input-helper';
+import { FieldSet } from '@/app/components/ui/primitives';
+import { Input } from '@/app/components/ui/primitives';
+import { InputHelper } from '@/app/components/ui/primitives';
 import { PageActionButtonBlock } from '@/app/components/layout/blocks/page-action-button-block';
 import { SectionDivider } from '@/app/components/layout/blocks/section-divider';
 import { connectionConfig } from '@/configs';

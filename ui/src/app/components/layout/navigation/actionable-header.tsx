@@ -2,7 +2,7 @@ import { useState, useContext, useEffect, FC } from 'react';
 import { ProjectRole } from '@rapidaai/react';
 import { cn } from '@/utils';
 import { useLocation } from 'react-router-dom';
-import { CustomLink } from '@/app/components/ui/primitives/custom-link';
+import { CustomLink } from '@/app/components/ui/primitives';
 import { AuthContext } from '@/context/auth-context';
 import { Moon, Sun, UserAvatar } from '@carbon/icons-react';
 import {
@@ -12,8 +12,8 @@ import {
   Switcher,
   SwitcherItem,
 } from '@carbon/react';
-import { Breadcrumb } from '@/app/components/ui/primitives/breadcrumb';
-import { Dropdown } from '@/app/components/ui/primitives/dropdown';
+import { Breadcrumb } from '@/app/components/ui/primitives';
+import { Dropdown } from '@/app/components/ui/primitives';
 import { useRapidaStore } from '@/hooks';
 import { useTheme } from '@/theme/theme-provider';
 

@@ -4,11 +4,11 @@ import { useCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/hooks/use-rapida-store';
 import { KnowledgeDocument } from '@rapidaai/react';
 import { useCreateKnowledgeDocumentPageStore } from '@/hooks/use-create-knowledge-document-page-store';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
 import { ButtonSet } from '@carbon/react';
 import { ManualFile } from '@/app/pages/knowledge-base/action/components/datasource-uploader/manual-file';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { ErrorMessage } from '@/app/components/ui/feedback/error-message';
+import { ErrorMessage } from '@/app/components/ui/feedback';
 import { DocNoticeBlock } from '@/app/components/layout/container/message/notice-block/doc-notice-block';
 
 export function CreateKnowledgeDocumentPage() {

@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { preview__ShapeIndicator as ShapeIndicatorModule } from '@carbon/react';
 
 const ShapeIndicator =
-  (ShapeIndicatorModule as unknown as { default?: FC<any> }).default ||
+  (ShapeIndicatorModule as unknown as { default?: FC<any> })?.default ||
   (ShapeIndicatorModule as unknown as FC<any>);
 
 export type RecordStatusIndicatorKind =

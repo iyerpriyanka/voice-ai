@@ -78,4 +78,26 @@ describe('Helmet', () => {
 
     await waitFor(() => expect(document.title).toBe('Tenant Voice'));
   });
+
+  it('trims page titles and renders supplied meta tags', async () => {
+    render(
+      <HelmetProvider>
+        <ThemeProvider theme={tenantTheme}>
+          <Helmet
+            title="  Trace Details  "
+            meta={[{ name: 'description', content: 'Conversation trace' }]}
+          />
+        </ThemeProvider>
+      </HelmetProvider>,
+    );
+
+    await waitFor(() =>
+      expect(document.title).toBe('Trace Details - Tenant Voice'),
+    );
+    expect(
+      document
+        .querySelector("meta[name='description']")
+        ?.getAttribute('content'),
+    ).toBe('Conversation trace');
+  });
 });

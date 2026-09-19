@@ -9,17 +9,23 @@ jest.mock('@/app/components/app-shell/helmet', () => ({
   Helmet: ({ title }: any) => <div data-testid="helmet">{title}</div>,
 }));
 
-jest.mock('@/app/components/dialogs/create-provider-credential-modal', () => ({
-  CreateProviderCredentialDialog: () => (
-    <div data-testid="create-provider-credential-dialog" />
-  ),
-}));
+jest.mock(
+  '@/app/components/dialogs/provider/create-provider-credential-modal',
+  () => ({
+    CreateProviderCredentialDialog: () => (
+      <div data-testid="create-provider-credential-dialog" />
+    ),
+  }),
+);
 
-jest.mock('@/app/components/dialogs/view-provider-credential-modal', () => ({
-  ViewProviderCredentialDialog: () => (
-    <div data-testid="view-provider-credential-dialog" />
-  ),
-}));
+jest.mock(
+  '@/app/components/dialogs/provider/view-provider-credential-modal',
+  () => ({
+    ViewProviderCredentialDialog: () => (
+      <div data-testid="view-provider-credential-dialog" />
+    ),
+  }),
+);
 
 jest.mock('@/app/components/layout/blocks/page-header-block', () => ({
   PageHeaderBlock: ({ children }: any) => <header>{children}</header>,

@@ -13,7 +13,7 @@ import { Button } from '@carbon/react';
 import { useSidebar } from '@/context/sidebar-context';
 import { cn } from '@/utils/index';
 import { useRapidaStore } from '@/hooks';
-import { Text } from '@/app/components/ui/primitives/text';
+import { Text } from '@/app/components/ui/primitives';
 import { useWorkspace } from '@/workspace';
 
 /**

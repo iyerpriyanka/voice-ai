@@ -18,7 +18,7 @@ jest.mock('react-router-dom', () => ({
   useParams: () => ({ assistantId: 'assistant-1' }),
 }));
 
-jest.mock('@/app/components/dialogs/confirm-ui', () => () => null);
+jest.mock('@/app/components/dialogs/shared/confirm-ui', () => () => null);
 
 jest.mock('@/app/components/domain/cards/knowledge-card', () => ({
   SelectKnowledgeCard: () => <article>Knowledge card</article>,
@@ -72,19 +72,22 @@ jest.mock('@/app/pages/assistant/actions/hooks/use-confirmation', () => ({
   }),
 }));
 
-jest.mock('@/app/pages/assistant/actions/store/use-knowledge-page-store', () => ({
-  useAssistantKnowledgePageStore: () => ({
-    deleteAssistantKnowledge: jest.fn(),
-    getAssistantKnowledge: mockGetAssistantKnowledge,
-    knowledges: [],
-    page: 1,
-    pageSize: 10,
-    setColumns: jest.fn(),
-    setPage: jest.fn(),
-    setPageSize: jest.fn(),
-    totalCount: 0,
+jest.mock(
+  '@/app/pages/assistant/actions/store/use-knowledge-page-store',
+  () => ({
+    useAssistantKnowledgePageStore: () => ({
+      deleteAssistantKnowledge: jest.fn(),
+      getAssistantKnowledge: mockGetAssistantKnowledge,
+      knowledges: [],
+      page: 1,
+      pageSize: 10,
+      setColumns: jest.fn(),
+      setPage: jest.fn(),
+      setPageSize: jest.fn(),
+      totalCount: 0,
+    }),
   }),
-}));
+);
 
 jest.mock('@/hooks', () => ({
   useRapidaStore: () => ({
@@ -153,7 +156,9 @@ describe('ConfigureAssistantKnowledgePage', () => {
       'data-stroke-width',
     );
 
-    fireEvent.click(screen.getByRole('button', { name: /create new knowledge/i }));
+    fireEvent.click(
+      screen.getByRole('button', { name: /create new knowledge/i }),
+    );
     fireEvent.click(screen.getByRole('button', { name: /connect knowledge/i }));
 
     expect(mockGoToCreateKnowledge).toHaveBeenCalledTimes(1);

@@ -1,5 +1,5 @@
 import { Metadata, VaultCredential } from '@rapidaai/react';
-import { Dropdown } from '@/app/components/ui/primitives/listbox-dropdown';
+import { ListboxDropdown as Dropdown } from '@/app/components/ui/primitives';
 import { ProviderComponentProps } from '@/app/components/domain/providers/provider-component-props';
 import { ConfigureCohereEmbeddingModel } from '@/app/components/domain/providers/embedding/cohere';
 import {
@@ -24,8 +24,8 @@ import {
 import { cn } from '@/utils';
 import { FC, useCallback } from 'react';
 import { CredentialDropdown } from '@/app/components/domain/dropdowns/credential-dropdown';
-import { FieldSet } from '@/app/components/ui/primitives/fieldset';
-import { FormLabel } from '@/app/components/ui/primitives/form-label';
+import { FieldSet } from '@/app/components/ui/primitives';
+import { FormLabel } from '@/app/components/ui/primitives';
 import { EMBEDDING_PROVIDERS } from '@/providers';
 
 /**

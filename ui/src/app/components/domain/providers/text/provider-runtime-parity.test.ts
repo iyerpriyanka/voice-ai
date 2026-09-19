@@ -10,7 +10,10 @@ import {
   loadProviderData,
 } from '@/providers/config-loader';
 
-jest.mock('@/app/components/domain/providers/provider-component-props', () => ({}));
+jest.mock(
+  '@/app/components/domain/providers/provider-component-props',
+  () => ({}),
+);
 jest.mock('@/utils', () => ({
   cn: (...inputs: any[]) => inputs.filter(Boolean).join(' '),
 }));

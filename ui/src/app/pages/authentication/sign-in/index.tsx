@@ -15,9 +15,9 @@ import { ServiceError } from '@rapidaai/react';
 import { AuthContext } from '@/context/auth-context';
 import { useWorkspace } from '@/workspace';
 import { connectionConfig } from '@/configs';
-import { Stack, TextInput } from '@/app/components/ui/primitives/form';
-import { PrimaryButton } from '@/app/components/ui/primitives/button';
-import { Notification } from '@/app/components/ui/feedback/notification';
+import { Stack, TextInput } from '@/app/components/ui/primitives';
+import { PrimaryButton } from '@/app/components/ui/primitives';
+import { Notification } from '@/app/components/ui/feedback';
 import { ArrowRight } from '@carbon/icons-react';
 import { Link, PasswordInput } from '@carbon/react';
 

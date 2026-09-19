@@ -51,7 +51,7 @@ export const CarbonIconIndicator: FC<CarbonIconIndicatorProps> = ({
 };
 
 const IconIndicator =
-  (IconIndicatorModule as unknown as { default?: FC<any> }).default ||
+  (IconIndicatorModule as unknown as { default?: FC<any> })?.default ||
   (IconIndicatorModule as unknown as FC<any>);
 
 export const recordStateToIconIndicator: Record<

@@ -1,6 +1,6 @@
 import React, { HTMLAttributes, useEffect, useState } from 'react';
 import { cn } from '@/utils';
-import TooltipPlus from '@/app/components/ui/primitives/tooltip-plus';
+import { Tooltip as FloatingTooltip } from './floating-tooltip';
 
 export function Pill(props: HTMLAttributes<HTMLSpanElement>) {
   return (
@@ -30,9 +30,9 @@ export function MultiplePills(props: {
     for (let i = 0; i < props.tags.length; i++) {
       if (i > (props.items ? props.items : 1)) {
         pl.push(
-          <TooltipPlus
+          <FloatingTooltip
             key={`td_${i}_${props.tags[i]}`}
-            popupContent={
+            content={
               <div className="w-fit">
                 {props.tags.slice(i).map((s, i) => {
                   return <p key={i}>{s}</p>;
@@ -46,7 +46,7 @@ export function MultiplePills(props: {
             >
               {props.tags.length - (props.items ? props.items : 2)} +
             </Pill>
-          </TooltipPlus>,
+          </FloatingTooltip>,
         );
         break;
       }

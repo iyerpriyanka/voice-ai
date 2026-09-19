@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Helmet } from '@/app/components/app-shell/helmet';
 import { useRapidaStore } from '@/hooks';
-import { TabForm } from '@/app/components/ui/composites/tab-form';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
+import { TabForm } from '@/app/components/ui/composites';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
 import { ButtonSet } from '@carbon/react';
 import {
   Assistant,
@@ -15,11 +15,11 @@ import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confir
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { randomMeaningfullName } from '@/utils';
-import { FieldSet } from '@/app/components/ui/primitives/fieldset';
-import { FormLabel } from '@/app/components/ui/primitives/form-label';
-import { Input } from '@/app/components/ui/primitives/input';
-import { Textarea } from '@/app/components/ui/primitives/textarea';
-import { TagInput } from '@/app/components/ui/composites/tag-input';
+import { FieldSet } from '@/app/components/ui/primitives';
+import { FormLabel } from '@/app/components/ui/primitives';
+import { Input } from '@/app/components/ui/primitives';
+import { Textarea } from '@/app/components/ui/primitives';
+import { TagInput } from '@/app/components/ui/composites';
 import { AssistantTag } from '@/app/components/domain/tags/assistant-tags';
 import {
   ChevronRight,
@@ -377,9 +377,7 @@ export function CreateWebsocket() {
                           <div className="border-y border-gray-300 dark:border-gray-800 grid grid-rows-[1fr_auto] max-md:border-t max-xl:last:hidden max-lg:nth-[3]:hidden last:border-r-0 max-xl:nth-[3]:border-r-0 max-lg:nth-[2]:border-r-0">
                             <div className="grid grid-cols-1 items-center">
                               <div className="px-4 py-2 sm:px-2">
-                                <Phone
-                                  className="w-6 h-6 opacity-70 mt-4"
-                                />
+                                <Phone className="w-6 h-6 opacity-70 mt-4" />
                                 <div className="flex items-center gap-2 mt-4">
                                   <h3 className="text-base/7 font-semibold">
                                     Phone call
@@ -405,9 +403,7 @@ export function CreateWebsocket() {
                           <div className="border-y border-gray-300 dark:border-gray-800 grid grid-rows-[1fr_auto] max-md:border-t max-xl:last:hidden max-lg:nth-[3]:hidden last:border-r-0 max-xl:nth-[3]:border-r-0 max-lg:nth-[2]:border-r-0">
                             <div className="grid grid-cols-1 items-center">
                               <div className="px-4 py-2 sm:px-2">
-                                <Code
-                                  className="w-6 h-6 opacity-70 mt-4"
-                                />
+                                <Code className="w-6 h-6 opacity-70 mt-4" />
                                 <div className="flex items-center gap-2 mt-4">
                                   <h3 className="text-base/7 font-semibold">
                                     API
@@ -434,9 +430,7 @@ export function CreateWebsocket() {
                           <div className="border-y border-gray-300 dark:border-gray-800 grid grid-rows-[1fr_auto] max-md:border-t max-xl:last:hidden max-lg:nth-[3]:hidden last:border-r-0 max-xl:nth-[3]:border-r-0 max-lg:nth-[2]:border-r-0">
                             <div className="grid grid-cols-1 items-center">
                               <div className="px-4 py-2 sm:px-2">
-                                <Globe
-                                  className="w-6 h-6 opacity-70 mt-4"
-                                />
+                                <Globe className="w-6 h-6 opacity-70 mt-4" />
                                 <div className="flex items-center gap-2 mt-4">
                                   <h3 className="text-base/7 font-semibold">
                                     Web Widget
@@ -464,9 +458,7 @@ export function CreateWebsocket() {
                           <div className="border-y border-gray-300 dark:border-gray-800 grid grid-rows-[1fr_auto] max-md:border-t max-xl:last:hidden max-lg:nth-[3]:hidden last:border-r-0 max-xl:nth-[3]:border-r-0 max-lg:nth-[2]:border-r-0">
                             <div className="grid grid-cols-1 items-center">
                               <div className="px-4 py-2 sm:px-2">
-                                <Debug
-                                  className="w-6 h-6 opacity-70 mt-4"
-                                />
+                                <Debug className="w-6 h-6 opacity-70 mt-4" />
                                 <div className="flex items-center gap-2 mt-4">
                                   <h3 className="text-base/7 font-semibold">
                                     Debugger / Testing

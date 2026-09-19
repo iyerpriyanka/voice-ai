@@ -7,7 +7,7 @@ import {
 } from '@rapidaai/react';
 import { GetAssistantResponse } from '@rapidaai/react';
 import { ServiceError } from '@rapidaai/react';
-import { ErrorContainer } from '@/app/components/ui/feedback/error-container';
+import { ErrorContainer } from '@/app/components/ui/feedback';
 import { useDeleteConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-delete-confirmation';
 import { useRapidaStore } from '@/hooks';
 import { useCurrentCredential } from '@/hooks/use-credential';
@@ -17,10 +17,15 @@ import toast from 'react-hot-toast/headless';
 import { useParams } from 'react-router-dom';
 import { UpdateAssistantDetail } from '@rapidaai/react';
 import { connectionConfig } from '@/configs';
-import { Notification } from '@/app/components/ui/feedback/notification';
-import { Form, Stack, TextInput, TextArea } from '@/app/components/ui/primitives/form';
-import { PrimaryButton, DangerButton } from '@/app/components/ui/primitives/button';
-import { CopyButton } from '@/app/components/ui/primitives/buttons/copy-button';
+import { Notification } from '@/app/components/ui/feedback';
+import {
+  Form,
+  Stack,
+  TextInput,
+  TextArea,
+} from '@/app/components/ui/primitives';
+import { PrimaryButton, DangerButton } from '@/app/components/ui/primitives';
+import { CopyButton } from '@/app/components/ui/primitives';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -29,7 +34,7 @@ import {
   ToggletipContent,
 } from '@carbon/react';
 import { Information, WarningAlt } from '@carbon/icons-react';
-import { InputGroup } from '@/app/components/ui/primitives/input-group';
+import { InputGroup } from '@/app/components/ui/primitives';
 
 const Toggletip = (CarbonToggletip as any).default || CarbonToggletip;
 

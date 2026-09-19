@@ -4,6 +4,8 @@ import {
   Button,
   DatePicker as CarbonDatePicker,
   DatePickerInput,
+  Popover,
+  PopoverContent,
 } from '@carbon/react';
 import { cn } from '@/utils';
 
@@ -35,7 +37,14 @@ export const DateFilter: FC<DateFilterProps> = ({
   };
 
   return (
-    <div className={cn('relative flex items-center', className)}>
+    <Popover
+      as="div"
+      align="bottom-end"
+      caret={false}
+      className={cn('relative flex items-center', className)}
+      onRequestClose={() => setOpen(false)}
+      open={open}
+    >
       <Button
         hasIconOnly
         renderIcon={Filter}
@@ -46,9 +55,8 @@ export const DateFilter: FC<DateFilterProps> = ({
         tooltipPosition="bottom"
       />
       {open && (
-        <>
-          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-full z-50 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-lg">
+        <PopoverContent className="w-max p-0">
+          <div>
             <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
               <p className="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                 Filter by date
@@ -94,8 +102,8 @@ export const DateFilter: FC<DateFilterProps> = ({
               </Button>
             </div>
           </div>
-        </>
+        </PopoverContent>
       )}
-    </div>
+    </Popover>
   );
 };

@@ -23,10 +23,19 @@ jest.mock('react-router-dom', () => ({
 }));
 
 jest.mock('@carbon/icons-react', () => ({
+  Application: ({ size }: any) => (
+    <span data-icon-size={size}>application</span>
+  ),
   Checkmark: ({ size }: any) => <span data-icon-size={size}>checkmark</span>,
+  Code: ({ size }: any) => <span data-icon-size={size}>code</span>,
   Copy: ({ size }: any) => <span data-icon-size={size}>copy</span>,
+  Debug: ({ size }: any) => <span data-icon-size={size}>debug</span>,
   Edit: ({ size }: any) => <span data-icon-size={size}>edit</span>,
+  Globe: ({ size }: any) => <span data-icon-size={size}>globe</span>,
   Information: ({ size }: any) => <span data-icon-size={size}>info</span>,
+  LogoPython: ({ size }: any) => <span data-icon-size={size}>python</span>,
+  LogoReact: ({ size }: any) => <span data-icon-size={size}>react</span>,
+  Phone: ({ size }: any) => <span data-icon-size={size}>phone</span>,
   SourceControl: ({ size }: any) => (
     <span data-icon-size={size}>source-control</span>
   ),
@@ -114,15 +123,18 @@ jest.mock('@/app/pages/endpoint/view/version-list', () => ({
   Version: () => <section>Endpoint versions</section>,
 }));
 
-jest.mock('@/app/components/dialogs/endpoint-instruction-modal', () => ({
-  EndpointInstructionDialog: () => null,
-}));
+jest.mock(
+  '@/app/components/dialogs/endpoint/endpoint-instruction-modal',
+  () => ({
+    EndpointInstructionDialog: () => null,
+  }),
+);
 
-jest.mock('@/app/components/dialogs/create-tag-modal', () => ({
+jest.mock('@/app/components/dialogs/shared/create-tag-modal', () => ({
   CreateTagDialog: () => null,
 }));
 
-jest.mock('@/app/components/dialogs/update-description-modal', () => ({
+jest.mock('@/app/components/dialogs/shared/update-description-modal', () => ({
   UpdateDescriptionDialog: () => null,
 }));
 

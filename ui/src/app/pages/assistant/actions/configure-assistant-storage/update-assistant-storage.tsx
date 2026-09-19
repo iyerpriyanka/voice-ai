@@ -12,9 +12,9 @@ import { useCurrentCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/hooks';
 import { connectionConfig } from '@/configs';
 import toast from 'react-hot-toast/headless';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
 import { ButtonSet } from '@carbon/react';
-import { Stack } from '@/app/components/ui/primitives/form';
+import { Stack } from '@/app/components/ui/primitives';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import {
   CloudStorageProvider,
@@ -26,8 +26,8 @@ import {
   upsertStorageFilesOption,
   ValidateStorageOptions,
 } from '@/app/components/domain/providers/storage';
-import { InputGroup } from '@/app/components/ui/primitives/input-group';
-import { Notification } from '@/app/components/ui/feedback/notification';
+import { InputGroup } from '@/app/components/ui/primitives';
+import { Notification } from '@/app/components/ui/feedback';
 
 const storageConfigurationType = 'storage';
 

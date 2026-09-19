@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Helmet } from '@/app/components/app-shell/helmet';
 import { DescriptiveHeading } from '@/app/components/layout/heading/descriptive-heading';
-import { Input } from '@/app/components/ui/primitives/input';
-import { Label } from '@/app/components/ui/primitives/label';
+import { Input } from '@/app/components/ui/primitives';
+import { Label } from '@/app/components/ui/primitives';
 import { ArrowButton } from '@/app/components/ui/primitives/buttons/arrow-button';
-import { DangerTertiaryButton } from '@/app/components/ui/primitives/button';
+import { DangerTertiaryButton } from '@/app/components/ui/primitives';
 import { ServiceError } from '@rapidaai/react';
 import { UpdateOrganization, GetOrganization } from '@rapidaai/react';
 
@@ -220,11 +220,7 @@ export function OverviewPage() {
 
           <div className="md:mx-0 m-5 flex space-y-2 w-full flex-col">
             <div className="w-60">
-              <DangerTertiaryButton
-                size="sm"
-                type="button"
-                onClick={() => {}}
-              >
+              <DangerTertiaryButton size="sm" type="button" onClick={() => {}}>
                 Archieve Organization
               </DangerTertiaryButton>
             </div>

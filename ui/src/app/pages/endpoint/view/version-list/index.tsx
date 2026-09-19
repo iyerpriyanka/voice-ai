@@ -9,7 +9,7 @@ import {
   toHumanReadableRelativeTime,
 } from '@/utils/date';
 import { TableSection } from '@/app/components/layout/sections/table-section';
-import { Pagination } from '@/app/components/ui/primitives/pagination';
+import { Pagination } from '@/app/components/ui/primitives';
 import IconIndicator from '@carbon/react/es/components/IconIndicator';
 import { auditActorLabel, createdAuditActor } from '@/utils/audit-actor';
 import {
@@ -28,7 +28,7 @@ import {
   RadioButton,
 } from '@carbon/react';
 import { Copy, Checkmark, Rocket, Renew } from '@carbon/icons-react';
-import { EmptyState } from '@/app/components/ui/feedback/empty-state';
+import { EmptyState } from '@/app/components/ui/feedback';
 
 const headers = [
   { key: 'description', header: 'Description' },

@@ -39,13 +39,7 @@ jest.mock('@carbon/react', () => {
         'data-testid': id,
         onChange: (e: any) => onChange?.({ value: Number(e.target.value) }),
       }),
-    SelectableTile: ({
-      children,
-      id,
-      onClick,
-      selected,
-      ...props
-    }: any) =>
+    SelectableTile: ({ children, id, onClick, selected, ...props }: any) =>
       React.createElement(
         'button',
         {

@@ -235,7 +235,9 @@ jest.mock('@/app/components/ui/primitives/select', () => ({
 jest.mock('@/app/components/ui/primitives/textarea', () => ({
   Textarea: (props: any) => <textarea {...props} />,
 }));
-jest.mock('@/app/components/ui/composites/tag-input', () => ({ TagInput: () => null }));
+jest.mock('@/app/components/ui/composites/tag-input', () => ({
+  TagInput: () => null,
+}));
 jest.mock('@/app/components/domain/tags/assistant-tags', () => ({
   AssistantTag: [],
 }));

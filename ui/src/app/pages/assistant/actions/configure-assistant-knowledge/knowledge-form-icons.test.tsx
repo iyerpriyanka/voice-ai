@@ -168,18 +168,20 @@ jest.mock('@carbon/icons-react', () => ({
 describe('assistant knowledge configuration forms', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetAssistantKnowledge.mockImplementation((_config, _assistantId, _id, callback) => {
-      callback(null, {
-        getData: () => ({
-          getAssistantknowledgererankeroptionsList: () => [],
-          getKnowledgeid: () => 'knowledge-1',
-          getRerankerenable: () => false,
-          getRetrievalmethod: () => 'hybrid',
-          getScorethreshold: () => 0.5,
-          getTopk: () => 5,
-        }),
-      });
-    });
+    mockGetAssistantKnowledge.mockImplementation(
+      (_config, _assistantId, _id, callback) => {
+        callback(null, {
+          getData: () => ({
+            getAssistantknowledgererankeroptionsList: () => [],
+            getKnowledgeid: () => 'knowledge-1',
+            getRerankerenable: () => false,
+            getRetrievalmethod: () => 'hybrid',
+            getScorethreshold: () => 0.5,
+            getTopk: () => 5,
+          }),
+        });
+      },
+    );
   });
 
   it('uses Carbon information icons in the create form tooltips', () => {

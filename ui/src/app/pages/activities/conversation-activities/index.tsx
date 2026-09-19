@@ -18,9 +18,9 @@ import { Helmet } from '@/app/components/app-shell/helmet';
 import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
 import { PageTitleWithCount } from '@/app/components/layout/blocks/page-title-with-count';
 import { CONFIG } from '@/configs';
-import { CarbonStatusIndicator } from '@/app/components/ui/feedback/status-indicator';
+import { CarbonStatusIndicator } from '@/app/components/ui/feedback';
 import SourceIndicator from '@/app/components/domain/indicators/source';
-import { ConversationLogDialog } from '@/app/components/dialogs/conversation-log-modal';
+import { ConversationLogDialog } from '@/app/components/dialogs/activity/conversation-log-modal';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 
 import {
@@ -36,8 +36,8 @@ import {
   Tag,
   Link,
 } from '@carbon/react';
-import { Pagination } from '@/app/components/ui/primitives/pagination';
-import { IconOnlyButton } from '@/app/components/ui/primitives/button';
+import { Pagination } from '@/app/components/ui/primitives';
+import { IconOnlyButton } from '@/app/components/ui/primitives';
 import {
   Download,
   Renew,
@@ -48,7 +48,7 @@ import {
   User as UserIcon,
   Chat,
 } from '@carbon/icons-react';
-import { EmptyState } from '@/app/components/ui/feedback/empty-state';
+import { EmptyState } from '@/app/components/ui/feedback';
 import { ScrollableTableSection } from '@/app/components/layout/sections/table-section';
 import { ConversationLogQuerySearch } from './conversation-query-search';
 

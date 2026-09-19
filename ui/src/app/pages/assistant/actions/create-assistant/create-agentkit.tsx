@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Helmet } from '@/app/components/app-shell/helmet';
 import { useRapidaStore } from '@/hooks';
-import { TabForm } from '@/app/components/ui/composites/tab-form';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
+import { TabForm } from '@/app/components/ui/composites';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
 import { ButtonSet, Slider } from '@carbon/react';
 import {
   ChevronDown,
@@ -22,18 +22,18 @@ import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confir
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { randomMeaningfullName } from '@/utils';
-import { FieldSet } from '@/app/components/ui/primitives/fieldset';
-import { FormLabel } from '@/app/components/ui/primitives/form-label';
-import { Input } from '@/app/components/ui/primitives/input';
-import { Select } from '@/app/components/ui/primitives/select';
-import { Textarea } from '@/app/components/ui/primitives/textarea';
-import { TagInput } from '@/app/components/ui/composites/tag-input';
+import { FieldSet } from '@/app/components/ui/primitives';
+import { FormLabel } from '@/app/components/ui/primitives';
+import { Input } from '@/app/components/ui/primitives';
+import { Select } from '@/app/components/ui/primitives';
+import { Textarea } from '@/app/components/ui/primitives';
+import { TagInput } from '@/app/components/ui/composites';
 import { AssistantTag } from '@/app/components/domain/tags/assistant-tags';
 import { DocNoticeBlock } from '@/app/components/layout/container/message/notice-block/doc-notice-block';
 import { CreateAssistant } from '@rapidaai/react';
 import { connectionConfig } from '@/configs';
 import { APiParameter } from '@/app/components/domain/external-api/api-parameter';
-import { InputHelper } from '@/app/components/ui/primitives/input-helper';
+import { InputHelper } from '@/app/components/ui/primitives';
 import { CodeEditor } from '@/app/components/ui/editor/code-editor';
 import toast from 'react-hot-toast/headless';
 import { SectionDivider } from '@/app/components/layout/blocks/section-divider';
@@ -690,9 +690,7 @@ export function CreateAgentKit() {
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 divide-x divide-gray-200 dark:divide-gray-800">
                         <div className="border-y border-gray-200 dark:border-gray-800 grid grid-rows-[1fr_auto]">
                           <div className="px-4 py-2">
-                            <Phone
-                              className="w-6 h-6 opacity-70 mt-4"
-                            />
+                            <Phone className="w-6 h-6 opacity-70 mt-4" />
                             <div className="flex items-center gap-2 mt-4">
                               <h3 className="text-base/7 font-semibold">
                                 Phone call
@@ -716,9 +714,7 @@ export function CreateAgentKit() {
 
                         <div className="border-y border-gray-200 dark:border-gray-800 grid grid-rows-[1fr_auto]">
                           <div className="px-4 py-2">
-                            <Code
-                              className="w-6 h-6 opacity-70 mt-4"
-                            />
+                            <Code className="w-6 h-6 opacity-70 mt-4" />
                             <div className="flex items-center gap-2 mt-4">
                               <h3 className="text-base/7 font-semibold">API</h3>
                             </div>
@@ -740,9 +736,7 @@ export function CreateAgentKit() {
 
                         <div className="border-y border-gray-200 dark:border-gray-800 grid grid-rows-[1fr_auto]">
                           <div className="px-4 py-2">
-                            <Globe
-                              className="w-6 h-6 opacity-70 mt-4"
-                            />
+                            <Globe className="w-6 h-6 opacity-70 mt-4" />
                             <div className="flex items-center gap-2 mt-4">
                               <h3 className="text-base/7 font-semibold">
                                 Web Widget
@@ -767,9 +761,7 @@ export function CreateAgentKit() {
 
                         <div className="border-y border-gray-200 dark:border-gray-800 grid grid-rows-[1fr_auto]">
                           <div className="px-4 py-2">
-                            <Debug
-                              className="w-6 h-6 opacity-70 mt-4"
-                            />
+                            <Debug className="w-6 h-6 opacity-70 mt-4" />
                             <div className="flex items-center gap-2 mt-4">
                               <h3 className="text-base/7 font-semibold">
                                 Debugger / Testing

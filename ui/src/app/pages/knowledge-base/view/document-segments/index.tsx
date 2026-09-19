@@ -1,19 +1,19 @@
 import { KnowledgeDocumentSegment } from '@rapidaai/react';
-import { TablePagination } from '@/app/components/ui/table/table-pagination';
+import { TablePagination } from '@/app/components/ui/table';
 import { BluredWrapper } from '@/app/components/layout/wrapper/blured-wrapper';
-import { BaseCard } from '@/app/components/ui/primitives/card';
+import { BaseCard } from '@/app/components/ui/primitives';
 import { useRapidaStore } from '@/hooks';
 import { useKnowledgeDocumentSegmentPageStore } from '@/hooks/use-knowledge-document-segment-page-store';
 import { FC, useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast/headless';
 import { Knowledge } from '@rapidaai/react';
-import { EditButton } from '@/app/components/ui/primitives/buttons/edit-button';
-import { DeleteButton } from '@/app/components/ui/primitives/buttons/delete-button';
+import { EditButton } from '@/app/components/ui/primitives';
+import { DeleteButton } from '@/app/components/ui/primitives';
 import { useCurrentCredential } from '@/hooks/use-credential';
 
-import { EditKnowledgeDocumentSegmentDialog } from '@/app/components/dialogs/edit-knowledge-document-segment-modal';
-import { DeleteKnowledgeDocumentSegmentDialog } from '@/app/components/dialogs/delete-knowledge-document-segment-modal';
-import { EmptyState } from '@/app/components/ui/feedback/empty-state';
+import { EditKnowledgeDocumentSegmentDialog } from '@/app/components/dialogs/knowledge';
+import { DeleteKnowledgeDocumentSegmentDialog } from '@/app/components/dialogs/knowledge';
+import { EmptyState } from '@/app/components/ui/feedback';
 
 export const DocumentSegments: FC<{
   currentKnowledge: Knowledge;

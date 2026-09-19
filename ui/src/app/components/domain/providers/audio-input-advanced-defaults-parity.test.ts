@@ -3,7 +3,10 @@ import { SetMetadata } from '@/utils/metadata';
 import { EndOfSpeech, VAD } from '@/providers';
 import { loadProviderConfig } from '@/providers/config-loader';
 
-jest.mock('@/app/components/domain/providers/provider-component-props', () => ({}));
+jest.mock(
+  '@/app/components/domain/providers/provider-component-props',
+  () => ({}),
+);
 jest.mock('@/app/components/domain/providers/config-renderer', () => ({
   ConfigRenderer: () => null,
 }));

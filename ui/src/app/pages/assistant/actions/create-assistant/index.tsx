@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Helmet } from '@/app/components/app-shell/helmet';
 import { useRapidaStore } from '@/hooks';
-import { TabForm } from '@/app/components/ui/composites/tab-form';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
+import { TabForm } from '@/app/components/ui/composites';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
 import {
   ButtonSet,
   Table,
@@ -34,8 +34,8 @@ import { useCurrentCredential } from '@/hooks/use-credential';
 import { useAllProviderCredentials } from '@/hooks/use-model';
 import { ConfigPrompt } from '@/app/components/domain/configuration/config-prompt';
 import { randomMeaningfullName, randomString } from '@/utils';
-import { TextInput, TextArea, Stack } from '@/app/components/ui/primitives/form';
-import { TagInput } from '@/app/components/ui/composites/tag-input';
+import { TextInput, TextArea, Stack } from '@/app/components/ui/primitives';
+import { TagInput } from '@/app/components/ui/composites';
 import { AssistantTag } from '@/app/components/domain/tags/assistant-tags';
 import {
   GetDefaultTextProviderConfigIfInvalid,
@@ -49,8 +49,8 @@ import {
   getToolConditionSourceLabel,
 } from '@/app/components/domain/tools/common';
 import { BUILDIN_TOOLS } from '@/llm-tools';
-import { EmptyState } from '@/app/components/ui/feedback/empty-state';
-import { ConfigureAssistantToolDialog } from '@/app/components/dialogs/assistant-configure-tool-modal';
+import { EmptyState } from '@/app/components/ui/feedback';
+import { ConfigureAssistantToolDialog } from '@/app/components/dialogs/assistant';
 import { DocNoticeBlock } from '@/app/components/layout/container/message/notice-block/doc-notice-block';
 import { CreateAssistant } from '@rapidaai/react';
 import { CreateAssistantToolRequest } from '@rapidaai/react';
@@ -58,14 +58,20 @@ import { Struct } from 'google-protobuf/google/protobuf/struct_pb';
 import { connectionConfig } from '@/configs';
 import { ChatCompletePrompt } from '@/utils/prompt';
 import toast from 'react-hot-toast/headless';
-import { ConfigureAssistantNextDialog } from '@/app/components/dialogs/assistant-configure-next-modal';
+import { ConfigureAssistantNextDialog } from '@/app/components/dialogs/assistant';
 import { SectionDivider } from '@/app/components/layout/blocks/section-divider';
-import { CornerBorderOverlay } from '@/app/components/ui/primitives/corner-border';
-import { Add, ArrowUpRight, Edit, ToolKit, TrashCan } from '@carbon/icons-react';
+import { CornerBorderOverlay } from '@/app/components/ui/primitives';
+import {
+  Add,
+  ArrowUpRight,
+  Edit,
+  ToolKit,
+  TrashCan,
+} from '@carbon/icons-react';
 import {
   AssistantTemplate,
   ConfigureAssistantTemplateDialog,
-} from '@/app/components/dialogs/configure-assistant-template-modal';
+} from '@/app/components/dialogs/assistant';
 import { useTheme } from '@/theme/theme-provider';
 
 /**

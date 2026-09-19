@@ -1,6 +1,6 @@
 import React, { HTMLAttributes } from 'react';
 import { cn } from '@/utils';
-import { Spinner } from '@/app/components/ui/feedback/loaders/spinner';
+import { Spinner } from './spinner';
 
 export function SectionLoader(props: HTMLAttributes<HTMLDivElement>) {
   return (

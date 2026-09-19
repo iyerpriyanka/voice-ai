@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextImage } from '@/app/components/ui/primitives/text-image';
+import { TextImage } from '@/app/components/ui/primitives';
 
 export function ProjectUserGroupAvatar(props: {
   size?: 7 | 8 | 9;

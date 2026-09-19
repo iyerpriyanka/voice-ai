@@ -9,13 +9,13 @@ import { useRapidaStore } from '@/hooks/use-rapida-store';
 import toast from 'react-hot-toast/headless';
 import { toDate, toHumanReadableDateTime } from '@/utils/date';
 import { useAssistantConversationListPageStore } from '@/hooks/use-assistant-conversation-list-page-store';
-import { CarbonStatusIndicator } from '@/app/components/ui/feedback/status-indicator';
+import { CarbonStatusIndicator } from '@/app/components/ui/feedback';
 import SourceIndicator from '@/app/components/domain/indicators/source';
 import { getStatusMetric, getConversationDuration } from '@/utils/metadata';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { ConversationDirectionIndicator } from '@/app/components/domain/indicators/conversation-direction';
 import { CONFIG } from '@/configs';
-import { AssistantConversationTelephonyEventDialog } from '@/app/components/dialogs/assistant-conversation-telephony-event-modal';
+import { AssistantConversationTelephonyEventDialog } from '@/app/components/dialogs/conversation';
 import { ChannelIndicator } from './channel-indicator';
 import { DisconnectReasonIndicator } from './disconnect-reason-indicator';
 import { DurationBreakdownToggletip } from './duration-breakdown-toggletip';
@@ -36,9 +36,9 @@ import {
   Loading,
   Link,
 } from '@carbon/react';
-import { Pagination } from '@/app/components/ui/primitives/pagination';
-import { IconOnlyButton } from '@/app/components/ui/primitives/button';
-import { EmptyState } from '@/app/components/ui/feedback/empty-state';
+import { Pagination } from '@/app/components/ui/primitives';
+import { IconOnlyButton } from '@/app/components/ui/primitives';
+import { EmptyState } from '@/app/components/ui/feedback';
 import {
   Renew,
   Download,

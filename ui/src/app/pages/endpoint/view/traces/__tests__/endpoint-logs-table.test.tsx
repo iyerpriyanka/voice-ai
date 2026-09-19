@@ -88,7 +88,7 @@ jest.mock('@/app/components/app-shell/helmet', () => ({
   Helmet: () => null,
 }));
 
-jest.mock('@/app/components/dialogs/endpoint-trace-modal', () => ({
+jest.mock('@/app/components/dialogs/endpoint/endpoint-trace-modal', () => ({
   EndpointTraceModal: ({ modalOpen }: any) =>
     modalOpen ? <section>endpoint-log-modal</section> : null,
 }));

@@ -8,9 +8,9 @@ import { TELEMETRY_PROVIDER } from '@/providers';
 import { Metadata, VaultCredential } from '@rapidaai/react';
 import { useCallback } from 'react';
 import { Dropdown } from '@carbon/react';
-import { Stack } from '@/app/components/ui/primitives/form';
+import { Stack } from '@/app/components/ui/primitives';
 import { HelpToggletip } from '@/app/components/domain/providers/help-label';
-import { FormLabel } from '@/app/components/ui/primitives/form-label';
+import { FormLabel } from '@/app/components/ui/primitives';
 
 export const TelemetryProvider: React.FC<ProviderComponentProps> = props => {
   const { parameters, provider, onChangeParameter, onChangeProvider } = props;

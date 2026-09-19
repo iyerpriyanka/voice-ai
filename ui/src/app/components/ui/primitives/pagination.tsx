@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { Pagination as CarbonPagination } from '@carbon/react';
 import { cn } from '@/utils';
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// Types
 
 type PaginationSize = 'sm' | 'md' | 'lg';
 

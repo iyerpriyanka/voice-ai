@@ -5,14 +5,14 @@ import {
   GetAllProjectResponse,
   Project,
 } from '@rapidaai/react';
-import { CreateProjectDialog } from '@/app/components/dialogs/create-project-modal';
+import { CreateProjectDialog } from '@/app/components/dialogs/workspace';
 import { GetAllProject, DeleteProject } from '@rapidaai/react';
 import { useCredential } from '@/hooks/use-credential';
 import toast from 'react-hot-toast/headless';
 import { useRapidaStore } from '@/hooks';
 import { ServiceError } from '@rapidaai/react';
-import { PrimaryButton } from '@/app/components/ui/primitives/button';
-import { Pagination } from '@/app/components/ui/primitives/pagination';
+import { PrimaryButton } from '@/app/components/ui/primitives';
+import { Pagination } from '@/app/components/ui/primitives';
 import { Add, Edit, Renew, TrashCan } from '@carbon/icons-react';
 import {
   Table,
@@ -36,10 +36,10 @@ import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-bloc
 import { PageTitleWithCount } from '@/app/components/layout/blocks/page-title-with-count';
 import { TableSection } from '@/app/components/layout/sections/table-section';
 import { connectionConfig } from '@/configs';
-import { ConfirmDeleteDialog } from '@/app/components/dialogs/confirm-delete';
+import { ConfirmDeleteDialog } from '@/app/components/dialogs/shared';
 import { AuthContext } from '@/context/auth-context';
-import { UpdateProjectDialog } from '@/app/components/dialogs/update-project-modal';
-import { CarbonIconIndicator } from '@/app/components/ui/feedback/icon-indicator';
+import { UpdateProjectDialog } from '@/app/components/dialogs/workspace';
+import { CarbonIconIndicator } from '@/app/components/ui/feedback';
 
 const headers = [
   { key: 'name', header: 'Name' },

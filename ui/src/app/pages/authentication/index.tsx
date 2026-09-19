@@ -3,7 +3,7 @@
  */
 
 import { lazyLoad } from '@/utils/loadable';
-import { PageLoader } from '@/app/components/ui/feedback/loaders/page-loader';
+import { PageLoader } from '@/app/components/ui/feedback';
 
 export const AuthSignUpPage = lazyLoad(
   () => import('./sign-up'),

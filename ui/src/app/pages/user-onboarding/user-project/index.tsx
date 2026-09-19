@@ -9,9 +9,9 @@ import { useRapidaStore } from '@/hooks';
 import { ServiceError } from '@rapidaai/react';
 import { AuthContext } from '@/context/auth-context';
 import { connectionConfig } from '@/configs';
-import { Stack, TextInput, TextArea } from '@/app/components/ui/primitives/form';
-import { PrimaryButton } from '@/app/components/ui/primitives/button';
-import { Notification } from '@/app/components/ui/feedback/notification';
+import { Stack, TextInput, TextArea } from '@/app/components/ui/primitives';
+import { PrimaryButton } from '@/app/components/ui/primitives';
+import { Notification } from '@/app/components/ui/feedback';
 import { ArrowRight } from '@carbon/icons-react';
 
 export function CreateProjectPage() {
@@ -33,7 +33,8 @@ export function CreateProjectPage() {
         authorize &&
           authorize(
             () => navigate('/dashboard'),
-            () => setError('Unable to create project. Please check the details.'),
+            () =>
+              setError('Unable to create project. Please check the details.'),
           );
       } else {
         setError('Unable to create project. Please check the details.');
@@ -57,7 +58,9 @@ export function CreateProjectPage() {
     <>
       <Helmet title="Onboarding: Create a Project" />
       <div className="mb-4">
-        <h1 className="text-xl font-light tracking-tight">Create your first project</h1>
+        <h1 className="text-xl font-light tracking-tight">
+          Create your first project
+        </h1>
         <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
           Projects help you separate client accounts, brands, regions, or
           internal product teams.

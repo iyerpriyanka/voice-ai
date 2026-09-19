@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { unstable__ShapeIndicator as ShapeIndicatorModule } from '@carbon/react';
-import { CarbonIconIndicator } from '@/app/components/ui/feedback/icon-indicator';
+import { CarbonIconIndicator } from './icon-indicator';
 
 const statusMap: Record<string, { kind: string; label: string }> = {
   // Success / complete: stable (green)
@@ -59,10 +59,10 @@ const statusMap: Record<string, { kind: string; label: string }> = {
 
 const defaultStatus = { kind: 'undefined', label: 'Unknown' };
 const ShapeIndicator =
-  (ShapeIndicatorModule as unknown as { default?: FC<any> }).default ||
+  (ShapeIndicatorModule as unknown as { default?: FC<any> })?.default ||
   (ShapeIndicatorModule as unknown as FC<any>);
 
-// ─── Component ───────────────────────────────────────────────────────────────
+// Component
 
 export interface CarbonStatusIndicatorProps {
   state: string;

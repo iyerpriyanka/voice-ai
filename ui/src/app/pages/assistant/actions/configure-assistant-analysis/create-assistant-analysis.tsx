@@ -1,8 +1,8 @@
 import React, { FC, useState } from 'react';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives/button';
-import { Stack, TextInput, TextArea } from '@/app/components/ui/primitives/form';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
+import { Stack, TextInput, TextArea } from '@/app/components/ui/primitives';
 import { ButtonSet, NumberInput } from '@carbon/react';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { randomMeaningfullName } from '@/utils';
@@ -15,7 +15,7 @@ import {
 } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
 import { connectionConfig } from '@/configs';
-import { TabForm } from '@/app/components/ui/composites/tab-form';
+import { TabForm } from '@/app/components/ui/composites';
 import {
   ASSISTANT_CONDITION_KEY_OPTIONS,
   ASSISTANT_CONDITION_OPERATOR_OPTIONS,
@@ -24,7 +24,7 @@ import {
   AssistantMappingTable,
 } from '@/app/components/domain/tools/common';
 import { SourceConditionRule } from '@/app/components/domain/conditions/source-condition-rule';
-import { InputGroup } from '@/app/components/ui/primitives/input-group';
+import { InputGroup } from '@/app/components/ui/primitives';
 
 // ── Parameter types ──────────────────────────────────────────────────────────
 

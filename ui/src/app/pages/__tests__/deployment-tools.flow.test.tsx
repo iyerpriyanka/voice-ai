@@ -485,26 +485,29 @@ jest.mock('@/app/components/ui/primitives/card', () => ({
 }));
 
 jest.mock(
-  '@/app/components/dialogs/assistant-phone-call-deployment-modal',
+  '@/app/components/dialogs/assistant/assistant-phone-call-deployment-modal',
   () => ({
     AssistantPhoneCallDeploymentDialog: () => null,
   }),
 );
 jest.mock(
-  '@/app/components/dialogs/assistant-debug-deployment-modal',
+  '@/app/components/dialogs/assistant/assistant-debug-deployment-modal',
   () => ({
     AssistantDebugDeploymentDialog: () => null,
   }),
 );
 jest.mock(
-  '@/app/components/dialogs/assistant-web-widget-deployment-modal',
+  '@/app/components/dialogs/assistant/assistant-web-widget-deployment-modal',
   () => ({
     AssistantWebWidgetlDeploymentDialog: () => null,
   }),
 );
-jest.mock('@/app/components/dialogs/assistant-api-deployment-modal', () => ({
-  AssistantApiDeploymentDialog: () => null,
-}));
+jest.mock(
+  '@/app/components/dialogs/assistant/assistant-api-deployment-modal',
+  () => ({
+    AssistantApiDeploymentDialog: () => null,
+  }),
+);
 
 jest.mock('@/app/components/ui/feedback/empty-state', () => ({
   EmptyState: ({ title, subtitle, action, onAction, actionComponent }: any) => (
@@ -517,7 +520,9 @@ jest.mock('@/app/components/ui/feedback/empty-state', () => ({
   ),
 }));
 
-jest.mock('@/app/components/ui/primitives/input-helper', () => ({ InputHelper: () => null }));
+jest.mock('@/app/components/ui/primitives/input-helper', () => ({
+  InputHelper: () => null,
+}));
 jest.mock('@/app/components/ui/primitives/form-label', () => ({
   FormLabel: ({ children }: any) => <label>{children}</label>,
 }));

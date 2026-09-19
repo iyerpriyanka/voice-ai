@@ -29,11 +29,7 @@ export function AccessSecurityPage() {
                 Users do not need a security code when signing in through the
                 organization's identity provider (SSO).
               </p>
-              <Link
-                href={documentationUrl}
-                size="sm"
-                renderIcon={ArrowRight}
-              >
+              <Link href={documentationUrl} size="sm" renderIcon={ArrowRight}>
                 Read the support documentation
               </Link>
             </div>

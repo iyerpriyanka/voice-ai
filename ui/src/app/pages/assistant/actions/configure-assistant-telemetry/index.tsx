@@ -4,15 +4,15 @@ import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { toHumanReadableDateTime } from '@/utils/date';
 import { Activity, Edit, TrashCan, Add, Renew } from '@carbon/icons-react';
 import { useCurrentCredential } from '@/hooks/use-credential';
-import { SectionLoader } from '@/app/components/ui/feedback/loaders/section-loader';
+import { SectionLoader } from '@/app/components/ui/feedback';
 import toast from 'react-hot-toast/headless';
-import { EmptyState } from '@/app/components/ui/feedback/empty-state';
+import { EmptyState } from '@/app/components/ui/feedback';
 import { CreateAssistantTelemetry } from './create-assistant-telemetry';
 import { UpdateAssistantTelemetry } from './update-assistant-telemetry';
 import { useAssistantTelemetryPageStore } from '@/app/pages/assistant/actions/store/use-telemetry-page-store';
 import { TELEMETRY_PROVIDER } from '@/providers';
-import { IconOnlyButton, PrimaryButton } from '@/app/components/ui/primitives/button';
-import { CarbonShapeIndicator } from '@/app/components/ui/feedback/shape-indicator';
+import { IconOnlyButton, PrimaryButton } from '@/app/components/ui/primitives';
+import { CarbonShapeIndicator } from '@/app/components/ui/feedback';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -35,7 +35,7 @@ import {
   Tag,
 } from '@carbon/react';
 import { AssistantConfiguration, Metadata } from '@rapidaai/react';
-import { Pagination } from '@/app/components/ui/primitives/pagination';
+import { Pagination } from '@/app/components/ui/primitives';
 import {
   ScrollableTableSection,
   TableSection,

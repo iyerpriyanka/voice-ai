@@ -2,8 +2,8 @@ import { FC, useState, useCallback, useEffect } from 'react';
 import { CodeEditor } from '@/app/components/ui/editor/code-editor';
 import { DocNoticeBlock } from '@/app/components/layout/container/message/notice-block/doc-notice-block';
 import { Add, TrashCan, ArrowRight, Information } from '@carbon/icons-react';
-import { TertiaryButton } from '@/app/components/ui/primitives/button';
-import { Stack, TextInput, TextArea } from '@/app/components/ui/primitives/form';
+import { TertiaryButton } from '@/app/components/ui/primitives';
+import { Stack, TextInput, TextArea } from '@/app/components/ui/primitives';
 import { Select, SelectItem, Button, Tooltip } from '@carbon/react';
 import {
   ToolDefinition,

@@ -1,5 +1,5 @@
 import { Metadata } from '@rapidaai/react';
-import { Dropdown } from '@/app/components/ui/primitives/listbox-dropdown';
+import { ListboxDropdown as Dropdown } from '@/app/components/ui/primitives';
 import { ConfigureCohereRerankerModel } from '@/app/components/domain/providers/reranker/cohere';
 import { GetCohereRerankerDefaultOptions } from '@/app/components/domain/providers/reranker/cohere/constants';
 import { cn } from '@/utils';

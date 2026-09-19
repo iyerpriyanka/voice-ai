@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { SearchIconInput } from '@/app/components/ui/composites/icon-input';
+import { SearchIconInput } from '@/app/components/ui/composites';
 import { Helmet } from '@/app/components/app-shell/helmet';
 import { BluredWrapper } from '@/app/components/layout/wrapper/blured-wrapper';
 import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
@@ -7,12 +7,12 @@ import { PageTitleBlock } from '@/app/components/layout/blocks/page-title-block'
 import { TEXT_TO_SPEECH, GOOGLE_CLOUD_VOICE } from '@/providers';
 import { PaginationButtonBlock } from '@/app/components/layout/blocks/pagination-button-block';
 import { cn } from '@/utils';
-import { CreateProviderCredentialDialog } from '@/app/components/dialogs/create-provider-credential-modal';
-import { ViewProviderCredentialDialog } from '@/app/components/dialogs/view-provider-credential-modal';
+import { CreateProviderCredentialDialog } from '@/app/components/dialogs/provider';
+import { ViewProviderCredentialDialog } from '@/app/components/dialogs/provider';
 import { useAllProviderCredentials } from '@/hooks/use-model';
 import { Add, Checkmark } from '@carbon/icons-react';
-import { Tooltip } from '@/app/components/ui/primitives/tooltip';
-import { PrimaryButton, GhostButton } from '@/app/components/ui/primitives/button';
+import { Tooltip } from '@/app/components/ui/primitives';
+import { PrimaryButton, GhostButton } from '@/app/components/ui/primitives';
 import { VoiceCard } from '@/app/pages/external-integration/provider-models/information/voice-card';
 import { useLocation } from 'react-router-dom';
 

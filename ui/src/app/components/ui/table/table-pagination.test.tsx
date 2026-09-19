@@ -69,7 +69,7 @@ jest.mock('@/app/components/ui/primitives/pagination', () => ({
   },
 }));
 
-jest.mock('@/app/components/dialogs/column-preference-modal', () => ({
+jest.mock('@/app/components/dialogs/shared/column-preference-modal', () => ({
   ColumnPreferencesDialog: ({ open }: any) =>
     open ? <div data-testid="column-preferences-dialog" /> : null,
 }));

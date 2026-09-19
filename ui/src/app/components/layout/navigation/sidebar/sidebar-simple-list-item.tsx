@@ -1,4 +1,4 @@
-import { CustomLink } from '@/app/components/ui/primitives/custom-link';
+import { CustomLink } from '@/app/components/ui/primitives';
 import React, { HTMLAttributes } from 'react';
 import { cn } from '@/utils';
 import { SkeletonIcon, SkeletonText } from '@carbon/react';

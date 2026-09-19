@@ -2,22 +2,22 @@ import {
   GetAssistantKnowledge,
   UpdateAssistantKnowledge,
 } from '@rapidaai/react';
-import { Card } from '@/app/components/ui/primitives/card';
+import { Card } from '@/app/components/ui/primitives';
 import { PageActionButtonBlock } from '@/app/components/layout/blocks/page-action-button-block';
 import { KnowledgeDropdown } from '@/app/components/domain/dropdowns/knowledge-dropdown';
-import { FormLabel } from '@/app/components/ui/primitives/form-label';
-import { PrimaryButton, GhostButton } from '@/app/components/ui/primitives/button';
-import CheckboxCard from '@/app/components/ui/primitives/checkbox-card';
-import { FieldSet } from '@/app/components/ui/primitives/fieldset';
-import { Input } from '@/app/components/ui/primitives/input';
-import { Slider } from '@/app/components/ui/primitives/slider';
-import { SwitchWithLabel } from '@/app/components/ui/primitives/switch';
-import { InputHelper } from '@/app/components/ui/primitives/input-helper';
+import { FormLabel } from '@/app/components/ui/primitives';
+import { PrimaryButton, GhostButton } from '@/app/components/ui/primitives';
+import { CheckboxCard } from '@/app/components/ui/primitives';
+import { FieldSet } from '@/app/components/ui/primitives';
+import { Input } from '@/app/components/ui/primitives';
+import { Slider } from '@/app/components/ui/primitives';
+import { SwitchWithLabel } from '@/app/components/ui/primitives';
+import { InputHelper } from '@/app/components/ui/primitives';
 import {
   GetDefaultRerankerConfigIfInvalid,
   RerankerProvider,
 } from '@/app/components/domain/providers/reranker';
-import { Tooltip } from '@/app/components/ui/primitives/tooltip';
+import { Tooltip } from '@/app/components/ui/primitives';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useRapidaStore } from '@/hooks';
 import { useCurrentCredential } from '@/hooks/use-credential';

@@ -2,7 +2,7 @@ import type { FC, ReactNode } from 'react';
 import { Tile as CarbonTile, SkeletonPlaceholder } from '@carbon/react';
 import { cn } from '@/utils';
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// Types
 
 export interface CarbonTileProps {
   children?: ReactNode;
@@ -10,7 +10,7 @@ export interface CarbonTileProps {
   isLoading?: boolean;
 }
 
-// ─── Tile ────────────────────────────────────────────────────────────────────
+// Tile
 
 /** Carbon Tile: static content container with optional skeleton loading. */
 export const Tile: FC<CarbonTileProps> = ({

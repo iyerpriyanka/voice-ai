@@ -1,5 +1,9 @@
 import { FC, HTMLAttributes } from 'react';
-import { BaseCard, CardDescription, CardTitle } from '@/app/components/ui/primitives/card';
+import {
+  BaseCard,
+  CardDescription,
+  CardTitle,
+} from '@/app/components/ui/primitives';
 import { cn } from '@/utils';
 import { AssistantTool } from '@rapidaai/react';
 import { BUILDIN_TOOLS } from '@/llm-tools';
@@ -8,7 +12,10 @@ import {
   getToolConditionSource,
   getToolConditionSourceLabel,
 } from '@/app/components/domain/tools/common';
-import { PrimaryButton, DangerGhostButton } from '@/app/components/ui/primitives/button';
+import {
+  PrimaryButton,
+  DangerGhostButton,
+} from '@/app/components/ui/primitives';
 import { Edit, TrashCan } from '@carbon/icons-react';
 
 interface ToolCardProps extends HTMLAttributes<HTMLDivElement> {

@@ -6,12 +6,12 @@ import {
 } from '@carbon/react';
 import { cn } from '@/utils';
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// Types
 
 type DropdownSize = 'sm' | 'md' | 'lg';
 type DropdownDirection = 'top' | 'bottom';
 
-// ─── Dropdown (single select) ────────────────────────────────────────────────
+// Dropdown (single select)
 
 export interface CarbonDropdownProps<T> {
   id: string;
@@ -97,7 +97,7 @@ export function Dropdown<T>({
   );
 }
 
-// ─── MultiSelect ─────────────────────────────────────────────────────────────
+// MultiSelect
 
 export interface CarbonMultiSelectProps<T> {
   id: string;

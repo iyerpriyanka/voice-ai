@@ -4,22 +4,22 @@ import { useCredential } from '@/hooks/use-credential';
 import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast/headless';
 import { useParams } from 'react-router-dom';
-import { Tab } from '@/app/components/ui/primitives/tabs';
+import { Tab } from '@/app/components/ui/primitives';
 import { Documents } from './documents';
 import { ConnectionConfig, GetKnowledgeBase } from '@rapidaai/react';
 import { GetKnowledgeResponse } from '@rapidaai/react';
 import { cn } from '@/utils';
 import { toHumanReadableRelativeTime } from '@/utils/date';
 import { useKnowledgePageStore } from '@/hooks/use-knowledge-page-store';
-import { CreateTagDialog } from '@/app/components/dialogs/create-tag-modal';
-import { UpdateDescriptionDialog } from '@/app/components/dialogs/update-description-modal';
+import { CreateTagDialog } from '@/app/components/dialogs/shared/create-tag-modal';
+import { UpdateDescriptionDialog } from '@/app/components/dialogs/shared';
 import { Tag } from '@rapidaai/react';
 import { ServiceError } from '@rapidaai/react';
 import { DocumentSegments } from '@/app/pages/knowledge-base/view/document-segments';
 import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
 import { PageTitleBlock } from '@/app/components/layout/blocks/page-title-block';
 import { connectionConfig } from '@/configs';
-import { CreateKnowledgeDocumentDialog } from '@/app/components/dialogs/create-knowledge-document-modal';
+import { CreateKnowledgeDocumentDialog } from '@/app/components/dialogs/knowledge';
 import { Add } from '@carbon/icons-react';
 
 /**

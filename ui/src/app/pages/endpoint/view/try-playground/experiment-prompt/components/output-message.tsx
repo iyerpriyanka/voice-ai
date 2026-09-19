@@ -1,7 +1,7 @@
 import { Metric } from '@rapidaai/react';
 import { InvokeResponse } from '@rapidaai/react';
 import { MarkdownViewer } from '@/app/components/ui/editor/markdown-viewer';
-import { Tab } from '@/app/components/ui/primitives/tabs';
+import { Tab } from '@/app/components/ui/primitives';
 import { ExecuteMessage } from '@/app/pages/endpoint/view/try-playground/experiment-prompt/components/execute-message';
 import { cn } from '@/utils';
 import { FC, useEffect, useState } from 'react';
