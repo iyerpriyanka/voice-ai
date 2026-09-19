@@ -1,43 +1,53 @@
 import { cn } from '@/utils';
+import {
+  TextArea as CarbonTextArea,
+  type TextAreaProps as CarbonTextAreaProps,
+} from '@carbon/react';
 import React, { useState } from 'react';
 
-interface TextAreaProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+export interface TextAreaProps
+  extends Omit<CarbonTextAreaProps, 'id' | 'labelText' | 'rows'> {
+  id?: string;
+  labelText?: CarbonTextAreaProps['labelText'];
   row?: number;
+  rows?: number;
   wrapperClassName?: string;
 }
 
-/**
- * Carbon textarea — default style.
- * Identical visual treatment to the Input component. resize-none. Min 3 rows.
- */
 export const Textarea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
-  (props, ref) => {
+  (
+    {
+      'aria-label': ariaLabel,
+      className,
+      hideLabel = true,
+      id,
+      labelText,
+      name,
+      row,
+      rows,
+      ...props
+    },
+    ref,
+  ) => {
+    const generatedId = React.useId().replace(/:/g, '');
+    const textareaId = id ?? name ?? `textarea-${generatedId}`;
+    const accessibleLabel =
+      labelText ||
+      ariaLabel ||
+      (typeof name === 'string' ? name : undefined) ||
+      props.placeholder ||
+      'Textarea';
+
     return (
-      <textarea
+      <CarbonTextArea
         {...props}
-        id={props.name}
         ref={ref}
-        rows={props.row ?? 3}
-        className={cn(
-          'block w-full px-4 py-2.5 resize-none',
-          // Carbon field background
-          'bg-light-background dark:bg-gray-950',
-          // Typography — Carbon body-short-01
-          'text-sm text-gray-900 dark:text-gray-100',
-          'placeholder-gray-400 dark:placeholder-gray-600',
-          // Border — bottom only
-          'border-0 border-b border-gray-300 dark:border-gray-700',
-          // Focus — inset outline
-          'outline-solid outline-[1.5px] outline-transparent outline-offset-[-1.5px]',
-          'focus:outline-primary focus:border-primary dark:focus:border-primary',
-          // Shape
-          'rounded-none',
-          // Disabled
-          'disabled:opacity-50 disabled:cursor-not-allowed',
-          'transition-colors duration-100',
-          props.className,
-        )}
+        id={textareaId}
+        name={name}
+        rows={rows ?? row ?? 3}
+        labelText={accessibleLabel}
+        hideLabel={hideLabel}
+        className={cn('w-full', className)}
       />
     );
   },
@@ -48,7 +58,7 @@ interface TextAreaWithActionProps extends TextAreaProps {
 }
 
 /**
- * Auto-expanding textarea — grows with content, no scroll. Used in prompt editors.
+ * Auto-expanding textarea. Grows with content, no scroll. Used in prompt editors.
  */
 export const ScalableTextarea = React.forwardRef<
   HTMLTextAreaElement,
@@ -100,7 +110,7 @@ export const ScalableTextarea = React.forwardRef<
   );
 });
 
-/** Inline paragraph input — transparent wrapper, no border. Used in variable editors. */
+/** Inline paragraph input. Transparent wrapper, no border. Used in variable editors. */
 export const ParagraphTextarea = React.forwardRef<
   HTMLTextAreaElement,
   TextAreaProps
