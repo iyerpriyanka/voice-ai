@@ -40,9 +40,9 @@ import {
   ValidateTelephonyOptions,
 } from '@/app/components/providers/telephony';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
-import { Tabs } from '@/app/components/carbon/tabs';
-import { PrimaryButton, SecondaryButton } from '@/app/components/carbon/button';
-import { Notification } from '@/app/components/carbon/notification';
+import { Tabs } from '@/app/components/tabs';
+import { PrimaryButton, SecondaryButton } from '@/app/components/button';
+import { Notification } from '@/app/components/notification';
 import { ButtonSet } from '@carbon/react';
 
 const EDIT_TABS = [

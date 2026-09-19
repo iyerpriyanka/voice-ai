@@ -5,7 +5,7 @@ import toast from 'react-hot-toast/headless';
 import { Assistant, GetAllAssistantProviderResponse } from '@rapidaai/react';
 import { SectionLoader } from '@/app/components/loader/section-loader';
 import { TableSection } from '@/app/components/sections/table-section';
-import { Pagination } from '@/app/components/carbon/pagination';
+import { Pagination } from '@/app/components/pagination';
 import { toHumanReadableDateTime } from '@/utils/date';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { auditActorLabel, createdAuditActor } from '@/utils/audit-actor';

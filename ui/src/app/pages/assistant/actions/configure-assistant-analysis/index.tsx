@@ -7,13 +7,13 @@ import { useCurrentCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/hooks';
 import { SectionLoader } from '@/app/components/loader/section-loader';
 import toast from 'react-hot-toast/headless';
-import { EmptyState } from '@/app/components/carbon/empty-state';
+import { EmptyState } from '@/app/components/empty-state';
 import { CreateAssistantAnalysis } from '@/app/pages/assistant/actions/configure-assistant-analysis/create-assistant-analysis';
 import { useAssistantAnalysisPageStore } from '@/app/pages/assistant/actions/store/use-analysis-page-store';
 import { UpdateAssistantAnalysis } from '@/app/pages/assistant/actions/configure-assistant-analysis/update-assistant-analysis';
-import { IconOnlyButton, PrimaryButton } from '@/app/components/carbon/button';
-import { RecordStatusIndicator } from '@/app/components/carbon/record-status-indicator';
-import { Pagination } from '@/app/components/carbon/pagination';
+import { IconOnlyButton, PrimaryButton } from '@/app/components/button';
+import { RecordStatusIndicator } from '@/app/components/record-status-indicator';
+import { Pagination } from '@/app/components/pagination';
 import {
   Breadcrumb,
   BreadcrumbItem,

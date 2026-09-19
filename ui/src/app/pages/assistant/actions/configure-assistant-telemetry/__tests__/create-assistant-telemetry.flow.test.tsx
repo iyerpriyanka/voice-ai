@@ -117,7 +117,7 @@ jest.mock('@/app/components/providers/telemetry', () => ({
   ),
 }));
 
-jest.mock('@/app/components/carbon/button', () => ({
+jest.mock('@/app/components/button', () => ({
   PrimaryButton: ({ children, isLoading: _, ...props }: any) => (
     <button {...props}>{children}</button>
   ),
@@ -126,11 +126,11 @@ jest.mock('@/app/components/carbon/button', () => ({
   ),
 }));
 
-jest.mock('@/app/components/carbon/form', () => ({
+jest.mock('@/app/components/form', () => ({
   Stack: ({ children }: any) => <div>{children}</div>,
 }));
 
-jest.mock('@/app/components/carbon/notification', () => ({
+jest.mock('@/app/components/notification', () => ({
   Notification: ({ subtitle }: any) => <div>{subtitle}</div>,
 }));
 

@@ -1,6 +1,6 @@
 import { cn } from '@/utils';
 import { FC, HTMLAttributes, ReactElement } from 'react';
-import { Notification } from '@/app/components/carbon/notification';
+import { Notification } from '@/app/components/notification';
 
 interface TabFormProps extends HTMLAttributes<HTMLDivElement> {
   activeTab?: string;

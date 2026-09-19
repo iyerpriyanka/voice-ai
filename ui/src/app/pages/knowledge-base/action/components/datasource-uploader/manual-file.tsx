@@ -1,4 +1,4 @@
-import { GhostButton } from '@/app/components/carbon/button';
+import { GhostButton } from '@/app/components/button';
 import SingleRowWrapper from '@/app/components/wrapper/single-row-wrapper';
 import { useCreateKnowledgeDocumentPageStore } from '@/hooks/use-create-knowledge-document-page-store';
 import { formatFileSize } from '@/utils/format';

@@ -8,7 +8,7 @@ import { Helmet } from '@/app/components/helmet';
 import {
   PrimaryButton,
   SecondaryButton,
-} from '@/app/components/carbon/button';
+} from '@/app/components/button';
 import {
   ButtonSet,
   Toggletip,
@@ -24,7 +24,7 @@ import {
   EndpointProviderModelAttribute,
   Metadata,
 } from '@rapidaai/react';
-import ConfirmDialog from '@/app/components/base/modal/confirm-ui';
+import ConfirmDialog from '@/app/components/modal/confirm-ui';
 import { create_endpoint_success_message } from '@/utils/messages';
 import {
   GetDefaultTextProviderConfigIfInvalid,
@@ -47,8 +47,8 @@ import { connectionConfig } from '@/configs';
 import { YellowNoticeBlock } from '@/app/components/container/message/notice-block';
 import { InputHelper } from '@/app/components/input-helper';
 import { ArrowUpRight } from 'lucide-react';
-import { ConfigureEndpointPromptDialog } from '@/app/components/base/modal/configure-endpoint-prompt-modal';
-import { CornerBorderOverlay } from '@/app/components/base/corner-border';
+import { ConfigureEndpointPromptDialog } from '@/app/components/modal/configure-endpoint-prompt-modal';
+import { CornerBorderOverlay } from '@/app/components/corner-border';
 
 export function CreateEndpointPage() {
   const { authId, token, projectId } = useCurrentCredential();

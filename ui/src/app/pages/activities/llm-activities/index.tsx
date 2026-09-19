@@ -10,16 +10,16 @@ import {
   toHumanReadableDateTime,
 } from '@/utils/date';
 import { getMetadataValue, getMetricValueOrDefault } from '@/utils/metadata';
-import { LLMLogDialog } from '@/app/components/base/modal/llm-log-modal';
+import { LLMLogDialog } from '@/app/components/modal/llm-log-modal';
 import { HttpStatusSpanIndicator } from '@/app/components/indicators/http-status';
 import { PageTitleWithCount } from '@/app/components/blocks/page-title-with-count';
 import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
-import { CarbonStatusIndicator } from '@/app/components/carbon/status-indicator';
-import { Pagination } from '@/app/components/carbon/pagination';
-import { IconOnlyButton } from '@/app/components/carbon/button';
+import { CarbonStatusIndicator } from '@/app/components/status-indicator';
+import { Pagination } from '@/app/components/pagination';
+import { IconOnlyButton } from '@/app/components/button';
 import { Renew, View, Launch, Ai } from '@carbon/icons-react';
-import { ProviderTag } from '@/app/components/carbon/provider-tag';
-import { EmptyState } from '@/app/components/carbon/empty-state';
+import { ProviderTag } from '@/app/components/provider-tag';
+import { EmptyState } from '@/app/components/empty-state';
 import { ScrollableTableSection } from '@/app/components/sections/table-section';
 import { LLMLogQuerySearch } from './llm-query-search';
 import {

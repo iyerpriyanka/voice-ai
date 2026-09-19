@@ -1,8 +1,8 @@
 import { Endpoint, Tag } from '@rapidaai/react';
 import { Helmet } from '@/app/components/helmet';
-import { EndpointInstructionDialog } from '@/app/components/base/modal/endpoint-instruction-modal';
-import { CreateTagDialog } from '@/app/components/base/modal/create-tag-modal';
-import { UpdateDescriptionDialog } from '@/app/components/base/modal/update-description-modal';
+import { EndpointInstructionDialog } from '@/app/components/modal/endpoint-instruction-modal';
+import { CreateTagDialog } from '@/app/components/modal/create-tag-modal';
+import { UpdateDescriptionDialog } from '@/app/components/modal/update-description-modal';
 import { EndpointTag } from '@/app/components/form/tag-input/endpoint-tags';
 import { EndpointSideNav } from '@/app/pages/endpoint/view/endpoint-side-nav';
 import { useEndpointPageStore, useRapidaStore } from '@/hooks';

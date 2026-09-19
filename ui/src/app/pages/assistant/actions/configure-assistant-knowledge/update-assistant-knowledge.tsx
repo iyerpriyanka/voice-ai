@@ -2,11 +2,11 @@ import {
   GetAssistantKnowledge,
   UpdateAssistantKnowledge,
 } from '@rapidaai/react';
-import { Card } from '@/app/components/base/cards';
+import { Card } from '@/app/components/cards';
 import { PageActionButtonBlock } from '@/app/components/blocks/page-action-button-block';
 import { KnowledgeDropdown } from '@/app/components/dropdown/knowledge-dropdown';
 import { FormLabel } from '@/app/components/form-label';
-import { PrimaryButton, GhostButton } from '@/app/components/carbon/button';
+import { PrimaryButton, GhostButton } from '@/app/components/button';
 import CheckboxCard from '@/app/components/form/checkbox-card';
 import { FieldSet } from '@/app/components/form/fieldset';
 import { Input } from '@/app/components/form/input';

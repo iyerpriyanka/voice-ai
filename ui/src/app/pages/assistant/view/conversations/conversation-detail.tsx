@@ -23,19 +23,19 @@ import {
   ChartLine,
 } from '@carbon/icons-react';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { GhostButton } from '@/app/components/carbon/button';
+import { GhostButton } from '@/app/components/button';
 import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
-import { Table } from '@/app/components/base/tables/table';
-import { TableHead } from '@/app/components/base/tables/table-head';
-import { TableBody } from '@/app/components/base/tables/table-body';
-import { TableRow } from '@/app/components/base/tables/table-row';
-import { TableCell } from '@/app/components/base/tables/table-cell';
-import { EmptyState } from '@/app/components/carbon/empty-state';
+import { Table } from '@/app/components/tables/table';
+import { TableHead } from '@/app/components/tables/table-head';
+import { TableBody } from '@/app/components/tables/table-body';
+import { TableRow } from '@/app/components/tables/table-row';
+import { TableCell } from '@/app/components/tables/table-cell';
+import { EmptyState } from '@/app/components/empty-state';
 import { connectionConfig } from '@/configs';
 import { cn } from '@/utils';
-import { CarbonStatusIndicator } from '@/app/components/carbon/status-indicator';
+import { CarbonStatusIndicator } from '@/app/components/status-indicator';
 import { getStatusMetric } from '@/utils/metadata';
-import { Tabs } from '@/app/components/carbon/tabs';
+import { Tabs } from '@/app/components/tabs';
 
 // ── Tab definitions ───────────────────────────────────────────────────────────
 

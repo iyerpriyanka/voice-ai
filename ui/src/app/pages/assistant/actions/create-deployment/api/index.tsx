@@ -42,8 +42,8 @@ import {
   PrimaryButton,
   SecondaryButton,
   GhostButton,
-} from '@/app/components/carbon/button';
-import { InputCheckbox } from '@/app/components/carbon/form/input-checkbox';
+} from '@/app/components/button';
+import { InputCheckbox } from '@/app/components/form/input-checkbox';
 import { ButtonSet, CheckboxGroup } from '@carbon/react';
 
 const STEPS = [

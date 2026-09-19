@@ -1,6 +1,6 @@
 import { RedNoticeBlock } from '@/app/components/container/message/notice-block';
 import { FormLabel } from '@/app/components/form-label';
-import { PrimaryButton } from '@/app/components/carbon/button';
+import { PrimaryButton } from '@/app/components/button';
 import { ChevronRight } from '@carbon/icons-react';
 import { FieldSet } from '@/app/components/form/fieldset';
 import { Input } from '@/app/components/form/input';

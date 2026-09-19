@@ -230,23 +230,23 @@ jest.mock('@/app/components/error-container', () => ({
 }));
 
 jest.mock('@/app/components/helmet', () => ({ Helmet: () => null }));
-jest.mock('@/app/components/carbon/button', () => ({
+jest.mock('@/app/components/button', () => ({
   PrimaryButton: ({ children, isLoading: _, renderIcon: _r, hasIconOnly: _h, iconDescription: _d, ...props }: any) => <button {...props}>{children}</button>,
   SecondaryButton: ({ children, isLoading: _, renderIcon: _r, hasIconOnly: _h, iconDescription: _d, ...props }: any) => <button {...props}>{children}</button>,
   GhostButton: ({ children, isLoading: _, renderIcon: _r, hasIconOnly: _h, iconDescription: _d, ...props }: any) => <button {...props}>{children}</button>,
 }));
 
-jest.mock('@/app/components/base/modal/confirm-ui', () => () => null);
-jest.mock('@/app/components/base/modal/configure-endpoint-prompt-modal', () => ({
+jest.mock('@/app/components/modal/confirm-ui', () => () => null);
+jest.mock('@/app/components/modal/configure-endpoint-prompt-modal', () => ({
   ConfigureEndpointPromptDialog: () => null,
 }));
-jest.mock('@/app/components/base/modal/assistant-configure-next-modal', () => ({
+jest.mock('@/app/components/modal/assistant-configure-next-modal', () => ({
   ConfigureAssistantNextDialog: () => null,
 }));
-jest.mock('@/app/components/base/modal/assistant-configure-tool-modal', () => ({
+jest.mock('@/app/components/modal/assistant-configure-tool-modal', () => ({
   ConfigureAssistantToolDialog: () => null,
 }));
-jest.mock('@/app/components/base/modal/configure-assistant-template-modal', () => ({
+jest.mock('@/app/components/modal/configure-assistant-template-modal', () => ({
   ConfigureAssistantTemplateDialog: () => null,
 }));
 
@@ -256,14 +256,14 @@ jest.mock('@/app/components/container/message/notice-block', () => ({
 jest.mock('@/app/components/container/message/notice-block/doc-notice-block', () => ({
   DocNoticeBlock: ({ children }: any) => <div>{children}</div>,
 }));
-jest.mock('@/app/components/carbon/empty-state', () => ({
+jest.mock('@/app/components/empty-state', () => ({
   EmptyState: () => null,
 }));
 
 jest.mock('@/app/components/blocks/section-divider', () => ({
   SectionDivider: () => null,
 }));
-jest.mock('@/app/components/base/corner-border', () => ({
+jest.mock('@/app/components/corner-border', () => ({
   CornerBorderOverlay: () => null,
 }));
 

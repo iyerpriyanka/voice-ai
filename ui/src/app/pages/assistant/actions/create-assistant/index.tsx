@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Helmet } from '@/app/components/helmet';
 import { useRapidaStore } from '@/hooks';
 import { TabForm } from '@/app/components/form/tab-form';
-import { PrimaryButton, SecondaryButton } from '@/app/components/carbon/button';
+import { PrimaryButton, SecondaryButton } from '@/app/components/button';
 import {
   ButtonSet,
   Table,
@@ -34,7 +34,7 @@ import { useCurrentCredential } from '@/hooks/use-credential';
 import { useAllProviderCredentials } from '@/hooks/use-model';
 import { ConfigPrompt } from '@/app/components/configuration/config-prompt';
 import { randomMeaningfullName, randomString } from '@/utils';
-import { TextInput, TextArea, Stack } from '@/app/components/carbon/form';
+import { TextInput, TextArea, Stack } from '@/app/components/form';
 import { TagInput } from '@/app/components/form/tag-input';
 import { AssistantTag } from '@/app/components/form/tag-input/assistant-tags';
 import {
@@ -50,8 +50,8 @@ import {
 } from '@/app/components/tools/common';
 import { ArrowUpRight } from 'lucide-react';
 import { BUILDIN_TOOLS } from '@/llm-tools';
-import { EmptyState } from '@/app/components/carbon/empty-state';
-import { ConfigureAssistantToolDialog } from '@/app/components/base/modal/assistant-configure-tool-modal';
+import { EmptyState } from '@/app/components/empty-state';
+import { ConfigureAssistantToolDialog } from '@/app/components/modal/assistant-configure-tool-modal';
 import { DocNoticeBlock } from '@/app/components/container/message/notice-block/doc-notice-block';
 import { CreateAssistant } from '@rapidaai/react';
 import { CreateAssistantToolRequest } from '@rapidaai/react';
@@ -59,14 +59,14 @@ import { Struct } from 'google-protobuf/google/protobuf/struct_pb';
 import { connectionConfig } from '@/configs';
 import { ChatCompletePrompt } from '@/utils/prompt';
 import toast from 'react-hot-toast/headless';
-import { ConfigureAssistantNextDialog } from '@/app/components/base/modal/assistant-configure-next-modal';
+import { ConfigureAssistantNextDialog } from '@/app/components/modal/assistant-configure-next-modal';
 import { SectionDivider } from '@/app/components/blocks/section-divider';
-import { CornerBorderOverlay } from '@/app/components/base/corner-border';
+import { CornerBorderOverlay } from '@/app/components/corner-border';
 import { Add, Edit, ToolKit, TrashCan } from '@carbon/icons-react';
 import {
   AssistantTemplate,
   ConfigureAssistantTemplateDialog,
-} from '@/app/components/base/modal/configure-assistant-template-modal';
+} from '@/app/components/modal/configure-assistant-template-modal';
 import { useTheme } from '@/theme/theme-provider';
 
 /**

@@ -1,6 +1,6 @@
 import React, { HTMLAttributes, useEffect, useState } from 'react';
 import { cn } from '@/utils';
-import TooltipPlus from '@/app/components/base/tooltip-plus';
+import TooltipPlus from '@/app/components/tooltip-plus';
 
 export function Pill(props: HTMLAttributes<HTMLSpanElement>) {
   return (

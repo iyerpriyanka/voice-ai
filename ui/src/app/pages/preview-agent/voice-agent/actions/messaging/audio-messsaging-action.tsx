@@ -7,7 +7,7 @@ import {
   Chat,
   StopFilledAlt,
 } from '@carbon/icons-react';
-import { GhostButton } from '@/app/components/carbon/button';
+import { GhostButton } from '@/app/components/button';
 import {
   useConnectAgent,
   MultibandAudioVisualizerComponent,

@@ -10,7 +10,7 @@ import {
 import { HttpStatusSpanIndicator } from '@/app/components/indicators/http-status';
 import { PageTitleWithCount } from '@/app/components/blocks/page-title-with-count';
 import { useWebhookLogPage } from '@/hooks/use-webhook-log-page-store';
-import { RequestLogDialog } from '@/app/components/base/modal/webhook-log-modal';
+import { RequestLogDialog } from '@/app/components/modal/webhook-log-modal';
 import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { RetryAssistantHTTPLogRequest, RetryHTTPLog } from '@rapidaai/react';
@@ -29,11 +29,11 @@ import {
   Tag,
   Link,
 } from '@carbon/react';
-import { Pagination } from '@/app/components/carbon/pagination';
-import { IconOnlyButton } from '@/app/components/carbon/button';
-import { UrlTableCell } from '@/app/components/carbon/url-table-cell';
+import { Pagination } from '@/app/components/pagination';
+import { IconOnlyButton } from '@/app/components/button';
+import { UrlTableCell } from '@/app/components/url-table-cell';
 import { Renew, View, EventSchedule, Launch } from '@carbon/icons-react';
-import { EmptyState } from '@/app/components/carbon/empty-state';
+import { EmptyState } from '@/app/components/empty-state';
 import { ScrollableTableSection } from '@/app/components/sections/table-section';
 import { RequestLogQuerySearch } from './request-query-search';
 

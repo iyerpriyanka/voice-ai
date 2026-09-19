@@ -9,9 +9,9 @@ import { DocumentOption } from '@/app/pages/knowledge-base/view/documents/docume
 import { useCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/hooks/use-rapida-store';
 import toast from 'react-hot-toast/headless';
-import { TableRow } from '@/app/components/base/tables/table-row';
-import { TableCell } from '@/app/components/base/tables/table-cell';
-import { LabelCell } from '@/app/components/base/tables/label-cell';
+import { TableRow } from '@/app/components/tables/table-row';
+import { TableCell } from '@/app/components/tables/table-cell';
+import { LabelCell } from '@/app/components/tables/label-cell';
 import { Checkmark, Document, WarningAlt } from '@carbon/icons-react';
 
 /**

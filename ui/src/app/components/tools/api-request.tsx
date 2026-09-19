@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Select, SelectItem } from '@carbon/react';
-import { Stack, TextInput } from '@/app/components/carbon/form';
+import { Stack, TextInput } from '@/app/components/form';
 import { APiStringHeader } from '@/app/components/external-api/api-header';
 import { InputGroup } from '../input-group';
 import {

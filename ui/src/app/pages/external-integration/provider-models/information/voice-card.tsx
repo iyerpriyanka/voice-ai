@@ -1,4 +1,4 @@
-import { TertiaryButton, GhostButton } from '@/app/components/carbon/button';
+import { TertiaryButton, GhostButton } from '@/app/components/button';
 import { Check, Copy, Pause, Play } from 'lucide-react';
 import { FC, useRef, useState } from 'react';
 

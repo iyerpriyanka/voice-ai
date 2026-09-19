@@ -12,7 +12,7 @@ import { SidePanelClose, SidePanelOpen } from '@carbon/icons-react';
 import { useSidebar } from '@/context/sidebar-context';
 import { cn } from '@/utils/index';
 import { useRapidaStore } from '@/hooks';
-import { Text } from '@/app/components/carbon/text';
+import { Text } from '@/app/components/text';
 import { useWorkspace } from '@/workspace';
 
 /**

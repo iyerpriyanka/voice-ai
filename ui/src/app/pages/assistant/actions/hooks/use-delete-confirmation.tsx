@@ -1,7 +1,7 @@
 // hooks/useConfirmDialog.tsx
 
 import { useState, useCallback } from 'react';
-import { ConfirmDeleteDialog } from '@/app/components/base/modal/confirm-delete';
+import { ConfirmDeleteDialog } from '@/app/components/modal/confirm-delete';
 
 interface UseConfirmDialogProps {
   onConfirm: () => void;

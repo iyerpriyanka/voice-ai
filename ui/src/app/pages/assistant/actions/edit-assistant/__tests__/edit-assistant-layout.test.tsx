@@ -69,7 +69,7 @@ jest.mock(
   }),
 );
 
-jest.mock('@/app/components/carbon/notification', () => ({
+jest.mock('@/app/components/notification', () => ({
   Notification: ({ subtitle }: any) => <div>{subtitle}</div>,
 }));
 

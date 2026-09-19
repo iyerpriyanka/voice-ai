@@ -2,8 +2,8 @@ import { FC, useState, useCallback, useEffect } from 'react';
 import { CodeEditor } from '@/app/components/form/editor/code-editor';
 import { DocNoticeBlock } from '@/app/components/container/message/notice-block/doc-notice-block';
 import { Add, TrashCan, ArrowRight, Information } from '@carbon/icons-react';
-import { TertiaryButton } from '@/app/components/carbon/button';
-import { Stack, TextInput, TextArea } from '@/app/components/carbon/form';
+import { TertiaryButton } from '@/app/components/button';
+import { Stack, TextInput, TextArea } from '@/app/components/form';
 import { Select, SelectItem, Button, Tooltip } from '@carbon/react';
 import {
   ToolDefinition,

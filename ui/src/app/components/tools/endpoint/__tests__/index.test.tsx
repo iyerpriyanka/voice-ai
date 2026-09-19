@@ -22,7 +22,7 @@ jest.mock('@/app/components/input-group', () => ({
   InputGroup: ({ children }: any) => <div>{children}</div>,
 }));
 
-jest.mock('@/app/components/carbon/form', () => ({
+jest.mock('@/app/components/form', () => ({
   Stack: ({ children }: any) => <div>{children}</div>,
   TextInput: ({ id, value, onChange, labelText, hideLabel }: any) => (
     <div>
@@ -35,7 +35,7 @@ jest.mock('@/app/components/carbon/form', () => ({
   ),
 }));
 
-jest.mock('@/app/components/carbon/button', () => ({
+jest.mock('@/app/components/button', () => ({
   TertiaryButton: ({ children, ...props }: any) => (
     <button {...props}>{children}</button>
   ),

@@ -164,7 +164,7 @@ jest.mock('@/app/components/form/tab-form', () => ({
   },
 }));
 
-jest.mock('@/app/components/carbon/button', () => ({
+jest.mock('@/app/components/button', () => ({
   PrimaryButton: ({ children, isLoading: _isLoading, ...props }: any) => (
     <button {...props}>{children}</button>
   ),

@@ -11,14 +11,14 @@ import {
   toHumanReadableDateTime,
 } from '@/utils/date';
 import { getTimeTakenMetric, getTotalTokenMetric } from '@/utils/metadata';
-import { EndpointTraceModal } from '@/app/components/base/modal/endpoint-trace-modal';
+import { EndpointTraceModal } from '@/app/components/modal/endpoint-trace-modal';
 import { useEndpointLogPage } from '@/hooks/use-endpoint-log-page-store';
-import { CarbonStatusIndicator } from '@/app/components/carbon/status-indicator';
-import { Pagination } from '@/app/components/carbon/pagination';
-import { IconOnlyButton } from '@/app/components/carbon/button';
-import { CopyButton } from '@/app/components/carbon/button/copy-button';
-import { DateFilter } from '@/app/components/carbon/date-filter';
-import { EmptyState } from '@/app/components/carbon/empty-state';
+import { CarbonStatusIndicator } from '@/app/components/status-indicator';
+import { Pagination } from '@/app/components/pagination';
+import { IconOnlyButton } from '@/app/components/button';
+import { CopyButton } from '@/app/components/button/copy-button';
+import { DateFilter } from '@/app/components/date-filter';
+import { EmptyState } from '@/app/components/empty-state';
 import { Renew, View, Activity } from '@carbon/icons-react';
 import { ScrollableTableSection } from '@/app/components/sections/table-section';
 

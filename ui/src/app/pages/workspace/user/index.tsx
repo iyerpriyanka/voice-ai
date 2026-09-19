@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Helmet } from '@/app/components/helmet';
-import { InviteOrganizationUserDialog } from '@/app/components/base/modal/invite-organization-user-modal';
-import { InviteProjectUserDialog } from '@/app/components/base/modal/invite-project-user-modal';
+import { InviteOrganizationUserDialog } from '@/app/components/modal/invite-organization-user-modal';
+import { InviteProjectUserDialog } from '@/app/components/modal/invite-project-user-modal';
 import {
   DeleteUserFromOrganization,
   DeleteUserFromOrganizationRequest,
@@ -14,8 +14,8 @@ import toast from 'react-hot-toast/headless';
 import { useRapidaStore } from '@/hooks';
 import { useUserPageStore } from '@/hooks';
 import { SingleUser } from '@/app/pages/workspace/user/single-user';
-import { PrimaryButton } from '@/app/components/carbon/button';
-import { Pagination } from '@/app/components/carbon/pagination';
+import { PrimaryButton } from '@/app/components/button';
+import { Pagination } from '@/app/components/pagination';
 import { Add, Renew, TrashCan, UserAdmin } from '@carbon/icons-react';
 import {
   Table,
@@ -33,7 +33,7 @@ import {
 import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
 import { PageTitleWithCount } from '@/app/components/blocks/page-title-with-count';
 import { TableSection } from '@/app/components/sections/table-section';
-import { ConfirmDeleteDialog } from '@/app/components/base/modal/confirm-delete';
+import { ConfirmDeleteDialog } from '@/app/components/modal/confirm-delete';
 import { connectionConfig } from '@/configs';
 
 const headers = [

@@ -1,7 +1,7 @@
 import { PageActionButtonBlock } from '@/app/components/blocks/page-action-button-block';
 import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
 import { PageTitleBlock } from '@/app/components/blocks/page-title-block';
-import { PrimaryButton, GhostButton } from '@/app/components/carbon/button';
+import { PrimaryButton, GhostButton } from '@/app/components/button';
 import { Select } from '@/app/components/form/select';
 import { Slider } from '@/app/components/form/slider';
 import { InputGroup } from '@/app/components/input-group';

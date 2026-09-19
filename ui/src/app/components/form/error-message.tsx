@@ -1,6 +1,6 @@
 import { RedNoticeBlock } from '@/app/components/container/message/notice-block';
 import React, { FC, HTMLAttributes } from 'react';
-import { Notification } from '@/app/components/carbon/notification';
+import { Notification } from '@/app/components/notification';
 
 interface ErrorMessageProps extends HTMLAttributes<HTMLDivElement> {
   message?: string;

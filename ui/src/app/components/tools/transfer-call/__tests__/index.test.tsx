@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 import { Metadata } from '@rapidaai/react';
 import { ConfigureTransferCall } from '../../transfer-call';
 
-jest.mock('@/app/components/carbon/form', () => {
+jest.mock('@/app/components/form', () => {
   const React = require('react');
   return {
     FormGroup: ({ legendText, children }: any) =>

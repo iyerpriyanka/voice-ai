@@ -6,13 +6,13 @@ import { Activity, Edit, TrashCan, Add, Renew } from '@carbon/icons-react';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { SectionLoader } from '@/app/components/loader/section-loader';
 import toast from 'react-hot-toast/headless';
-import { EmptyState } from '@/app/components/carbon/empty-state';
+import { EmptyState } from '@/app/components/empty-state';
 import { CreateAssistantTelemetry } from './create-assistant-telemetry';
 import { UpdateAssistantTelemetry } from './update-assistant-telemetry';
 import { useAssistantTelemetryPageStore } from '@/app/pages/assistant/actions/store/use-telemetry-page-store';
 import { TELEMETRY_PROVIDER } from '@/providers';
-import { IconOnlyButton, PrimaryButton } from '@/app/components/carbon/button';
-import { CarbonShapeIndicator } from '@/app/components/carbon/shape-indicator';
+import { IconOnlyButton, PrimaryButton } from '@/app/components/button';
+import { CarbonShapeIndicator } from '@/app/components/shape-indicator';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -35,7 +35,7 @@ import {
   Tag,
 } from '@carbon/react';
 import { AssistantConfiguration, Metadata } from '@rapidaai/react';
-import { Pagination } from '@/app/components/carbon/pagination';
+import { Pagination } from '@/app/components/pagination';
 import {
   ScrollableTableSection,
   TableSection,

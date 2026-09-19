@@ -1,5 +1,5 @@
 import { Helmet } from '@/app/components/helmet';
-import { ProviderCard } from '@/app/components/base/cards/provider-card';
+import { ProviderCard } from '@/app/components/cards/provider-card';
 import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
 import { PageTitleBlock } from '@/app/components/blocks/page-title-block';
 import { cn } from '@/utils';

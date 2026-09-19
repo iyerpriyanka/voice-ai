@@ -136,7 +136,7 @@ jest.mock('@/app/pages/assistant/actions/hooks/use-confirmation', () => {
   };
 });
 
-jest.mock('@/app/components/base/modal/webhook-log-modal', () => ({
+jest.mock('@/app/components/modal/webhook-log-modal', () => ({
   RequestLogDialog: ({ modalOpen }: any) =>
     modalOpen ? <div>request-log-modal</div> : null,
 }));
@@ -145,7 +145,7 @@ jest.mock('@/app/components/helmet', () => ({
   Helmet: () => null,
 }));
 
-jest.mock('@/app/components/carbon/query-search', () => ({
+jest.mock('@/app/components/query-search', () => ({
   QuerySearch: ({ placeholder }: any) => <input placeholder={placeholder} />,
   parseQuerySearchFilters: () => [],
 }));
@@ -158,19 +158,19 @@ jest.mock('@/app/components/blocks/page-header-block', () => ({
   PageHeaderBlock: ({ children }: any) => <div>{children}</div>,
 }));
 
-jest.mock('@/app/components/carbon/table-link', () => ({
+jest.mock('@/app/components/table-link', () => ({
   TableLink: ({ children, href }: any) => <a href={href}>{children}</a>,
 }));
 
-jest.mock('@/app/components/carbon/pagination', () => ({
+jest.mock('@/app/components/pagination', () => ({
   Pagination: () => <div>pagination</div>,
 }));
 
-jest.mock('@/app/components/carbon/empty-state', () => ({
+jest.mock('@/app/components/empty-state', () => ({
   EmptyState: ({ title }: any) => <div>{title}</div>,
 }));
 
-jest.mock('@/app/components/carbon/button', () => ({
+jest.mock('@/app/components/button', () => ({
   IconOnlyButton: ({
     iconDescription,
     children,

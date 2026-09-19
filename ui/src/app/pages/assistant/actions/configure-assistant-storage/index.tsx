@@ -7,13 +7,13 @@ import { useCurrentCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/hooks';
 import { SectionLoader } from '@/app/components/loader/section-loader';
 import toast from 'react-hot-toast/headless';
-import { EmptyState } from '@/app/components/carbon/empty-state';
+import { EmptyState } from '@/app/components/empty-state';
 import { CreateAssistantStorage } from './create-assistant-storage';
 import { UpdateAssistantStorage } from './update-assistant-storage';
 import { useAssistantStoragePageStore } from '@/app/pages/assistant/actions/store/use-storage-page-store';
 import { STORAGE_PROVIDER } from '@/providers';
-import { IconOnlyButton, PrimaryButton } from '@/app/components/carbon/button';
-import { RecordStatusIndicator } from '@/app/components/carbon/record-status-indicator';
+import { IconOnlyButton, PrimaryButton } from '@/app/components/button';
+import { RecordStatusIndicator } from '@/app/components/record-status-indicator';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -36,7 +36,7 @@ import {
   Tag,
 } from '@carbon/react';
 import { AssistantConfiguration, Metadata } from '@rapidaai/react';
-import { Pagination } from '@/app/components/carbon/pagination';
+import { Pagination } from '@/app/components/pagination';
 import {
   ScrollableTableSection,
   TableSection,

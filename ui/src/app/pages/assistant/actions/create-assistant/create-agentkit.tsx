@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Helmet } from '@/app/components/helmet';
 import { useRapidaStore } from '@/hooks';
 import { TabForm } from '@/app/components/form/tab-form';
-import { PrimaryButton, SecondaryButton } from '@/app/components/carbon/button';
+import { PrimaryButton, SecondaryButton } from '@/app/components/button';
 import { ButtonSet, Slider } from '@carbon/react';
 import { ChevronDown } from '@carbon/icons-react';
 import {

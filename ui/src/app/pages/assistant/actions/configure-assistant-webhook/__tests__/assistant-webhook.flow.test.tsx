@@ -194,7 +194,7 @@ jest.mock('@/app/components/form/tab-form', () => ({
   },
 }));
 
-jest.mock('@/app/components/carbon/form', () => {
+jest.mock('@/app/components/form', () => {
   const React = require('react');
   return {
     Stack: ({ children }: any) => React.createElement('div', null, children),
@@ -272,7 +272,7 @@ jest.mock('@/app/components/form/slider', () => {
   };
 });
 
-jest.mock('@/app/components/carbon/button', () => {
+jest.mock('@/app/components/button', () => {
   const React = require('react');
   return {
     PrimaryButton: ({

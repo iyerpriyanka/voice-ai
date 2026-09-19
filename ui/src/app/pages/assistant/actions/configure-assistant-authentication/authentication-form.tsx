@@ -23,8 +23,8 @@ import { useCurrentCredential } from '@/hooks/use-credential';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { connectionConfig } from '@/configs';
-import { Notification } from '@/app/components/carbon/notification';
-import { PrimaryButton, SecondaryButton } from '@/app/components/carbon/button';
+import { Notification } from '@/app/components/notification';
+import { PrimaryButton, SecondaryButton } from '@/app/components/button';
 import { InputGroup } from '@/app/components/input-group';
 import { APiStringHeader } from '@/app/components/external-api/api-header';
 import {
@@ -36,7 +36,7 @@ import {
   normalizeAssistantConditionEntries,
 } from '@/app/components/tools/common';
 import { SourceConditionRule } from '@/app/components/conditions/source-condition-rule';
-import { Stack, TextInput } from '@/app/components/carbon/form';
+import { Stack, TextInput } from '@/app/components/form';
 
 import {
   AUTH_KEY_OPTIONS_BY_TYPE,

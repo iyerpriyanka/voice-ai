@@ -165,15 +165,15 @@ jest.mock('@/app/components/external-api/api-header', () => ({
   APiStringHeader: () => <div>headers</div>,
 }));
 
-jest.mock('@/app/components/carbon/notification', () => ({
+jest.mock('@/app/components/notification', () => ({
   Notification: ({ subtitle }: any) => <div>{subtitle}</div>,
 }));
 
-jest.mock('@/app/components/carbon/status-indicator', () => ({
+jest.mock('@/app/components/status-indicator', () => ({
   CarbonStatusIndicator: ({ state }: any) => <span>{state}</span>,
 }));
 
-jest.mock('@/app/components/carbon/overflow-menu', () => ({
+jest.mock('@/app/components/overflow-menu', () => ({
   OverflowMenu: ({ children }: any) => <div>{children}</div>,
   OverflowMenuItem: ({ itemText, onClick, disabled }: any) => (
     <button disabled={disabled} onClick={onClick}>
@@ -182,7 +182,7 @@ jest.mock('@/app/components/carbon/overflow-menu', () => ({
   ),
 }));
 
-jest.mock('@/app/components/carbon/empty-state', () => ({
+jest.mock('@/app/components/empty-state', () => ({
   EmptyState: ({
     title,
     subtitle,
@@ -207,7 +207,7 @@ jest.mock('@/app/components/sections/table-section', () => ({
   TableSection: ({ children }: any) => <div>{children}</div>,
 }));
 
-jest.mock('@/app/components/carbon/form', () => ({
+jest.mock('@/app/components/form', () => ({
   Stack: ({ children }: any) => <div>{children}</div>,
   TextInput: ({ id, labelText, value, onChange, hideLabel }: any) => (
     <div>
@@ -220,7 +220,7 @@ jest.mock('@/app/components/carbon/form', () => ({
   ),
 }));
 
-jest.mock('@/app/components/carbon/button', () => ({
+jest.mock('@/app/components/button', () => ({
   PrimaryButton: ({
     children,
     isLoading: _isLoading,
@@ -313,7 +313,7 @@ jest.mock('@carbon/react', () => ({
   Tooltip: ({ children }: any) => <span>{children}</span>,
 }));
 
-jest.mock('@/app/components/carbon/record-status-indicator', () => ({
+jest.mock('@/app/components/record-status-indicator', () => ({
   RecordStatusIndicator: ({ state }: any) => (
     <span>
       {state === 'ACTIVE'
@@ -325,7 +325,7 @@ jest.mock('@/app/components/carbon/record-status-indicator', () => ({
   ),
 }));
 
-jest.mock('@/app/components/carbon/url-table-cell', () => ({
+jest.mock('@/app/components/url-table-cell', () => ({
   UrlTableCell: ({ url }: any) => <td>{url || '-'}</td>,
 }));
 

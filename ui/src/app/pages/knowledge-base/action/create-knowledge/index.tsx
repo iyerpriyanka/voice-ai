@@ -6,7 +6,7 @@ import { useCreateKnowledgePageStore } from '@/hooks/use-create-knowledge-page-s
 import { useCallback, useEffect, useState } from 'react';
 import { useCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/hooks/use-rapida-store';
-import { PrimaryButton, SecondaryButton } from '@/app/components/carbon/button';
+import { PrimaryButton, SecondaryButton } from '@/app/components/button';
 import { ButtonSet } from '@carbon/react';
 import { KnowledgeDocument } from '@rapidaai/react';
 import { TabForm } from '@/app/components/form/tab-form';
@@ -18,7 +18,7 @@ import { create_knowledge_success_message } from '@/utils/messages';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { ManualFile } from '@/app/pages/knowledge-base/action/components/datasource-uploader/manual-file';
 import { FormLabel } from '@/app/components/form-label';
-import ConfirmDialog from '@/app/components/base/modal/confirm-ui';
+import ConfirmDialog from '@/app/components/modal/confirm-ui';
 import { useNavigate } from 'react-router-dom';
 import { Textarea } from '@/app/components/form/textarea';
 import { EmbeddingProvider } from '@/app/components/providers/embedding';

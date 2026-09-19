@@ -48,7 +48,7 @@ jest.mock('@carbon/react', () => {
 });
 
 // Mock Carbon form wrapper components
-jest.mock('@/app/components/carbon/form', () => {
+jest.mock('@/app/components/form', () => {
   const React = require('react');
   return {
     TextInput: ({
@@ -138,7 +138,7 @@ jest.mock('@/app/components/form/checkbox-card', () => {
   };
 });
 
-jest.mock('@/app/components/base/cards', () => {
+jest.mock('@/app/components/cards', () => {
   const R = require('react');
   return {
     Card: ({ children, className }: any) =>

@@ -38,15 +38,15 @@ import {
   ValidateTextToSpeechIfInvalid,
 } from '@/app/components/providers/text-to-speech/provider';
 import { connectionConfig } from '@/configs';
-import { AssistantWebwidgetDeploymentDialog } from '@/app/components/base/modal/assistant-instruction-modal';
+import { AssistantWebwidgetDeploymentDialog } from '@/app/components/modal/assistant-instruction-modal';
 import { TabForm } from '@/app/components/form/tab-form';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import {
   PrimaryButton,
   SecondaryButton,
   GhostButton,
-} from '@/app/components/carbon/button';
-import { InputCheckbox } from '@/app/components/carbon/form/input-checkbox';
+} from '@/app/components/button';
+import { InputCheckbox } from '@/app/components/form/input-checkbox';
 import { ButtonSet, CheckboxGroup } from '@carbon/react';
 
 const STEPS = [

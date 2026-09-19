@@ -47,7 +47,7 @@ import {
   PrimaryButton,
   SecondaryButton,
   GhostButton,
-} from '@/app/components/carbon/button';
+} from '@/app/components/button';
 import { ButtonSet } from '@carbon/react';
 
 const STEPS = [

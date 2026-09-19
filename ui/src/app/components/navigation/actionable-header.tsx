@@ -12,8 +12,8 @@ import {
   Switcher,
   SwitcherItem,
 } from '@carbon/react';
-import { Breadcrumb } from '@/app/components/carbon/breadcrumb';
-import { Dropdown } from '@/app/components/carbon/dropdown';
+import { Breadcrumb } from '@/app/components/breadcrumb';
+import { Dropdown } from '@/app/components/carbon-dropdown';
 import { useRapidaStore } from '@/hooks';
 import { useTheme } from '@/theme/theme-provider';
 

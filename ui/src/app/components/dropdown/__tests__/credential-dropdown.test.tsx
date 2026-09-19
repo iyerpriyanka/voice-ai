@@ -43,7 +43,7 @@ jest.mock('@/providers', () => ({
 }));
 
 jest.mock(
-  '@/app/components/base/modal/create-provider-credential-modal',
+  '@/app/components/modal/create-provider-credential-modal',
   () => ({
     CreateProviderCredentialDialog: (props: any) => {
       mockCreateProviderCredentialDialog(props);
@@ -54,7 +54,7 @@ jest.mock(
   }),
 );
 
-jest.mock('@/app/components/carbon/dropdown', () => ({
+jest.mock('@/app/components/carbon-dropdown', () => ({
   Dropdown: ({
     id,
     titleText,

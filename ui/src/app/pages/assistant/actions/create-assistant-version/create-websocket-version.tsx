@@ -3,7 +3,7 @@ import { useRapidaStore } from '@/hooks';
 import { useCredential } from '@/hooks/use-credential';
 import { useParams } from 'react-router-dom';
 import { Helmet } from '@/app/components/helmet';
-import { PrimaryButton, SecondaryButton } from '@/app/components/carbon/button';
+import { PrimaryButton, SecondaryButton } from '@/app/components/button';
 import { ButtonSet } from '@carbon/react';
 import { TabForm } from '@/app/components/form/tab-form';
 import { FieldSet } from '@/app/components/form/fieldset';

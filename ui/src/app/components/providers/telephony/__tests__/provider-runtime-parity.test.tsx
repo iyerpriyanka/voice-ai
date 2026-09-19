@@ -9,7 +9,7 @@ import {
 } from '@/app/components/providers/telephony';
 import { TELEPHONY_PROVIDER } from '@/providers';
 
-jest.mock('@/app/components/carbon/form', () => ({
+jest.mock('@/app/components/form', () => ({
   Stack: ({ children }: any) => <div>{children}</div>,
   TextInput: ({ id, value, onChange, placeholder }: any) => (
     <input

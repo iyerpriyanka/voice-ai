@@ -2,8 +2,8 @@ import React, { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { PrimaryButton, SecondaryButton } from '@/app/components/carbon/button';
-import { TextInput, TextArea, Stack } from '@/app/components/carbon/form';
+import { PrimaryButton, SecondaryButton } from '@/app/components/button';
+import { TextInput, TextArea, Stack } from '@/app/components/form';
 import { InputGroup } from '@/app/components/input-group';
 import {
   ButtonSet,

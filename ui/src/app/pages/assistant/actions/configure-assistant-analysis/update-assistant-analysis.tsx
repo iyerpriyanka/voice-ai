@@ -1,8 +1,8 @@
 import React, { FC, useEffect, useState } from 'react';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { PrimaryButton, SecondaryButton } from '@/app/components/carbon/button';
-import { Stack, TextInput, TextArea } from '@/app/components/carbon/form';
+import { PrimaryButton, SecondaryButton } from '@/app/components/button';
+import { Stack, TextInput, TextArea } from '@/app/components/form';
 import { ButtonSet, NumberInput } from '@carbon/react';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { randomMeaningfullName } from '@/utils';

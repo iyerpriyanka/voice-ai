@@ -2,7 +2,7 @@ import { Variable, Endpoint, EndpointProviderModel } from '@rapidaai/react';
 import { Tab } from '@/app/components/tab';
 import { FC, ReactNode } from 'react';
 import { CodeHighlighting } from '@/app/components/code-highlighting';
-import { RapidaCredentialCard } from '@/app/components/base/cards/rapida-credential-card';
+import { RapidaCredentialCard } from '@/app/components/cards/rapida-credential-card';
 
 // Auto-sizes Monaco to its content.
 // CodeHighlighting uses flex-1 which requires a flex parent, and Monaco

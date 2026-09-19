@@ -5,7 +5,7 @@ import {
   MAX_PROMPT_MESSAGE_LENGTH,
   SUPPORTED_PROMPT_VARIABLE_TYPE,
 } from '@/configs';
-import { TertiaryButton } from '@/app/components/carbon/button';
+import { TertiaryButton } from '@/app/components/button';
 import { ChevronDown, Plus } from 'lucide-react';
 import { FormLabel } from '@/app/components/form-label';
 import { FieldSet } from '@/app/components/form/fieldset';

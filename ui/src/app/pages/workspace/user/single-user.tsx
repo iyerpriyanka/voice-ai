@@ -4,8 +4,8 @@ import { User } from '@rapidaai/react';
 import { OrganizationRoleIndicator } from '@/app/components/indicators/organization-role';
 import { toHumanReadableDate } from '@/utils/date';
 import { RadioButton, TableRow, TableCell } from '@carbon/react';
-import { CarbonIconIndicator } from '@/app/components/carbon/icon-indicator';
-import { CopyButton } from '@/app/components/carbon/button/copy-button';
+import { CarbonIconIndicator } from '@/app/components/icon-indicator';
+import { CopyButton } from '@/app/components/button/copy-button';
 
 export function SingleUser(props: {
   user: User;

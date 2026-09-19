@@ -6,11 +6,11 @@ import { BluredWrapper } from '@/app/components/wrapper/blured-wrapper';
 import { SearchIconInput } from '@/app/components/form/input/IconInput';
 import { KnowledgeDocument } from '@rapidaai/react';
 import { useKnowledgeDocumentPageStore } from '@/hooks/use-knowledge-document-page-store';
-import { TablePagination } from '@/app/components/base/tables/table-pagination';
+import { TablePagination } from '@/app/components/tables/table-pagination';
 import { SingleDocument } from '@/app/pages/knowledge-base/view/documents/single-document';
 import { Knowledge } from '@rapidaai/react';
-import { PageLoading } from '@/app/components/carbon/loading';
-import { EmptyState } from '@/app/components/carbon/empty-state';
+import { PageLoading } from '@/app/components/loading';
+import { EmptyState } from '@/app/components/empty-state';
 import { ScrollableResizableTable } from '@/app/components/data-table';
 
 export function Documents(props: {

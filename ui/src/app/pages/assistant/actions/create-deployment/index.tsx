@@ -1,6 +1,6 @@
 import { Helmet } from '@/app/components/helmet';
-import { EmptyState } from '@/app/components/carbon/empty-state';
-import { IconOnlyButton } from '@/app/components/carbon/button';
+import { EmptyState } from '@/app/components/empty-state';
+import { IconOnlyButton } from '@/app/components/button';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import {
@@ -38,20 +38,20 @@ import toast from 'react-hot-toast/headless';
 import { connectionConfig } from '@/configs';
 import { useRapidaStore } from '@/hooks';
 import { toHumanReadableDateTime } from '@/utils/date';
-import { AssistantPhoneCallDeploymentDialog } from '@/app/components/base/modal/assistant-phone-call-deployment-modal';
-import { AssistantDebugDeploymentDialog } from '@/app/components/base/modal/assistant-debug-deployment-modal';
-import { AssistantWebWidgetlDeploymentDialog } from '@/app/components/base/modal/assistant-web-widget-deployment-modal';
-import { AssistantApiDeploymentDialog } from '@/app/components/base/modal/assistant-api-deployment-modal';
+import { AssistantPhoneCallDeploymentDialog } from '@/app/components/modal/assistant-phone-call-deployment-modal';
+import { AssistantDebugDeploymentDialog } from '@/app/components/modal/assistant-debug-deployment-modal';
+import { AssistantWebWidgetlDeploymentDialog } from '@/app/components/modal/assistant-web-widget-deployment-modal';
+import { AssistantApiDeploymentDialog } from '@/app/components/modal/assistant-api-deployment-modal';
 import {
   AssistantDeploymentType,
   AssistantDeploymentVersionsModal,
-} from '@/app/components/base/modal/assistant-deployment-versions-modal';
+} from '@/app/components/modal/assistant-deployment-versions-modal';
 import SourceIndicator from '@/app/components/indicators/source';
-import { RecordStatusIndicator } from '@/app/components/carbon/record-status-indicator';
+import { RecordStatusIndicator } from '@/app/components/record-status-indicator';
 import {
   OverflowMenu,
   OverflowMenuItem,
-} from '@/app/components/carbon/overflow-menu';
+} from '@/app/components/overflow-menu';
 import {
   Breadcrumb,
   BreadcrumbItem,

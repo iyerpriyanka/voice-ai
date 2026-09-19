@@ -139,7 +139,7 @@ jest.mock('@/app/components/form/tab-form', () => ({
   },
 }));
 
-jest.mock('@/app/components/carbon/form', () => ({
+jest.mock('@/app/components/form', () => ({
   Stack: ({ children }: any) => <div>{children}</div>,
   TextInput: ({
     labelText: _l,
@@ -163,7 +163,7 @@ jest.mock('@/app/components/carbon/form', () => ({
   }: any) => <textarea {...props} />,
 }));
 
-jest.mock('@/app/components/carbon/button', () => ({
+jest.mock('@/app/components/button', () => ({
   PrimaryButton: ({
     children,
     isLoading: _,

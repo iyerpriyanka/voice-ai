@@ -7,13 +7,13 @@ import { useRapidaStore } from '@/hooks';
 import { SectionLoader } from '@/app/components/loader/section-loader';
 import { CreateAssistantWebhook } from './create-assistant-webhook';
 import toast from 'react-hot-toast/headless';
-import { EmptyState } from '@/app/components/carbon/empty-state';
+import { EmptyState } from '@/app/components/empty-state';
 import { UpdateAssistantWebhook } from '@/app/pages/assistant/actions/configure-assistant-webhook/update-assistant-webhook';
 import { useAssistantWebhookPageStore } from '@/app/pages/assistant/actions/store/use-webhook-page-store';
-import { IconOnlyButton, PrimaryButton } from '@/app/components/carbon/button';
-import { RecordStatusIndicator } from '@/app/components/carbon/record-status-indicator';
-import { UrlTableCell } from '@/app/components/carbon/url-table-cell';
-import { Pagination } from '@/app/components/carbon/pagination';
+import { IconOnlyButton, PrimaryButton } from '@/app/components/button';
+import { RecordStatusIndicator } from '@/app/components/record-status-indicator';
+import { UrlTableCell } from '@/app/components/url-table-cell';
+import { Pagination } from '@/app/components/pagination';
 import { Add, Renew, Webhook } from '@carbon/icons-react';
 import { Tag } from '@carbon/react';
 import {

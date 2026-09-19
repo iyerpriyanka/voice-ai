@@ -1,5 +1,5 @@
-import { TableCell } from '@/app/components/base/tables/table-cell';
-import { TableRow } from '@/app/components/base/tables/table-row';
+import { TableCell } from '@/app/components/tables/table-cell';
+import { TableRow } from '@/app/components/tables/table-row';
 import {
   useState,
   useCallback,

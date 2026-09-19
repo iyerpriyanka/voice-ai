@@ -1,11 +1,11 @@
 import {
   QuerySearch,
   parseQuerySearchFilters,
-} from '@/app/components/carbon/query-search';
+} from '@/app/components/query-search';
 import type {
   QuerySearchField,
   QuerySearchOption,
-} from '@/app/components/carbon/query-search';
+} from '@/app/components/query-search';
 
 type SessionSearchCriteria = {
   k: string;

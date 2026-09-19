@@ -18,9 +18,9 @@ import { Helmet } from '@/app/components/helmet';
 import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
 import { PageTitleWithCount } from '@/app/components/blocks/page-title-with-count';
 import { CONFIG } from '@/configs';
-import { CarbonStatusIndicator } from '@/app/components/carbon/status-indicator';
+import { CarbonStatusIndicator } from '@/app/components/status-indicator';
 import SourceIndicator from '@/app/components/indicators/source';
-import { ConversationLogDialog } from '@/app/components/base/modal/conversation-log-modal';
+import { ConversationLogDialog } from '@/app/components/modal/conversation-log-modal';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 
 import {
@@ -36,8 +36,8 @@ import {
   Tag,
   Link,
 } from '@carbon/react';
-import { Pagination } from '@/app/components/carbon/pagination';
-import { IconOnlyButton } from '@/app/components/carbon/button';
+import { Pagination } from '@/app/components/pagination';
+import { IconOnlyButton } from '@/app/components/button';
 import {
   Download,
   Renew,
@@ -48,7 +48,7 @@ import {
   User as UserIcon,
   Chat,
 } from '@carbon/icons-react';
-import { EmptyState } from '@/app/components/carbon/empty-state';
+import { EmptyState } from '@/app/components/empty-state';
 import { ScrollableTableSection } from '@/app/components/sections/table-section';
 import { ConversationLogQuerySearch } from './conversation-query-search';
 

@@ -1,9 +1,9 @@
-import { QuerySearch } from '@/app/components/carbon/query-search';
+import { QuerySearch } from '@/app/components/query-search';
 import type {
   QuerySearchField,
   QuerySearchOption,
   QuerySearchTab,
-} from '@/app/components/carbon/query-search';
+} from '@/app/components/query-search';
 import {
   ALL_EVENT_OPTIONS,
   COMPONENT_OPTIONS,

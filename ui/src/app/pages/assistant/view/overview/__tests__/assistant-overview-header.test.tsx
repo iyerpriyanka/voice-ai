@@ -24,7 +24,7 @@ jest.mock('@/app/components/loader/section-loader', () => ({
   SectionLoader: () => <div>Loading section</div>,
 }));
 
-jest.mock('@/app/components/carbon/notification', () => ({
+jest.mock('@/app/components/notification', () => ({
   LinkNotification: ({ title }: any) => <div>{title}</div>,
 }));
 

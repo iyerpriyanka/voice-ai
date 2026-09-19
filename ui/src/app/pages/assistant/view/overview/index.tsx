@@ -3,7 +3,7 @@ import { SectionLoader } from '@/app/components/loader/section-loader';
 import { AssistantAnalytics } from '@/app/pages/assistant/view/overview/assistant-analytics';
 import { useRapidaStore } from '@/hooks';
 import { FC } from 'react';
-import { LinkNotification } from '@/app/components/carbon/notification';
+import { LinkNotification } from '@/app/components/notification';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import {
   Breadcrumb,

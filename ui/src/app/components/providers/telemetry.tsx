@@ -8,7 +8,7 @@ import { TELEMETRY_PROVIDER } from '@/providers';
 import { Metadata, VaultCredential } from '@rapidaai/react';
 import { useCallback } from 'react';
 import { Dropdown } from '@carbon/react';
-import { Stack } from '@/app/components/carbon/form';
+import { Stack } from '@/app/components/form';
 import { HelpToggletip } from '@/app/components/providers/help-label';
 import { FormLabel } from '@/app/components/form-label';
 

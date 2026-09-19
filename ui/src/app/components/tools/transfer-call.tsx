@@ -1,5 +1,5 @@
 import { FC, useState, useCallback } from 'react';
-import { FormGroup, Stack, TextArea } from '@/app/components/carbon/form';
+import { FormGroup, Stack, TextArea } from '@/app/components/form';
 import { Select, SelectItem, Slider, Tooltip } from '@carbon/react';
 import {
   ConfigureToolProps,

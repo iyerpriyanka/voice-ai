@@ -1,5 +1,5 @@
 import { FC, ReactNode } from 'react';
-import { TextArea, Stack } from '@/app/components/carbon/form';
+import { TextArea, Stack } from '@/app/components/form';
 import {
   Button,
   ComboBox,

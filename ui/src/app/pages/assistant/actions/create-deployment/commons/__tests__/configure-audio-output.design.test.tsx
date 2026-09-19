@@ -35,7 +35,7 @@ jest.mock('@/providers', () => ({
   CONJUNCTION_BOUNDARIES: ['and', 'or'],
 }));
 
-jest.mock('@/app/components/carbon/form', () => {
+jest.mock('@/app/components/form', () => {
   const React = require('react');
   return {
     TextInput: ({ id, labelText, value, onChange }: any) =>

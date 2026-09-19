@@ -18,7 +18,7 @@ jest.mock('@/app/components/json-editor', () => ({
   ),
 }));
 
-jest.mock('@/app/components/carbon/form', () => ({
+jest.mock('@/app/components/form', () => ({
   Stack: ({ children }: any) => <div>{children}</div>,
   TextInput: ({ id, labelText, value, onChange, placeholder, type }: any) => (
     <div>

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, FC, ReactNode } from 'react';
 import WaveSurfer from 'wavesurfer.js';
 import TimelinePlugin from 'wavesurfer.js/dist/plugins/timeline.esm.js';
-import { GhostButton } from '@/app/components/carbon/button';
+import { GhostButton } from '@/app/components/button';
 import {
   Download,
   Pause,
@@ -9,7 +9,7 @@ import {
   VolumeMute,
   VolumeUp,
 } from '@carbon/icons-react';
-import { Tooltip } from '@/app/components/base/tooltip';
+import { Tooltip } from '@/app/components/floating-tooltip';
 import { cn } from '@/utils';
 import { Slider } from '@/app/components/form/slider';
 import { AssistantConversationRecording } from '@rapidaai/react';

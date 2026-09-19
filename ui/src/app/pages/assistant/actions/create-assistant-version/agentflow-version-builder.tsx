@@ -33,14 +33,14 @@ import type {
 import { Helmet } from '@/app/components/helmet';
 import { ConfigPrompt } from '@/app/components/configuration/config-prompt';
 import { FormLabel } from '@/app/components/form-label';
-import { CornerBorderOverlay } from '@/app/components/base/corner-border';
-import { PrimaryButton, SecondaryButton } from '@/app/components/carbon/button';
+import { CornerBorderOverlay } from '@/app/components/corner-border';
+import { PrimaryButton, SecondaryButton } from '@/app/components/button';
 import {
   Modal,
   ModalBody,
   ModalFooter,
   ModalHeader,
-} from '@/app/components/carbon/modal';
+} from '@/app/components/modal';
 import { ReactSortable } from 'react-sortablejs';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';

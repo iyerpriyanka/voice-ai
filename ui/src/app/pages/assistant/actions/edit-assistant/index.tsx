@@ -17,10 +17,10 @@ import toast from 'react-hot-toast/headless';
 import { useParams } from 'react-router-dom';
 import { UpdateAssistantDetail } from '@rapidaai/react';
 import { connectionConfig } from '@/configs';
-import { Notification } from '@/app/components/carbon/notification';
-import { Form, Stack, TextInput, TextArea } from '@/app/components/carbon/form';
-import { PrimaryButton, DangerButton } from '@/app/components/carbon/button';
-import { CopyButton } from '@/app/components/carbon/button/copy-button';
+import { Notification } from '@/app/components/notification';
+import { Form, Stack, TextInput, TextArea } from '@/app/components/form';
+import { PrimaryButton, DangerButton } from '@/app/components/button';
+import { CopyButton } from '@/app/components/button/copy-button';
 import {
   Breadcrumb,
   BreadcrumbItem,

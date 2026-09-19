@@ -8,7 +8,7 @@ import {
   Search,
 } from '@carbon/icons-react';
 import { cn } from '@/utils';
-import { CornerBorderOverlay } from '@/app/components/base/corner-border';
+import { CornerBorderOverlay } from '@/app/components/corner-border';
 import { KnowledgeDropdown } from '@/app/components/dropdown/knowledge-dropdown';
 import { Slider } from '@carbon/react';
 import { Tooltip } from '@carbon/react';
@@ -18,7 +18,7 @@ import {
   ToolDefinitionForm,
   useParameterManager,
 } from './common';
-import { Stack } from '../carbon/form';
+import { Stack } from '../form';
 import { InputGroup } from '../input-group';
 
 // ============================================================================

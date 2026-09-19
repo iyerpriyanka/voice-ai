@@ -12,9 +12,9 @@ import { useCurrentCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/hooks';
 import { connectionConfig } from '@/configs';
 import toast from 'react-hot-toast/headless';
-import { PrimaryButton, SecondaryButton } from '@/app/components/carbon/button';
+import { PrimaryButton, SecondaryButton } from '@/app/components/button';
 import { ButtonSet } from '@carbon/react';
-import { Stack } from '@/app/components/carbon/form';
+import { Stack } from '@/app/components/form';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import {
   CloudStorageProvider,
@@ -27,7 +27,7 @@ import {
   ValidateStorageOptions,
 } from '@/app/components/providers/storage';
 import { InputGroup } from '@/app/components/input-group';
-import { Notification } from '@/app/components/carbon/notification';
+import { Notification } from '@/app/components/notification';
 
 const storageConfigurationType = 'storage';
 

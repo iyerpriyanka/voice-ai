@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { CONFIG } from '@/configs';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { PrimaryButton, SecondaryButton } from '@/app/components/carbon/button';
+import { PrimaryButton, SecondaryButton } from '@/app/components/button';
 import { ButtonSet } from '@carbon/react';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import {

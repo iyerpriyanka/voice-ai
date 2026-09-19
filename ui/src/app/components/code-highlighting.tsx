@@ -2,7 +2,7 @@ import { useTheme } from '@/theme/theme-provider';
 import { cn } from '@/utils';
 import React, { FC, HTMLAttributes } from 'react';
 import Editor, { OnMount } from '@monaco-editor/react';
-import { CopyButton } from '@/app/components/carbon/button/copy-button';
+import { CopyButton } from '@/app/components/button/copy-button';
 
 export interface CodeHighlightingProps extends HTMLAttributes<HTMLDivElement> {
   code: string;

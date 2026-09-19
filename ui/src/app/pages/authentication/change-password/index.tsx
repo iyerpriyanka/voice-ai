@@ -7,9 +7,9 @@ import { useForm } from 'react-hook-form';
 import { ServiceError } from '@rapidaai/react';
 import { connectionConfig } from '@/configs';
 import { useRapidaStore } from '@/hooks';
-import { Stack } from '@/app/components/carbon/form';
-import { PrimaryButton } from '@/app/components/carbon/button';
-import { Notification } from '@/app/components/carbon/notification';
+import { Stack } from '@/app/components/form';
+import { PrimaryButton } from '@/app/components/button';
+import { Notification } from '@/app/components/notification';
 import { ArrowRight } from '@carbon/icons-react';
 import { PasswordInput } from '@carbon/react';
 

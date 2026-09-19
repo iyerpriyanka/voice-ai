@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Select, SelectItem } from '@carbon/react';
-import { TextInput, TextArea, Stack } from '@/app/components/carbon/form';
+import { TextInput, TextArea, Stack } from '@/app/components/form';
 import { ConfigureToolProps, useParameterManager } from './common';
 import { BlueNoticeBlock } from '@/app/components/container/message/notice-block';
 import { APiStringHeader } from '@/app/components/external-api/api-header';

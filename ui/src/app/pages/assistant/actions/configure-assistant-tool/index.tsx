@@ -3,7 +3,7 @@ import { FC, useEffect, useState } from 'react';
 import toast from 'react-hot-toast/headless';
 import { useParams } from 'react-router-dom';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { EmptyState } from '@/app/components/carbon/empty-state';
+import { EmptyState } from '@/app/components/empty-state';
 import { Add, Renew, Edit, TrashCan, ToolKit } from '@carbon/icons-react';
 import { CreateTool } from '@/app/pages/assistant/actions/configure-assistant-tool/create-assistant-tool';
 import { SectionLoader } from '@/app/components/loader/section-loader';
@@ -11,7 +11,7 @@ import { useAssistantToolPageStore } from '@/app/pages/assistant/actions/store/u
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { UpdateTool } from '@/app/pages/assistant/actions/configure-assistant-tool/update-assistant-tool';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
-import { IconOnlyButton, PrimaryButton } from '@/app/components/carbon/button';
+import { IconOnlyButton, PrimaryButton } from '@/app/components/button';
 import { BUILDIN_TOOLS } from '@/llm-tools';
 import {
   getToolConditionSource,

@@ -1,10 +1,10 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { Metadata } from '@rapidaai/react';
 import { SettingsAdjust, Add, TrashCan } from '@carbon/icons-react';
-import { PrimaryButton, SecondaryButton } from '@/app/components/carbon/button';
+import { PrimaryButton, SecondaryButton } from '@/app/components/button';
 import { cn } from '@/utils';
-import { TextInput, TextArea } from '@/app/components/carbon/form';
-import { TertiaryButton } from '@/app/components/carbon/button';
+import { TextInput, TextArea } from '@/app/components/form';
+import { TertiaryButton } from '@/app/components/button';
 import {
   Select as CarbonSelect,
   SelectItem,

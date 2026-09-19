@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { ProviderComponentProps } from '@/app/components/providers';
 import { TELEPHONY_PROVIDER } from '@/providers';
 import { Dropdown } from '@carbon/react';
-import { Stack } from '@/app/components/carbon/form';
+import { Stack } from '@/app/components/form';
 import { loadProviderConfig } from '@/providers/config-loader';
 import {
   getDefaultsFromConfig,

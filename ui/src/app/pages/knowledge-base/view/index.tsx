@@ -11,15 +11,15 @@ import { GetKnowledgeResponse } from '@rapidaai/react';
 import { cn } from '@/utils';
 import { toHumanReadableRelativeTime } from '@/utils/date';
 import { useKnowledgePageStore } from '@/hooks/use-knowledge-page-store';
-import { CreateTagDialog } from '@/app/components/base/modal/create-tag-modal';
-import { UpdateDescriptionDialog } from '@/app/components/base/modal/update-description-modal';
+import { CreateTagDialog } from '@/app/components/modal/create-tag-modal';
+import { UpdateDescriptionDialog } from '@/app/components/modal/update-description-modal';
 import { Tag } from '@rapidaai/react';
 import { ServiceError } from '@rapidaai/react';
 import { DocumentSegments } from '@/app/pages/knowledge-base/view/document-segments';
 import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
 import { PageTitleBlock } from '@/app/components/blocks/page-title-block';
 import { connectionConfig } from '@/configs';
-import { CreateKnowledgeDocumentDialog } from '@/app/components/base/modal/create-knowledge-document-modal';
+import { CreateKnowledgeDocumentDialog } from '@/app/components/modal/create-knowledge-document-modal';
 import { Plus } from 'lucide-react';
 
 /**

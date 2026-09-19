@@ -5,9 +5,9 @@ import SourceIndicator from '@/app/components/indicators/source';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { Launch, Rocket, SourceControl, View } from '@carbon/icons-react';
 import { Link, TableRow, TableCell, Tag } from '@carbon/react';
-import { RecordStatusIndicator } from '@/app/components/carbon/record-status-indicator';
-import { IconOnlyButton } from '@/app/components/carbon/button';
-import { CopyButton } from '@/app/components/carbon/button/copy-button';
+import { RecordStatusIndicator } from '@/app/components/record-status-indicator';
+import { IconOnlyButton } from '@/app/components/button';
+import { CopyButton } from '@/app/components/button/copy-button';
 import { VersionIndicator } from '@/app/components/indicators/version';
 
 const SingleAssistant: FC<{ assistant: Assistant }> = ({ assistant }) => {

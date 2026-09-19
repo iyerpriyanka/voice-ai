@@ -6,7 +6,7 @@ import {
   PrimaryButton,
   TertiaryButton,
   GhostButton,
-} from '@/app/components/carbon/button';
+} from '@/app/components/button';
 import { FieldSet } from '@/app/components/form/fieldset';
 import { Input } from '@/app/components/form/input';
 import { Select } from '@/app/components/form/select';

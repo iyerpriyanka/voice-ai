@@ -1,4 +1,4 @@
-import { PrimaryButton } from '@/app/components/carbon/button';
+import { PrimaryButton } from '@/app/components/button';
 
 import { ArrowLeft } from 'lucide-react';
 import { FC } from 'react';

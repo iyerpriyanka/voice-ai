@@ -10,7 +10,7 @@ import {
   PARAMETER_TYPE_OPTIONS,
   useParameterManager,
 } from './common';
-import { Stack } from '../carbon/form';
+import { Stack } from '../form';
 
 // ============================================================================
 // Constants

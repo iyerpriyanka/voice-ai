@@ -3,7 +3,7 @@ import { NoiseCancellation } from '@/providers';
 import { Metadata } from '@rapidaai/react';
 import { NoiseCancellationConfigComponent } from '@/app/components/providers/noise-removal/provider';
 import { Dropdown } from '@carbon/react';
-import { Stack } from '@/app/components/carbon/form';
+import { Stack } from '@/app/components/form';
 
 interface NoiseCancellationProviderProps
   extends HTMLAttributes<HTMLDivElement> {

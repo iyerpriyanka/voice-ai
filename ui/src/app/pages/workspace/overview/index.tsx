@@ -3,8 +3,8 @@ import { Helmet } from '@/app/components/helmet';
 import { DescriptiveHeading } from '@/app/components/heading/descriptive-heading';
 import { Input } from '@/app/components/form/input';
 import { Label } from '@/app/components/form/label';
-import { ArrowButton } from '@/app/components/carbon/button/arrow-button';
-import { DangerTertiaryButton } from '@/app/components/carbon/button';
+import { ArrowButton } from '@/app/components/button/arrow-button';
+import { DangerTertiaryButton } from '@/app/components/button';
 import { ServiceError } from '@rapidaai/react';
 import { UpdateOrganization, GetOrganization } from '@rapidaai/react';
 

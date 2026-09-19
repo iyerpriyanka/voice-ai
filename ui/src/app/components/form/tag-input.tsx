@@ -7,7 +7,7 @@ import {
   ToggletipContent,
 } from '@carbon/react';
 import { Information } from '@carbon/icons-react';
-import { TextInput } from '@/app/components/carbon/form';
+import { TextInput } from '@/app/components/form';
 import { FormLabel } from '@/app/components/form-label';
 
 interface TagInputProps {

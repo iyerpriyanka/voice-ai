@@ -1,10 +1,10 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast/headless';
 import { Helmet } from '@/app/components/helmet';
-import { PrimaryButton, SecondaryButton } from '@/app/components/carbon/button';
+import { PrimaryButton, SecondaryButton } from '@/app/components/button';
 import { ButtonSet } from '@carbon/react';
 import { TabForm } from '@/app/components/form/tab-form';
-import ConfirmDialog from '@/app/components/base/modal/confirm-ui';
+import ConfirmDialog from '@/app/components/modal/confirm-ui';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/hooks';
 import { useAllProviderCredentials } from '@/hooks/use-model';

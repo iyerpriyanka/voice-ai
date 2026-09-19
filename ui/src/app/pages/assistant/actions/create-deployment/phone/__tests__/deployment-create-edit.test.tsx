@@ -203,7 +203,7 @@ jest.mock('@/app/components/form/tab-form', () => ({
   },
 }));
 
-jest.mock('@/app/components/carbon/tabs', () => ({
+jest.mock('@/app/components/tabs', () => ({
   Tabs: ({ tabs = [], children, selectedIndex = 0, onChange }: any) => {
     const panels = Array.isArray(children) ? children : [children];
     return (
@@ -261,7 +261,7 @@ jest.mock('@/app/components/providers/text-to-speech/provider', () => ({
     mockValidateTextToSpeechIfInvalid(...args),
 }));
 
-jest.mock('@/app/components/carbon/button', () => ({
+jest.mock('@/app/components/button', () => ({
   PrimaryButton: ({ children, isLoading, ...props }: any) => (
     <button {...props}>{children}</button>
   ),

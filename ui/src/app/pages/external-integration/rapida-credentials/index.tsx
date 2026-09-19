@@ -11,7 +11,7 @@ import {
 } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
 import { Helmet } from '@/app/components/helmet';
-import { EmptyState } from '@/app/components/carbon/empty-state';
+import { EmptyState } from '@/app/components/empty-state';
 import { AuthContext } from '@/context/auth-context';
 import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
 import { PageTitleBlock } from '@/app/components/blocks/page-title-block';
@@ -29,9 +29,9 @@ import { toHumanReadableDate } from '@/utils/date';
 import { DocNoticeBlock } from '@/app/components/container/message/notice-block/doc-notice-block';
 import { FieldSet } from '@/app/components/form/fieldset';
 import { FormLabel } from '@/app/components/form-label';
-import { CopyButton } from '@/app/components/carbon/button/copy-button';
-import { GhostButton } from '@/app/components/carbon/button';
-import { BaseCard } from '@/app/components/base/cards';
+import { CopyButton } from '@/app/components/button/copy-button';
+import { GhostButton } from '@/app/components/button';
+import { BaseCard } from '@/app/components/cards';
 
 /**
  *

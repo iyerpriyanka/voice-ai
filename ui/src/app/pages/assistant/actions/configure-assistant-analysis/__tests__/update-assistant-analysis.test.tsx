@@ -175,7 +175,7 @@ jest.mock('@/app/components/form/tab-form', () => ({
   },
 }));
 
-jest.mock('@/app/components/carbon/button', () => ({
+jest.mock('@/app/components/button', () => ({
   TertiaryButton: ({ children, ...props }: any) => (
     <button {...props}>{children}</button>
   ),
@@ -184,7 +184,7 @@ jest.mock('@/app/components/carbon/button', () => ({
   ),
 }));
 
-jest.mock('@/app/components/carbon/button', () => ({
+jest.mock('@/app/components/button', () => ({
   PrimaryButton: ({ children, renderIcon: _renderIcon, ...props }: any) => (
     <button {...props}>{children}</button>
   ),
@@ -196,7 +196,7 @@ jest.mock('@/app/components/carbon/button', () => ({
   ),
 }));
 
-jest.mock('@/app/components/carbon/form', () => ({
+jest.mock('@/app/components/form', () => ({
   Stack: ({ children }: any) => <div>{children}</div>,
   TextInput: ({
     id,

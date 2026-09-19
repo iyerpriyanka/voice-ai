@@ -48,11 +48,11 @@ jest.mock('@/app/components/sections/table-section', () => ({
   ScrollableTableSection: ({ children }: any) => <div>{children}</div>,
 }));
 
-jest.mock('@/app/components/carbon/empty-state', () => ({
+jest.mock('@/app/components/empty-state', () => ({
   EmptyState: ({ title }: any) => <div>{title}</div>,
 }));
 
-jest.mock('@/app/components/carbon/button', () => ({
+jest.mock('@/app/components/button', () => ({
   IconOnlyButton: ({
     children,
     renderIcon: _renderIcon,
@@ -64,7 +64,7 @@ jest.mock('@/app/components/carbon/button', () => ({
   ),
 }));
 
-jest.mock('@/app/components/carbon/pagination', () => ({
+jest.mock('@/app/components/pagination', () => ({
   Pagination: ({ onChange, pageSize }: any) => (
     <div>
       <button

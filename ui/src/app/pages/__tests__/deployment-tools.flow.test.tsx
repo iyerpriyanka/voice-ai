@@ -402,7 +402,7 @@ jest.mock('@/app/components/tools/common', () => ({
   ),
 }));
 
-jest.mock('@/app/components/carbon/overflow-menu', () => ({
+jest.mock('@/app/components/overflow-menu', () => ({
   OverflowMenu: ({ children }: any) => <div>{children}</div>,
   OverflowMenuItem: ({ itemText, onClick }: any) => (
     <button onClick={onClick}>{itemText}</button>
@@ -417,7 +417,7 @@ jest.mock('@/app/components/blocks/page-title-block', () => ({
   PageTitleBlock: ({ children }: any) => <h2>{children}</h2>,
 }));
 
-jest.mock('@/app/components/carbon/button', () => ({
+jest.mock('@/app/components/button', () => ({
   PrimaryButton: ({
     children,
     isLoading: _,
@@ -449,7 +449,7 @@ jest.mock('@/app/components/carbon/button', () => ({
     ...props
   }: any) => <button aria-label={iconDescription} {...props} />,
 }));
-jest.mock('@/app/components/carbon/modal', () => ({
+jest.mock('@/app/components/modal', () => ({
   Modal: ({ children, open }: any) => (open ? <div>{children}</div> : null),
   ModalHeader: ({ title }: any) => <div>{title}</div>,
   ModalBody: ({ children }: any) => <div>{children}</div>,
@@ -465,7 +465,7 @@ jest.mock('@/app/components/providers/telephony', () => ({
   ValidateTelephonyOptions: () => true,
 }));
 
-jest.mock('@/app/components/base/corner-border', () => ({
+jest.mock('@/app/components/corner-border', () => ({
   CornerBorderOverlay: () => null,
 }));
 
@@ -480,33 +480,33 @@ jest.mock('@/app/components/providers/text-to-speech/provider', () => ({
   ValidateTextToSpeechIfInvalid: () => undefined,
 }));
 
-jest.mock('@/app/components/base/cards', () => ({
+jest.mock('@/app/components/cards', () => ({
   BaseCard: ({ children }: any) => <div>{children}</div>,
 }));
 
 jest.mock(
-  '@/app/components/base/modal/assistant-phone-call-deployment-modal',
+  '@/app/components/modal/assistant-phone-call-deployment-modal',
   () => ({
     AssistantPhoneCallDeploymentDialog: () => null,
   }),
 );
 jest.mock(
-  '@/app/components/base/modal/assistant-debug-deployment-modal',
+  '@/app/components/modal/assistant-debug-deployment-modal',
   () => ({
     AssistantDebugDeploymentDialog: () => null,
   }),
 );
 jest.mock(
-  '@/app/components/base/modal/assistant-web-widget-deployment-modal',
+  '@/app/components/modal/assistant-web-widget-deployment-modal',
   () => ({
     AssistantWebWidgetlDeploymentDialog: () => null,
   }),
 );
-jest.mock('@/app/components/base/modal/assistant-api-deployment-modal', () => ({
+jest.mock('@/app/components/modal/assistant-api-deployment-modal', () => ({
   AssistantApiDeploymentDialog: () => null,
 }));
 
-jest.mock('@/app/components/carbon/empty-state', () => ({
+jest.mock('@/app/components/empty-state', () => ({
   EmptyState: ({ title, subtitle, action, onAction, actionComponent }: any) => (
     <div>
       <div>{title}</div>
@@ -524,7 +524,7 @@ jest.mock('@/app/components/form-label', () => ({
 jest.mock('@/app/components/form/fieldset', () => ({
   FieldSet: ({ children }: any) => <div>{children}</div>,
 }));
-jest.mock('@/app/components/carbon/button/copy-button', () => ({
+jest.mock('@/app/components/button/copy-button', () => ({
   CopyButton: () => null,
 }));
 

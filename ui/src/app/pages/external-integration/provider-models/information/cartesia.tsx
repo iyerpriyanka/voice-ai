@@ -7,12 +7,12 @@ import { PageTitleBlock } from '@/app/components/blocks/page-title-block';
 import { TEXT_TO_SPEECH, CARTESIA_VOICE } from '@/providers';
 import { PaginationButtonBlock } from '@/app/components/blocks/pagination-button-block';
 import { cn } from '@/utils';
-import { CreateProviderCredentialDialog } from '@/app/components/base/modal/create-provider-credential-modal';
-import { ViewProviderCredentialDialog } from '@/app/components/base/modal/view-provider-credential-modal';
+import { CreateProviderCredentialDialog } from '@/app/components/modal/create-provider-credential-modal';
+import { ViewProviderCredentialDialog } from '@/app/components/modal/view-provider-credential-modal';
 import { useAllProviderCredentials } from '@/hooks/use-model';
 import { Check, Plus } from 'lucide-react';
 import { Tooltip } from '@/app/components/tooltip';
-import { PrimaryButton, GhostButton } from '@/app/components/carbon/button';
+import { PrimaryButton, GhostButton } from '@/app/components/button';
 import { VoiceCard } from '@/app/pages/external-integration/provider-models/information/voice-card';
 import { useLocation } from 'react-router-dom';
 

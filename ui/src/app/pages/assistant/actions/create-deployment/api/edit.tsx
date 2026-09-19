@@ -35,11 +35,11 @@ import {
 } from '@/app/components/providers/text-to-speech/provider';
 import { connectionConfig } from '@/configs';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
-import { Tabs } from '@/app/components/carbon/tabs';
-import { PrimaryButton, SecondaryButton } from '@/app/components/carbon/button';
-import { InputCheckbox } from '@/app/components/carbon/form/input-checkbox';
+import { Tabs } from '@/app/components/tabs';
+import { PrimaryButton, SecondaryButton } from '@/app/components/button';
+import { InputCheckbox } from '@/app/components/form/input-checkbox';
 import { ButtonSet, CheckboxGroup } from '@carbon/react';
-import { Notification } from '@/app/components/carbon/notification';
+import { Notification } from '@/app/components/notification';
 
 const EDIT_TABS = [
   { code: 'experience', name: 'General Experience' },

@@ -44,7 +44,7 @@ jest.mock('@/app/components/helmet', () => ({
   Helmet: () => null,
 }));
 
-jest.mock('@/app/components/carbon/form', () => ({
+jest.mock('@/app/components/form', () => ({
   Stack: ({ children }: any) => <div>{children}</div>,
   TextInput: require('react').forwardRef(
     ({ labelText, helperText, ...props }: any, ref: any) => <input ref={ref} {...props} />,
@@ -54,13 +54,13 @@ jest.mock('@/app/components/carbon/form', () => ({
   ),
 }));
 
-jest.mock('@/app/components/carbon/button', () => ({
+jest.mock('@/app/components/button', () => ({
   PrimaryButton: ({ children, isLoading, renderIcon, ...props }: any) => (
     <button {...props}>{children}</button>
   ),
 }));
 
-jest.mock('@/app/components/carbon/notification', () => ({
+jest.mock('@/app/components/notification', () => ({
   Notification: ({ subtitle }: any) => <div>{subtitle}</div>,
 }));
 

@@ -8,7 +8,7 @@ jest.mock('@/utils', () => ({
   cn: (...inputs: string[]) => inputs.filter(Boolean).join(' '),
 }));
 
-jest.mock('@/app/components/carbon/form', () => {
+jest.mock('@/app/components/form', () => {
   const React = require('react');
   return {
     TextInput: ({
@@ -39,7 +39,7 @@ jest.mock('@/app/components/carbon/form', () => {
   };
 });
 
-jest.mock('@/app/components/carbon/button', () => {
+jest.mock('@/app/components/button', () => {
   const React = require('react');
   return {
     TertiaryButton: ({ children, onClick }: any) =>

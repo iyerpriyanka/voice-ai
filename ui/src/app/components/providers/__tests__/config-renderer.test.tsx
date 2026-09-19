@@ -84,7 +84,7 @@ jest.mock('@/app/components/dropdown', () => {
   };
 });
 
-jest.mock('@/app/components/carbon/form', () => {
+jest.mock('@/app/components/form', () => {
   const React = require('react');
   return {
     TextInput: ({

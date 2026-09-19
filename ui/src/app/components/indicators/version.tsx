@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Checkmark, Copy } from '@carbon/icons-react';
-import { IconOnlyButton } from '@/app/components/carbon/button';
+import { IconOnlyButton } from '@/app/components/button';
 
 export function VersionIndicator({ id }: { id: string }) {
   const [copied, setCopied] = useState(false);

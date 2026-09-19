@@ -163,10 +163,10 @@ jest.mock('@/hooks/use-global-navigator', () => ({
 }));
 
 jest.mock('@/app/components/helmet', () => ({ Helmet: () => null }));
-jest.mock('@/app/components/base/cards', () => ({
+jest.mock('@/app/components/cards', () => ({
   BaseCard: ({ children }: any) => <div>{children}</div>,
 }));
-jest.mock('@/app/components/carbon/form/input-checkbox', () => ({
+jest.mock('@/app/components/form/input-checkbox', () => ({
   InputCheckbox: ({ children, ...props }: any) => (
     <label>
       <input type="checkbox" {...props} />
@@ -270,7 +270,7 @@ jest.mock('@/app/pages/assistant/actions/hooks/use-confirmation', () => {
   };
 });
 
-jest.mock('@/app/components/carbon/button', () => ({
+jest.mock('@/app/components/button', () => ({
   PrimaryButton: ({ children, isLoading, ...props }: any) => (
     <button {...props}>{children}</button>
   ),
