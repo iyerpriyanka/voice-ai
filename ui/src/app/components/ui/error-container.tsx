@@ -1,6 +1,6 @@
 import { PrimaryButton } from '@/app/components/ui/button';
 
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from '@carbon/icons-react';
 import { FC } from 'react';
 
 interface ErrorContainerProps {
@@ -25,9 +25,13 @@ export const ErrorContainer: FC<ErrorContainerProps> = ({
         <p className="text-3xl md:text-3xl leading-normal mt-4">{title}</p>
         <p className="mb-8 mt-2">{description}</p>
 
-        <PrimaryButton size="md" onClick={onAction} className="pr-4">
-          <ArrowLeft className="w-5 h-5 mr-2" strokeWidth={1.5} />{' '}
-          <span>{actionLabel}</span>
+        <PrimaryButton
+          size="md"
+          onClick={onAction}
+          className="pr-4"
+          renderIcon={ArrowLeft}
+        >
+          {actionLabel}
         </PrimaryButton>
       </div>
       <div className="max-w-lg">
