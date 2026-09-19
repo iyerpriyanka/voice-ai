@@ -1,26 +1,23 @@
 import {
-  Clock,
+  Time,
   Archive,
-  X,
+  Close,
   Activity,
-  MinusCircle,
-  Mail,
-  Loader,
-  Cable,
-  LoaderCircle,
-  CircleCheck,
-  Bot,
-  User,
-} from 'lucide-react';
+  SubtractAlt,
+  Email,
+  Pending,
+  ConnectionSignal,
+  InProgress,
+  CheckmarkFilled,
+} from '@carbon/icons-react';
 
 export const StatusIndicator = ({ state, size = 'medium' }) => {
-  // Status configurations with SVG icons and appropriate colors
   const complete = {
     bgColor: 'bg-purple-100 dark:bg-purple-900/30',
     textColor: 'text-purple-700 dark:text-purple-500',
     iconColor: 'text-purple-500 dark:text-purple-400',
     ringColor: 'ring-purple-200 dark:ring-purple-700',
-    Icon: CircleCheck,
+    Icon: CheckmarkFilled,
     display: 'Complete',
   };
   const statusConfig = {
@@ -29,7 +26,7 @@ export const StatusIndicator = ({ state, size = 'medium' }) => {
       textColor: 'text-yellow-700 dark:text-yellow-500',
       iconColor: 'text-yellow-500 dark:text-yellow-400',
       ringColor: 'ring-yellow-200 dark:ring-yellow-700',
-      Icon: Mail, // Assuming you have a Mail icon imported
+      Icon: Email,
       display: 'Invited',
     },
     WAITLIST: {
@@ -37,7 +34,7 @@ export const StatusIndicator = ({ state, size = 'medium' }) => {
       textColor: 'text-orange-700 dark:text-orange-500',
       iconColor: 'text-orange-500 dark:text-orange-400',
       ringColor: 'ring-orange-200 dark:ring-orange-700',
-      Icon: Clock, // Reusing the Clock icon from IN_PROGRESS
+      Icon: Time,
       display: 'Waitlist',
     },
 
@@ -54,7 +51,7 @@ export const StatusIndicator = ({ state, size = 'medium' }) => {
       textColor: 'text-blue-700 dark:text-blue-500',
       iconColor: 'text-blue-500 dark:text-blue-400 animate-spin3s',
       ringColor: 'ring-blue-200 dark:ring-blue-700',
-      Icon: LoaderCircle,
+      Icon: InProgress,
       display: 'In progress',
     },
     SUCCESS: {
@@ -62,7 +59,7 @@ export const StatusIndicator = ({ state, size = 'medium' }) => {
       textColor: 'text-emerald-700 dark:text-emerald-500',
       iconColor: 'text-emerald-500 dark:text-emerald-400',
       ringColor: 'ring-emerald-200/10 dark:ring-emerald-700/10',
-      Icon: CircleCheck,
+      Icon: CheckmarkFilled,
       display: 'Success',
     },
     COMPLETE: complete,
@@ -73,7 +70,7 @@ export const StatusIndicator = ({ state, size = 'medium' }) => {
       textColor: 'text-gray-700 dark:text-gray-500',
       iconColor: 'dark:text-gray-400',
       ringColor: 'ring-gray-200 dark:ring-gray-700',
-      Icon: MinusCircle,
+      Icon: SubtractAlt,
       display: 'Inactive',
     },
     ARCHIEVE: {
@@ -89,7 +86,7 @@ export const StatusIndicator = ({ state, size = 'medium' }) => {
       textColor: 'text-indigo-700 dark:text-indigo-500',
       iconColor: 'text-indigo-500 dark:text-indigo-400',
       ringColor: 'ring-indigo-200 dark:ring-indigo-700',
-      Icon: Loader, // Assuming you have a Queue icon imported
+      Icon: Pending,
       display: 'Queued',
     },
     CONNECTED: {
@@ -97,7 +94,7 @@ export const StatusIndicator = ({ state, size = 'medium' }) => {
       textColor: 'text-teal-700 dark:text-teal-500',
       iconColor: 'text-teal-500 dark:text-teal-400',
       ringColor: 'ring-teal-200 dark:ring-teal-700',
-      Icon: Cable, // Assuming you have a Link icon imported
+      Icon: ConnectionSignal,
       display: 'Connected',
     },
     FAILED: {
@@ -105,7 +102,7 @@ export const StatusIndicator = ({ state, size = 'medium' }) => {
       textColor: 'text-red-700 dark:text-red-500',
       iconColor: 'text-red-500 dark:text-red-400',
       ringColor: 'ring-red-200 dark:ring-red-700',
-      Icon: X,
+      Icon: Close,
       display: 'Failed',
     },
   };
@@ -113,7 +110,6 @@ export const StatusIndicator = ({ state, size = 'medium' }) => {
   const config = statusConfig[state.toUpperCase()] || statusConfig['INACTIVE'];
   const { Icon } = config;
 
-  // Size variants
   const sizeClasses = {
     small: {
       container: 'text-xs px-2 py-0.5 gap-1',
@@ -138,7 +134,6 @@ export const StatusIndicator = ({ state, size = 'medium' }) => {
       <Icon
         className={`${config.iconColor}`}
         size={sizeClass.icon}
-        strokeWidth={1.5}
       />
       {config.display}
     </span>
