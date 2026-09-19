@@ -1,5 +1,6 @@
-import { ModalProps } from '@/app/components/ui/modal';
-import { HTMLAttributes, FC } from 'react';
+import { IconOnlyButton } from '@/app/components/ui/button';
+import { ModalHeader, ModalProps } from '@/app/components/ui/modal';
+import type { FC, HTMLAttributes, ReactNode } from 'react';
 import useMeasure from 'react-use-measure';
 import {
   useDragControls,
@@ -7,27 +8,18 @@ import {
   useAnimate,
   motion,
 } from 'framer-motion';
-import { ModalHeader } from '@/app/components/ui/modal';
 import { cn } from '@/utils';
 import { Close } from '@carbon/icons-react';
-/**
- *
- */
+
 export interface SideModalProps
   extends ModalProps,
     HTMLAttributes<HTMLDivElement> {
-  // title
   title?: string;
   label?: string;
-
-  // children
-  children: any;
-
-  //
+  children: ReactNode;
   loading?: boolean;
 }
 
-// const DragCloseDrawer = ({ open, setModalOpen, children }) => {
 export const RightSideModal: FC<SideModalProps> = ({
   title,
   label,
@@ -97,11 +89,13 @@ export const RightSideModal: FC<SideModalProps> = ({
           >
             <div className="absolute left-0 bottom-0 top-0 z-10 flex justify-center">
               <button
+                type="button"
+                aria-label="Resize drawer"
                 onPointerDown={e => {
                   controls.start(e);
                 }}
                 className="h-1/2 my-auto w-2 cursor-grab touch-none rounded-[2px] bg-gray-300 dark:bg-slate-700 hover:bg-primary active:cursor-grabbing"
-              ></button>
+              />
             </div>
             <div className="relative z-0 h-full overflow-auto flex flex-col">
               {title || label ? (
@@ -112,9 +106,13 @@ export const RightSideModal: FC<SideModalProps> = ({
                 />
               ) : (
                 <header className="absolute top-0 z-10 right-0 p-4">
-                  <span className="cursor-pointer" onClick={handleClose}>
-                    <Close />
-                  </span>
+                  <IconOnlyButton
+                    kind="ghost"
+                    size="sm"
+                    iconDescription="Close"
+                    renderIcon={Close}
+                    onClick={handleClose}
+                  />
                 </header>
               )}
               {children}
