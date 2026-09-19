@@ -1,9 +1,5 @@
 /**
- * Tests that tool configuration components use Carbon Design System components
- * after migration from legacy form components.
- *
- * Reuses the test pattern from:
- *   src/app/components/domain/providers/config-renderer.test.tsx
+ * Component tests for tool configuration forms.
  */
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
@@ -16,7 +12,7 @@ jest.mock('@/utils', () => ({
   cn: (...inputs: any[]) => inputs.filter(Boolean).join(' '),
 }));
 
-// Mock Carbon react Select/SelectItem to render native elements
+// Mock design-system controls with native elements.
 jest.mock('@carbon/react', () => {
   const React = require('react');
   return {
@@ -57,7 +53,7 @@ jest.mock('@carbon/react', () => {
           id,
           type: 'button',
           'aria-pressed': selected,
-          'data-carbon-selectable-tile': id,
+          'data-selectable-tile': id,
           onClick,
         },
         children,
@@ -66,7 +62,7 @@ jest.mock('@carbon/react', () => {
   };
 });
 
-// Mock Carbon form wrapper components
+// Mock form wrapper components.
 jest.mock('@/app/components/ui/form', () => {
   const React = require('react');
   return {
@@ -115,7 +111,7 @@ jest.mock('@/app/components/ui/form', () => {
   };
 });
 
-// Mock external dependencies that the tool components use
+// Mock external dependencies that the tool components use.
 jest.mock('@/app/components/layout/container/message/notice-block', () => {
   const R = require('react');
   return {
@@ -220,7 +216,7 @@ function createMetadata(key: string, value: string): Metadata {
 
 // Tests
 
-describe('ConfigureMCP Carbon migration', () => {
+describe('ConfigureMCP', () => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const { ConfigureMCP } = require('./mcp');
 
@@ -245,34 +241,33 @@ describe('ConfigureMCP Carbon migration', () => {
     mockOnChangeToolDefinition.mockClear();
   });
 
-  it('renders Carbon TextInput for Name with correct id and labelText', () => {
+  it('renders name field with correct id and label', () => {
     render(<ConfigureMCP {...defaultProps} />);
     expect(screen.getByTestId('mcp-tool-name')).toBeInTheDocument();
     expect(screen.getByLabelText('Name')).toBeInTheDocument();
   });
 
-  it('renders Carbon TextArea for Description with correct id', () => {
+  it('renders description field with correct id', () => {
     render(<ConfigureMCP {...defaultProps} />);
     expect(screen.getByTestId('mcp-tool-description')).toBeInTheDocument();
     expect(screen.getByLabelText('Description')).toBeInTheDocument();
   });
 
-  it('renders Carbon TextInput for MCP Server URL', () => {
+  it('renders server URL field', () => {
     render(<ConfigureMCP {...defaultProps} />);
     expect(screen.getByTestId('mcp-server-url')).toBeInTheDocument();
     expect(screen.getByLabelText('MCP Server URL')).toBeInTheDocument();
   });
 
-  it('renders Carbon Select for Protocol with SelectItem options', () => {
+  it('renders protocol select options', () => {
     render(<ConfigureMCP {...defaultProps} />);
     expect(screen.getByTestId('mcp-protocol')).toBeInTheDocument();
     expect(screen.getByLabelText('Protocol')).toBeInTheDocument();
-    // Check that options are rendered
     const select = screen.getByTestId('mcp-protocol');
     expect(select.querySelectorAll('option').length).toBe(3);
   });
 
-  it('renders Carbon TextInput for Timeout', () => {
+  it('renders timeout field', () => {
     render(<ConfigureMCP {...defaultProps} />);
     expect(screen.getByTestId('mcp-timeout')).toBeInTheDocument();
     expect(screen.getByLabelText('Timeout (seconds)')).toBeInTheDocument();
@@ -299,14 +294,13 @@ describe('ConfigureMCP Carbon migration', () => {
     expect(serverUrl?.getValue()).toBe('https://new.example.com');
   });
 
-  // Regression: ensure no old components are rendered (FieldSet, FormLabel, InputGroup)
-  it('does not render legacy FieldSet or FormLabel wrappers', () => {
+  it('uses direct form layout without fieldset wrappers', () => {
     const { container } = render(<ConfigureMCP {...defaultProps} />);
     expect(container.querySelector('fieldset')).toBeNull();
   });
 });
 
-describe('ConfigureAPIRequest Carbon migration', () => {
+describe('ConfigureAPIRequest', () => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const { ConfigureAPIRequest } = require('./api-request');
 
@@ -331,7 +325,7 @@ describe('ConfigureAPIRequest Carbon migration', () => {
     mockOnChangeToolDefinition.mockClear();
   });
 
-  it('renders Carbon Select for Method with correct id and labelText', () => {
+  it('renders method select options', () => {
     render(<ConfigureAPIRequest {...defaultProps} />);
     expect(screen.getByTestId('api-request-method')).toBeInTheDocument();
     expect(screen.getByLabelText('Method')).toBeInTheDocument();
@@ -339,7 +333,7 @@ describe('ConfigureAPIRequest Carbon migration', () => {
     expect(select.querySelectorAll('option').length).toBe(4);
   });
 
-  it('renders Carbon TextInput for Server URL', () => {
+  it('renders server URL field', () => {
     render(<ConfigureAPIRequest {...defaultProps} />);
     expect(screen.getByTestId('api-request-server-url')).toBeInTheDocument();
     expect(screen.getByLabelText('Server URL')).toBeInTheDocument();
@@ -365,14 +359,13 @@ describe('ConfigureAPIRequest Carbon migration', () => {
     expect(endpoint?.getValue()).toBe('https://new-api.com');
   });
 
-  // Regression: no legacy form components
-  it('does not render legacy FieldSet elements', () => {
+  it('uses direct form layout without fieldset wrappers', () => {
     const { container } = render(<ConfigureAPIRequest {...defaultProps} />);
     expect(container.querySelector('fieldset')).toBeNull();
   });
 });
 
-describe('ConfigureKnowledgeRetrieval Carbon migration', () => {
+describe('ConfigureKnowledgeRetrieval', () => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const { ConfigureKnowledgeRetrieval } = require('./knowledge-retrieval');
 
@@ -397,7 +390,7 @@ describe('ConfigureKnowledgeRetrieval Carbon migration', () => {
     mockOnChangeToolDefinition.mockClear();
   });
 
-  it('renders Carbon TextInput for slider numeric fields (hidden label)', () => {
+  it('renders slider numeric fields with hidden labels', () => {
     render(<ConfigureKnowledgeRetrieval {...defaultProps} />);
     expect(screen.getByTestId('top-k')).toBeInTheDocument();
     expect(screen.getByTestId('score-threshold')).toBeInTheDocument();
@@ -414,7 +407,7 @@ describe('ConfigureKnowledgeRetrieval Carbon migration', () => {
     expect(screen.getByText('Semantic Search')).toBeInTheDocument();
     expect(screen.getByText('Full Text Search')).toBeInTheDocument();
     expect(screen.getByText('Hybrid Search').closest('button')).toHaveAttribute(
-      'data-carbon-selectable-tile',
+      'data-selectable-tile',
       'hybrid-search-type',
     );
   });
@@ -442,8 +435,7 @@ describe('ConfigureKnowledgeRetrieval Carbon migration', () => {
     expect(topK?.getValue()).toBe('8');
   });
 
-  // Regression: no legacy FieldSet or InputGroup
-  it('does not render legacy FieldSet elements', () => {
+  it('uses direct form layout without fieldset wrappers', () => {
     const { container } = render(
       <ConfigureKnowledgeRetrieval {...defaultProps} />,
     );
