@@ -81,7 +81,6 @@
         "@formatjs/intl-localematcher": "0.5.4",
         "@grpc/proto-loader": "0.7.13",
         "@improbable-eng/grpc-web": "0.15.0",
-        "@material-tailwind/react": "2.1.8",
         "@monaco-editor/react": "4.6.0",
         "@popperjs/core": "2.11.8",
         "@protobuf-ts/plugin": "2.9.4",

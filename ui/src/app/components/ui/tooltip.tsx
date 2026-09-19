@@ -1,21 +1,16 @@
-import React from 'react';
-import { Tooltip as TP } from '@material-tailwind/react';
-import { cn } from '@/utils';
+import type { ReactElement, ReactNode } from 'react';
+import { Tooltip as CarbonTooltip } from '@carbon/react';
 
-export function Tooltip(props: { children: any; icon: React.ReactElement }) {
-  const colorClasses = () => {
-    return 'bg-white border-gray-200 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-700';
-  };
+type TooltipProps = {
+  align?: 'top' | 'right' | 'bottom' | 'left';
+  children: ReactNode;
+  icon: ReactElement;
+};
+
+export function Tooltip({ align = 'bottom', children, icon }: TooltipProps) {
   return (
-    <TP
-      className={cn(
-        colorClasses(),
-        'border overflow-hidden shadow-lg shrink-0',
-        'z-50',
-      )}
-      content={props.children}
-    >
-      {props.icon}
-    </TP>
+    <CarbonTooltip align={align} label={children}>
+      {icon}
+    </CarbonTooltip>
   );
 }
