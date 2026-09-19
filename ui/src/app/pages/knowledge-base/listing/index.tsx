@@ -14,7 +14,7 @@ import { EmptyState } from '@/app/components/ui/empty-state';
 import { HowKnowledgeWorksDialog } from '@/app/components/dialogs/how-knowledge-works-modal';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { GhostButton } from '@/app/components/ui/button';
-import { Plus, RotateCw } from 'lucide-react';
+import { Add, Renew } from '@carbon/icons-react';
 import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
 import { PageTitleBlock } from '@/app/components/layout/blocks/page-title-block';
 import { cn } from '@/utils';
@@ -90,7 +90,7 @@ export function KnowledgePage() {
             className="flex items-center gap-2 px-4 text-sm text-white bg-primary hover:bg-primary/90 transition-colors whitespace-nowrap"
           >
             Add new knowledge
-            <Plus strokeWidth={1.5} className="w-4 h-4" />
+            <Add className="w-4 h-4" />
           </button>
         </div>
       </PageHeaderBlock>
@@ -107,12 +107,13 @@ export function KnowledgePage() {
           />
           <GhostButton
             size="md"
+            hasIconOnly
+            iconDescription="Refresh knowledge bases"
+            renderIcon={Renew}
             onClick={() => {
               getKnowledges(projectId, token, userId);
             }}
-          >
-            <RotateCw strokeWidth={1.5} className="h-4 w-4" />
-          </GhostButton>
+          />
         </PaginationButtonBlock>
       </BluredWrapper>
 
