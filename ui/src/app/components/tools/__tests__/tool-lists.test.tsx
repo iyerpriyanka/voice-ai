@@ -11,7 +11,14 @@ jest.mock('@/utils', () => ({
 jest.mock('@/app/components/carbon/form', () => {
   const React = require('react');
   return {
-    TextInput: ({ id, value, onChange, placeholder, labelText, hideLabel }: any) =>
+    TextInput: ({
+      id,
+      value,
+      onChange,
+      placeholder,
+      labelText,
+      hideLabel,
+    }: any) =>
       React.createElement(
         'div',
         null,
@@ -40,12 +47,16 @@ jest.mock('@/app/components/carbon/button', () => {
   };
 });
 
-jest.mock('@/app/components/container/message/notice-block/doc-notice-block', () => {
-  const React = require('react');
-  return {
-    DocNoticeBlock: ({ children }: any) => React.createElement('div', null, children),
-  };
-});
+jest.mock(
+  '@/app/components/container/message/notice-block/doc-notice-block',
+  () => {
+    const React = require('react');
+    return {
+      DocNoticeBlock: ({ children }: any) =>
+        React.createElement('div', null, children),
+    };
+  },
+);
 
 jest.mock('@/app/components/form/editor/code-editor', () => {
   const React = require('react');
@@ -129,7 +140,9 @@ describe('Tool list editors', () => {
     const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
     const onChange = jest.fn();
 
-    render(<APiStringHeader headerValue="not-json" setHeaderValue={onChange} />);
+    render(
+      <APiStringHeader headerValue="not-json" setHeaderValue={onChange} />,
+    );
 
     expect(screen.getByTestId('api-header-key-0')).toBeInTheDocument();
     expect(screen.getByTestId('api-header-val-0')).toBeInTheDocument();

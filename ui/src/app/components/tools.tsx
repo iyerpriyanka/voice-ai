@@ -1,0 +1,357 @@
+import { Metadata } from '@rapidaai/react';
+import { FC, useCallback, useMemo } from 'react';
+import { Dropdown } from '@carbon/react';
+import { CONFIG } from '@/configs';
+import { ConfigureAPIRequest } from '@/app/components/tools/api-request';
+import {
+  GetAPIRequestDefaultOptions,
+  ValidateAPIRequestDefaultOptions,
+} from '@/app/components/tools/api-request/constant';
+import { ConfigureEndOfConversation } from '@/app/components/tools/end-of-conversation';
+import {
+  GetEndOfConversationDefaultOptions,
+  ValidateEndOfConversationDefaultOptions,
+} from '@/app/components/tools/end-of-conversation/constant';
+import { ConfigureEndpoint } from '@/app/components/tools/endpoint';
+import {
+  GetEndpointDefaultOptions,
+  ValidateEndpointDefaultOptions,
+} from '@/app/components/tools/endpoint/constant';
+import { ConfigureKnowledgeRetrieval } from '@/app/components/tools/knowledge-retrieval';
+import {
+  GetKnowledgeRetrievalDefaultOptions,
+  ValidateKnowledgeRetrievalDefaultOptions,
+} from '@/app/components/tools/knowledge-retrieval/constant';
+import { ConfigureMCP } from '@/app/components/tools/mcp';
+import {
+  GetMCPDefaultOptions,
+  ValidateMCPDefaultOptions,
+} from '@/app/components/tools/mcp/constant';
+import { ConfigureTransferCall } from '@/app/components/tools/transfer-call';
+import { InputGroup } from './input-group';
+import {
+  GetTransferCallDefaultOptions,
+  ValidateTransferCallDefaultOptions,
+} from '@/app/components/tools/transfer-call/constant';
+import {
+  APIRequestToolDefintion,
+  BUILDIN_TOOLS,
+  EndOfConverstaionToolDefintion,
+  EndpointToolDefintion,
+  KnowledgeRetrievalToolDefintion,
+  TransferCallToolDefintion,
+} from '@/llm-tools';
+import {
+  ConfigureToolProps,
+  ASSISTANT_CONDITION_KEY_OPTIONS,
+  ASSISTANT_CONDITION_OPERATOR_OPTIONS,
+  ASSISTANT_CONDITION_SOURCE_OPTIONS,
+  ASSISTANT_CONDITION_VALUE_OPTIONS_BY_KEY,
+  getToolConditionEntries,
+  validateToolConditionMetadata,
+  withToolConditionEntries,
+  withNormalizedToolCondition,
+} from './tools/common';
+import { SourceConditionRule } from '@/app/components/conditions/source-condition-rule';
+
+// ============================================================================
+// Types
+// ============================================================================
+
+export type ToolCode =
+  | 'knowledge_retrieval'
+  | 'api_request'
+  | 'endpoint'
+  | 'end_of_conversation'
+  | 'transfer_call'
+  | 'mcp';
+
+export interface ToolDefinition {
+  name: string;
+  description: string;
+  parameters: string;
+}
+
+export interface BuildinToolConfig {
+  code: string;
+  parameters: Metadata[];
+}
+
+// ============================================================================
+// Tool Registry - Single source of truth for tool configurations
+// ============================================================================
+
+/**
+ * Configuration interface for each tool in the registry.
+ * @property definition - Static tool definition (optional for runtime-resolved tools like MCP)
+ * @property getDefaultOptions - Returns default metadata parameters for the tool
+ * @property validateOptions - Validates tool configuration and returns error message if invalid
+ * @property Component - React component for tool configuration UI
+ */
+interface ToolConfig {
+  definition?: ToolDefinition;
+  getDefaultOptions: (params: Metadata[]) => Metadata[];
+  validateOptions: (params: Metadata[]) => string | undefined;
+  Component: FC<ConfigureToolProps>;
+}
+
+const TOOL_REGISTRY: Record<ToolCode, ToolConfig> = {
+  knowledge_retrieval: {
+    definition: KnowledgeRetrievalToolDefintion,
+    getDefaultOptions: GetKnowledgeRetrievalDefaultOptions,
+    validateOptions: ValidateKnowledgeRetrievalDefaultOptions,
+    Component: ConfigureKnowledgeRetrieval,
+  },
+  api_request: {
+    definition: APIRequestToolDefintion,
+    getDefaultOptions: GetAPIRequestDefaultOptions,
+    validateOptions: ValidateAPIRequestDefaultOptions,
+    Component: ConfigureAPIRequest,
+  },
+  endpoint: {
+    definition: EndpointToolDefintion,
+    getDefaultOptions: GetEndpointDefaultOptions,
+    validateOptions: ValidateEndpointDefaultOptions,
+    Component: ConfigureEndpoint,
+  },
+  end_of_conversation: {
+    definition: EndOfConverstaionToolDefintion,
+    getDefaultOptions: GetEndOfConversationDefaultOptions,
+    validateOptions: ValidateEndOfConversationDefaultOptions,
+    Component: ConfigureEndOfConversation,
+  },
+  transfer_call: {
+    definition: TransferCallToolDefintion,
+    getDefaultOptions: GetTransferCallDefaultOptions,
+    validateOptions: ValidateTransferCallDefaultOptions,
+    Component: ConfigureTransferCall,
+  },
+  mcp: {
+    // MCP tools don't have a static definition - resolved dynamically at runtime
+    definition: undefined,
+    getDefaultOptions: GetMCPDefaultOptions,
+    validateOptions: ValidateMCPDefaultOptions,
+    Component: ConfigureMCP,
+  },
+};
+
+const DEFAULT_TOOL_CODE: ToolCode = 'endpoint';
+
+// ============================================================================
+// Helper Functions
+// ============================================================================
+
+/**
+ * Type guard to check if a string is a valid tool code
+ */
+const isValidToolCode = (code: string): code is ToolCode => {
+  return code in TOOL_REGISTRY;
+};
+
+/**
+ * Safely retrieves tool configuration with fallback to default
+ */
+const getToolConfig = (code: string): ToolConfig => {
+  return isValidToolCode(code)
+    ? TOOL_REGISTRY[code]
+    : TOOL_REGISTRY[DEFAULT_TOOL_CODE];
+};
+
+/**
+ * Returns the default tool definition for a given tool code.
+ * If an existing definition has all required fields, it returns the existing one.
+ * MCP tools return a placeholder definition as they are resolved at runtime.
+ * This should only be called during initialization, not on every render.
+ */
+export const GetDefaultToolDefintion = (
+  code: string,
+  existing?: Partial<ToolDefinition>,
+): ToolDefinition => {
+  // For MCP, use existing or return placeholder
+  if (code === 'mcp') {
+    if (existing?.name && existing?.description && existing?.parameters) {
+      return existing as ToolDefinition;
+    }
+    // Return placeholder for MCP - actual definition resolved at runtime
+    return {
+      name: 'mcp_tool',
+      description: 'MCP server tool - resolved at runtime',
+      parameters: JSON.stringify({ type: 'object', properties: {} }),
+    };
+  }
+
+  const hasValidExisting =
+    existing?.name && existing?.description && existing?.parameters;
+
+  if (hasValidExisting) {
+    return existing as ToolDefinition;
+  }
+
+  const config = getToolConfig(code);
+  if (!config.definition) {
+    throw new Error(`Tool definition not found for code: ${code}`);
+  }
+
+  return config.definition;
+};
+
+/**
+ * Returns default tool config parameters, merging with existing if valid.
+ */
+export const GetDefaultToolConfigIfInvalid = (
+  code: string,
+  parameters: Metadata[],
+): Metadata[] => {
+  const config = getToolConfig(code);
+  return withNormalizedToolCondition(
+    config.getDefaultOptions(parameters),
+    parameters,
+  );
+};
+
+/**
+ * Validates tool parameters and returns an error message if invalid.
+ * Returns undefined if validation passes.
+ */
+export const ValidateToolDefaultOptions = (
+  code: string,
+  parameters: Metadata[],
+): string | undefined => {
+  if (!isValidToolCode(code)) {
+    return `Invalid tool code: ${code}`;
+  }
+  return (
+    TOOL_REGISTRY[code].validateOptions(parameters) ||
+    validateToolConditionMetadata(parameters)
+  );
+};
+
+// ============================================================================
+// Components
+// ============================================================================
+
+const ConfigureBuildinTool: FC<{
+  toolDefinition: ToolDefinition;
+  onChangeToolDefinition?: (value: ToolDefinition) => void;
+  config: BuildinToolConfig;
+  onParameterChange: (params: Metadata[]) => void;
+  inputClass?: string;
+}> = ({
+  config,
+  inputClass,
+  toolDefinition,
+  onChangeToolDefinition,
+  onParameterChange,
+}) => {
+  if (!isValidToolCode(config.code)) {
+    return null;
+  }
+
+  const { Component } = TOOL_REGISTRY[config.code];
+
+  return (
+    <Component
+      toolDefinition={toolDefinition}
+      onChangeToolDefinition={onChangeToolDefinition}
+      parameters={config.parameters}
+      inputClass={inputClass}
+      onParameterChange={onParameterChange}
+    />
+  );
+};
+
+export const BuildinTool: FC<{
+  toolDefinition: ToolDefinition;
+  onChangeToolDefinition: (value: ToolDefinition) => void;
+  onChangeBuildinTool: (code: string) => void;
+  onChangeConfig: (config: BuildinToolConfig) => void;
+  inputClass?: string;
+  config: BuildinToolConfig;
+  showDefinitionForm?: boolean;
+}> = ({
+  toolDefinition,
+  onChangeToolDefinition,
+  onChangeBuildinTool,
+  onChangeConfig,
+  config,
+  inputClass,
+  showDefinitionForm = true,
+}) => {
+  const conditionEntries = useMemo(
+    () => getToolConditionEntries(config.parameters),
+    [config.parameters],
+  );
+  const handleParameterChange = useCallback(
+    (params: Metadata[]) => {
+      onChangeConfig({
+        ...config,
+        parameters: withNormalizedToolCondition(params, config.parameters),
+      });
+    },
+    [config, onChangeConfig],
+  );
+
+  const availableTools = useMemo(
+    () =>
+      CONFIG.workspace.features?.knowledge !== false
+        ? BUILDIN_TOOLS
+        : BUILDIN_TOOLS.filter(tool => tool.code !== 'knowledge_retrieval'),
+    [],
+  );
+
+  const currentTool = useMemo(
+    () => availableTools.find(tool => tool.code === config.code),
+    [config.code, availableTools],
+  );
+
+  return (
+    <>
+      <InputGroup
+        title="Condition"
+        className="relative z-20"
+        childClass="overflow-visible relative z-20"
+      >
+        <SourceConditionRule
+          conditions={conditionEntries}
+          onChangeConditions={nextConditions =>
+            onChangeConfig({
+              ...config,
+              parameters: withToolConditionEntries(
+                config.parameters,
+                nextConditions,
+              ),
+            })
+          }
+          conditionOptions={ASSISTANT_CONDITION_OPERATOR_OPTIONS}
+          sourceOptions={ASSISTANT_CONDITION_SOURCE_OPTIONS}
+          keyOptions={ASSISTANT_CONDITION_KEY_OPTIONS}
+          valueOptionsByKey={ASSISTANT_CONDITION_VALUE_OPTIONS_BY_KEY}
+        />
+      </InputGroup>
+
+      <InputGroup title="Action">
+        <Dropdown
+          id="tool-action-select"
+          titleText="Action"
+          label="Select provider"
+          items={availableTools}
+          selectedItem={currentTool}
+          itemToString={(item: any) => item?.name || ''}
+          onChange={({ selectedItem }: any) => {
+            if (selectedItem) onChangeBuildinTool(selectedItem.code);
+          }}
+        />
+      </InputGroup>
+
+      <ConfigureBuildinTool
+        toolDefinition={toolDefinition}
+        onChangeToolDefinition={
+          showDefinitionForm ? onChangeToolDefinition : undefined
+        }
+        config={config}
+        onParameterChange={handleParameterChange}
+        inputClass={inputClass}
+      />
+    </>
+  );
+};

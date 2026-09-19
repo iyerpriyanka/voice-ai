@@ -47,7 +47,7 @@ import { connectionConfig } from '@/configs';
 import { YellowNoticeBlock } from '@/app/components/container/message/notice-block';
 import { InputHelper } from '@/app/components/input-helper';
 import { ArrowUpRight } from 'lucide-react';
-import { ConfigureEndpointPromptDialog } from '@/app/components/base/modal/configure-endpoint-prompt-modal/index';
+import { ConfigureEndpointPromptDialog } from '@/app/components/base/modal/configure-endpoint-prompt-modal';
 import { CornerBorderOverlay } from '@/app/components/base/corner-border';
 
 export function CreateEndpointPage() {

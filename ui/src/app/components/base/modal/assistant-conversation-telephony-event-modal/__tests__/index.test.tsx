@@ -1,10 +1,11 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { AssistantConversationTelephonyEventDialog } from '../index';
+import { AssistantConversationTelephonyEventDialog } from '../../assistant-conversation-telephony-event-modal';
 
 jest.mock('@/app/components/base/modal/right-side-modal', () => ({
-  RightSideModal: ({ modalOpen, children }: any) => (modalOpen ? <div>{children}</div> : null),
+  RightSideModal: ({ modalOpen, children }: any) =>
+    modalOpen ? <div>{children}</div> : null,
 }));
 
 jest.mock('@/app/components/code-highlighting', () => ({
@@ -48,7 +49,10 @@ describe('AssistantConversationTelephonyEventDialog', () => {
 
     fireEvent.click(screen.getByText('evt_1').closest('button')!);
 
-    expect(screen.getByTestId('payload')).toHaveAttribute('data-language', 'json');
+    expect(screen.getByTestId('payload')).toHaveAttribute(
+      'data-language',
+      'json',
+    );
   });
 
   it('shows fallback created date when event created date is missing', () => {
@@ -69,8 +73,14 @@ describe('AssistantConversationTelephonyEventDialog', () => {
         modalOpen
         setModalOpen={jest.fn()}
         events={[
-          makeEvent({ getId: () => 'evt_session', getEventtype: () => 'session' }) as any,
-          makeEvent({ getId: () => 'evt_llm', getEventtype: () => 'llm' }) as any,
+          makeEvent({
+            getId: () => 'evt_session',
+            getEventtype: () => 'session',
+          }) as any,
+          makeEvent({
+            getId: () => 'evt_llm',
+            getEventtype: () => 'llm',
+          }) as any,
         ]}
       />,
     );

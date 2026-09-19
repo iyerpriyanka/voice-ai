@@ -2,7 +2,7 @@ import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import { ViewProviderCredentialDialog } from '../index';
+import { ViewProviderCredentialDialog } from '../../view-provider-credential-modal';
 
 type MockCredential = {
   getId: () => string;

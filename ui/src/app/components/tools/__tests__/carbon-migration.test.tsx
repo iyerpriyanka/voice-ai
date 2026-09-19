@@ -203,7 +203,7 @@ function createMetadata(key: string, value: string): Metadata {
 
 describe('ConfigureMCP — Carbon migration', () => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { ConfigureMCP } = require('../../tools/mcp/index');
+  const { ConfigureMCP } = require('../mcp');
 
   const mockOnParameterChange = jest.fn();
   const mockOnChangeToolDefinition = jest.fn();
@@ -289,7 +289,7 @@ describe('ConfigureMCP — Carbon migration', () => {
 
 describe('ConfigureAPIRequest — Carbon migration', () => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { ConfigureAPIRequest } = require('../../tools/api-request/index');
+  const { ConfigureAPIRequest } = require('../api-request');
 
   const mockOnParameterChange = jest.fn();
   const mockOnChangeToolDefinition = jest.fn();
@@ -355,9 +355,7 @@ describe('ConfigureAPIRequest — Carbon migration', () => {
 
 describe('ConfigureKnowledgeRetrieval — Carbon migration', () => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const {
-    ConfigureKnowledgeRetrieval,
-  } = require('../../tools/knowledge-retrieval/index');
+  const { ConfigureKnowledgeRetrieval } = require('../knowledge-retrieval');
 
   const mockOnParameterChange = jest.fn();
   const mockOnChangeToolDefinition = jest.fn();

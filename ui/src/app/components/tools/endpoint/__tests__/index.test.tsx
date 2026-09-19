@@ -2,7 +2,7 @@ import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { Metadata } from '@rapidaai/react';
-import { ConfigureEndpoint } from '../index';
+import { ConfigureEndpoint } from '../../endpoint';
 
 const createMetadata = (key: string, value: string): Metadata => {
   const metadata = new Metadata();

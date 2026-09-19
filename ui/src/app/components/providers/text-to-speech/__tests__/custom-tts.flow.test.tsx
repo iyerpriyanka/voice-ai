@@ -2,7 +2,7 @@ import React from 'react';
 import { Metadata } from '@rapidaai/react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { TextToSpeechProvider } from '..';
+import { TextToSpeechProvider } from '../../text-to-speech';
 import {
   GetDefaultTextToSpeechIfInvalid,
   ValidateTextToSpeechIfInvalid,

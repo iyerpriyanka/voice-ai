@@ -2,7 +2,7 @@ import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { Metadata } from '@rapidaai/react';
-import { ConfigureTransferCall } from '../index';
+import { ConfigureTransferCall } from '../../transfer-call';
 
 jest.mock('@/app/components/carbon/form', () => {
   const React = require('react');

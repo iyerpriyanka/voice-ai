@@ -36,7 +36,7 @@ import {
   TextProvider,
 } from '@/app/components/providers/text';
 import { randomString } from '@/utils';
-import { ValidateTextProviderDefaultOptions } from '@/app/components/providers/text/index';
+import { ValidateTextProviderDefaultOptions } from '@/app/components/providers/text';
 import { useAllProviderCredentials } from '@/hooks/use-model';
 import { connectionConfig } from '@/configs';
 import { DocNoticeBlock } from '@/app/components/container/message/notice-block/doc-notice-block';

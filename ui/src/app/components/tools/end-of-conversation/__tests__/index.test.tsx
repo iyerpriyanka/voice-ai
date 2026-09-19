@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { ConfigureEndOfConversation } from '../index';
+import { ConfigureEndOfConversation } from '../../end-of-conversation';
 import {
   GetEndOfConversationDefaultOptions,
   ValidateEndOfConversationDefaultOptions,

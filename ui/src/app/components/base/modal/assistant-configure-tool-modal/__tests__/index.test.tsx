@@ -1,7 +1,7 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { ConfigureAssistantToolDialog } from '../index';
+import { ConfigureAssistantToolDialog } from '../../assistant-configure-tool-modal';
 
 const mockValidateToolDefaultOptions = jest.fn();
 
@@ -71,7 +71,12 @@ jest.mock('@/app/components/tools', () => ({
           onChangeConfig({
             ...config,
             code: 'mcp',
-            parameters: [{ getKey: () => 'mcp.server_url', getValue: () => 'https://mcp.example.com' }],
+            parameters: [
+              {
+                getKey: () => 'mcp.server_url',
+                getValue: () => 'https://mcp.example.com',
+              },
+            ],
           })
         }
       >
@@ -120,7 +125,9 @@ describe('ConfigureAssistantToolDialog', () => {
       />,
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Set Valid Definition' }));
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Set Valid Definition' }),
+    );
     fireEvent.click(screen.getByRole('button', { name: 'Save tool' }));
 
     expect(onChange).toHaveBeenCalledTimes(1);
@@ -165,7 +172,9 @@ describe('ConfigureAssistantToolDialog', () => {
       />,
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Set Valid Definition' }));
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Set Valid Definition' }),
+    );
     fireEvent.click(screen.getByRole('button', { name: 'Save tool' }));
 
     expect(

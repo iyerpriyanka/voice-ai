@@ -3,9 +3,12 @@ import {
   GetDefaultTextProviderConfigIfInvalid,
   GetDefaultTextProviderConfigOnProviderSwitch,
   ValidateTextProviderDefaultOptions,
-} from '../index';
+} from '../../text';
 import { TEXT_PROVIDERS } from '@/providers';
-import { loadProviderConfig, loadProviderData } from '@/providers/config-loader';
+import {
+  loadProviderConfig,
+  loadProviderData,
+} from '@/providers/config-loader';
 
 jest.mock('@/app/components/providers', () => ({}));
 jest.mock('@/utils', () => ({
@@ -229,7 +232,13 @@ describe('Text provider runtime parity', () => {
     },
   );
 
-  it.each(configuredTextProviders.map((provider, index) => [provider.code, configuredTextProviders[(index + 1) % configuredTextProviders.length].code]))(
+  it.each(
+    configuredTextProviders.map((provider, index) => [
+      provider.code,
+      configuredTextProviders[(index + 1) % configuredTextProviders.length]
+        .code,
+    ]),
+  )(
     '%s resets stale text parameters when switching from %s',
     (targetProvider, sourceProvider) => {
       const sourceDefaults = GetDefaultTextProviderConfigIfInvalid(
@@ -312,10 +321,7 @@ describe('Text provider runtime parity', () => {
         createMetadata(overrideKey, overrideValue!),
       ];
 
-      const hydrated = GetDefaultTextProviderConfigIfInvalid(
-        provider,
-        seeded,
-      );
+      const hydrated = GetDefaultTextProviderConfigIfInvalid(provider, seeded);
 
       expect(getMetadataValue(hydrated, 'model.id')).toBe(modelId);
       expect(getMetadataValue(hydrated, 'model.name')).toBe(modelName);
@@ -384,7 +390,11 @@ describe('Text provider runtime parity', () => {
     const defaults = GetDefaultTextProviderConfigIfInvalid('openai', [
       createMetadata('rapida.credential_id', 'cred-openai'),
     ]);
-    const withLegacyModelToken = withMetadataValue(defaults, 'model.id', 'gpt-4o');
+    const withLegacyModelToken = withMetadataValue(
+      defaults,
+      'model.id',
+      'gpt-4o',
+    );
     const withLegacyModelName = withMetadataValue(
       withLegacyModelToken,
       'model.name',
@@ -403,11 +413,10 @@ describe('Text provider runtime parity', () => {
     const defaults = GetDefaultTextProviderConfigIfInvalid('openai', [
       createMetadata('rapida.credential_id', 'cred-from-other-provider'),
     ]);
-    const err = ValidateTextProviderDefaultOptions(
-      'openai',
-      defaults,
-      ['cred-openai-1', 'cred-openai-2'],
-    );
+    const err = ValidateTextProviderDefaultOptions('openai', defaults, [
+      'cred-openai-1',
+      'cred-openai-2',
+    ]);
 
     expect(err).toBe('Please select a valid openai credential.');
   });

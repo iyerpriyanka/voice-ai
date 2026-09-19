@@ -17,7 +17,7 @@ import toast from 'react-hot-toast/headless';
 import { create_knowledge_success_message } from '@/utils/messages';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { ManualFile } from '@/app/pages/knowledge-base/action/components/datasource-uploader/manual-file';
-import { FormLabel } from '@/app/components/form-label/index';
+import { FormLabel } from '@/app/components/form-label';
 import ConfirmDialog from '@/app/components/base/modal/confirm-ui';
 import { useNavigate } from 'react-router-dom';
 import { Textarea } from '@/app/components/form/textarea';

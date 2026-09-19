@@ -237,7 +237,7 @@ jest.mock('@/app/components/carbon/button', () => ({
 }));
 
 jest.mock('@/app/components/base/modal/confirm-ui', () => () => null);
-jest.mock('@/app/components/base/modal/configure-endpoint-prompt-modal/index', () => ({
+jest.mock('@/app/components/base/modal/configure-endpoint-prompt-modal', () => ({
   ConfigureEndpointPromptDialog: () => null,
 }));
 jest.mock('@/app/components/base/modal/assistant-configure-next-modal', () => ({

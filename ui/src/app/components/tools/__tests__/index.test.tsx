@@ -7,7 +7,7 @@ import {
   GetDefaultToolConfigIfInvalid,
   GetDefaultToolDefintion,
   ValidateToolDefaultOptions,
-} from '../index';
+} from '../../tools';
 
 const createMetadata = (key: string, value: string): Metadata => {
   const m = new Metadata();
@@ -62,7 +62,7 @@ jest.mock('@carbon/react', () => ({
   Tooltip: ({ children }: any) => <>{children}</>,
 }));
 
-jest.mock('@/app/components/input-group/index', () => ({
+jest.mock('@/app/components/input-group', () => ({
   InputGroup: ({ title, children }: any) => (
     <section>
       <h3>{title}</h3>

@@ -1,8 +1,5 @@
 import { Metadata } from '@rapidaai/react';
-import {
-  GetMCPDefaultOptions,
-  ValidateMCPDefaultOptions,
-} from '../constant';
+import { GetMCPDefaultOptions, ValidateMCPDefaultOptions } from '../constant';
 
 const createMetadata = (key: string, value: string): Metadata => {
   const metadata = new Metadata();

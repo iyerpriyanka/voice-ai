@@ -4,7 +4,10 @@ import {
   ValidateTextToSpeechIfInvalid,
 } from '../provider';
 import { TEXT_TO_SPEECH_PROVIDER } from '@/providers';
-import { loadProviderConfig, loadProviderData } from '@/providers/config-loader';
+import {
+  loadProviderConfig,
+  loadProviderData,
+} from '@/providers/config-loader';
 
 jest.mock('@/app/components/providers', () => ({}));
 jest.mock('@/app/components/providers/config-renderer', () => ({
@@ -160,9 +163,14 @@ describe('Text-to-speech provider runtime parity', () => {
     const seed = [createMetadata('custom.key', 'custom')];
     expect(
       normalizeMetadata(
-        GetDefaultTextToSpeechIfInvalid('unknown-provider', cloneMetadata(seed)),
+        GetDefaultTextToSpeechIfInvalid(
+          'unknown-provider',
+          cloneMetadata(seed),
+        ),
       ),
     ).toEqual(normalizeMetadata(seed));
-    expect(ValidateTextToSpeechIfInvalid('unknown-provider', [])).toBeUndefined();
+    expect(
+      ValidateTextToSpeechIfInvalid('unknown-provider', []),
+    ).toBeUndefined();
   });
 });

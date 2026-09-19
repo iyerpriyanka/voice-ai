@@ -11,21 +11,21 @@ export const DEFAULT_REPO_ROOT = resolve(
 );
 
 export const SHELL_CONTRACTS = Object.freeze({
-  'ui/src/app/components/aside/index.tsx': [
+  'ui/src/app/components/aside.tsx': [
     'bg-shell',
     'text-foreground',
     'border-border-subtle',
   ],
-  'ui/src/app/components/navigation/actionable-header/index.tsx': [
+  'ui/src/app/components/navigation/actionable-header.tsx': [
     'bg-shell',
     'text-foreground',
     'border-border-subtle',
   ],
-  'ui/src/app/components/navigation/header/index.tsx': [
+  'ui/src/app/components/navigation/header.tsx': [
     'bg-shell',
     'border-border-subtle',
   ],
-  'ui/src/app/components/navigation/sidebar/index.tsx': [
+  'ui/src/app/components/navigation/sidebar.tsx': [
     'border-border-subtle',
     'text-muted',
     'text-foreground',
@@ -86,11 +86,11 @@ export const BRAND_LITERAL_ALLOWLIST = Object.freeze({
       reason:
         'legacy conversation role value is mapped to a tenant-neutral display label',
     },
-  'ui/src/app/components/base/modal/assistant-instruction-modal/index.tsx': {
+  'ui/src/app/components/base/modal/assistant-instruction-modal.tsx': {
     literals: ['cdn-01.rapida.ai'],
     reason: 'web widget script URL is a deployment snippet asset source',
   },
-  'ui/src/app/components/base/modal/assistant-web-widget-deployment-modal/index.tsx':
+  'ui/src/app/components/base/modal/assistant-web-widget-deployment-modal.tsx':
     {
       literals: ['cdn-01.rapida.ai'],
       reason: 'web widget script URL is a deployment snippet asset source',

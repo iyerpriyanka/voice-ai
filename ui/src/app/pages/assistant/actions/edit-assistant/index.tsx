@@ -29,7 +29,7 @@ import {
   ToggletipContent,
 } from '@carbon/react';
 import { Information, WarningAlt } from '@carbon/icons-react';
-import { InputGroup } from '../../../../components/input-group/index';
+import { InputGroup } from '../../../../components/input-group';
 
 const Toggletip = (CarbonToggletip as any).default || CarbonToggletip;
 
