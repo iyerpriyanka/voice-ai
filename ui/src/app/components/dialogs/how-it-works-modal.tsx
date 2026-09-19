@@ -6,7 +6,8 @@ import {
 } from '@/app/components/ui/modal';
 import React, { FC } from 'react';
 import { ModalProps } from '@/app/components/ui/modal';
-import { Check } from 'lucide-react';
+import { Button } from '@carbon/react';
+import { Checkmark } from '@carbon/icons-react';
 
 export const HowItWorksDialog: FC<
   ModalProps & {
@@ -34,14 +35,15 @@ export const HowItWorksDialog: FC<
     <ModalHeader title={title} onClose={() => setModalOpen(false)} />
     <HowItWorks steps={steps} />
     <ModalFooter>
-      <button
+      <Button
         type="button"
-        className="inline-flex items-center gap-2 h-10 px-4 text-sm text-white bg-primary hover:bg-primary/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
+        kind="primary"
+        size="md"
+        renderIcon={Checkmark}
         onClick={() => setModalOpen(false)}
       >
         Got it
-        <Check className="w-4 h-4" strokeWidth={1.5} />
-      </button>
+      </Button>
     </ModalFooter>
   </Modal>
 );
