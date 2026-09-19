@@ -13,13 +13,10 @@ import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
 import { FieldSet } from '@/app/components/ui/fieldset';
 import { Input } from '@/app/components/ui/input';
 import { useCurrentCredential } from '@/hooks/use-credential';
-import { Check } from 'lucide-react';
+import { Checkmark } from '@carbon/icons-react';
 import { FC, useState } from 'react';
 import { connectionConfig } from '@/configs';
 
-/**
- *
- */
 export const EditKnowledgeDocumentSegmentDialog: FC<{
   segment: KnowledgeDocumentSegment;
   onClose: () => void;
@@ -190,9 +187,13 @@ export const EditKnowledgeDocumentSegmentDialog: FC<{
         <SecondaryButton size="lg" onClick={onClose}>
           Cancel
         </SecondaryButton>
-        <PrimaryButton size="lg" type="button" onClick={handleUpdate}>
+        <PrimaryButton
+          size="lg"
+          type="button"
+          onClick={handleUpdate}
+          renderIcon={Checkmark}
+        >
           Update document
-          <Check className="ml-2" strokeWidth={1.5} />
         </PrimaryButton>
       </ModalFooter>
     </Modal>
