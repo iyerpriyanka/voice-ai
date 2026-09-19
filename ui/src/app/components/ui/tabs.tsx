@@ -1,4 +1,5 @@
-import type { FC, ReactNode } from 'react';
+import { useState } from 'react';
+import type { FC, HTMLAttributes, ReactElement, ReactNode } from 'react';
 import {
   Tabs as CarbonTabs,
   TabList as CarbonTabList,
@@ -87,6 +88,68 @@ export const Tabs: FC<CarbonTabsProps> = ({
                 )}
               >
                 {panel}
+              </CarbonTabPanel>
+            ))}
+          </CarbonTabPanels>
+        </div>
+      </CarbonTabs>
+    </div>
+  );
+};
+
+export interface TabProps extends HTMLAttributes<HTMLDivElement> {
+  active: string;
+  tabs: {
+    label: string;
+    labelIcon?: ReactElement;
+    element: ReactElement;
+  }[];
+  strict?: boolean;
+  linkClass?: string;
+}
+
+const getSelectedIndex = (tabs: TabProps['tabs'], active: string) => {
+  const index = tabs.findIndex(tab => tab.label === active);
+  return index >= 0 ? index : 0;
+};
+
+export const Tab: FC<TabProps> = ({
+  active,
+  tabs,
+  className,
+  strict = true,
+  linkClass,
+}) => {
+  const [selectedIndex, setSelectedIndex] = useState(() =>
+    getSelectedIndex(tabs, active),
+  );
+
+  return (
+    <div className={cn('flex min-h-0 flex-1 flex-col', className)}>
+      <CarbonTabs
+        selectedIndex={selectedIndex}
+        onChange={({ selectedIndex: idx }: { selectedIndex: number }) =>
+          setSelectedIndex(idx)
+        }
+      >
+        <CarbonTabList aria-label="Tabs">
+          {tabs.map(tab => (
+            <CarbonTab key={tab.label}>
+              <span className={cn('inline-flex items-center gap-2', linkClass)}>
+                {tab.labelIcon}
+                {tab.label}
+              </span>
+            </CarbonTab>
+          ))}
+        </CarbonTabList>
+        <div className="flex min-h-0 flex-1 overflow-hidden">
+          <CarbonTabPanels>
+            {tabs.map((tab, idx) => (
+              <CarbonTabPanel
+                key={tab.label}
+                className="flex min-h-0 flex-1 overflow-auto !p-0"
+              >
+                {strict || idx === selectedIndex ? tab.element : null}
               </CarbonTabPanel>
             ))}
           </CarbonTabPanels>
