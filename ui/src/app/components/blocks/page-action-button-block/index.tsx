@@ -1,5 +1,5 @@
 import { RedNoticeBlock } from '@/app/components/container/message/notice-block';
-import { AlertTriangle } from '@/app/components/Icon/alert-triangle';
+import { WarningAlt } from '@carbon/icons-react';
 import { FC, HTMLAttributes } from 'react';
 
 export const PageActionButtonBlock: FC<
@@ -11,7 +11,7 @@ export const PageActionButtonBlock: FC<
     <div className="shrink-0 w-full">
       {errorMessage && (
         <RedNoticeBlock className="flex items-center space-x-2">
-          <AlertTriangle className="w-4 h-4 text-red-600" />
+          <WarningAlt className="w-4 h-4 text-red-600" />
           <span>{errorMessage}</span>
         </RedNoticeBlock>
       )}

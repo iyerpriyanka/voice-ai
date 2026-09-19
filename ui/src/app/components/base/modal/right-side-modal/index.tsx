@@ -7,9 +7,9 @@ import {
   useAnimate,
   motion,
 } from 'framer-motion';
-import { CloseIcon } from '@/app/components/Icon/Close';
 import { ModalHeader } from '@/app/components/carbon/modal';
 import { cn } from '@/utils';
+import { Close } from '@carbon/icons-react';
 /**
  *
  */
@@ -113,7 +113,7 @@ export const RightSideModal: FC<SideModalProps> = ({
               ) : (
                 <header className="absolute top-0 z-10 right-0 p-4">
                   <span className="cursor-pointer" onClick={handleClose}>
-                    <CloseIcon />
+                    <Close />
                   </span>
                 </header>
               )}

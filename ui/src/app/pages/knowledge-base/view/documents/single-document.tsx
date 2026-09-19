@@ -1,20 +1,18 @@
 import { FC } from 'react';
-import { TickIcon } from '@/app/components/Icon/Tick';
 import { cn } from '@/utils';
 import { toHumanReadableRelativeTime } from '@/utils/date';
 import { KnowledgeDocument } from '@rapidaai/react';
 import { useKnowledgeDocumentPageStore } from '@/hooks/use-knowledge-document-page-store';
 import { formatFileSize, formatNumber } from '@/utils/format';
 import { DocumentSourcePill } from '@/app/components/pill/document-source-pill';
-import { FileExtensionIcon } from '@/app/components/Icon/file-extension';
 import { DocumentOption } from '@/app/pages/knowledge-base/view/documents/document-option';
 import { useCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/hooks/use-rapida-store';
 import toast from 'react-hot-toast/headless';
-import { WarningInfo } from '@/app/components/Icon/Warning';
 import { TableRow } from '@/app/components/base/tables/table-row';
 import { TableCell } from '@/app/components/base/tables/table-cell';
 import { LabelCell } from '@/app/components/base/tables/label-cell';
+import { Checkmark, Document, WarningAlt } from '@carbon/icons-react';
 
 /**
  *
@@ -91,9 +89,9 @@ export const SingleDocument: FC<SingleDocumentProps> = ({
               )}
             >
               {document.getDisplaystatus() === 'error' ? (
-                <WarningInfo className="w-5 h-5" />
+                <WarningAlt className="w-5 h-5" />
               ) : (
-                <TickIcon className="w-5 h-5" />
+                <Checkmark className="w-5 h-5" />
               )}
             </span>
             <div>
@@ -122,7 +120,7 @@ export const SingleDocument: FC<SingleDocumentProps> = ({
         <TableCell>
           <div className="flex items-center gap-2">
             <div className="p-1.5 border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950/30 shrink-0">
-              <FileExtensionIcon filename={document.getName()} />
+              <Document className="w-5 h-5" />
             </div>
             <div className="flex flex-col min-w-0">
               <span className="text-sm font-semibold line-clamp-1 text-gray-900 dark:text-gray-100">

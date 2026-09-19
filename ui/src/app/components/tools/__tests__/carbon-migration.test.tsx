@@ -51,7 +51,16 @@ jest.mock('@carbon/react', () => {
 jest.mock('@/app/components/carbon/form', () => {
   const React = require('react');
   return {
-    TextInput: ({ id, labelText, value, onChange, placeholder, type, hideLabel, size }: any) =>
+    TextInput: ({
+      id,
+      labelText,
+      value,
+      onChange,
+      placeholder,
+      type,
+      hideLabel,
+      size,
+    }: any) =>
       React.createElement(
         'div',
         null,
@@ -83,8 +92,7 @@ jest.mock('@/app/components/carbon/form', () => {
           'data-testid': id,
         }),
       ),
-    Stack: ({ children }: any) =>
-      React.createElement('div', null, children),
+    Stack: ({ children }: any) => React.createElement('div', null, children),
   };
 });
 
@@ -101,7 +109,11 @@ jest.mock('@/app/components/external-api/api-header', () => {
   const R = require('react');
   return {
     APiStringHeader: ({ headerValue }: any) =>
-      R.createElement('div', { 'data-testid': 'api-header' }, headerValue || ''),
+      R.createElement(
+        'div',
+        { 'data-testid': 'api-header' },
+        headerValue || '',
+      ),
   };
 });
 
@@ -147,29 +159,10 @@ jest.mock('@/app/components/form/slider', () => {
   };
 });
 
-jest.mock('@/app/components/Icon/hybrid-search', () => {
-  const R = require('react');
-  return {
-    HybridSearchIcon: () => R.createElement('span', null, 'HybridIcon'),
-  };
-});
-jest.mock('@/app/components/Icon/text-search', () => {
-  const R = require('react');
-  return {
-    TextSearchIcon: () => R.createElement('span', null, 'TextIcon'),
-  };
-});
-jest.mock('@/app/components/Icon/vector-search', () => {
-  const R = require('react');
-  return {
-    VectorSearchIcon: () => R.createElement('span', null, 'VectorIcon'),
-  };
-});
 jest.mock('@/app/components/tooltip', () => {
   const R = require('react');
   return {
-    Tooltip: ({ children }: any) =>
-      R.createElement('span', null, children),
+    Tooltip: ({ children }: any) => R.createElement('span', null, children),
   };
 });
 
@@ -187,7 +180,11 @@ jest.mock('../common', () => {
   return {
     ...actual,
     ToolDefinitionForm: ({ toolDefinition }: any) =>
-      R.createElement('div', { 'data-testid': 'tool-definition-form' }, toolDefinition?.name),
+      R.createElement(
+        'div',
+        { 'data-testid': 'tool-definition-form' },
+        toolDefinition?.name,
+      ),
     ParameterEditor: () =>
       R.createElement('div', { 'data-testid': 'parameter-editor' }),
   };
@@ -274,7 +271,9 @@ describe('ConfigureMCP — Carbon migration', () => {
   it('calls onParameterChange when Server URL changes', () => {
     render(<ConfigureMCP {...defaultProps} />);
     const urlInput = screen.getByTestId('mcp-server-url');
-    fireEvent.change(urlInput, { target: { value: 'https://new.example.com' } });
+    fireEvent.change(urlInput, {
+      target: { value: 'https://new.example.com' },
+    });
     expect(mockOnParameterChange).toHaveBeenCalled();
     const updatedParams = mockOnParameterChange.mock.calls[0][0] as Metadata[];
     const serverUrl = updatedParams.find(m => m.getKey() === 'mcp.server_url');
@@ -356,7 +355,9 @@ describe('ConfigureAPIRequest — Carbon migration', () => {
 
 describe('ConfigureKnowledgeRetrieval — Carbon migration', () => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { ConfigureKnowledgeRetrieval } = require('../../tools/knowledge-retrieval/index');
+  const {
+    ConfigureKnowledgeRetrieval,
+  } = require('../../tools/knowledge-retrieval/index');
 
   const mockOnParameterChange = jest.fn();
   const mockOnChangeToolDefinition = jest.fn();
@@ -409,7 +410,9 @@ describe('ConfigureKnowledgeRetrieval — Carbon migration', () => {
 
   // Regression: no legacy FieldSet or InputGroup
   it('does not render legacy FieldSet elements', () => {
-    const { container } = render(<ConfigureKnowledgeRetrieval {...defaultProps} />);
+    const { container } = render(
+      <ConfigureKnowledgeRetrieval {...defaultProps} />,
+    );
     expect(container.querySelector('fieldset')).toBeNull();
   });
 

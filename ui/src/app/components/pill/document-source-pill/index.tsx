@@ -1,6 +1,6 @@
-import { LanguageIcon } from '@/app/components/Icon/Language';
 import { ToolProviderPill } from '@/app/components/pill/tool-provider-pill';
 import { cn } from '@/utils';
+import { Globe } from '@carbon/icons-react';
 import { FC, HTMLAttributes } from 'react';
 
 interface DocumentSourcePillProps extends HTMLAttributes<HTMLSpanElement> {
@@ -28,7 +28,7 @@ export const DocumentSourcePill: FC<DocumentSourcePillProps> = ({
         className,
       )}
     >
-      <LanguageIcon className="w-4 h-4 mr-1.5 inline-block" />
+      <Globe className="w-4 h-4 mr-1.5 inline-block" />
       <span className="font-medium opacity-80 ">{type}</span>
     </span>
   );

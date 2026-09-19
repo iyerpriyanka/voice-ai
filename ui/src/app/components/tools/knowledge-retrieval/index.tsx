@@ -1,13 +1,16 @@
 import { FC } from 'react';
 import { Knowledge } from '@rapidaai/react';
-import { Information, Checkmark } from '@carbon/icons-react';
+import {
+  DataBase,
+  Information,
+  Checkmark,
+  ModelAlt,
+  Search,
+} from '@carbon/icons-react';
 import { cn } from '@/utils';
 import { CornerBorderOverlay } from '@/app/components/base/corner-border';
 import { KnowledgeDropdown } from '@/app/components/dropdown/knowledge-dropdown';
 import { Slider } from '@carbon/react';
-import { HybridSearchIcon } from '@/app/components/Icon/hybrid-search';
-import { TextSearchIcon } from '@/app/components/Icon/text-search';
-import { VectorSearchIcon } from '@/app/components/Icon/vector-search';
 import { Tooltip } from '@carbon/react';
 import { RETRIEVE_METHOD } from '@/models/datasets';
 import {
@@ -26,7 +29,7 @@ const SEARCH_TYPE_CONFIG = [
   {
     id: 'hybrid-search-type',
     value: RETRIEVE_METHOD.hybrid,
-    icon: HybridSearchIcon,
+    icon: DataBase,
     title: 'Hybrid Search',
     description:
       "Execute full-text search and vector searches simultaneously, re-rank to select the best match for the user's query.",
@@ -34,7 +37,7 @@ const SEARCH_TYPE_CONFIG = [
   {
     id: 'vector-search-type',
     value: RETRIEVE_METHOD.semantic,
-    icon: VectorSearchIcon,
+    icon: ModelAlt,
     title: 'Semantic Search',
     description:
       'Generate query embeddings and search for the text chunk most similar to its vector representation.',
@@ -42,7 +45,7 @@ const SEARCH_TYPE_CONFIG = [
   {
     id: 'text-search-type',
     value: RETRIEVE_METHOD.fullText,
-    icon: TextSearchIcon,
+    icon: Search,
     title: 'Full Text Search',
     description:
       'Index all terms in the document, allowing users to search any term and retrieve relevant text chunk containing those terms.',

@@ -2,8 +2,7 @@ import React, { FC, Fragment } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { cn } from '@/utils';
 import { Float } from '@headlessui-float/react';
-import { DotIcon } from '@/app/components/Icon/Dot';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, OverflowMenuHorizontal } from '@carbon/icons-react';
 
 interface OptionMenuProps {
   /*
@@ -33,7 +32,7 @@ export const OptionMenu: FC<OptionMenuProps> = props => {
             >
               Menu
             </span>
-            <DotIcon className="h-5 w-5 opacity-50" />
+            <OverflowMenuHorizontal className="h-5 w-5 opacity-50" />
           </Menu.Button>
           <Transition
             as={Fragment}
@@ -52,7 +51,8 @@ export const OptionMenu: FC<OptionMenuProps> = props => {
                 {props.options.map((opt, idx) => {
                   const isDanger =
                     React.isValidElement(opt.option) &&
-                    (opt.option as React.ReactElement).type === OptionMenuItem &&
+                    (opt.option as React.ReactElement).type ===
+                      OptionMenuItem &&
                     (opt.option as React.ReactElement).props.type === 'danger';
                   return (
                     <Fragment key={`opt-menu-${idx}`}>
@@ -100,8 +100,10 @@ export const CardOptionMenu: FC<OptionMenuProps> = props => {
           >
             <span className="sr-only">Menu</span>
             <ChevronDown
-              className={cn('w-4 h-4 transition-transform duration-150', open && 'rotate-180')}
-              strokeWidth={1.5}
+              className={cn(
+                'w-4 h-4 transition-transform duration-150',
+                open && 'rotate-180',
+              )}
             />
           </Menu.Button>
           <Transition
@@ -124,7 +126,8 @@ export const CardOptionMenu: FC<OptionMenuProps> = props => {
                 {props.options.map((opt, idx) => {
                   const isDanger =
                     React.isValidElement(opt.option) &&
-                    (opt.option as React.ReactElement).type === OptionMenuItem &&
+                    (opt.option as React.ReactElement).type ===
+                      OptionMenuItem &&
                     (opt.option as React.ReactElement).props.type === 'danger';
                   return (
                     <Fragment key={`opt-menu-${idx}`}>

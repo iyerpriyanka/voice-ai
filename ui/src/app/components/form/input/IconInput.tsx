@@ -1,6 +1,6 @@
 import { cn } from '@/utils';
 import { Input } from '@/app/components/form/input';
-import { SearchIcon } from '@/app/components/Icon/Search';
+import { Search } from '@carbon/icons-react';
 import { forwardRef, InputHTMLAttributes } from 'react';
 
 interface IconInputProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -38,7 +38,7 @@ export const SearchIconInput = forwardRef<HTMLInputElement, IconInputProps>(
           type="submit"
           aria-label="Search"
         >
-          <SearchIcon
+          <Search
             className={cn(
               'w-3 h-3 shrink-0 fill-current mx-3 opacity-70',
               iconClassName,

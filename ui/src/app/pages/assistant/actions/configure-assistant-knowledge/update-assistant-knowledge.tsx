@@ -12,9 +12,6 @@ import { FieldSet } from '@/app/components/form/fieldset';
 import { Input } from '@/app/components/form/input';
 import { Slider } from '@/app/components/form/slider';
 import { SwitchWithLabel } from '@/app/components/form/switch';
-import { HybridSearchIcon } from '@/app/components/Icon/hybrid-search';
-import { TextSearchIcon } from '@/app/components/Icon/text-search';
-import { VectorSearchIcon } from '@/app/components/Icon/vector-search';
 import { InputHelper } from '@/app/components/input-helper';
 import {
   GetDefaultRerankerConfigIfInvalid,
@@ -28,6 +25,7 @@ import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { RETRIEVE_METHOD } from '@/models/datasets';
 import { cn } from '@/utils';
 import { retrieveMethodFromString } from '@/utils';
+import { DataBase, ModelAlt, Search } from '@carbon/icons-react';
 import { InfoIcon } from 'lucide-react';
 import { FC, useEffect, useState } from 'react';
 import toast from 'react-hot-toast/headless';
@@ -200,7 +198,7 @@ export const UpdateKnowledge: FC<{ assistantId: string }> = ({
                 >
                   <Card className="p-3 flex flex-row space-x-3 bg-light-background">
                     <div className="rounded-[2px] flex items-center justify-center bg-blue-200/30 dark:bg-blue-200/10 shrink-0 h-10 w-10">
-                      <HybridSearchIcon className="text-blue-600" />
+                      <DataBase className="text-blue-600" />
                     </div>
                     <div className="flex flex-col">
                       <span className="font-medium text-[14px]">
@@ -224,7 +222,7 @@ export const UpdateKnowledge: FC<{ assistantId: string }> = ({
                 >
                   <Card className="p-3 flex flex-row space-x-3 bg-light-background">
                     <div className="rounded-[2px] flex items-center justify-center bg-blue-200/30 dark:bg-blue-200/10 shrink-0 h-10 w-10">
-                      <VectorSearchIcon className="text-blue-600" />
+                      <ModelAlt className="text-blue-600" />
                     </div>
                     <div className="flex flex-col">
                       <span className="font-medium text-[14px]">
@@ -247,7 +245,7 @@ export const UpdateKnowledge: FC<{ assistantId: string }> = ({
                 >
                   <Card className="p-3 flex flex-row space-x-3 bg-light-background">
                     <div className="rounded-[2px] flex items-center justify-center bg-blue-200/30 dark:bg-blue-200/10 shrink-0 h-10 w-10">
-                      <TextSearchIcon className="text-blue-600" />
+                      <Search className="text-blue-600" />
                     </div>
                     <div className="flex flex-col">
                       <span className="font-medium text-[14px]">
@@ -356,7 +354,8 @@ export const UpdateKnowledge: FC<{ assistantId: string }> = ({
         </div>
       </div>
       <PageActionButtonBlock errorMessage={errorMessage}>
-        <GhostButton size="md"
+        <GhostButton
+          size="md"
           onClick={() => showDialog(navigator.goBack)}
           type="button"
         >
