@@ -9,11 +9,9 @@ import { Spinner } from '@/app/components/ui/loaders/spinner';
 import React, { ChangeEvent, Fragment, HTMLAttributes } from 'react';
 import { cn } from '@/utils';
 import { SearchIconInput } from '@/app/components/ui/icon-input';
-import { Check, ChevronDown } from 'lucide-react';
+import { Checkmark, ChevronDown } from '@carbon/icons-react';
 import { Float } from '@headlessui-float/react';
-/**
- *
- */
+
 export interface DropdownProps<T> extends HTMLAttributes<HTMLDivElement> {
   currentValue?: T | null;
   setValue: (value: T) => void;
@@ -27,11 +25,6 @@ export interface DropdownProps<T> extends HTMLAttributes<HTMLDivElement> {
   searchable?: boolean;
   onSearching?: (qry: ChangeEvent<HTMLInputElement>) => void;
 }
-/**
- *
- * @param props
- * @returns
- */
 export function Dropdown(props: DropdownProps<any>) {
   return (
     <div className="relative flex flex-1">
@@ -148,7 +141,7 @@ export function Dropdown(props: DropdownProps<any>) {
                           {props.option && props.option(mp, selected)}
                           {selected && (
                             <span className="h-4 w-4 rounded-[2px] bg-primary p-[2px] ml-auto flex items-center justify-center shrink-0">
-                              <Check className="text-white" />
+                              <Checkmark size={16} className="text-white" />
                             </span>
                           )}
                         </>
