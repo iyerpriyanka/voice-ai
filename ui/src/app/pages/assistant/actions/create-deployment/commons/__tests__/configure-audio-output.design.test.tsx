@@ -10,10 +10,6 @@ jest.mock('@/utils', () => ({
   cn: (...inputs: any[]) => inputs.filter(Boolean).join(' '),
 }));
 
-jest.mock('lucide-react', () => ({
-  ChevronDown: () => null,
-}));
-
 jest.mock('@/app/components/layout/blocks/section-divider', () => ({
   SectionDivider: ({ label }: { label: string }) => <div>{label}</div>,
 }));

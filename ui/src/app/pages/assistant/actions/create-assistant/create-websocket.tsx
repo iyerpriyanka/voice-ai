@@ -22,15 +22,15 @@ import { Textarea } from '@/app/components/ui/textarea';
 import { TagInput } from '@/app/components/ui/tag-input';
 import { AssistantTag } from '@/app/components/domain/tags/assistant-tags';
 import {
-  Bug,
   ChevronRight,
   Code,
-  ExternalLink,
-  Info,
-  PhoneCall,
-} from 'lucide-react';
+  Debug,
+  Globe,
+  Information,
+  Launch,
+  Phone,
+} from '@carbon/icons-react';
 import { YellowNoticeBlock } from '@/app/components/layout/container/message/notice-block';
-import { Globe } from 'lucide-react';
 import { APiParameter } from '@/app/components/domain/external-api/api-parameter';
 import { connectionConfig } from '@/configs';
 import toast from 'react-hot-toast';
@@ -195,7 +195,7 @@ export function CreateWebsocket() {
             body: (
               <div className="">
                 <YellowNoticeBlock className="flex items-center">
-                  <Info className="shrink-0 w-4 h-4" />
+                  <Information className="shrink-0 w-4 h-4" />
                   <div className="ms-3 text-sm font-medium">
                     Connect your external AI agent to {theme.brand.name} using a
                     WebSocket endpoint.
@@ -207,10 +207,7 @@ export function CreateWebsocket() {
                     rel="noreferrer"
                   >
                     Read documentation
-                    <ExternalLink
-                      className="shrink-0 w-4 h-4 ml-1.5"
-                      strokeWidth={1.5}
-                    />
+                    <Launch className="shrink-0 w-4 h-4 ml-1.5" />
                   </a>
                 </YellowNoticeBlock>
                 <div className="space-y-6 p-8 max-w-4xl">
@@ -354,7 +351,7 @@ export function CreateWebsocket() {
             body: (
               <div className="">
                 <YellowNoticeBlock className="flex items-center">
-                  <Info className="shrink-0 w-4 h-4" />
+                  <Information className="shrink-0 w-4 h-4" />
                   <div className="ms-3 text-sm font-medium">
                     Choose how you’d like to start engaging with users and add
                     advanced features to customize user's experience.
@@ -366,10 +363,7 @@ export function CreateWebsocket() {
                     rel="noreferrer"
                   >
                     Read documentation
-                    <ExternalLink
-                      className="shrink-0 w-4 h-4 ml-1.5"
-                      strokeWidth={1.5}
-                    />
+                    <Launch className="shrink-0 w-4 h-4 ml-1.5" />
                   </a>
                 </YellowNoticeBlock>
                 <div className="border-gray-500">
@@ -383,9 +377,8 @@ export function CreateWebsocket() {
                           <div className="border-y border-gray-300 dark:border-gray-800 grid grid-rows-[1fr_auto] max-md:border-t max-xl:last:hidden max-lg:nth-[3]:hidden last:border-r-0 max-xl:nth-[3]:border-r-0 max-lg:nth-[2]:border-r-0">
                             <div className="grid grid-cols-1 items-center">
                               <div className="px-4 py-2 sm:px-2">
-                                <PhoneCall
+                                <Phone
                                   className="w-6 h-6 opacity-70 mt-4"
-                                  strokeWidth={1.5}
                                 />
                                 <div className="flex items-center gap-2 mt-4">
                                   <h3 className="text-base/7 font-semibold">
@@ -414,7 +407,6 @@ export function CreateWebsocket() {
                               <div className="px-4 py-2 sm:px-2">
                                 <Code
                                   className="w-6 h-6 opacity-70 mt-4"
-                                  strokeWidth={1.5}
                                 />
                                 <div className="flex items-center gap-2 mt-4">
                                   <h3 className="text-base/7 font-semibold">
@@ -444,7 +436,6 @@ export function CreateWebsocket() {
                               <div className="px-4 py-2 sm:px-2">
                                 <Globe
                                   className="w-6 h-6 opacity-70 mt-4"
-                                  strokeWidth={1.5}
                                 />
                                 <div className="flex items-center gap-2 mt-4">
                                   <h3 className="text-base/7 font-semibold">
@@ -473,9 +464,8 @@ export function CreateWebsocket() {
                           <div className="border-y border-gray-300 dark:border-gray-800 grid grid-rows-[1fr_auto] max-md:border-t max-xl:last:hidden max-lg:nth-[3]:hidden last:border-r-0 max-xl:nth-[3]:border-r-0 max-lg:nth-[2]:border-r-0">
                             <div className="grid grid-cols-1 items-center">
                               <div className="px-4 py-2 sm:px-2">
-                                <Bug
+                                <Debug
                                   className="w-6 h-6 opacity-70 mt-4"
-                                  strokeWidth={1.5}
                                 />
                                 <div className="flex items-center gap-2 mt-4">
                                   <h3 className="text-base/7 font-semibold">
@@ -520,7 +510,7 @@ export function CreateWebsocket() {
                             conversation transcripts Quality, sentiment, and SOP
                             adherence analysis Custom reporting and dashboards
                           </div>
-                          <ChevronRight className="w-5 h-5" strokeWidth={1.5} />
+                          <ChevronRight className="w-5 h-5" />
                         </div>
                       </div>
                     </div>
@@ -542,7 +532,7 @@ export function CreateWebsocket() {
                             ended Escalation to a human agent Custom events for
                             analytics or CRM sync
                           </div>
-                          <ChevronRight className="w-5 h-5" strokeWidth={1.5} />
+                          <ChevronRight className="w-5 h-5" />
                         </div>
                       </div>
                     </div>

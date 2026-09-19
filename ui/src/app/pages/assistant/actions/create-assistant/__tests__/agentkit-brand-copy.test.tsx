@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import { CreateAgentKit } from '../create-agentkit';
@@ -187,20 +187,29 @@ jest.mock('@carbon/react', () => ({
   ToggletipContent: ({ children }: any) => <span>{children}</span>,
 }));
 
-jest.mock('@carbon/icons-react', () => ({
-  ChevronDown: () => <span />,
-  Information: () => <span />,
-}));
+jest.mock('@carbon/icons-react', () => {
+  const Icon =
+    (testId: string) =>
+    ({ className, size, strokeWidth }: any) => (
+      <svg
+        className={className}
+        data-size={size}
+        data-stroke-width={strokeWidth}
+        data-testid={testId}
+      />
+    );
 
-jest.mock('lucide-react', () => ({
-  Bug: () => <span />,
-  ChevronRight: () => <span />,
-  Code: () => <span />,
-  ExternalLink: () => <span />,
-  Globe: () => <span />,
-  Info: () => <span />,
-  PhoneCall: () => <span />,
-}));
+  return {
+    ChevronDown: Icon('chevron-down-icon'),
+    ChevronRight: Icon('chevron-right-icon'),
+    Code: Icon('code-icon'),
+    Debug: Icon('debug-icon'),
+    Globe: Icon('globe-icon'),
+    Information: Icon('information-icon'),
+    Launch: Icon('launch-icon'),
+    Phone: Icon('phone-icon'),
+  };
+});
 
 jest.mock('@/app/components/app-shell/helmet', () => ({ Helmet: () => null }));
 jest.mock('@/app/components/ui/fieldset', () => ({
@@ -344,6 +353,14 @@ describe('AgentKit brand copy', () => {
     expect(document.body).toHaveTextContent(
       'where your Acme Voice AgentKit is running',
     );
+    expect(document.body).toHaveTextContent('Show advanced settings');
+    expect(screen.getByTestId('chevron-down-icon')).toHaveAttribute(
+      'data-size',
+      '16',
+    );
+    expect(screen.getByTestId('chevron-down-icon')).not.toHaveAttribute(
+      'data-stroke-width',
+    );
     expect(document.body).not.toHaveTextContent('Rapida AgentKit');
   });
 
@@ -352,6 +369,12 @@ describe('AgentKit brand copy', () => {
 
     expect(document.body).toHaveTextContent(
       'Connect your external AI agent to Acme Voice using a WebSocket endpoint.',
+    );
+    expect(screen.getByTestId('information-icon')).not.toHaveAttribute(
+      'data-stroke-width',
+    );
+    expect(screen.getByTestId('launch-icon')).not.toHaveAttribute(
+      'data-stroke-width',
     );
     expect(document.body).not.toHaveTextContent('Rapida');
   });

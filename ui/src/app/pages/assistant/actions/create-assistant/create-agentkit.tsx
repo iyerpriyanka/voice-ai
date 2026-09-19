@@ -4,7 +4,14 @@ import { useRapidaStore } from '@/hooks';
 import { TabForm } from '@/app/components/ui/tab-form';
 import { PrimaryButton, SecondaryButton } from '@/app/components/ui/button';
 import { ButtonSet, Slider } from '@carbon/react';
-import { ChevronDown } from '@carbon/icons-react';
+import {
+  ChevronDown,
+  ChevronRight,
+  Code,
+  Debug,
+  Globe,
+  Phone,
+} from '@carbon/icons-react';
 import {
   Assistant,
   CreateAssistantProviderRequest,
@@ -22,11 +29,9 @@ import { Select } from '@/app/components/ui/select';
 import { Textarea } from '@/app/components/ui/textarea';
 import { TagInput } from '@/app/components/ui/tag-input';
 import { AssistantTag } from '@/app/components/domain/tags/assistant-tags';
-import { Bug, ChevronRight, Code, PhoneCall } from 'lucide-react';
 import { DocNoticeBlock } from '@/app/components/layout/container/message/notice-block/doc-notice-block';
 import { CreateAssistant } from '@rapidaai/react';
 import { connectionConfig } from '@/configs';
-import { Globe } from 'lucide-react';
 import { APiParameter } from '@/app/components/domain/external-api/api-parameter';
 import { InputHelper } from '@/app/components/ui/input-helper';
 import { CodeEditor } from '@/app/components/ui/code-editor';
@@ -685,9 +690,8 @@ export function CreateAgentKit() {
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 divide-x divide-gray-200 dark:divide-gray-800">
                         <div className="border-y border-gray-200 dark:border-gray-800 grid grid-rows-[1fr_auto]">
                           <div className="px-4 py-2">
-                            <PhoneCall
+                            <Phone
                               className="w-6 h-6 opacity-70 mt-4"
-                              strokeWidth={1.5}
                             />
                             <div className="flex items-center gap-2 mt-4">
                               <h3 className="text-base/7 font-semibold">
@@ -714,7 +718,6 @@ export function CreateAgentKit() {
                           <div className="px-4 py-2">
                             <Code
                               className="w-6 h-6 opacity-70 mt-4"
-                              strokeWidth={1.5}
                             />
                             <div className="flex items-center gap-2 mt-4">
                               <h3 className="text-base/7 font-semibold">API</h3>
@@ -739,7 +742,6 @@ export function CreateAgentKit() {
                           <div className="px-4 py-2">
                             <Globe
                               className="w-6 h-6 opacity-70 mt-4"
-                              strokeWidth={1.5}
                             />
                             <div className="flex items-center gap-2 mt-4">
                               <h3 className="text-base/7 font-semibold">
@@ -765,9 +767,8 @@ export function CreateAgentKit() {
 
                         <div className="border-y border-gray-200 dark:border-gray-800 grid grid-rows-[1fr_auto]">
                           <div className="px-4 py-2">
-                            <Bug
+                            <Debug
                               className="w-6 h-6 opacity-70 mt-4"
-                              strokeWidth={1.5}
                             />
                             <div className="flex items-center gap-2 mt-4">
                               <h3 className="text-base/7 font-semibold">
@@ -809,7 +810,7 @@ export function CreateAgentKit() {
                           conversation transcripts, quality, sentiment, and SOP
                           adherence analysis, custom reporting and dashboards.
                         </div>
-                        <ChevronRight className="w-5 h-5" strokeWidth={1.5} />
+                        <ChevronRight className="w-5 h-5" />
                       </div>
                     </div>
                   </div>
@@ -831,7 +832,7 @@ export function CreateAgentKit() {
                           ended, escalation to a human agent, custom events for
                           analytics or CRM sync.
                         </div>
-                        <ChevronRight className="w-5 h-5" strokeWidth={1.5} />
+                        <ChevronRight className="w-5 h-5" />
                       </div>
                     </div>
                   </div>

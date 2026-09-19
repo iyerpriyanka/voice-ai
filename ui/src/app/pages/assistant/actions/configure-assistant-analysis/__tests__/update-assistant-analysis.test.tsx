@@ -315,12 +315,6 @@ jest.mock('@/app/components/layout/blocks/section-divider', () => ({
   SectionDivider: ({ label }: any) => <h3>{label}</h3>,
 }));
 
-jest.mock('lucide-react', () => ({
-  ArrowRight: () => <span>arrow-right</span>,
-  Plus: () => <span>plus</span>,
-  Trash2: () => <span>trash</span>,
-}));
-
 describe('UpdateAssistantAnalysis', () => {
   beforeEach(() => {
     jest.clearAllMocks();
