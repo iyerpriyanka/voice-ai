@@ -6,8 +6,8 @@ import {
   ModalBody,
   ModalFooter,
 } from '@/app/components/ui/modal';
+import { Launch } from '@carbon/icons-react';
 import type { FC } from 'react';
-import { ExternalLink } from 'lucide-react';
 
 interface DebuggerDeploymentSuccessDialogProps extends ModalProps {
   assistantId: string;
@@ -36,9 +36,9 @@ export const DebuggerDeploymentSuccessDialog: FC<
           size="lg"
           type="button"
           onClick={() => window.open(`/preview/chat/${assistantId}`, '_blank')}
+          renderIcon={Launch}
         >
-          <span>Preview assistant</span>
-          <ExternalLink className="w-4 h-4 ml-1" strokeWidth={1.5} />
+          Preview assistant
         </PrimaryButton>
       </ModalFooter>
     </Modal>
