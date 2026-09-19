@@ -10,7 +10,7 @@ import {
 import { cn } from '@/utils';
 import { CornerBorderOverlay } from '@/app/components/ui/corner-border';
 import { KnowledgeDropdown } from '@/app/components/domain/dropdowns/knowledge-dropdown';
-import { Slider } from '@carbon/react';
+import { SelectableTile, Slider } from '@carbon/react';
 import { Tooltip } from '@carbon/react';
 import { RETRIEVE_METHOD } from '@/models/datasets';
 import {
@@ -154,20 +154,23 @@ interface SearchTypeCardProps {
 
 const SearchTypeCard: FC<SearchTypeCardProps> = ({
   id,
+  value,
   icon: Icon,
   title,
   description,
   isSelected,
   onSelect,
 }) => (
-  <button
-    type="button"
+  <SelectableTile
+    id={id}
+    data-value={value}
+    selected={isSelected}
     onClick={onSelect}
     className={cn(
-      'relative group text-left p-4 border transition-colors duration-100',
+      'relative group !min-h-0 !p-4 !text-left !transition-colors !duration-100',
       isSelected
-        ? 'border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950/50'
-        : 'border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950/50 hover:bg-gray-50 dark:hover:bg-gray-900/60',
+        ? '!border-gray-200 dark:!border-gray-800 !bg-white dark:!bg-gray-950/50'
+        : '!border-gray-200 dark:!border-gray-800 !bg-white dark:!bg-gray-950/50 hover:!bg-gray-50 dark:hover:!bg-gray-900/60',
     )}
   >
     <CornerBorderOverlay className={isSelected ? 'opacity-100' : undefined} />
@@ -185,7 +188,7 @@ const SearchTypeCard: FC<SearchTypeCardProps> = ({
     <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
       {description}
     </p>
-  </button>
+  </SelectableTile>
 );
 
 // ============================================================================

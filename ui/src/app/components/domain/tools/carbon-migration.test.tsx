@@ -43,6 +43,25 @@ jest.mock('@carbon/react', () => {
         'data-testid': id,
         onChange: (e: any) => onChange?.({ value: Number(e.target.value) }),
       }),
+    SelectableTile: ({
+      children,
+      id,
+      onClick,
+      selected,
+      ...props
+    }: any) =>
+      React.createElement(
+        'button',
+        {
+          ...props,
+          id,
+          type: 'button',
+          'aria-pressed': selected,
+          'data-carbon-selectable-tile': id,
+          onClick,
+        },
+        children,
+      ),
     Tooltip: ({ children }: any) => React.createElement('span', null, children),
   };
 });
@@ -394,6 +413,23 @@ describe('ConfigureKnowledgeRetrieval Carbon migration', () => {
     expect(screen.getByText('Hybrid Search')).toBeInTheDocument();
     expect(screen.getByText('Semantic Search')).toBeInTheDocument();
     expect(screen.getByText('Full Text Search')).toBeInTheDocument();
+    expect(screen.getByText('Hybrid Search').closest('button')).toHaveAttribute(
+      'data-carbon-selectable-tile',
+      'hybrid-search-type',
+    );
+  });
+
+  it('calls onParameterChange when a search type tile is selected', () => {
+    render(<ConfigureKnowledgeRetrieval {...defaultProps} />);
+
+    fireEvent.click(screen.getByText('Semantic Search').closest('button')!);
+
+    expect(mockOnParameterChange).toHaveBeenCalled();
+    const updatedParams = mockOnParameterChange.mock.calls[0][0] as Metadata[];
+    const searchType = updatedParams.find(
+      m => m.getKey() === 'tool.search_type',
+    );
+    expect(searchType?.getValue()).toBe('semantic_search');
   });
 
   it('calls onParameterChange when top_k numeric input changes', () => {
