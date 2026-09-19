@@ -6,7 +6,7 @@ import {
   SUPPORTED_PROMPT_VARIABLE_TYPE,
 } from '@/configs';
 import { TertiaryButton } from '@/app/components/ui/button';
-import { ChevronDown, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { FormLabel } from '@/app/components/ui/form-label';
 import { FieldSet } from '@/app/components/ui/fieldset';
 import { ScalableTextarea } from '@/app/components/ui/textarea';
@@ -17,8 +17,13 @@ import {
   RAPIDA_RESERVED_RUNTIME_VARIABLE_KEYS,
   RAPIDA_RESERVED_RUNTIME_VARIABLES,
 } from '@/utils/prompt-reserved-variables';
-import { Toggletip, ToggletipButton, ToggletipContent } from '@carbon/react';
-import { Information } from '@carbon/icons-react';
+import {
+  Button,
+  Toggletip,
+  ToggletipButton,
+  ToggletipContent,
+} from '@carbon/react';
+import { ChevronDown, Information } from '@carbon/icons-react';
 
 const isRapidaReservedRuntimeVariable = (variableName: string): boolean =>
   RAPIDA_RESERVED_RUNTIME_VARIABLE_KEYS.has(variableName) ||
@@ -147,9 +152,11 @@ export const ConfigPrompt: FC<IPromptProps> = ({
         </div>
         {showRuntimeReplacementHint && (
           <div className="border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
-            <button
+            <Button
               type="button"
-              className="w-full text-left px-4 py-4"
+              kind="ghost"
+              size="md"
+              className="!h-auto !min-h-0 !w-full !max-w-none !justify-between !px-4 !py-4 !text-left"
               aria-expanded={showReservedVariables}
               onClick={() => setShowReservedVariables(v => !v)}
             >
@@ -159,13 +166,12 @@ export const ConfigPrompt: FC<IPromptProps> = ({
                 </span>
                 <ChevronDown
                   className={`h-4 w-4 text-gray-500 transition-transform ${showReservedVariables ? 'rotate-180' : ''}`}
-                  strokeWidth={1.6}
                 />
               </div>
               <InputHelper className="mt-1">
                 These variables are preserved and replaced at runtime.
               </InputHelper>
-            </button>
+            </Button>
 
             {showReservedVariables && (
               <div className="mt-2 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950">

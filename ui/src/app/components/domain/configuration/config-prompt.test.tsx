@@ -11,6 +11,19 @@ jest.mock('@carbon/react', () => {
   const actual = jest.requireActual('@carbon/react');
   return {
     ...actual,
+    Button: ({
+      children,
+      hasIconOnly: _hasIconOnly,
+      iconDescription: _iconDescription,
+      kind,
+      renderIcon: Icon,
+      ...props
+    }: any) => (
+      <button type="button" data-carbon-button-kind={kind} {...props}>
+        {children}
+        {Icon ? <Icon /> : null}
+      </button>
+    ),
     Toggletip: ({ children }: any) => <span>{children}</span>,
     ToggletipButton: ({ children, label }: any) => (
       <button type="button" aria-label={label}>
@@ -66,6 +79,9 @@ describe('ConfigPrompt argument hints', () => {
     expect(
       screen.getByRole('button', { name: /Reserved Variables/i }),
     ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /Reserved Variables/i }),
+    ).toHaveAttribute('data-carbon-button-kind', 'ghost');
     expect(
       screen.getByText(
         /These variables are preserved and replaced at runtime/i,
