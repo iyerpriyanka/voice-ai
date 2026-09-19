@@ -1,5 +1,6 @@
 import { TableCell } from '@/app/components/ui/table/table-cell';
 import { TableRow } from '@/app/components/ui/table/table-row';
+import { InputCheckbox } from '@/app/components/ui/input-checkbox';
 import {
   useState,
   useCallback,
@@ -14,7 +15,7 @@ interface ScrollableResizableTableProps
   clms: { name: string; key: string; width?: number }[];
   isActionable?: boolean;
   isExpandable?: boolean;
-  ontoggle?: (boolean) => void;
+  ontoggle?: (checked: boolean) => void;
   isOptionable?: boolean;
   optionLabel?: string;
 }
@@ -78,9 +79,11 @@ export const ScrollableResizableTable: FC<ScrollableResizableTableProps> = ({
               {isActionable && (
                 <TableCell className="w-8 h-8 ">
                   <div className="w-8 h-8 flex justify-center items-center">
-                    <input
-                      type="checkbox"
-                      onChange={x => ontoggle && ontoggle(x.target.checked)}
+                    <InputCheckbox
+                      aria-label="Select all rows"
+                      onChange={event =>
+                        ontoggle?.(event.currentTarget.checked)
+                      }
                     />
                   </div>
                 </TableCell>

@@ -1,3 +1,4 @@
+import { InputCheckbox } from '@/app/components/ui/input-checkbox';
 import { cn } from '@/utils';
 import { FC, memo } from 'react';
 
@@ -36,7 +37,7 @@ export const TableHead: FC<
 };
 
 export const TableHederWithCheckbox: FC<
-  TableHeadProps & { ontoggle: (boolean) => void }
+  TableHeadProps & { ontoggle: (checked: boolean) => void }
 > = memo(props => {
   return (
     <thead className="dark:bg-gray-950/30 bg-gray-100/50 border-b dark:border-gray-800">
@@ -48,9 +49,9 @@ export const TableHederWithCheckbox: FC<
           )}
         >
           <div className="flex justify-between">
-            <input
-              type="checkbox"
-              onChange={x => props.ontoggle(x.target.checked)}
+            <InputCheckbox
+              aria-label="Select all rows"
+              onChange={event => props.ontoggle(event.currentTarget.checked)}
             />
             <span className="w-0.5 bg-slate-300 dark:bg-gray-800 h-4"></span>
           </div>
