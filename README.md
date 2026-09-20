@@ -224,7 +224,7 @@ just ui-dev
 # Run Storybook
 just ui-storybook
 
-# Generate and view the Allure report
+# Generate Allure and coverage reports, then view Allure
 just ui-report
 just ui-report-open
 

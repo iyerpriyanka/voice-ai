@@ -1,11 +1,25 @@
-import React, { FC } from 'react';
+import type { HTMLAttributes, ReactNode } from 'react';
+import { cn } from '@/utils';
 
-export const OverviewRow: FC<{ label: string; children: React.ReactNode }> = ({
+export interface OverviewRowProps extends HTMLAttributes<HTMLDivElement> {
+  label: string;
+  children: ReactNode;
+}
+
+export const OverviewRow = ({
+  className,
   label,
   children,
-}) => (
-  <div className="flex items-center justify-between h-12 px-4 gap-4">
-    <span className="text-xs font-medium uppercase tracking-[0.08em] text-gray-500 dark:text-gray-400 shrink-0">
+  ...attributes
+}: OverviewRowProps) => (
+  <div
+    {...attributes}
+    className={cn(
+      'flex h-12 items-center justify-between gap-4 px-4',
+      className,
+    )}
+  >
+    <span className="shrink-0 text-xs font-medium uppercase tracking-[0.08em] text-muted">
       {label}
     </span>
     <div className="flex items-center">{children}</div>

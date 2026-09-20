@@ -1,10 +1,23 @@
-import { FC } from 'react';
+import type { FC, HTMLAttributes } from 'react';
+import { cn } from '@/utils';
 
-export const SectionDivider: FC<{ label: string }> = ({ label }) => (
-  <div className="flex items-center gap-3">
-    <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-gray-500 dark:text-gray-400 whitespace-nowrap">
+interface SectionDividerProps extends HTMLAttributes<HTMLDivElement> {
+  label: string;
+}
+
+export const SectionDivider: FC<SectionDividerProps> = ({
+  label,
+  className,
+  ...attributes
+}) => (
+  <div
+    {...attributes}
+    className={cn('flex items-center gap-3', className)}
+    role="separator"
+  >
+    <span className="whitespace-nowrap text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
       {label}
     </span>
-    <div className="flex-1 h-px bg-gray-100 dark:bg-gray-800" />
+    <div className="h-px flex-1 bg-border-subtle" />
   </div>
 );

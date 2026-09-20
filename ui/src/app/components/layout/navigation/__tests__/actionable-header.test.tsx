@@ -37,6 +37,8 @@ const mockTheme = {
 let mockResolvedMode: 'light' | 'dark' = 'light';
 
 let mockPathname = '/dashboard/assistant/list';
+let mockRapidaLoading = false;
+let mockRapidaLoadingType: string | undefined;
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -48,6 +50,13 @@ jest.mock('@/theme/theme-provider', () => ({
     resolvedMode: mockResolvedMode,
     toggleMode: mockToggleMode,
     theme: mockTheme,
+  }),
+}));
+
+jest.mock('@/hooks', () => ({
+  useRapidaStore: () => ({
+    loading: mockRapidaLoading,
+    loadingType: mockRapidaLoadingType,
   }),
 }));
 
@@ -64,6 +73,9 @@ jest.mock('@carbon/icons-react', () => ({
 jest.mock('@carbon/react', () => ({
   Breadcrumb: ({ children }: any) => <ol>{children}</ol>,
   BreadcrumbItem: ({ children }: any) => <li>{children}</li>,
+  BreadcrumbSkeleton: ({ className }: any) => (
+    <div className={className} data-testid="breadcrumb-skeleton" />
+  ),
   HeaderGlobalBar: ({ children }: any) => <div>{children}</div>,
   HeaderGlobalAction: ({
     children,
@@ -79,6 +91,13 @@ jest.mock('@carbon/react', () => ({
       {children}
     </a>
   ),
+  DropdownSkeleton: ({ hideLabel, size }: any) => (
+    <div
+      data-hide-label={String(Boolean(hideLabel))}
+      data-size={size}
+      data-testid="dropdown-skeleton"
+    />
+  ),
   Dropdown: ({
     id,
     label,
@@ -86,6 +105,7 @@ jest.mock('@carbon/react', () => ({
     selectedItem,
     itemToString,
     onChange,
+    isLoading,
   }: any) => {
     const selectedIndex = Math.max(
       items.findIndex((x: any) => x === selectedItem),
@@ -96,12 +116,14 @@ jest.mock('@carbon/react', () => ({
         id={id}
         aria-label={label}
         data-testid={id}
+        data-loading={String(Boolean(isLoading))}
         value={String(selectedIndex)}
         onChange={e => {
           const idx = Number(e.target.value);
           onChange({ selectedItem: items[idx] ?? null });
         }}
       >
+        <option value="-1">{itemToString(null) || 'No project'}</option>
         {items.map((item: any, idx: number) => (
           <option key={item.id || idx} value={String(idx)}>
             {itemToString(item)}
@@ -123,6 +145,8 @@ describe('Actionable header project switcher', () => {
     mockPathname = '/dashboard/assistant/list';
     mockResolvedMode = 'light';
     mockTheme.allowModeSelection = true;
+    mockRapidaLoading = false;
+    mockRapidaLoadingType = undefined;
   });
 
   it('renders project dropdown in header and switches project on selection', () => {
@@ -136,8 +160,26 @@ describe('Actionable header project switcher', () => {
           setCurrentProjectRole,
         }}
       >
-        <ActionableHeader />
+        <ActionableHeader className="custom-header" data-testid="header" />
       </AuthContext.Provider>,
+    );
+
+    expect(screen.getByTestId('header')).toHaveClass(
+      'custom-header',
+      'bg-shell',
+      'border-border-subtle',
+    );
+    expect(screen.getByRole('link', { name: 'dashboard' })).toHaveAttribute(
+      'href',
+      '/dashboard',
+    );
+    expect(screen.getByRole('link', { name: 'assistant' })).toHaveAttribute(
+      'href',
+      '/dashboard/assistant',
+    );
+    expect(screen.getByRole('link', { name: 'list' })).toHaveAttribute(
+      'href',
+      '/dashboard/assistant/list',
     );
 
     const projectSelector = screen.getByLabelText('Select a Project');
@@ -147,6 +189,29 @@ describe('Actionable header project switcher', () => {
 
     fireEvent.change(projectSelector, { target: { value: '1' } });
     expect(setCurrentProjectRole).toHaveBeenCalledWith(projectRoles[1]);
+  });
+
+  it('renders loading skeletons while a blocking request is active', () => {
+    mockRapidaLoading = true;
+    mockRapidaLoadingType = 'block';
+
+    render(
+      <AuthContext.Provider
+        value={{
+          projectRoles,
+          currentProjectRole: projectRoles[0],
+          setCurrentProjectRole: jest.fn(),
+        }}
+      >
+        <ActionableHeader />
+      </AuthContext.Provider>,
+    );
+
+    expect(screen.getByTestId('breadcrumb-skeleton')).toHaveClass('pl-4');
+    expect(screen.getByTestId('dropdown-skeleton')).toHaveAttribute(
+      'data-size',
+      'sm',
+    );
   });
 
   it('does not render project dropdown when setter is unavailable', () => {
@@ -162,6 +227,44 @@ describe('Actionable header project switcher', () => {
     );
 
     expect(screen.queryByLabelText('Select a Project')).not.toBeInTheDocument();
+  });
+
+  it('does not render project dropdown when it is disabled', () => {
+    render(
+      <AuthContext.Provider
+        value={{
+          projectRoles,
+          currentProjectRole: projectRoles[0],
+          setCurrentProjectRole: jest.fn(),
+        }}
+      >
+        <CustomerOptions showProjectSelector={false} />
+      </AuthContext.Provider>,
+    );
+
+    expect(screen.queryByLabelText('Select a Project')).not.toBeInTheDocument();
+  });
+
+  it('ignores an empty project selection from the dropdown', () => {
+    const setCurrentProjectRole = jest.fn();
+
+    render(
+      <AuthContext.Provider
+        value={{
+          projectRoles,
+          currentProjectRole: projectRoles[0],
+          setCurrentProjectRole,
+        }}
+      >
+        <CustomerOptions />
+      </AuthContext.Provider>,
+    );
+
+    fireEvent.change(screen.getByLabelText('Select a Project'), {
+      target: { value: '-1' },
+    });
+
+    expect(setCurrentProjectRole).not.toHaveBeenCalled();
   });
 
   it('renders configured account links without documentation or source', () => {
@@ -205,5 +308,31 @@ describe('Actionable header project switcher', () => {
       screen.queryByRole('button', { name: 'Switch to dark mode' }),
     ).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Account' })).toBeInTheDocument();
+  });
+
+  it('toggles theme mode from the global action', () => {
+    render(
+      <AuthContext.Provider value={{}}>
+        <CustomerOptions />
+      </AuthContext.Provider>,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Switch to dark mode' }));
+
+    expect(mockToggleMode).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows the light mode action while dark mode is active', () => {
+    mockResolvedMode = 'dark';
+
+    render(
+      <AuthContext.Provider value={{}}>
+        <CustomerOptions />
+      </AuthContext.Provider>,
+    );
+
+    expect(
+      screen.getByRole('button', { name: 'Switch to light mode' }),
+    ).toBeInTheDocument();
   });
 });

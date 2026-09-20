@@ -36,10 +36,10 @@ one.
 
 ## Testing
 
-Each shell behavior should have nearby tests:
+Each shell behavior should have tests in `__tests__`:
 
-- `helmet.test.tsx` verifies document title and meta behavior.
-- `ga.test.tsx` verifies analytics gating, route path creation, and tracking
+- `__tests__/helmet.test.tsx` verifies document title and meta behavior.
+- `__tests__/ga.test.tsx` verifies analytics gating, route path creation, and tracking
   calls.
 
 Run focused checks with:

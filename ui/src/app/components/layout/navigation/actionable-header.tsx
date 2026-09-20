@@ -1,4 +1,10 @@
-import { useState, useContext, useEffect, FC } from 'react';
+import {
+  useState,
+  useContext,
+  useMemo,
+  type FC,
+  type HTMLAttributes,
+} from 'react';
 import { ProjectRole } from '@rapidaai/react';
 import { cn } from '@/utils';
 import { useLocation } from 'react-router-dom';
@@ -17,39 +23,38 @@ import { Dropdown } from '@/app/components/ui/primitives';
 import { useRapidaStore } from '@/hooks';
 import { useTheme } from '@/theme/theme-provider';
 
-export function ActionableHeader(props: { reload?: boolean }) {
+export function ActionableHeader({
+  className,
+  ...attributes
+}: HTMLAttributes<HTMLElement>) {
   const location = useLocation();
   const { pathname } = location;
   const { loading, loadingType } = useRapidaStore();
   const isLoading = loading && loadingType === 'block';
 
-  const [breadcrumbs, setBreadcrumbs] = useState<
-    { label: string; href: string }[]
-  >([]);
-
-  useEffect(() => {
+  const breadcrumbs = useMemo(() => {
     const pathParts = pathname.split('/').filter(part => part?.trim() !== '');
-    setBreadcrumbs(
-      pathParts?.map((part, partIndex) => {
-        const previousParts = pathParts.slice(0, partIndex);
-        return {
-          label: part,
-          href:
-            previousParts?.length > 0
-              ? `/${previousParts?.join('/')}/${part}`
-              : `/${part}`,
-        };
-      }) || [],
-    );
+    return pathParts.map((part, partIndex) => {
+      const previousParts = pathParts.slice(0, partIndex);
+      return {
+        label: part,
+        href:
+          previousParts?.length > 0
+            ? `/${previousParts?.join('/')}/${part}`
+            : `/${part}`,
+      };
+    });
   }, [pathname]);
 
   return (
     <header
+      {...attributes}
       className={cn(
         'h-12 flex items-center justify-between',
         'bg-shell text-foreground',
         'border-b border-border-subtle',
         'shrink-0',
+        className,
       )}
     >
       <Breadcrumb
@@ -70,10 +75,9 @@ export function ActionableHeader(props: { reload?: boolean }) {
 }
 
 export const CustomerOptions: FC<{
-  placement?: 'top' | 'bottom';
   isLoading?: boolean;
   showProjectSelector?: boolean;
-}> = ({ placement, isLoading, showProjectSelector = true }) => {
+}> = ({ isLoading, showProjectSelector = true }) => {
   const { projectRoles, currentProjectRole, setCurrentProjectRole } =
     useContext(AuthContext);
 

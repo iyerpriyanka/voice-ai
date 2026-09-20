@@ -1,27 +1,32 @@
 import { GeneralFooter } from '@/app/components/layout/footer/general-footer';
 import { Header } from '@/app/components/layout/navigation/header';
+import type { HTMLAttributes, ReactNode } from 'react';
+import { cn } from '@/utils';
 
-interface FlexBoxProps extends React.HTMLAttributes<HTMLElement> {
-  children: any;
-  showFooter: boolean;
-  isFloatingHeader: boolean;
+interface FlexBoxProps extends HTMLAttributes<HTMLElement> {
+  children: ReactNode;
+  showFooter?: boolean;
+  isFloatingHeader?: boolean;
 }
 
-export function FlexBox(props: FlexBoxProps) {
-  const { children, showFooter, isFloatingHeader, ...attrs } = props;
+export function FlexBox({
+  children,
+  showFooter = true,
+  isFloatingHeader = false,
+  className,
+  ...attributes
+}: FlexBoxProps) {
   return (
     <main
-      {...attrs}
-      className="relative antialiased dark:text-gray-400 bg-gray-50 dark:bg-gray-950 min-h-[100dvh] flex flex-col flex-1"
+      {...attributes}
+      className={cn(
+        'relative flex min-h-[100dvh] flex-1 flex-col bg-surface text-foreground antialiased',
+        className,
+      )}
     >
-      <Header />
-      <div className="flex flex-col flex-1 grow">{props.children}</div>
-      <GeneralFooter />
+      <Header className={cn(isFloatingHeader && 'sticky top-0 z-20')} />
+      <div className="flex flex-1 grow flex-col">{children}</div>
+      {showFooter && <GeneralFooter />}
     </main>
   );
 }
-
-FlexBox.defaultProps = {
-  showFooter: false,
-  isFloatingHeader: false,
-};

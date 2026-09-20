@@ -1,15 +1,20 @@
-import React, { FC, HTMLAttributes } from 'react';
+import type { FC, HTMLAttributes } from 'react';
 import { cn } from '@/utils';
 
-export const PageHeaderBlock: FC<HTMLAttributes<HTMLDivElement>> = props => {
+export const PageHeaderBlock: FC<HTMLAttributes<HTMLDivElement>> = ({
+  className,
+  children,
+  ...attributes
+}) => {
   return (
     <div
+      {...attributes}
       className={cn(
-        'flex justify-between pl-4 pr-0 bg-white dark:bg-gray-900 items-center h-12 border-b border-gray-200 dark:border-gray-800 shrink-0',
-        props.className,
+        'flex h-12 shrink-0 items-center justify-between border-b border-border-subtle bg-shell pl-4 pr-0',
+        className,
       )}
     >
-      {props.children}
+      {children}
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import { CustomLink } from '@/app/components/ui/primitives';
-import React, { HTMLAttributes } from 'react';
+import type { HTMLAttributes } from 'react';
 import { cn } from '@/utils';
 import { SkeletonIcon, SkeletonText } from '@carbon/react';
 import { useSidebar } from '@/context/sidebar-context';
@@ -12,15 +12,16 @@ interface SidebarLinkItemProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 export function SidebarSimpleListItem(props: SidebarLinkItemProps) {
-  const { active, redirect, navigate, loading, ...dProps } = props;
+  const { active, redirect, navigate, loading, className, children, ...dProps } =
+    props;
   const { open } = useSidebar();
 
   const isLoading = loading;
 
   if (isLoading) {
     return (
-      <div className="flex items-center h-10 w-full px-1">
-        <div className="flex-shrink-0 flex items-center justify-center w-12 h-8">
+      <div className={cn('flex h-10 w-full items-center px-1', className)}>
+        <div className="flex h-8 w-12 flex-shrink-0 items-center justify-center">
           <SkeletonIcon className="!w-5 !h-5" />
         </div>
         {open && <SkeletonText className="!mb-0 flex-1" width="70%" />}
@@ -33,17 +34,17 @@ export function SidebarSimpleListItem(props: SidebarLinkItemProps) {
       <div
         {...dProps}
         className={cn(
-          'relative flex items-center h-10 w-full cursor-pointer',
-          'text-gray-700 dark:text-gray-300',
-          'hover:bg-gray-100 dark:hover:bg-gray-800',
+          'relative flex h-10 w-full cursor-pointer items-center',
+          'text-muted',
+          'hover:bg-layer-hover hover:text-foreground',
           active && [
-            'bg-gray-100 dark:bg-gray-800 font-semibold',
+            'bg-layer-hover font-semibold text-foreground',
             'before:absolute before:inset-y-0 before:left-0 before:w-1 before:bg-primary before:content-[""]',
           ],
-          props.className,
+          className,
         )}
       >
-        {props.children}
+        {children}
       </div>
     </CustomLink>
   );

@@ -2,7 +2,7 @@ import React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import { RightSideModal } from './right-side-modal';
+import { RightSideModal } from '../right-side-modal';
 
 const mockAnimate = jest.fn(() => Promise.resolve());
 const mockDragStart = jest.fn();
@@ -114,9 +114,24 @@ describe('RightSideModal', () => {
     const setModalOpen = jest.fn();
 
     render(
-      <RightSideModal modalOpen setModalOpen={setModalOpen}>
+      <RightSideModal
+        modalOpen
+        setModalOpen={setModalOpen}
+        className="custom-drawer"
+        data-testid="drawer"
+      >
         Drawer content
       </RightSideModal>,
+    );
+
+    expect(screen.getByRole('dialog', { name: 'Details' })).toHaveClass(
+      'custom-drawer',
+      'bg-layer',
+      'text-foreground',
+    );
+    expect(screen.getByTestId('drawer')).toHaveAttribute(
+      'aria-modal',
+      'true',
     );
 
     const closeButton = screen.getByRole('button', { name: 'Close' });
@@ -131,6 +146,27 @@ describe('RightSideModal', () => {
     await waitFor(() => expect(setModalOpen).toHaveBeenCalledWith(false));
   });
 
+  it('renders title and label through the modal header', () => {
+    render(
+      <RightSideModal
+        modalOpen
+        setModalOpen={jest.fn()}
+        title="Trace details"
+        label="Endpoint"
+      >
+        Drawer content
+      </RightSideModal>,
+    );
+
+    expect(
+      screen.getByRole('dialog', { name: 'Trace details' }),
+    ).toBeInTheDocument();
+    expect(screen.getByText('Endpoint')).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Trace details' }),
+    ).toBeInTheDocument();
+  });
+
   it('starts drawer dragging from the resize handle', () => {
     render(
       <RightSideModal modalOpen setModalOpen={jest.fn()}>
@@ -143,5 +179,35 @@ describe('RightSideModal', () => {
     );
 
     expect(mockDragStart).toHaveBeenCalledTimes(1);
+  });
+
+  it('closes the drawer after dragging past the close threshold', async () => {
+    const setModalOpen = jest.fn();
+    mockMotionValueGet.mockReturnValue(120);
+
+    render(
+      <RightSideModal modalOpen setModalOpen={setModalOpen}>
+        Drawer content
+      </RightSideModal>,
+    );
+
+    fireEvent.dragEnd(screen.getByRole('dialog'));
+
+    await waitFor(() => expect(setModalOpen).toHaveBeenCalledWith(false));
+  });
+
+  it('keeps the drawer open when drag distance is below the close threshold', () => {
+    const setModalOpen = jest.fn();
+    mockMotionValueGet.mockReturnValue(20);
+
+    render(
+      <RightSideModal modalOpen setModalOpen={setModalOpen}>
+        Drawer content
+      </RightSideModal>,
+    );
+
+    fireEvent.dragEnd(screen.getByRole('dialog'));
+
+    expect(setModalOpen).not.toHaveBeenCalled();
   });
 });

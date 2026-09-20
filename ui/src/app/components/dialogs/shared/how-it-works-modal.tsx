@@ -4,8 +4,8 @@ import {
   ModalBody,
   ModalFooter,
 } from '@/app/components/ui/primitives';
-import React, { FC } from 'react';
-import { ModalProps } from '@/app/components/ui/primitives';
+import React, { type FC } from 'react';
+import type { ModalProps } from '@/app/components/ui/primitives';
 import { Button } from '@carbon/react';
 import { Checkmark } from '@carbon/icons-react';
 
@@ -57,23 +57,22 @@ export const HowItWorks: FC<{
 }> = React.memo(({ steps }) => {
   return (
     <ModalBody>
-      <div className="grid grid-flow-col divide-x divide-gray-200 dark:divide-gray-800 -mx-8">
+      <div className="-mx-8 grid grid-flow-col divide-x divide-border-subtle">
         {steps.map((step, index) => (
           <div key={index} className="flex flex-col px-8">
-            {/* Step indicator row */}
             <div className="flex items-center gap-2 mb-5">
-              <span className="text-[10px] font-medium tracking-[0.08em] text-gray-400 dark:text-gray-500 tabular-nums">
+              <span className="text-[10px] font-medium tracking-[0.08em] text-muted tabular-nums">
                 {String(index + 1).padStart(2, '0')}
               </span>
-              <span className="w-px h-3 bg-gray-300 dark:bg-gray-700" />
+              <span className="h-3 w-px bg-border-subtle" />
               <div className="text-primary [&_svg]:w-4 [&_svg]:h-4">
                 {step.icon}
               </div>
             </div>
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2 leading-snug">
+            <h3 className="mb-2 text-sm font-semibold leading-snug text-foreground">
               {step.title}
             </h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+            <p className="text-sm leading-relaxed text-muted">
               {step.description}
             </p>
           </div>

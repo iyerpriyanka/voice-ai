@@ -1,15 +1,24 @@
-import { FC } from 'react';
+import type { FC, HTMLAttributes } from 'react';
+import { cn } from '@/utils';
 
-interface CenterBoxProps extends React.HTMLAttributes<HTMLElement> {}
-
-export const CenterBox: FC<CenterBoxProps> = props => {
+export const CenterBox: FC<HTMLAttributes<HTMLDivElement>> = ({
+  children,
+  className,
+  ...attributes
+}) => {
   return (
-    <div className="grid min-h-dvh grid-cols-[1fr_2.5rem_minmax(0,var(--container-2xl))_2.5rem_1fr] grid-rows-[1fr_auto_1fr] overflow-clip">
-      <div className="col-start-2 row-span-full row-start-1 border-x border-gray-200 dark:border-gray-900" />
-      <div className="col-start-4 row-span-full border-x border-gray-200 dark:border-gray-900" />
-      <main className="grid grid-cols-1 col-start-3 row-start-2 border-y border-gray-200 dark:border-gray-900">
-        <div className="grid! grid-cols-1! items-center! bg-white p-10! dark:bg-gray-950">
-          <div className="grid grid-cols-1 gap-10 w-full">{props.children}</div>
+    <div
+      {...attributes}
+      className={cn(
+        'grid min-h-dvh grid-cols-[1fr_2.5rem_minmax(0,var(--container-2xl))_2.5rem_1fr] grid-rows-[1fr_auto_1fr] overflow-clip bg-surface text-foreground',
+        className,
+      )}
+    >
+      <div className="col-start-2 row-span-full row-start-1 border-x border-border-subtle" />
+      <div className="col-start-4 row-span-full border-x border-border-subtle" />
+      <main className="col-start-3 row-start-2 grid grid-cols-1 border-y border-border-subtle">
+        <div className="grid! grid-cols-1! items-center! bg-surface p-10!">
+          <div className="grid w-full grid-cols-1 gap-10">{children}</div>
         </div>
       </main>
     </div>

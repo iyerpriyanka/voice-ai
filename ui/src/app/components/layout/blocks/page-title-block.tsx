@@ -1,15 +1,17 @@
-import React, { FC, HTMLAttributes } from 'react';
+import type { FC, HTMLAttributes } from 'react';
 import { cn } from '@/utils';
 
-export const PageTitleBlock: FC<HTMLAttributes<HTMLDivElement>> = props => {
+export const PageTitleBlock: FC<HTMLAttributes<HTMLDivElement>> = ({
+  className,
+  children,
+  ...attributes
+}) => {
   return (
     <div
-      className={cn(
-        'text-base text-gray-900 dark:text-gray-100',
-        props.className,
-      )}
+      {...attributes}
+      className={cn('text-base text-foreground', className)}
     >
-      {props.children}
+      {children}
     </div>
   );
 };

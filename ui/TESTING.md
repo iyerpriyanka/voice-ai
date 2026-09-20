@@ -9,8 +9,8 @@ workflow:
 just ui
 ```
 
-This installs UI dependencies, prepares generated CSS, generates an Allure
-report, and builds Storybook static docs. After it completes, use:
+This installs UI dependencies, prepares generated CSS, generates Allure and
+coverage reports, and builds Storybook static docs. After it completes, use:
 
 ```bash
 just ui-storybook
@@ -36,11 +36,17 @@ Allure artifacts.
 
 The Allure CLI requires Java at runtime.
 
-Generate fresh Allure results and build the HTML report with:
+Generate fresh Allure results, build the HTML report, and write Jest coverage
+with:
 
 ```bash
 just ui-report
 ```
+
+The full report command writes:
+
+- Allure test report: `ui/allure-report/index.html`
+- Jest coverage report: `ui/coverage/lcov-report/index.html`
 
 Open an existing generated report with:
 
@@ -60,5 +66,10 @@ Run a focused component report by passing the Jest path:
 just ui-report src/app/components/app-shell
 ```
 
+Focused reports write Allure results for the selected path. They do not run
+global coverage because repository coverage thresholds are intended for the full
+UI suite.
+
 Allure writes generated files to `ui/allure-results` and `ui/allure-report`.
-Both folders are ignored by git.
+Coverage writes generated files to `ui/coverage`. These folders are ignored by
+git.

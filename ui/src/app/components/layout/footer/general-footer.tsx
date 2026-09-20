@@ -1,26 +1,29 @@
-import {
-  Header,
-  HeaderMenuItem,
-  HeaderName,
-  HeaderNavigation,
-} from '@carbon/react';
+import type { HTMLAttributes } from 'react';
+import { HeaderMenuItem, HeaderName, HeaderNavigation } from '@carbon/react';
 import { useTheme } from '@/theme/theme-provider';
+import { cn } from '@/utils';
 
-export function GeneralFooter() {
+export function GeneralFooter({
+  className,
+  ...attributes
+}: HTMLAttributes<HTMLElement>) {
   const { theme } = useTheme();
 
   return (
-    <Header
-      aria-label={`${theme.brand.name} Platform`}
-      className="[inset-block-start:auto]! [inset-block-end:0]! border-border-subtle! border-t!"
+    <footer
+      {...attributes}
+      aria-label={`${theme.brand.name} platform footer`}
+      className={cn(
+        'h-12 flex shrink-0 items-center',
+        'bg-shell text-foreground',
+        'border-t border-border-subtle',
+        className,
+      )}
     >
-      <HeaderName href="#" prefix={theme.brand.name}>
-        [Platform]
+      <HeaderName href="/" prefix={theme.brand.name}>
+        Platform
       </HeaderName>
-      <HeaderNavigation
-        aria-label={`${theme.brand.name} [Platform]`}
-        className=""
-      >
+      <HeaderNavigation aria-label={`${theme.brand.name} footer links`}>
         <HeaderMenuItem href={theme.links.terms}>
           <span className="opacity-80">Terms and Conditions</span>
         </HeaderMenuItem>
@@ -37,6 +40,6 @@ export function GeneralFooter() {
           <span className="opacity-80">Support</span>
         </HeaderMenuItem>
       </HeaderNavigation>
-    </Header>
+    </footer>
   );
 }

@@ -1,87 +1,99 @@
-import React, { HTMLAttributes } from 'react';
+import type { HTMLAttributes } from 'react';
 import { cn } from '@/utils';
 
-export function ErrorWrapper(props: HTMLAttributes<HTMLDivElement>) {
+const wrapperBaseClassName =
+  'flex items-start relative border border-l-4 bg-layer px-2 py-4 pr-8 text-foreground space-x-2';
+
+export function ErrorWrapper({
+  className,
+  children,
+  ...attributes
+}: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
+      {...attributes}
       className={cn(
-        'flex p-2 border-red-600/30 dark:border-red-700/30',
-        'bg-red-600/10 dark:bg-red-700/10',
-        'items-start',
-        'relative',
-        'pr-8 py-4 space-x-2',
-        props.className,
+        wrapperBaseClassName,
+        'border-border-subtle [border-left-color:var(--cds-support-error)]',
+        className,
       )}
     >
-      {props.children}
+      {children}
     </div>
   );
 }
 
-export function SuccessWrapper(props: HTMLAttributes<HTMLDivElement>) {
+export function SuccessWrapper({
+  className,
+  children,
+  ...attributes
+}: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
+      {...attributes}
       className={cn(
-        'flex p-2 border-green-600/30 dark:border-green-700/30',
-        'bg-green-600/10 dark:bg-green-700/10',
-        'items-start',
-        'relative',
-        'pr-8 py-4 space-x-2',
-        props.className,
+        wrapperBaseClassName,
+        'border-border-subtle [border-left-color:var(--cds-support-success)]',
+        className,
       )}
     >
-      {props.children}
+      {children}
     </div>
   );
 }
 
-export function InfoWrapper(props: HTMLAttributes<HTMLDivElement>) {
+export function InfoWrapper({
+  className,
+  children,
+  ...attributes
+}: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
+      {...attributes}
       className={cn(
-        'flex p-2 border-blue-600/30 dark:border-blue-700/30',
-        'bg-blue-600/10 dark:bg-blue-700/10',
-        'items-start',
-        'relative',
-        'pr-8 py-4 space-x-2',
-        props.className,
+        wrapperBaseClassName,
+        'border-border-subtle [border-left-color:var(--cds-support-info)]',
+        className,
       )}
     >
-      {props.children}
+      {children}
     </div>
   );
 }
 
-export function WarnWrapper(props: HTMLAttributes<HTMLDivElement>) {
+export function WarnWrapper({
+  className,
+  children,
+  ...attributes
+}: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
+      {...attributes}
       className={cn(
-        'flex p-2 border-yellow-600/30 dark:border-yellow-700/30',
-        'bg-yellow-600/10 dark:bg-yellow-700/10',
-        'items-start',
-        'relative',
-        'pr-8 py-4 space-x-2',
-        props.className,
+        wrapperBaseClassName,
+        'border-border-subtle [border-left-color:var(--cds-support-warning)]',
+        className,
       )}
     >
-      {props.children}
+      {children}
     </div>
   );
 }
 
-export function PlainWrapper(props: HTMLAttributes<HTMLDivElement>) {
+export function PlainWrapper({
+  className,
+  children,
+  ...attributes
+}: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
+      {...attributes}
       className={cn(
-        'flex p-2 border-b border-t dark:border-gray-800',
-        'items-start',
-        'relative',
-        'bg-gray-50 dark:bg-gray-800',
-        'pr-8 py-4 space-x-2',
-        props.className,
+        'flex items-start relative border-y border-border-subtle bg-layer px-2 py-4 pr-8 text-foreground space-x-2',
+        className,
       )}
     >
-      {props.children}
+      {children}
     </div>
   );
 }

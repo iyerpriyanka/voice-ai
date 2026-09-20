@@ -1,4 +1,4 @@
-import { ModalProps } from '@/app/components/ui/primitives';
+import type { ModalProps } from '@/app/components/ui/primitives';
 import {
   Modal,
   ModalHeader,
@@ -8,27 +8,24 @@ import {
 import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
 import { Textarea } from '@/app/components/ui/primitives';
 import { Checkmark } from '@carbon/icons-react';
-import { FC, useState } from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 
 export const MessageFeedbackDialog: FC<
   ModalProps & { onSubmitFeedback: (feedback: string) => void }
-> = props => {
+> = ({ modalOpen, setModalOpen, onSubmitFeedback }) => {
   const [feedbackText, setFeedbackText] = useState('');
+  const closeDialog = () => setModalOpen(false);
+
   return (
-    <Modal
-      open={props.modalOpen}
-      onClose={() => props.setModalOpen(false)}
-      size="sm"
-    >
+    <Modal open={modalOpen} onClose={closeDialog} size="sm">
       <ModalHeader
         title="What can be improved?"
-        onClose={() => {
-          props.setModalOpen(false);
-        }}
+        onClose={closeDialog}
       />
       <ModalBody hasForm>
         <div className="px-4 py-6">
-          <p className="font-semibold text-base mt-1">
+          <p className="mt-1 text-base font-semibold text-foreground">
             Tell us what went wrong or how we can make this answer more helpful.
           </p>
           <div className="mt-4">
@@ -43,15 +40,15 @@ export const MessageFeedbackDialog: FC<
         </div>
       </ModalBody>
       <ModalFooter>
-        <SecondaryButton size="lg" onClick={() => props.setModalOpen(false)}>
+        <SecondaryButton size="lg" onClick={closeDialog}>
           Cancel
         </SecondaryButton>
         <PrimaryButton
           size="lg"
           type="button"
           onClick={() => {
-            props.setModalOpen(false);
-            props.onSubmitFeedback(feedbackText);
+            closeDialog();
+            onSubmitFeedback(feedbackText);
           }}
           disabled={!feedbackText.trim()}
           renderIcon={Checkmark}

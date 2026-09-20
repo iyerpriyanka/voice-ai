@@ -18,6 +18,7 @@ ui-help:
       'Development server: just ui-dev' \
       'Storybook:          just ui-storybook' \
       'Allure report:      just ui-report-open' \
+      'Coverage report:    ui/coverage/lcov-report/index.html' \
       'Focused report:     just ui-report src/app/components/app-shell' \
       'Quality checks:     just ui-quality'
 
@@ -97,6 +98,7 @@ ui-report path=ui_test_path: ui-setup
       yarn allure:generate
     else
       yarn allure:report
+      echo "Coverage report generated at ui/coverage/lcov-report/index.html."
     fi
     echo "Allure report generated at ui/allure-report/index.html."
 

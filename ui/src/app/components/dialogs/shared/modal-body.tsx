@@ -1,17 +1,21 @@
 import { cn } from '@/utils';
-import { FC, HTMLAttributes } from 'react';
+import type { FC, HTMLAttributes } from 'react';
 
-export const ModalBody: FC<HTMLAttributes<HTMLDivElement>> = props => {
+export const ModalBody: FC<HTMLAttributes<HTMLDivElement>> = ({
+  className,
+  children,
+  ...attributes
+}) => {
   return (
     <div
-      {...props}
+      {...attributes}
       className={cn(
         'flex flex-col gap-6 shrink',
         'relative px-4 py-5',
-        props.className,
+        className,
       )}
     >
-      {props.children}
+      {children}
     </div>
   );
 };

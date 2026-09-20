@@ -2,7 +2,7 @@ import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import { MessageFeedbackDialog } from './message-feedback-modal';
+import { MessageFeedbackDialog } from '../message-feedback-modal';
 
 jest.mock('@/app/components/ui/primitives/modal', () => ({
   Modal: ({ open, children }: any) => (open ? <div>{children}</div> : null),

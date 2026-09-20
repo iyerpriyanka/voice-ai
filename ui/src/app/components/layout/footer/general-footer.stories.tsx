@@ -19,4 +19,10 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  render: args => (
+    <div className="flex min-h-32 items-end bg-background">
+      <GeneralFooter {...args} className="w-full" />
+    </div>
+  ),
+};

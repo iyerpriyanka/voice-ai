@@ -1,20 +1,27 @@
-import React, { FC, HTMLAttributes } from 'react';
+import type { FC, HTMLAttributes } from 'react';
 import { cn } from '@/utils';
 
-export const TableSection: FC<HTMLAttributes<HTMLDivElement>> = props => {
+export const TableSection: FC<HTMLAttributes<HTMLDivElement>> = ({
+  className,
+  children,
+  ...attributes
+}) => {
   return (
-    <div className={cn('flex-1 flex flex-col', props.className)}>
-      {props.children}
+    <div {...attributes} className={cn('flex-1 flex flex-col', className)}>
+      {children}
     </div>
   );
 };
 
 export const ScrollableTableSection: FC<
   HTMLAttributes<HTMLDivElement>
-> = props => {
+> = ({ className, children, ...attributes }) => {
   return (
-    <div className={cn('flex-1 min-h-0 overflow-auto', props.className)}>
-      {props.children}
+    <div
+      {...attributes}
+      className={cn('flex-1 min-h-0 overflow-auto', className)}
+    >
+      {children}
     </div>
   );
 };

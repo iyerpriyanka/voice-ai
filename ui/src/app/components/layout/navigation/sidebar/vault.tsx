@@ -45,7 +45,7 @@ export function Vault({ isLoading }: { isLoading?: boolean }) {
       <Disclosure open={opt}>
         <div
           className={cn(
-            'ml-6 dark:border-gray-800 border-l',
+            'ml-6 border-l border-border-subtle',
             open ? 'block' : 'hidden',
           )}
         >

@@ -4,9 +4,23 @@ import '@testing-library/jest-dom';
 import { HowItWorksDialog } from '@/app/components/dialogs/shared/how-it-works-modal';
 
 jest.mock('@/app/components/ui/primitives/modal', () => ({
-  Modal: ({ open, children }: any) =>
-    open ? <div data-testid="modal">{children}</div> : null,
-  ModalHeader: ({ title }: any) => <h2>{title}</h2>,
+  Modal: ({ open, children, containerClassName, onClose }: any) =>
+    open ? (
+      <div data-container-class={containerClassName} data-testid="modal">
+        <button type="button" onClick={onClose}>
+          Modal close
+        </button>
+        {children}
+      </div>
+    ) : null,
+  ModalHeader: ({ title, onClose }: any) => (
+    <header>
+      <h2>{title}</h2>
+      <button type="button" onClick={onClose}>
+        Header close
+      </button>
+    </header>
+  ),
   ModalBody: ({ children }: any) => <div>{children}</div>,
   ModalFooter: ({ children }: any) => <footer>{children}</footer>,
 }));
@@ -62,5 +76,38 @@ describe('HowItWorksDialog', () => {
 
     fireEvent.click(closeButton);
     expect(setModalOpen).toHaveBeenCalledWith(false);
+  });
+
+  it('uses the default title and forwards container class to the modal', () => {
+    render(
+      <HowItWorksDialog
+        modalOpen
+        setModalOpen={jest.fn()}
+        className="custom-modal"
+        steps={steps}
+      />,
+    );
+
+    expect(
+      screen.getByRole('heading', { name: 'How it works' }),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId('modal')).toHaveAttribute(
+      'data-container-class',
+      'custom-modal',
+    );
+  });
+
+  it('closes from the modal and header close actions', () => {
+    const setModalOpen = jest.fn();
+
+    render(
+      <HowItWorksDialog modalOpen setModalOpen={setModalOpen} steps={steps} />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Modal close' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Header close' }));
+
+    expect(setModalOpen).toHaveBeenCalledWith(false);
+    expect(setModalOpen).toHaveBeenCalledTimes(2);
   });
 });

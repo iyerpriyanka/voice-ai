@@ -5,23 +5,32 @@ import { useRapidaStore } from '@/hooks';
 import { Toast } from '@/app/components/ui/feedback';
 import { ProviderContextProvider } from '@/context/provider-context';
 import { SidebarProvider } from '@/context/sidebar-context';
+import type { HTMLAttributes } from 'react';
+import { cn } from '@/utils';
 
-export function MissionBox(props: { children?: any }) {
+export function MissionBox({
+  children,
+  className,
+  ...attributes
+}: HTMLAttributes<HTMLDivElement>) {
   useRapidaStore();
   return (
     <ProviderContextProvider>
       <SidebarProvider>
-        <div className="flex h-[100dvh] relative w-[100dvw]">
+        <div
+          {...attributes}
+          className={cn('relative flex h-[100dvh] w-[100dvw]', className)}
+        >
           <SidebarNavigation />
-          <main className="antialiased text-sm text-foreground relative bg-surface font-sans flex-1 flex w-full overflow-hidden">
-            <div className="w-full flex flex-col h-full">
+          <main className="relative flex w-full flex-1 overflow-hidden bg-surface font-sans text-sm text-foreground antialiased">
+            <div className="flex h-full w-full flex-col">
               <ActionableHeader />
-              <div className="relative flex-1 overflow-hidden bg-surface flex flex-col">
-                <div className="flex w-full absolute top-0 left-0 right-0 z-10">
+              <div className="relative flex flex-1 flex-col overflow-hidden bg-surface">
+                <div className="absolute left-0 right-0 top-0 z-10 flex w-full">
                   <Loader />
                 </div>
                 <Toast />
-                {props.children}
+                {children}
               </div>
             </div>
           </main>

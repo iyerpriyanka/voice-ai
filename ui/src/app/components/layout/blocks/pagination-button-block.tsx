@@ -1,17 +1,18 @@
-import React, { FC, HTMLAttributes } from 'react';
+import type { FC, HTMLAttributes } from 'react';
 import { cn } from '@/utils';
 
 export const PaginationButtonBlock: FC<
   HTMLAttributes<HTMLDivElement>
-> = props => {
+> = ({ className, children, ...attributes }) => {
   return (
     <div
+      {...attributes}
       className={cn(
-        'flex flex-row divide-x divide-gray-200 dark:divide-gray-800',
-        props.className,
+        'flex flex-row divide-x divide-border-subtle',
+        className,
       )}
     >
-      {props.children}
+      {children}
     </div>
   );
 };

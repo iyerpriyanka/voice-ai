@@ -2,10 +2,7 @@ import React, { useContext, useEffect } from 'react';
 import { Navigate, useLocation, useSearchParams } from 'react-router-dom';
 import { AuthContext } from '@/context/auth-context';
 
-export function ProtectedBox(props: {
-  children: React.ReactElement;
-  allowedRoles?: string[];
-}) {
+export function ProtectedBox({ children }: { children: React.ReactElement }) {
   const { pathname, search } = useLocation();
   const { isAuthenticated, isThereOrganization, isThereProject } =
     useContext(AuthContext);
@@ -15,25 +12,34 @@ export function ProtectedBox(props: {
   }
 
   if (pathname === '/onboarding/organization') {
-    return props.children;
+    return children;
   }
 
   if (isThereOrganization && !isThereOrganization())
     return <Navigate to="/onboarding/organization" />;
 
   if (pathname === '/onboarding/project') {
-    return props.children;
+    return children;
   }
 
   if (isThereProject && !isThereProject())
     return <Navigate to="/onboarding/project" />;
 
-  return props.children;
+  return children;
 }
 
-export function IgnoreBox(props: { children: React.ReactElement }) {
+interface IgnoreBoxProps {
+  children: React.ReactElement;
+  replaceLocation?: (url: string) => void;
+}
+
+export function IgnoreBox({
+  children,
+  replaceLocation = window.location.replace.bind(window.location),
+}: IgnoreBoxProps) {
   const [searchParams] = useSearchParams();
-  const searchParamMap = Object.fromEntries(searchParams.entries());
+  const nextUrl = searchParams.get('next');
+  const externalValidation = searchParams.get('externalValidation');
   const {
     unauthenticate,
     isAuthenticated,
@@ -50,19 +56,19 @@ export function IgnoreBox(props: { children: React.ReactElement }) {
       isThereProject &&
       isThereProject();
 
-    const isExternalAuthValid = () => {
-      return (
-        searchParamMap['next'] &&
-        searchParamMap['externalValidation'] &&
-        isAuthValid()
-      );
-    };
-
-    if (isExternalAuthValid()) {
-      window.location.replace(searchParamMap['next']);
+    if (nextUrl && externalValidation && isAuthValid()) {
+      replaceLocation(nextUrl);
       return;
     }
     if (unauthenticate) unauthenticate();
-  }, []);
-  return props.children;
+  }, [
+    externalValidation,
+    isAuthenticated,
+    isThereOrganization,
+    isThereProject,
+    nextUrl,
+    replaceLocation,
+    unauthenticate,
+  ]);
+  return children;
 }

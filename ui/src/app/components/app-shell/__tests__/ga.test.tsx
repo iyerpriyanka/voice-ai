@@ -2,7 +2,7 @@ import React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { Link, MemoryRouter, Route, Routes } from 'react-router-dom';
 import ReactGA from 'react-ga4';
-import { GA, getAnalyticsPagePath, isGoogleAnalyticsEnabled } from './ga';
+import { GA, getAnalyticsPagePath, isGoogleAnalyticsEnabled } from '../ga';
 
 jest.mock('react-ga4', () => ({
   initialize: jest.fn(),

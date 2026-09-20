@@ -4,7 +4,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import developmentConfig from '@/configs/config.development.json';
 import { ThemeProvider, useTheme } from '@/theme/theme-provider';
 import { ThemeManifest } from '@/theme/types';
-import { Helmet } from './helmet';
+import { Helmet } from '../helmet';
 
 const theme = developmentConfig.theme as unknown as ThemeManifest;
 const tenantTheme: ThemeManifest = {

@@ -9,6 +9,9 @@ const theme = developmentConfig.theme as unknown as ThemeManifest;
 let mockOpen = true;
 let mockLocked = false;
 let mockSetLocked = jest.fn();
+let mockWorkspaceFeatures: Record<string, boolean> = { knowledge: false };
+let mockRapidaLoading = false;
+let mockRapidaLoadingType: string | undefined;
 
 jest.mock('@/context/sidebar-context', () => ({
   useSidebar: () => ({
@@ -35,15 +38,24 @@ jest.mock('@/theme/theme-provider', () => ({
 }));
 
 jest.mock('@/workspace', () => ({
-  useWorkspace: () => ({ features: { knowledge: false } }),
+  useWorkspace: () => ({ features: mockWorkspaceFeatures }),
 }));
 
 jest.mock('@/hooks', () => ({
-  useRapidaStore: () => ({ loading: false, loadingType: undefined }),
+  useRapidaStore: () => ({
+    loading: mockRapidaLoading,
+    loadingType: mockRapidaLoadingType,
+  }),
 }));
 
 jest.mock('@/app/components/ui/primitives/text', () => ({
-  Text: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  Text: ({
+    children,
+    isLoading,
+  }: {
+    children: React.ReactNode;
+    isLoading?: boolean;
+  }) => <span data-loading={String(Boolean(isLoading))}>{children}</span>,
 }));
 
 jest.mock('@/app/components/layout/navigation/sidebar/dashboard', () => ({
@@ -53,7 +65,7 @@ jest.mock('@/app/components/layout/navigation/sidebar/deployment', () => ({
   Deployment: () => null,
 }));
 jest.mock('@/app/components/layout/navigation/sidebar/knowledge', () => ({
-  Knowledge: () => null,
+  Knowledge: () => <li data-testid="knowledge-item" />,
 }));
 jest.mock('@/app/components/layout/navigation/sidebar/observability', () => ({
   Observability: () => null,
@@ -76,6 +88,9 @@ describe('sidebar shell', () => {
     mockOpen = true;
     mockLocked = false;
     mockSetLocked = jest.fn();
+    mockWorkspaceFeatures = { knowledge: false };
+    mockRapidaLoading = false;
+    mockRapidaLoadingType = undefined;
   });
 
   it('uses the shared shell surface and aligned full logo when expanded', () => {
@@ -117,5 +132,31 @@ describe('sidebar shell', () => {
 
     fireEvent.click(toggle);
     expect(mockSetLocked).toHaveBeenCalledWith(true);
+  });
+
+  it('renders optional knowledge navigation and passes loading state to sections', () => {
+    mockWorkspaceFeatures = {};
+    mockRapidaLoading = true;
+    mockRapidaLoadingType = 'block';
+
+    render(<SidebarNavigation />);
+
+    expect(screen.getByTestId('knowledge-item')).toBeInTheDocument();
+    expect(screen.getByText('Observability')).toHaveAttribute(
+      'data-loading',
+      'true',
+    );
+  });
+
+  it('uses the locked state for the collapse action', () => {
+    mockLocked = true;
+
+    render(<SidebarNavigation />);
+
+    const toggle = screen.getByRole('button', { name: 'Collapse sidebar' });
+    expect(toggle).toHaveTextContent('Collapse');
+
+    fireEvent.click(toggle);
+    expect(mockSetLocked).toHaveBeenCalledWith(false);
   });
 });

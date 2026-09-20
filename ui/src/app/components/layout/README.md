@@ -27,7 +27,8 @@ components, but they should not own product workflows or domain data behavior.
 - Prefer theme tokens such as `bg-shell`, `bg-surface`, `text-foreground`, and
   `border-border-subtle` over hard-coded light and dark color pairs.
 - Keep route-level side effects in `app-shell`, not `layout`.
-- Keep tests and stories beside the component they document.
+- Keep stories beside the component they document.
+- Keep tests in the nearest `__tests__` folder for the component group.
 
 ## Storybook
 
@@ -55,6 +56,10 @@ Layout tests should assert observable structure and accessibility:
 - Carbon component usage where it affects behavior
 - theme-driven logo and link rendering
 - collapsed, expanded, loading, and guarded states
+
+Use the nearest component-group test folder for layout tests. For example,
+`blocks` tests belong in `blocks/__tests__`, and sidebar-specific navigation
+tests belong in `navigation/sidebar/__tests__`.
 
 Run focused layout tests with:
 

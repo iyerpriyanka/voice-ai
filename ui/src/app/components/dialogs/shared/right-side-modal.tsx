@@ -1,6 +1,6 @@
-import { IconOnlyButton } from '@/app/components/ui/primitives';
-import { ModalHeader, ModalProps } from '@/app/components/ui/primitives';
-import type { FC, HTMLAttributes, ReactNode } from 'react';
+import { IconOnlyButton, ModalHeader } from '@/app/components/ui/primitives';
+import type { ModalProps } from '@/app/components/ui/primitives';
+import type { FC, HTMLAttributes, MouseEvent, ReactNode } from 'react';
 import useMeasure from 'react-use-measure';
 import {
   useDragControls,
@@ -27,6 +27,8 @@ export const RightSideModal: FC<SideModalProps> = ({
   setModalOpen,
   children,
   className,
+  onClick,
+  ...attributes
 }) => {
   const [scope, animate] = useAnimate();
   const [drawerRef, { width }] = useMeasure();
@@ -46,6 +48,11 @@ export const RightSideModal: FC<SideModalProps> = ({
     setModalOpen(false);
   };
 
+  const handleDrawerClick = (event: MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+    onClick?.(event);
+  };
+
   return (
     <>
       {modalOpen && (
@@ -54,20 +61,24 @@ export const RightSideModal: FC<SideModalProps> = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           onClick={handleClose}
-          className="fixed inset-0 z-50 bg-neutral-950/70"
+          className="fixed inset-0 z-50 [background:var(--cds-overlay)]"
         >
           <motion.div
+            {...attributes}
+            role="dialog"
+            aria-modal="true"
+            aria-label={title || label || 'Details'}
             id="drawer"
             ref={drawerRef}
-            onClick={e => e.stopPropagation()}
+            onClick={handleDrawerClick}
             initial={{ x: '100%' }}
             animate={{ x: '0%' }}
             transition={{
               ease: 'easeInOut',
             }}
             className={cn(
+              'absolute right-0 top-0 h-full min-w-80 overflow-hidden bg-layer text-foreground shadow-lg',
               className,
-              'absolute right-0 top-0 h-full min-w-80 overflow-hidden bg-white dark:bg-gray-900',
             )}
             style={{ x }}
             drag="x"
@@ -94,7 +105,7 @@ export const RightSideModal: FC<SideModalProps> = ({
                 onPointerDown={e => {
                   controls.start(e);
                 }}
-                className="h-1/2 my-auto w-2 cursor-grab touch-none rounded-[2px] bg-gray-300 dark:bg-slate-700 hover:bg-primary active:cursor-grabbing"
+                className="h-1/2 my-auto w-2 cursor-grab touch-none rounded-[2px] bg-border-strong hover:bg-primary active:cursor-grabbing"
               />
             </div>
             <div className="relative z-0 h-full overflow-auto flex flex-col">

@@ -36,7 +36,7 @@ const preview: Preview = {
           <ThemeProvider theme={themeByMode[mode]}>
             <CarbonTheme
               theme={carbonTheme}
-              className="min-h-screen bg-[var(--cds-background)] p-4 text-[var(--cds-text-primary)]"
+              className="min-h-screen bg-[var(--cds-background)] p-4 font-sans text-[var(--cds-text-primary)]"
             >
               <Story />
             </CarbonTheme>
