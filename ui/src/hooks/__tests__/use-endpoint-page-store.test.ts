@@ -1,36 +1,25 @@
 import {
-  GetAllEndpoint,
-  GetEndpoint,
-  CreateEndpointTag,
-  CreateEndpointRetryConfiguration,
-  CreateEndpointCacheConfiguration,
-  UpdateEndpointDetail,
-} from '@rapidaai/react';
+  createEndpointCacheConfiguration,
+  createEndpointRetryConfiguration,
+  createEndpointTag,
+  getEndpoint,
+  listEndpoints,
+  updateEndpointDetail,
+} from '@/clients';
 
 import {
   initialEndpointType,
   useEndpointPageStore,
 } from '@/hooks/use-endpoint-page-store';
 
-jest.mock('@rapidaai/react', () => {
-  class ConnectionConfig {
-    constructor(_: unknown) {}
-
-    static WithDebugger(config: unknown) {
-      return config;
-    }
-  }
-
-  return {
-    ConnectionConfig,
-    GetAllEndpoint: jest.fn(),
-    GetEndpoint: jest.fn(),
-    CreateEndpointTag: jest.fn(),
-    CreateEndpointRetryConfiguration: jest.fn(),
-    CreateEndpointCacheConfiguration: jest.fn(),
-    UpdateEndpointDetail: jest.fn(),
-  };
-});
+jest.mock('@/clients', () => ({
+  createEndpointCacheConfiguration: jest.fn(),
+  createEndpointRetryConfiguration: jest.fn(),
+  createEndpointTag: jest.fn(),
+  getEndpoint: jest.fn(),
+  listEndpoints: jest.fn(),
+  updateEndpointDetail: jest.fn(),
+}));
 
 const defaultColumns = useEndpointPageStore.getState().columns;
 
@@ -45,17 +34,17 @@ const resetStore = () => {
   });
 };
 
-const makeEndpoint = (id: string) => ({ getId: () => id } as any);
+const makeEndpoint = (id: string) => ({ getId: () => id }) as any;
 
 describe('useEndpointPageStore', () => {
   beforeEach(() => {
     resetStore();
-    (GetAllEndpoint as jest.Mock).mockReset();
-    (GetEndpoint as jest.Mock).mockReset();
-    (CreateEndpointTag as jest.Mock).mockReset();
-    (CreateEndpointRetryConfiguration as jest.Mock).mockReset();
-    (CreateEndpointCacheConfiguration as jest.Mock).mockReset();
-    (UpdateEndpointDetail as jest.Mock).mockReset();
+    (listEndpoints as jest.Mock).mockReset();
+    (getEndpoint as jest.Mock).mockReset();
+    (createEndpointTag as jest.Mock).mockReset();
+    (createEndpointRetryConfiguration as jest.Mock).mockReset();
+    (createEndpointCacheConfiguration as jest.Mock).mockReset();
+    (updateEndpointDetail as jest.Mock).mockReset();
   });
 
   it('adds, merges, and removes criteria correctly', () => {
@@ -101,7 +90,9 @@ describe('useEndpointPageStore', () => {
       endpoint2Updated,
       endpoint1,
     ]);
-    expect(useEndpointPageStore.getState().currentEndpoint).toBe(endpoint2Updated);
+    expect(useEndpointPageStore.getState().currentEndpoint).toBe(
+      endpoint2Updated,
+    );
   });
 
   it('handles successful onGetAllEndpoint response', () => {
@@ -109,15 +100,13 @@ describe('useEndpointPageStore', () => {
     const onError = jest.fn();
     const onSuccess = jest.fn();
 
-    (GetAllEndpoint as jest.Mock).mockImplementation(
-      (_cfg, _page, _pageSize, _criteria, callback) => {
-        callback(null, {
-          getSuccess: () => true,
-          getDataList: () => [endpoint],
-          getPaginated: () => ({ getTotalitem: () => 11 }),
-        });
-      },
-    );
+    (listEndpoints as jest.Mock).mockImplementation(({ callback }) => {
+      callback(null, {
+        getSuccess: () => true,
+        getDataList: () => [endpoint],
+        getPaginated: () => ({ getTotalitem: () => 11 }),
+      });
+    });
 
     useEndpointPageStore
       .getState()
@@ -127,20 +116,30 @@ describe('useEndpointPageStore', () => {
     expect(onError).not.toHaveBeenCalled();
     expect(useEndpointPageStore.getState().endpoints).toEqual([endpoint]);
     expect(useEndpointPageStore.getState().totalCount).toBe(11);
+    expect(listEndpoints).toHaveBeenCalledWith(
+      expect.objectContaining({
+        page: 1,
+        pageSize: 20,
+        criteria: [],
+        auth: {
+          projectId: 'project-1',
+          token: 'token-1',
+          userId: 'user-1',
+        },
+      }),
+    );
   });
 
   it('uses human-readable error from onGetAllEndpoint response', () => {
     const onError = jest.fn();
     const onSuccess = jest.fn();
 
-    (GetAllEndpoint as jest.Mock).mockImplementation(
-      (_cfg, _page, _pageSize, _criteria, callback) => {
-        callback(null, {
-          getSuccess: () => false,
-          getError: () => ({ getHumanmessage: () => 'explicit endpoint error' }),
-        });
-      },
-    );
+    (listEndpoints as jest.Mock).mockImplementation(({ callback }) => {
+      callback(null, {
+        getSuccess: () => false,
+        getError: () => ({ getHumanmessage: () => 'explicit endpoint error' }),
+      });
+    });
 
     useEndpointPageStore
       .getState()
@@ -153,14 +152,12 @@ describe('useEndpointPageStore', () => {
   it('uses fallback error when onGetAllEndpoint has no error object', () => {
     const onError = jest.fn();
 
-    (GetAllEndpoint as jest.Mock).mockImplementation(
-      (_cfg, _page, _pageSize, _criteria, callback) => {
-        callback(null, {
-          getSuccess: () => false,
-          getError: () => null,
-        });
-      },
-    );
+    (listEndpoints as jest.Mock).mockImplementation(({ callback }) => {
+      callback(null, {
+        getSuccess: () => false,
+        getError: () => null,
+      });
+    });
 
     useEndpointPageStore
       .getState()
@@ -176,14 +173,12 @@ describe('useEndpointPageStore', () => {
     const onError = jest.fn();
     const onSuccess = jest.fn();
 
-    (GetEndpoint as jest.Mock).mockImplementation(
-      (_cfg, _endpointId, _version, _headers, callback) => {
-        callback(null, {
-          getSuccess: () => true,
-          getData: () => endpoint,
-        });
-      },
-    );
+    (getEndpoint as jest.Mock).mockImplementation(({ callback }) => {
+      callback(null, {
+        getSuccess: () => true,
+        getData: () => endpoint,
+      });
+    });
 
     useEndpointPageStore
       .getState()
@@ -200,19 +195,28 @@ describe('useEndpointPageStore', () => {
     expect(onSuccess).toHaveBeenCalledWith(endpoint);
     expect(onError).not.toHaveBeenCalled();
     expect(useEndpointPageStore.getState().currentEndpoint).toBe(endpoint);
+    expect(getEndpoint).toHaveBeenCalledWith(
+      expect.objectContaining({
+        endpointId: 'endpoint-2',
+        endpointProviderModelId: null,
+        auth: {
+          projectId: 'project-1',
+          token: 'token-1',
+          userId: 'user-1',
+        },
+      }),
+    );
   });
 
   it('uses fallback error when onGetEndpoint fails without error object', () => {
     const onError = jest.fn();
 
-    (GetEndpoint as jest.Mock).mockImplementation(
-      (_cfg, _endpointId, _version, _headers, callback) => {
-        callback(null, {
-          getSuccess: () => false,
-          getError: () => null,
-        });
-      },
-    );
+    (getEndpoint as jest.Mock).mockImplementation(({ callback }) => {
+      callback(null, {
+        getSuccess: () => false,
+        getError: () => null,
+      });
+    });
 
     useEndpointPageStore
       .getState()

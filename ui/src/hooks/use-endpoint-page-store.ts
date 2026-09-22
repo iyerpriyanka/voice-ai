@@ -1,11 +1,3 @@
-import {
-  CreateEndpointCacheConfiguration,
-  CreateEndpointRetryConfiguration,
-  CreateEndpointTag,
-  GetAllEndpoint,
-  GetEndpoint,
-  UpdateEndpointDetail,
-} from '@rapidaai/react';
 import { ServiceError } from '@rapidaai/react';
 import {
   CreateEndpointCacheConfigurationResponse,
@@ -21,7 +13,14 @@ import {
 import { EndpointType } from '@/types';
 import { initialPaginated } from '@/types/types.paginated';
 import { create } from 'zustand';
-import { connectionConfig } from '@/configs';
+import {
+  createEndpointCacheConfiguration,
+  createEndpointRetryConfiguration,
+  createEndpointTag,
+  getEndpoint,
+  listEndpoints,
+  updateEndpointDetail,
+} from '@/clients';
 
 /**
  *
@@ -265,18 +264,13 @@ export const useEndpointPageStore = create<EndpointType>((set, get) => ({
       }
     };
 
-    GetAllEndpoint(
-      connectionConfig,
-      get().page,
-      get().pageSize,
-      get().criteria,
-      afterGetAllEndpoint,
-      {
-        authorization: token,
-        'x-project-id': projectId,
-        'x-auth-id': userId,
-      },
-    );
+    listEndpoints({
+      page: get().page,
+      pageSize: get().pageSize,
+      criteria: get().criteria,
+      auth: { projectId, token, userId },
+      callback: afterGetAllEndpoint,
+    });
   },
 
   /**
@@ -457,17 +451,12 @@ export const useEndpointPageStore = create<EndpointType>((set, get) => ({
       }
     };
 
-    CreateEndpointTag(
-      connectionConfig,
+    createEndpointTag({
       endpointId,
       tags,
-      {
-        authorization: token,
-        'x-project-id': projectId,
-        'x-auth-id': userId,
-      },
-      afterCreateEndpointTag,
-    );
+      auth: { projectId, token, userId },
+      callback: afterCreateEndpointTag,
+    });
   },
 
   /**
@@ -525,21 +514,16 @@ export const useEndpointPageStore = create<EndpointType>((set, get) => ({
       }
     };
 
-    CreateEndpointRetryConfiguration(
-      connectionConfig,
+    createEndpointRetryConfiguration({
       endpointId,
       retryType,
       maxAttempts,
       delaySeconds,
       exponentialBackoff,
       retryables,
-      {
-        authorization: token,
-        'x-project-id': projectId,
-        'x-auth-id': userId,
-      },
-      afterCreateEndpointRetryConfiguration,
-    );
+      auth: { projectId, token, userId },
+      callback: afterCreateEndpointRetryConfiguration,
+    });
   },
   // /
 
@@ -587,19 +571,14 @@ export const useEndpointPageStore = create<EndpointType>((set, get) => ({
       }
     };
 
-    CreateEndpointCacheConfiguration(
-      connectionConfig,
+    createEndpointCacheConfiguration({
       endpointId,
       cacheType,
       expiryInterval,
       matchThreshold,
-      {
-        authorization: token,
-        'x-project-id': projectId,
-        'x-auth-id': userId,
-      },
-      afterCreateEndpointCacheConfiguration,
-    );
+      auth: { projectId, token, userId },
+      callback: afterCreateEndpointCacheConfiguration,
+    });
   },
 
   /**
@@ -643,18 +622,13 @@ export const useEndpointPageStore = create<EndpointType>((set, get) => ({
       }
     };
 
-    UpdateEndpointDetail(
-      connectionConfig,
+    updateEndpointDetail({
       endpointId,
       name,
       description,
-      {
-        authorization: token,
-        'x-project-id': projectId,
-        'x-auth-id': userId,
-      },
-      afterUpdateEndpointDetail,
-    );
+      auth: { projectId, token, userId },
+      callback: afterUpdateEndpointDetail,
+    });
   },
 
   /**
@@ -696,17 +670,12 @@ export const useEndpointPageStore = create<EndpointType>((set, get) => ({
       }
     };
 
-    GetEndpoint(
-      connectionConfig,
+    getEndpoint({
       endpointId,
       endpointProviderModelId,
-      {
-        authorization: token,
-        'x-project-id': projectId,
-        'x-auth-id': userId,
-      },
-      afterGetEndpoint,
-    );
+      auth: { projectId, token, userId },
+      callback: afterGetEndpoint,
+    });
   },
   /**
    * clear everything from the context
