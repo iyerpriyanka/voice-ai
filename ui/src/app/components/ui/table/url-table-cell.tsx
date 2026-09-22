@@ -1,4 +1,4 @@
-import type { FC, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { Link, TableCell } from '@carbon/react';
 
 import { CopyButton } from '@/app/components/ui/primitives/buttons/copy-button';
@@ -14,7 +14,7 @@ interface UrlTableCellProps {
   copyButtonClassName?: string;
 }
 
-export const UrlTableCell: FC<UrlTableCellProps> = ({
+export function UrlTableCell({
   url,
   copyText,
   prefix,
@@ -22,7 +22,7 @@ export const UrlTableCell: FC<UrlTableCellProps> = ({
   maxWidthClassName = 'max-w-[360px]',
   valueClassName,
   copyButtonClassName = 'h-6 w-6 shrink-0',
-}) => {
+}: UrlTableCellProps) {
   const valueToCopy = copyText || url;
 
   return (
@@ -44,4 +44,4 @@ export const UrlTableCell: FC<UrlTableCellProps> = ({
       </div>
     </TableCell>
   );
-};
+}

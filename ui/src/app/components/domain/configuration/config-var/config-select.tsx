@@ -1,5 +1,4 @@
-import type { FC } from 'react';
-import React from 'react';
+import { memo } from 'react';
 import { ReactSortable } from 'react-sortablejs';
 import { TextInput } from '@/app/components/ui/primitives';
 import { TertiaryButton } from '@/app/components/ui/primitives';
@@ -15,13 +14,13 @@ export type IConfigSelectProps = {
   onChange: (options: Options) => void;
 };
 
-const ConfigSelect: FC<IConfigSelectProps> = ({
+function ConfigSelect({
   placeholder,
   label = 'Add option',
   helperText,
   options,
   onChange,
-}) => {
+}: IConfigSelectProps) {
   const optionList = options.map((content, index) => ({
     id: index,
     name: content,
@@ -100,6 +99,6 @@ const ConfigSelect: FC<IConfigSelectProps> = ({
       )}
     </div>
   );
-};
+}
 
-export default React.memo(ConfigSelect);
+export default memo(ConfigSelect);

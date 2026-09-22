@@ -1,5 +1,5 @@
-import React from 'react';
 import { Tag, Tooltip } from '@carbon/react';
+import type { TYPES } from '@carbon/react/es/components/Tag/Tag';
 import {
   Phone,
   Code,
@@ -9,15 +9,18 @@ import {
   LogoReact,
   LogoPython,
 } from '@carbon/icons-react';
+import type { ReactNode } from 'react';
 
 interface SourceIndicatorProps {
   source: string;
   withLabel?: boolean;
 }
 
+type CarbonTagType = keyof typeof TYPES;
+
 const sourceConfig: Record<
   string,
-  { tagType: string; icon: React.ReactNode; label: string }
+  { tagType: CarbonTagType; icon: ReactNode; label: string }
 > = {
   'phone-call': { tagType: 'green', icon: <Phone size={16} />, label: 'Phone' },
   sdk: { tagType: 'warm-gray', icon: <Code size={16} />, label: 'SDK' },
@@ -82,19 +85,15 @@ const defaultConfig = {
   label: 'Unknown',
 };
 
-export const SourceIndicator: React.FC<SourceIndicatorProps> = ({
+export function SourceIndicator({
   source,
   withLabel = true,
-}) => {
+}: SourceIndicatorProps) {
   const config = sourceConfig[source] || defaultConfig;
   if (!withLabel) {
     return (
       <Tooltip label={config.label} align="bottom">
-        <Tag
-          size="md"
-          type={config.tagType as any}
-          className="flex items-center"
-        >
+        <Tag size="md" type={config.tagType} className="flex items-center">
           <span className="flex items-center justify-center leading-none [&>svg]:block">
             {config.icon}
           </span>
@@ -104,17 +103,13 @@ export const SourceIndicator: React.FC<SourceIndicatorProps> = ({
   }
 
   return (
-    <Tag
-      size="md"
-      type={config.tagType as any}
-      className="inline-flex items-center"
-    >
+    <Tag size="md" type={config.tagType} className="inline-flex items-center">
       <span className="flex items-center gap-1.5 leading-none [&>svg]:block">
         {config.icon}
         {config.label}
       </span>
     </Tag>
   );
-};
+}
 
 export default SourceIndicator;

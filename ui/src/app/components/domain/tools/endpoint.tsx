@@ -1,4 +1,3 @@
-import { FC } from 'react';
 import { Endpoint } from '@rapidaai/react';
 import { cn } from '@/utils';
 import { EndpointDropdown } from '@/app/components/domain/dropdowns/endpoint-dropdown';
@@ -25,13 +24,13 @@ const ENDPOINT_TYPE_OPTIONS = PARAMETER_TYPE_OPTIONS.filter(
 // Main Component
 // ============================================================================
 
-export const ConfigureEndpoint: FC<ConfigureToolProps> = ({
+export function ConfigureEndpoint({
   toolDefinition,
   onChangeToolDefinition,
   onParameterChange,
   parameters,
   inputClass,
-}) => {
+}: ConfigureToolProps) {
   const { getParamValue, updateParameter } = useParameterManager(
     parameters,
     onParameterChange,
@@ -68,4 +67,4 @@ export const ConfigureEndpoint: FC<ConfigureToolProps> = ({
       )}
     </>
   );
-};
+}

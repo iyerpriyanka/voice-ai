@@ -1,12 +1,10 @@
-import type { FC, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import {
   Breadcrumb as CarbonBreadcrumb,
   BreadcrumbItem as CarbonBreadcrumbItem,
   BreadcrumbSkeleton,
 } from '@carbon/react';
 import { cn } from '@/utils';
-
-// Types
 
 export interface BreadcrumbItemData {
   label: ReactNode;
@@ -22,15 +20,13 @@ export interface CarbonBreadcrumbProps {
   isLoading?: boolean;
 }
 
-// Breadcrumb
-
 /** Carbon Breadcrumb: renders items or a skeleton placeholder when loading. */
-export const Breadcrumb: FC<CarbonBreadcrumbProps> = ({
+export function Breadcrumb({
   items,
   className,
   noTrailingSlash = true,
   isLoading = false,
-}) => {
+}: CarbonBreadcrumbProps) {
   if (isLoading) {
     return <BreadcrumbSkeleton className={cn(className)} />;
   }
@@ -50,6 +46,6 @@ export const Breadcrumb: FC<CarbonBreadcrumbProps> = ({
       ))}
     </CarbonBreadcrumb>
   );
-};
+}
 
 export { CarbonBreadcrumbItem as BreadcrumbItem };

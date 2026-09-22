@@ -1,11 +1,11 @@
-import type { FC, HTMLAttributes } from 'react';
+import type { HTMLAttributes } from 'react';
 import { cn } from '@/utils';
 
-export const CenterBox: FC<HTMLAttributes<HTMLDivElement>> = ({
+export function CenterBox({
   children,
   className,
   ...attributes
-}) => {
+}: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       {...attributes}
@@ -23,4 +23,4 @@ export const CenterBox: FC<HTMLAttributes<HTMLDivElement>> = ({
       </main>
     </div>
   );
-};
+}

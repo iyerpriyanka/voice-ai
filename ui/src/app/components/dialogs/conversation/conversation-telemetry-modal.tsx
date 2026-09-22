@@ -83,6 +83,7 @@ const getTelemetryTime = (record: {
 export function ConversationTelemetryDialog(
   props: ConversationTelemetryDialogProps,
 ) {
+  const { assistantId, criterias, modalOpen, setModalOpen } = props;
   const { token, authId, projectId } = useCurrentCredential();
   const [chips, setChips] = useState<Chip[]>([]);
   const [rows, setRows] = useState<TelemetryRow[]>([]);
@@ -120,8 +121,9 @@ export function ConversationTelemetryDialog(
   const requestPageSize = shouldFetchAllRows ? 100 : pageSize;
 
   useEffect(() => {
+    if (!modalOpen) return;
     const normalized = splitStructuredTelemetryCriteria(
-      (props.criterias || []).map(criteria => ({
+      (criterias || []).map(criteria => ({
         key: criteria.getKey(),
         value: criteria.getValue(),
       })),
@@ -150,10 +152,10 @@ export function ConversationTelemetryDialog(
     setAppliedMetricScope('');
     setStructuredError('');
     setCriteriaReady(true);
-  }, [props.criterias]);
+  }, [criterias, modalOpen]);
 
   useEffect(() => {
-    if (!criteriaReady) return;
+    if (!modalOpen || !criteriaReady) return;
     let active = true;
     setIsLoading(true);
     setRows([]);
@@ -180,7 +182,7 @@ export function ConversationTelemetryDialog(
 
       const assistantCriteria = new Criteria();
       assistantCriteria.setKey('assistant_id');
-      assistantCriteria.setValue(props.assistantId);
+      assistantCriteria.setValue(assistantId);
       assistantCriteria.setLogic('match');
       request.setCriteriasList([assistantCriteria, ...criteriaList]);
       return request;
@@ -199,14 +201,14 @@ export function ConversationTelemetryDialog(
             kind: 'event',
             ts: getTelemetryTime(event),
             key: `e-${pageOffset + index}`,
-            record: event as any,
+            record: event,
           });
         } else if (metric) {
           merged.push({
             kind: 'metric',
             ts: getTelemetryTime(metric),
             key: `m-${pageOffset + index}`,
-            record: metric as any,
+            record: metric,
           });
         }
       });
@@ -270,7 +272,8 @@ export function ConversationTelemetryDialog(
     token,
     authId,
     projectId,
-    props.assistantId,
+    assistantId,
+    modalOpen,
     JSON.stringify(chips),
     appliedConversationId,
     appliedMessageId,
@@ -505,7 +508,7 @@ export function ConversationTelemetryDialog(
             : appliedMetricScope !== '') ||
           appliedConversationId !== '' ||
           appliedMessageId !== '') && (
-          <div className="flex flex-wrap gap-1.5 px-4 py-2 border-b border-gray-200 dark:border-gray-800">
+          <div className="flex flex-wrap gap-1.5 border-b border-border-subtle px-4 py-2">
             {appliedConversationId !== '' && (
               <DismissibleTag
                 type="teal"
@@ -578,7 +581,7 @@ export function ConversationTelemetryDialog(
           </div>
         )}
         {structuredError !== '' && (
-          <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-800 text-xs text-red-600 dark:text-red-400">
+          <div className="border-b border-border-subtle px-4 py-2 text-xs text-[var(--cds-text-error)]">
             {structuredError}
           </div>
         )}
@@ -589,7 +592,7 @@ export function ConversationTelemetryDialog(
               <Loading withOverlay={false} small />
             </div>
           ) : tabVisibleRows.length === 0 ? (
-            <div className="flex items-center justify-center py-16 text-gray-400 dark:text-gray-500 text-sm">
+            <div className="flex items-center justify-center py-16 text-sm text-muted">
               No {tabTitle.toLowerCase()} found
             </div>
           ) : (
@@ -609,7 +612,7 @@ export function ConversationTelemetryDialog(
                   return (
                     <React.Fragment key={row.key}>
                       <TableRow
-                        className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                        className="cursor-pointer hover:bg-layer-hover"
                         onClick={() => toggleRow(row.key)}
                       >
                         <TableCell className="!w-8 !px-2">
@@ -626,7 +629,7 @@ export function ConversationTelemetryDialog(
                             {typeLabel}
                           </Tag>
                         </TableCell>
-                        <TableCell className="!text-xs !text-gray-500 dark:!text-gray-400 truncate max-w-[300px]">
+                        <TableCell className="max-w-[300px] truncate !text-xs !text-muted">
                           {JSON.stringify(json)}
                         </TableCell>
                       </TableRow>
@@ -667,8 +670,8 @@ export function ConversationTelemetryDialog(
 
   return (
     <Modal
-      open={props.modalOpen}
-      onClose={() => props.setModalOpen(false)}
+      open={modalOpen}
+      onClose={() => setModalOpen(false)}
       size="lg"
       preventCloseOnClickOutside
       containerClassName="!h-[90vh] !w-[90vw] !max-h-[90vh] !max-w-[90vw]"
@@ -676,7 +679,7 @@ export function ConversationTelemetryDialog(
       <ModalHeader
         label="Observability"
         title="Telemetry Events"
-        onClose={() => props.setModalOpen(false)}
+        onClose={() => setModalOpen(false)}
       />
       <ModalBody className="!p-0 !overflow-hidden !flex !flex-col">
         <Tabs

@@ -6,3 +6,7 @@ export interface ProviderComponentProps {
   parameters: Metadata[];
   onChangeParameter: (parameters: Metadata[]) => void;
 }
+
+export type ProviderSelectionChange<T> = {
+  selectedItem?: T | null;
+};

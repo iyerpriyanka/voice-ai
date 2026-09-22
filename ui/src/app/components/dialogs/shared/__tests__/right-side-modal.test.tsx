@@ -129,10 +129,7 @@ describe('RightSideModal', () => {
       'bg-layer',
       'text-foreground',
     );
-    expect(screen.getByTestId('drawer')).toHaveAttribute(
-      'aria-modal',
-      'true',
-    );
+    expect(screen.getByTestId('drawer')).toHaveAttribute('aria-modal', 'true');
 
     const closeButton = screen.getByRole('button', { name: 'Close' });
     expect(closeButton).toHaveAttribute(

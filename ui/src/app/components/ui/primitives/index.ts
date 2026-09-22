@@ -25,10 +25,6 @@ export * from './input-checkbox';
 export * from './input-group';
 export * from './input-helper';
 export * from './label';
-export {
-  Dropdown as ListboxDropdown,
-  type DropdownProps as ListboxDropdownProps,
-} from './listbox-dropdown';
 export * from './modal';
 export * from './overflow-menu';
 export * from './pagination';

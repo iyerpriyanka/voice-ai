@@ -1,6 +1,7 @@
 export * from './column-preference-modal';
 export * from './confirm-delete';
 export { default as ConfirmDialog } from './confirm-ui';
+export * from './create-tag-modal';
 export * from './deployment-modal-primitives';
 export * from './disconnect-details-modal';
 export * from './how-it-works-modal';

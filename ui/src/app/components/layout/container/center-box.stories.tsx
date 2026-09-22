@@ -8,8 +8,7 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component:
-          'Centered page container for auth and narrow-form surfaces.',
+        component: 'Centered page container for auth and narrow-form surfaces.',
       },
     },
   },

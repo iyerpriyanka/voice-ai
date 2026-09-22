@@ -17,7 +17,7 @@ Current groups:
 - `pills`: compact domain labels.
 - `prompt-editor`: prompt editor logic and suggestions.
 - `providers`: provider-specific configuration panels.
-- `tags`: domain tag definitions.
+- `tags`: duplicate-free domain tag catalogs for selectors.
 - `tools`: assistant tool configuration components.
 
 Add a folder when a component belongs to a new product concept and is reused

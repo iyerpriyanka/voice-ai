@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { useEffect } from 'react';
 import ReactGA from 'react-ga4';
 import { useLocation } from 'react-router-dom';
 import { getRuntimeEnv } from '@/configs/runtime-env';
@@ -37,11 +37,7 @@ const initializeGoogleAnalytics = (measurementId: string) => {
   initializedMeasurementIds.add(measurementId);
 };
 
-export const GA: FC<GoogleAnalyticsProps> = ({
-  env,
-  hostname,
-  measurementId,
-}) => {
+export function GA({ env, hostname, measurementId }: GoogleAnalyticsProps) {
   const location = useLocation();
 
   useEffect(() => {
@@ -61,4 +57,4 @@ export const GA: FC<GoogleAnalyticsProps> = ({
   }, [env, hostname, location, measurementId]);
 
   return null;
-};
+}

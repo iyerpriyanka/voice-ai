@@ -1,13 +1,13 @@
 import {
-  AssistantApiDeployment,
-  DeploymentAudioProvider,
+  type AssistantApiDeployment,
+  type DeploymentAudioProvider,
 } from '@rapidaai/react';
-import { ModalProps } from '@/app/components/ui/primitives';
+import type { ModalProps } from '@/app/components/ui/primitives';
 import { RightSideModal } from '@/app/components/dialogs/shared';
 import { CopyButton } from '@/app/components/ui/primitives';
 import { YellowNoticeBlock } from '@/app/components/layout/container/message/notice-block';
 import { ProviderPill } from '@/app/components/domain/pills/provider-model-pill';
-import { FC, useState } from 'react';
+import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
   DeploymentRow,
@@ -37,9 +37,9 @@ export function AssistantApiDeploymentDialog(
           selectedIndex={selectedTab}
           onChange={setSelectedTab}
           contained
+          fill
           aria-label="SDK/API deployment tabs"
-          className="!h-full !min-h-0 !flex !flex-col [&_.cds--tabs__nav]:border-b [&_.cds--tabs__nav]:border-gray-200 dark:[&_.cds--tabs__nav]:border-gray-800 [&_.cds--tab-content]:!h-full [&_.cds--tab-content]:!min-h-0 [&_.cds--tab-content]:!p-0"
-          panelClassName="!h-full !min-h-0 !overflow-auto !p-0"
+          panelClassName="overflow-auto p-0"
         >
           <div className="divide-y divide-gray-200 dark:divide-gray-800 w-full">
             <VoiceInput deployment={props.deployment?.getInputaudio()} />
@@ -58,72 +58,76 @@ export function AssistantApiDeploymentDialog(
 const Row = DeploymentRow;
 const SectionHeader = DeploymentSectionHeader;
 
-const VoiceInput: FC<{ deployment?: DeploymentAudioProvider }> = ({
-  deployment,
-}) => (
-  <>
-    <SectionHeader label="Speech to text" />
-    {deployment?.getAudiooptionsList() ? (
-      deployment?.getAudiooptionsList().length > 0 && (
-        <>
-          <Row label="Provider">
-            <ProviderPill provider={deployment?.getAudioprovider()} />
-          </Row>
-          {deployment
-            ?.getAudiooptionsList()
-            .filter(d => d.getValue())
-            .filter(d => d.getKey().startsWith('listen.'))
-            .map((detail, index) => (
-              <Row key={index} label={detail.getKey()}>
-                <span className="text-sm font-mono text-gray-900 dark:text-gray-100 truncate max-w-[200px] text-right">
-                  {detail.getValue()}
-                </span>
-                <CopyButton className="h-6 w-6 shrink-0">
-                  {detail.getValue()}
-                </CopyButton>
-              </Row>
-            ))}
-        </>
-      )
-    ) : (
-      <div className="px-4 py-3">
-        <YellowNoticeBlock>Voice input is not enabled</YellowNoticeBlock>
-      </div>
-    )}
-  </>
-);
+interface DeploymentAudioProps {
+  deployment?: DeploymentAudioProvider;
+}
 
-const VoiceOutput: FC<{ deployment?: DeploymentAudioProvider }> = ({
-  deployment,
-}) => (
-  <>
-    <SectionHeader label="Text to speech" />
-    {deployment?.getAudiooptionsList() ? (
-      deployment?.getAudiooptionsList().length > 0 && (
-        <>
-          <Row label="Provider">
-            <ProviderPill provider={deployment?.getAudioprovider()} />
-          </Row>
-          {deployment
-            ?.getAudiooptionsList()
-            .filter(d => d.getValue())
-            .filter(d => d.getKey().startsWith('speak.'))
-            .map((detail, index) => (
-              <Row key={index} label={detail.getKey()}>
-                <span className="text-sm font-mono text-gray-900 dark:text-gray-100 truncate max-w-[200px] text-right">
-                  {detail.getValue()}
-                </span>
-                <CopyButton className="h-6 w-6 shrink-0">
-                  {detail.getValue()}
-                </CopyButton>
-              </Row>
-            ))}
-        </>
-      )
-    ) : (
-      <div className="px-4 py-3">
-        <YellowNoticeBlock>Voice output is not enabled</YellowNoticeBlock>
-      </div>
-    )}
-  </>
-);
+function VoiceInput({ deployment }: DeploymentAudioProps) {
+  return (
+    <>
+      <SectionHeader label="Speech to text" />
+      {deployment?.getAudiooptionsList() ? (
+        deployment?.getAudiooptionsList().length > 0 && (
+          <>
+            <Row label="Provider">
+              <ProviderPill provider={deployment?.getAudioprovider()} />
+            </Row>
+            {deployment
+              ?.getAudiooptionsList()
+              .filter(detail => detail.getValue())
+              .filter(detail => detail.getKey().startsWith('listen.'))
+              .map((detail, index) => (
+                <Row key={index} label={detail.getKey()}>
+                  <span className="text-sm font-mono text-gray-900 dark:text-gray-100 truncate max-w-[200px] text-right">
+                    {detail.getValue()}
+                  </span>
+                  <CopyButton className="h-6 w-6 shrink-0">
+                    {detail.getValue()}
+                  </CopyButton>
+                </Row>
+              ))}
+          </>
+        )
+      ) : (
+        <div className="px-4 py-3">
+          <YellowNoticeBlock>Voice input is not enabled</YellowNoticeBlock>
+        </div>
+      )}
+    </>
+  );
+}
+
+function VoiceOutput({ deployment }: DeploymentAudioProps) {
+  return (
+    <>
+      <SectionHeader label="Text to speech" />
+      {deployment?.getAudiooptionsList() ? (
+        deployment?.getAudiooptionsList().length > 0 && (
+          <>
+            <Row label="Provider">
+              <ProviderPill provider={deployment?.getAudioprovider()} />
+            </Row>
+            {deployment
+              ?.getAudiooptionsList()
+              .filter(detail => detail.getValue())
+              .filter(detail => detail.getKey().startsWith('speak.'))
+              .map((detail, index) => (
+                <Row key={index} label={detail.getKey()}>
+                  <span className="text-sm font-mono text-gray-900 dark:text-gray-100 truncate max-w-[200px] text-right">
+                    {detail.getValue()}
+                  </span>
+                  <CopyButton className="h-6 w-6 shrink-0">
+                    {detail.getValue()}
+                  </CopyButton>
+                </Row>
+              ))}
+          </>
+        )
+      ) : (
+        <div className="px-4 py-3">
+          <YellowNoticeBlock>Voice output is not enabled</YellowNoticeBlock>
+        </div>
+      )}
+    </>
+  );
+}

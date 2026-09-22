@@ -1,11 +1,11 @@
-import { FC, HTMLAttributes } from 'react';
+import type { HTMLAttributes } from 'react';
 import {
   BaseCard,
   CardDescription,
   CardTitle,
 } from '@/app/components/ui/primitives';
 import { cn } from '@/utils';
-import { AssistantTool } from '@rapidaai/react';
+import type { AssistantTool } from '@rapidaai/react';
 import { BUILDIN_TOOLS } from '@/llm-tools';
 import { Tag, ButtonSet } from '@carbon/react';
 import {
@@ -17,9 +17,20 @@ import {
   DangerGhostButton,
 } from '@/app/components/ui/primitives';
 import { Edit, TrashCan } from '@carbon/icons-react';
+import type { Metadata } from '@rapidaai/react';
+
+type PlainToolCardData = {
+  name?: string;
+  description?: string;
+  buildinToolConfig?: {
+    parameters?: Metadata[] | null;
+  };
+};
+
+type ToolCardData = AssistantTool | PlainToolCardData;
 
 interface ToolCardProps extends HTMLAttributes<HTMLDivElement> {
-  tool: AssistantTool;
+  tool: ToolCardData;
   onEdit?: () => void;
   onDelete?: () => void;
   iconClass?: string;
@@ -27,31 +38,32 @@ interface ToolCardProps extends HTMLAttributes<HTMLDivElement> {
   isConnected?: boolean;
 }
 
-export const SelectToolCard: FC<ToolCardProps> = ({
+const hasAssistantToolMethods = (tool: ToolCardData): tool is AssistantTool =>
+  typeof (tool as AssistantTool).getExecutionmethod === 'function';
+
+export function SelectToolCard({
   tool,
   onEdit,
   onDelete,
   className,
-}) => {
-  const hasProtobufMethods = typeof tool.getExecutionmethod === 'function';
+}: ToolCardProps) {
+  const hasProtobufMethods = hasAssistantToolMethods(tool);
   const executionMethod = hasProtobufMethods ? tool.getExecutionmethod() : '';
   const isMCP = executionMethod === 'mcp';
 
-  const toolName = hasProtobufMethods ? tool.getName?.() : (tool as any).name;
+  const toolName = hasProtobufMethods ? tool.getName?.() : tool.name;
   const toolDescription = hasProtobufMethods
     ? tool.getDescription?.()
-    : (tool as any).description;
+    : tool.description;
   const conditionSource = hasProtobufMethods
     ? getToolConditionSource(tool.getExecutionoptionsList?.())
-    : getToolConditionSource((tool as any).buildinToolConfig?.parameters || []);
+    : getToolConditionSource(tool.buildinToolConfig?.parameters || []);
 
   const toolMeta = BUILDIN_TOOLS.find(x => x.code === executionMethod);
 
   return (
     <BaseCard className={cn('flex flex-col', className)}>
-      {/* Body */}
       <div className="p-4 flex-1 flex flex-col gap-3">
-        {/* Header row: icon + tags */}
         <header className="flex items-start justify-between">
           <div className="w-9 h-9 flex items-center justify-center bg-gray-100 dark:bg-gray-800/60 shrink-0">
             {toolMeta?.icon ? (
@@ -90,7 +102,6 @@ export const SelectToolCard: FC<ToolCardProps> = ({
           </div>
         </header>
 
-        {/* Name + description */}
         <div className="flex-1 flex flex-col gap-1 min-w-0">
           <CardTitle className="line-clamp-1 text-sm font-semibold">
             {toolName}
@@ -101,7 +112,6 @@ export const SelectToolCard: FC<ToolCardProps> = ({
         </div>
       </div>
 
-      {/* Footer: action buttons */}
       <ButtonSet className="border-t border-gray-200 dark:border-gray-800 [&>button]:!flex-1 [&>button]:!max-w-none">
         {onDelete && (
           <DangerGhostButton size="md" renderIcon={TrashCan} onClick={onDelete}>
@@ -116,4 +126,4 @@ export const SelectToolCard: FC<ToolCardProps> = ({
       </ButtonSet>
     </BaseCard>
   );
-};
+}

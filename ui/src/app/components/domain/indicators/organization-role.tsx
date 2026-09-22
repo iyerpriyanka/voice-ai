@@ -1,9 +1,27 @@
-import React from 'react';
 import { Tag } from '@carbon/react';
+import type { TYPES } from '@carbon/react/es/components/Tag/Tag';
 import { UserAdmin, UserMultiple, UserRole } from '@carbon/icons-react';
+import type { ElementType } from 'react';
 
-export const OrganizationRoleIndicator = ({ role, size = 'medium' }) => {
-  const roleConfig = {
+type IndicatorSize = 'small' | 'medium' | 'large';
+type CarbonTagType = keyof typeof TYPES;
+
+interface OrganizationRoleIndicatorProps {
+  role?: string;
+  size?: IndicatorSize;
+}
+
+type RoleConfig = {
+  type: CarbonTagType;
+  display: string;
+  Icon: ElementType;
+};
+
+export const OrganizationRoleIndicator = ({
+  role,
+  size = 'medium',
+}: OrganizationRoleIndicatorProps) => {
+  const roleConfig: Record<string, RoleConfig> = {
     owner: {
       type: 'red',
       display: 'Owner',
@@ -41,21 +59,19 @@ export const OrganizationRoleIndicator = ({ role, size = 'medium' }) => {
     },
   };
   const config = role
-    ? roleConfig[role] || roleConfig['DEFAULT']
-    : roleConfig['DEFAULT'];
+    ? roleConfig[role] || roleConfig.DEFAULT
+    : roleConfig.DEFAULT;
   const Icon = config.Icon;
 
-  const sizeClasses = {
+  const sizeClasses: Record<IndicatorSize, 'sm' | 'md'> = {
     small: 'sm',
     medium: 'md',
     large: 'md',
   };
 
-  const sizeClass = sizeClasses[size] || sizeClasses.medium;
-
   return (
     <Tag
-      size={sizeClass}
+      size={sizeClasses[size]}
       type={config.type}
       renderIcon={Icon}
       className="!whitespace-nowrap"

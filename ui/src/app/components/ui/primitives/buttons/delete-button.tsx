@@ -1,6 +1,6 @@
 import { IconOnlyButton } from '@/app/components/ui/primitives/button';
 import { TrashCan } from '@carbon/icons-react';
-import type { FC, MouseEventHandler } from 'react';
+import type { MouseEventHandler } from 'react';
 
 interface DeleteButtonProps {
   onClick?: MouseEventHandler<HTMLButtonElement>;
@@ -8,11 +8,11 @@ interface DeleteButtonProps {
   disabled?: boolean;
 }
 
-export const DeleteButton: FC<DeleteButtonProps> = ({
+export function DeleteButton({
   onClick,
   className,
   disabled,
-}) => {
+}: DeleteButtonProps) {
   return (
     <IconOnlyButton
       kind="ghost"
@@ -24,4 +24,4 @@ export const DeleteButton: FC<DeleteButtonProps> = ({
       className={className}
     />
   );
-};
+}

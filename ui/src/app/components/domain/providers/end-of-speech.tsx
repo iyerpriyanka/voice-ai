@@ -1,12 +1,23 @@
-import { ProviderComponentProps } from '@/app/components/domain/providers/provider-component-props';
 import { EndOfSpeech } from '@/providers';
 import { EndOfSpeechConfigComponent } from '@/app/components/domain/providers/end-of-speech/provider';
 import { useMemo } from 'react';
 import { Dropdown } from '@carbon/react';
 import { Stack } from '@/app/components/ui/primitives';
+import type {
+  ProviderComponentProps,
+  ProviderSelectionChange,
+} from '@/app/components/domain/providers/provider-component-props';
+import type { RapidaProvider } from '@/providers';
 
-export const EndOfSpeechProvider: React.FC<ProviderComponentProps> = props => {
-  const { provider, onChangeProvider } = props;
+const getProviderName = (item: RapidaProvider | null): string =>
+  item?.name ?? '';
+
+export function EndOfSpeechProvider({
+  provider,
+  parameters,
+  onChangeProvider,
+  onChangeParameter,
+}: ProviderComponentProps) {
   const providers = useMemo(() => EndOfSpeech(), []);
   const selectedProvider = providers.find(x => x.code === provider) || null;
 
@@ -18,12 +29,21 @@ export const EndOfSpeechProvider: React.FC<ProviderComponentProps> = props => {
         label="Select end of speech provider"
         items={providers}
         selectedItem={selectedProvider}
-        itemToString={(item: any) => item?.name || ''}
-        onChange={({ selectedItem }: any) => {
+        itemToString={getProviderName}
+        onChange={({
+          selectedItem,
+        }: ProviderSelectionChange<RapidaProvider>) => {
           if (selectedItem) onChangeProvider(selectedItem.code);
         }}
       />
-      {provider && <EndOfSpeechConfigComponent {...props} />}
+      {provider && (
+        <EndOfSpeechConfigComponent
+          provider={provider}
+          parameters={parameters}
+          onChangeProvider={onChangeProvider}
+          onChangeParameter={onChangeParameter}
+        />
+      )}
     </Stack>
   );
-};
+}

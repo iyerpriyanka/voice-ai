@@ -1,10 +1,11 @@
-import { Knowledge } from '@rapidaai/react';
+import type { Knowledge } from '@rapidaai/react';
 import { useCredential } from '@/hooks/use-credential';
 import { useKnowledgePageStore } from '@/hooks/use-knowledge-page-store';
-import { Renew, Launch } from '@carbon/icons-react';
-import { FC, useCallback, useEffect, useState } from 'react';
+import { Launch, Renew } from '@carbon/icons-react';
+import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast/headless';
 import { Dropdown, Button } from '@carbon/react';
+import { cn } from '@/utils';
 
 interface KnowledgeDropdownProps {
   className?: string;
@@ -12,13 +13,78 @@ interface KnowledgeDropdownProps {
   onChangeKnowledge?: (k: Knowledge) => void;
 }
 
-export const KnowledgeDropdown: FC<KnowledgeDropdownProps> = props => {
+interface KnowledgeDropdownViewProps extends KnowledgeDropdownProps {
+  isLoading?: boolean;
+  knowledgeBases: Knowledge[];
+  onCreateKnowledge: () => void;
+  onRefresh: () => void;
+}
+
+export function KnowledgeDropdownView({
+  className,
+  currentKnowledge,
+  isLoading = false,
+  knowledgeBases,
+  onChangeKnowledge,
+  onCreateKnowledge,
+  onRefresh,
+}: KnowledgeDropdownViewProps) {
+  const selectedItem =
+    knowledgeBases.find(knowledge => knowledge.getId() === currentKnowledge) ||
+    null;
+
+  return (
+    <div className={cn(className)}>
+      <div className="flex">
+        <div className="flex-1 [&_.cds--dropdown]:!rounded-none [&_.cds--list-box]:!rounded-none">
+          <Dropdown
+            id="knowledge-dropdown"
+            titleText="Knowledge"
+            label="Select knowledge"
+            items={knowledgeBases}
+            selectedItem={selectedItem}
+            disabled={isLoading}
+            itemToString={(item: Knowledge | null) =>
+              item ? `${item.getName()} [${item.getId()}]` : ''
+            }
+            onChange={({ selectedItem }) => {
+              if (selectedItem) {
+                onChangeKnowledge?.(selectedItem);
+              }
+            }}
+          />
+        </div>
+        <Button
+          hasIconOnly
+          renderIcon={Renew}
+          iconDescription="Refresh knowledge"
+          kind="ghost"
+          size="md"
+          disabled={isLoading}
+          onClick={onRefresh}
+          className="!rounded-none !border !border-l-0 !border-gray-200 dark:!border-gray-700"
+        />
+        <Button
+          hasIconOnly
+          renderIcon={Launch}
+          iconDescription="Create knowledge"
+          kind="ghost"
+          size="md"
+          onClick={onCreateKnowledge}
+          className="!rounded-none !border !border-l-0 !border-gray-200 dark:!border-gray-700"
+        />
+      </div>
+    </div>
+  );
+}
+
+export function KnowledgeDropdown(props: KnowledgeDropdownProps) {
   const [userId, token, projectId] = useCredential();
   const knowledgeActions = useKnowledgePageStore();
-  const [, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const showLoader = () => setLoading(true);
-  const hideLoader = () => setLoading(false);
+  const showLoader = () => setIsLoading(true);
+  const hideLoader = () => setIsLoading(false);
 
   const onError = useCallback((err: string) => {
     hideLoader();
@@ -53,52 +119,17 @@ export const KnowledgeDropdown: FC<KnowledgeDropdownProps> = props => {
     props.currentKnowledge,
   ]);
 
-  const selectedItem =
-    knowledgeActions.knowledgeBases.find(
-      x => x.getId() === props.currentKnowledge,
-    ) || null;
-
   return (
-    <div>
-      <p className="text-xs font-medium mb-1">Knowledge</p>
-      <div className="flex">
-        <div className="flex-1 [&_.cds--dropdown]:!rounded-none [&_.cds--list-box]:!rounded-none">
-          <Dropdown
-            id="knowledge-dropdown"
-            titleText=""
-            hideLabel
-            label="Select knowledge"
-            items={knowledgeActions.knowledgeBases}
-            selectedItem={selectedItem}
-            itemToString={(item: Knowledge | null) =>
-              item ? `${item.getName()} [${item.getId()}]` : ''
-            }
-            onChange={({ selectedItem }: any) => {
-              if (selectedItem && props.onChangeKnowledge) {
-                props.onChangeKnowledge(selectedItem);
-              }
-            }}
-          />
-        </div>
-        <Button
-          hasIconOnly
-          renderIcon={Renew}
-          iconDescription="Refresh"
-          kind="ghost"
-          size="md"
-          onClick={() => getKnowledges(projectId, token, userId)}
-          className="!rounded-none !border !border-l-0 !border-gray-200 dark:!border-gray-700"
-        />
-        <Button
-          hasIconOnly
-          renderIcon={Launch}
-          iconDescription="Create knowledge"
-          kind="ghost"
-          size="md"
-          onClick={() => window.open('/knowledge/create-knowledge', '_blank')}
-          className="!rounded-none !border !border-l-0 !border-gray-200 dark:!border-gray-700"
-        />
-      </div>
-    </div>
+    <KnowledgeDropdownView
+      className={props.className}
+      currentKnowledge={props.currentKnowledge}
+      isLoading={isLoading}
+      knowledgeBases={knowledgeActions.knowledgeBases}
+      onChangeKnowledge={props.onChangeKnowledge}
+      onRefresh={() => getKnowledges(projectId, token, userId)}
+      onCreateKnowledge={() =>
+        window.open('/knowledge/create-knowledge', '_blank')
+      }
+    />
   );
-};
+}

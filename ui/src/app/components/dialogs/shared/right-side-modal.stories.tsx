@@ -29,7 +29,7 @@ export const Drawer: Story = {
     setModalOpen: () => undefined,
     children: null,
   },
-  render: () => {
+  render: function Render() {
     const [modalOpen, setModalOpen] = useState(true);
 
     return (

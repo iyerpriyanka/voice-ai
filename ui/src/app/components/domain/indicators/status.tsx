@@ -10,55 +10,57 @@ import {
   InProgress,
   CheckmarkFilled,
 } from '@carbon/icons-react';
+import { Tag } from '@carbon/react';
+import type { TYPES } from '@carbon/react/es/components/Tag/Tag';
+import type { ElementType } from 'react';
 
-export const StatusIndicator = ({ state, size = 'medium' }) => {
-  const complete = {
-    bgColor: 'bg-purple-100 dark:bg-purple-900/30',
-    textColor: 'text-purple-700 dark:text-purple-500',
-    iconColor: 'text-purple-500 dark:text-purple-400',
-    ringColor: 'ring-purple-200 dark:ring-purple-700',
+type IndicatorSize = 'small' | 'medium' | 'large';
+type CarbonTagType = keyof typeof TYPES;
+
+interface StatusIndicatorProps {
+  state: string;
+  size?: IndicatorSize;
+}
+
+type StatusConfig = {
+  type: CarbonTagType;
+  Icon: ElementType;
+  display: string;
+};
+
+export const StatusIndicator = ({
+  state,
+  size = 'medium',
+}: StatusIndicatorProps) => {
+  const complete: StatusConfig = {
+    type: 'purple',
     Icon: CheckmarkFilled,
     display: 'Complete',
   };
-  const statusConfig = {
+  const statusConfig: Record<string, StatusConfig> = {
     INVITED: {
-      bgColor: 'bg-yellow-100 dark:bg-yellow-900/30',
-      textColor: 'text-yellow-700 dark:text-yellow-500',
-      iconColor: 'text-yellow-500 dark:text-yellow-400',
-      ringColor: 'ring-yellow-200 dark:ring-yellow-700',
+      type: 'cyan',
       Icon: Email,
       display: 'Invited',
     },
     WAITLIST: {
-      bgColor: 'bg-orange-100 dark:bg-orange-900/30',
-      textColor: 'text-orange-700 dark:text-orange-500',
-      iconColor: 'text-orange-500 dark:text-orange-400',
-      ringColor: 'ring-orange-200 dark:ring-orange-700',
+      type: 'warm-gray',
       Icon: Time,
       display: 'Waitlist',
     },
 
     ACTIVE: {
-      bgColor: 'bg-green-100 dark:bg-green-900/30',
-      textColor: 'text-green-700 dark:text-green-500',
-      iconColor: 'text-green-500 dark:text-green-400',
-      ringColor: 'ring-green-200 dark:ring-green-700',
+      type: 'green',
       Icon: Activity,
       display: 'Active',
     },
     IN_PROGRESS: {
-      bgColor: 'bg-blue-100 dark:bg-blue-900/30',
-      textColor: 'text-blue-700 dark:text-blue-500',
-      iconColor: 'text-blue-500 dark:text-blue-400 animate-spin3s',
-      ringColor: 'ring-blue-200 dark:ring-blue-700',
+      type: 'blue',
       Icon: InProgress,
       display: 'In progress',
     },
     SUCCESS: {
-      bgColor: 'bg-emerald-100 dark:bg-emerald-900/30',
-      textColor: 'text-emerald-700 dark:text-emerald-500',
-      iconColor: 'text-emerald-500 dark:text-emerald-400',
-      ringColor: 'ring-emerald-200/10 dark:ring-emerald-700/10',
+      type: 'green',
       Icon: CheckmarkFilled,
       display: 'Success',
     },
@@ -66,73 +68,48 @@ export const StatusIndicator = ({ state, size = 'medium' }) => {
     COMPLETED: complete,
     'STREAM-STOPPED': complete,
     INACTIVE: {
-      bgColor: 'bg-gray-100 dark:bg-gray-800/50',
-      textColor: 'text-gray-700 dark:text-gray-500',
-      iconColor: 'dark:text-gray-400',
-      ringColor: 'ring-gray-200 dark:ring-gray-700',
+      type: 'gray',
       Icon: SubtractAlt,
       display: 'Inactive',
     },
     ARCHIEVE: {
-      bgColor: 'bg-amber-100 dark:bg-amber-900/30',
-      textColor: 'text-amber-700 dark:text-amber-500',
-      iconColor: 'text-amber-500 dark:text-amber-400',
-      ringColor: 'ring-amber-200 dark:ring-amber-700',
+      type: 'warm-gray',
       Icon: Archive,
       display: 'Archive',
     },
     QUEUED: {
-      bgColor: 'bg-indigo-100 dark:bg-indigo-900/30',
-      textColor: 'text-indigo-700 dark:text-indigo-500',
-      iconColor: 'text-indigo-500 dark:text-indigo-400',
-      ringColor: 'ring-indigo-200 dark:ring-indigo-700',
+      type: 'cyan',
       Icon: Pending,
       display: 'Queued',
     },
     CONNECTED: {
-      bgColor: 'bg-teal-100 dark:bg-teal-900/30',
-      textColor: 'text-teal-700 dark:text-teal-500',
-      iconColor: 'text-teal-500 dark:text-teal-400',
-      ringColor: 'ring-teal-200 dark:ring-teal-700',
+      type: 'teal',
       Icon: ConnectionSignal,
       display: 'Connected',
     },
     FAILED: {
-      bgColor: 'bg-red-100 dark:bg-red-900/30',
-      textColor: 'text-red-700 dark:text-red-500',
-      iconColor: 'text-red-500 dark:text-red-400',
-      ringColor: 'ring-red-200 dark:ring-red-700',
+      type: 'red',
       Icon: Close,
       display: 'Failed',
     },
   };
 
-  const config = statusConfig[state.toUpperCase()] || statusConfig['INACTIVE'];
-  const { Icon } = config;
+  const config = statusConfig[state.toUpperCase()] || statusConfig.INACTIVE;
 
-  const sizeClasses = {
-    small: {
-      container: 'text-xs px-2 py-0.5 gap-1',
-      icon: 12,
-    },
-    medium: {
-      container: 'text-sm px-2.5 py-1 gap-1.5',
-      icon: 16,
-    },
-    large: {
-      container: 'text-base px-3 py-1.5 gap-2',
-      icon: 18,
-    },
+  const sizeClasses: Record<IndicatorSize, 'sm' | 'md'> = {
+    small: 'sm',
+    medium: 'md',
+    large: 'md',
   };
 
-  const sizeClass = sizeClasses[size] || sizeClasses.medium;
-
   return (
-    <span
-      className={`shrink-0 inline-flex items-center ${config.bgColor} ${config.textColor} font-medium ${sizeClass.container} ring-none ring-inset ${config.ringColor}`}
+    <Tag
+      size={sizeClasses[size]}
+      type={config.type}
+      renderIcon={config.Icon}
+      className="!whitespace-nowrap"
     >
-      <Icon className={`${config.iconColor}`} size={sizeClass.icon} />
       {config.display}
-    </span>
+    </Tag>
   );
 };

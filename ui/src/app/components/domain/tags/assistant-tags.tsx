@@ -17,6 +17,4 @@ export const AssistantTag = [
   'sql',
   'summarization',
   'tagging',
-  'classification',
-  'evaluation',
 ];

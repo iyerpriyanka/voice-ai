@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import type { FC, MouseEvent, ReactNode } from 'react';
+import type { MouseEvent, ReactNode } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   ComposedModal,
@@ -112,7 +112,7 @@ GenericModal.defaultProps = {
   whenLeaveEnd: 'opacity-0 trangray-y-4',
 };
 
-export const Modal: FC<CarbonModalProps> = ({
+export function Modal({
   open,
   onClose,
   className,
@@ -123,7 +123,7 @@ export const Modal: FC<CarbonModalProps> = ({
   selectorPrimaryFocus,
   children,
   ...rest
-}) => {
+}: CarbonModalProps) {
   return (
     <ComposedModal
       open={open}
@@ -139,15 +139,15 @@ export const Modal: FC<CarbonModalProps> = ({
       {children}
     </ComposedModal>
   );
-};
+}
 
-export const ModalHeader: FC<CarbonModalHeaderProps> = ({
+export function ModalHeader({
   className,
   title,
   label,
   children,
   onClose,
-}) => {
+}: CarbonModalHeaderProps) {
   return (
     <CarbonModalHeader
       className={cn(className)}
@@ -158,14 +158,14 @@ export const ModalHeader: FC<CarbonModalHeaderProps> = ({
       {children}
     </CarbonModalHeader>
   );
-};
+}
 
-export const ModalBody: FC<CarbonModalBodyProps> = ({
+export function ModalBody({
   className,
   children,
   hasForm = false,
   hasScrollingContent = false,
-}) => {
+}: CarbonModalBodyProps) {
   return (
     <CarbonModalBody
       className={cn(className)}
@@ -175,16 +175,16 @@ export const ModalBody: FC<CarbonModalBodyProps> = ({
       {children}
     </CarbonModalBody>
   );
-};
+}
 
-export const ModalFooter: FC<CarbonModalFooterProps> = ({
+export function ModalFooter({
   className,
   children,
   danger = false,
-}) => {
+}: CarbonModalFooterProps) {
   return (
     <CarbonModalFooter className={cn(className)} danger={danger}>
       {children}
     </CarbonModalFooter>
   );
-};
+}

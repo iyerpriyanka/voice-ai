@@ -1,18 +1,18 @@
-import { VaultCredential } from '@rapidaai/react';
-import { Renew, Add, Information } from '@carbon/icons-react';
-import { FC, useEffect, useState } from 'react';
+import type { VaultCredential } from '@rapidaai/react';
+import { Add, Information, Renew } from '@carbon/icons-react';
+import { useMemo, useState } from 'react';
 import { CreateProviderCredentialDialog } from '@/app/components/dialogs/provider';
 import { useAllProviderCredentials } from '@/hooks/use-model';
 import { useProviderContext } from '@/context/provider-context';
 import { allProvider } from '@/providers';
 import {
   Button,
+  Dropdown,
   Toggletip,
   ToggletipButton,
   ToggletipContent,
 } from '@carbon/react';
-import { Dropdown } from '@/app/components/ui/primitives';
-import { FormLabel } from '@/app/components/ui/primitives';
+import { cn } from '@/utils';
 
 interface CredentialDropdownProps {
   className?: string;
@@ -21,90 +21,138 @@ interface CredentialDropdownProps {
   onChangeCredential: (credential: VaultCredential) => void;
 }
 
-export const CredentialDropdown: FC<CredentialDropdownProps> = props => {
+interface CredentialDropdownViewProps extends CredentialDropdownProps {
+  credentials: VaultCredential[];
+  getProviderName: (provider: string) => string | undefined;
+  onCreateCredential: () => void;
+  onReloadCredentials: () => void;
+}
+
+export function CredentialDropdownView({
+  className,
+  credentials,
+  currentCredential,
+  getProviderName,
+  onChangeCredential,
+  onCreateCredential,
+  onReloadCredentials,
+}: CredentialDropdownViewProps) {
+  const selectedItem =
+    credentials.find(credential => credential.getId() === currentCredential) ||
+    null;
+
+  const formatCredential = (credential: VaultCredential | null) => {
+    if (!credential) {
+      return '';
+    }
+
+    const providerName = getProviderName(credential.getProvider());
+    return providerName
+      ? `${providerName} / ${credential.getName()}`
+      : credential.getName();
+  };
+
+  return (
+    <div className={cn(className)}>
+      <div className="flex items-end">
+        <div className="min-w-0 flex-1 [&_.cds--dropdown]:!rounded-none [&_.cds--list-box]:!rounded-none">
+          <Dropdown
+            id="credential-dropdown"
+            titleText={
+              <span className="inline-flex items-center gap-1">
+                Credential
+                <Toggletip align="right">
+                  <ToggletipButton label="Show credential information">
+                    <Information size={14} />
+                  </ToggletipButton>
+                  <ToggletipContent>
+                    Select the saved provider credential used for model access.
+                  </ToggletipContent>
+                </Toggletip>
+              </span>
+            }
+            label="Select credential"
+            items={credentials}
+            selectedItem={selectedItem}
+            itemToString={formatCredential}
+            onChange={({ selectedItem }) => {
+              if (selectedItem) {
+                onChangeCredential(selectedItem);
+              }
+            }}
+          />
+        </div>
+        <Button
+          hasIconOnly
+          renderIcon={Renew}
+          iconDescription="Refresh credentials"
+          kind="ghost"
+          size="md"
+          onClick={onReloadCredentials}
+          className="!rounded-none !border !border-l-0 !border-gray-200 dark:!border-gray-700"
+        />
+        <Button
+          hasIconOnly
+          renderIcon={Add}
+          iconDescription="Create credential"
+          kind="ghost"
+          size="md"
+          onClick={onCreateCredential}
+          className="!rounded-none !border !border-l-0 !border-gray-200 dark:!border-gray-700"
+        />
+      </div>
+    </div>
+  );
+}
+
+export function CredentialDropdown({
+  className,
+  provider,
+  currentCredential,
+  onChangeCredential,
+}: CredentialDropdownProps) {
   const { providerCredentials } = useAllProviderCredentials();
   const ctx = useProviderContext();
   const [createProviderModalOpen, setCreateProviderModalOpen] = useState(false);
-  const [currentProviderCredentials, setCurrentProviderCredentials] = useState<
-    Array<VaultCredential>
-  >([]);
 
-  useEffect(() => {
-    setCurrentProviderCredentials(
-      providerCredentials.filter(y => y.getProvider() === props.provider),
-    );
-  }, [providerCredentials, props.provider]);
+  const currentProviderCredentials = useMemo(
+    () =>
+      providerCredentials.filter(
+        credential => credential.getProvider() === provider,
+      ),
+    [provider, providerCredentials],
+  );
 
-  const selectedItem =
-    currentProviderCredentials.find(
-      x => x.getId() === props.currentCredential,
-    ) || null;
+  const providerNames = useMemo(
+    () =>
+      new Map(
+        allProvider().map(currentProvider => [
+          currentProvider.code,
+          currentProvider.name,
+        ]),
+      ),
+    [],
+  );
 
-  const getProviderInfo = (code: string) =>
-    allProvider().find(x => x.code === code);
+  const getProviderName = (code: string) => providerNames.get(code);
 
   return (
     <>
       <CreateProviderCredentialDialog
         modalOpen={createProviderModalOpen}
         setModalOpen={setCreateProviderModalOpen}
-        currentProvider={props.provider}
+        currentProvider={provider}
       />
-      <div>
-        <div className="flex items-end">
-          <div className="flex-1 min-w-0">
-            <Dropdown
-              id="credential-dropdown"
-              titleText={
-                <span className="inline-flex items-center gap-1">
-                  <FormLabel>Credential</FormLabel>
-                  <Toggletip align="right">
-                    <ToggletipButton label="Show information">
-                      <Information size={14} />
-                    </ToggletipButton>
-                    <ToggletipContent>
-                      Select the saved provider credential used for model
-                      access.
-                    </ToggletipContent>
-                  </Toggletip>
-                </span>
-              }
-              hideLabel={false}
-              label="Select credential"
-              items={currentProviderCredentials}
-              selectedItem={selectedItem}
-              itemToString={(item: VaultCredential | null) => {
-                if (!item) return '';
-                const provider = getProviderInfo(item.getProvider());
-                return provider
-                  ? `${provider.name} / ${item.getName()}`
-                  : item.getName();
-              }}
-              onChange={({ selectedItem }: any) => {
-                if (selectedItem) props.onChangeCredential(selectedItem);
-              }}
-            />
-          </div>
-          <Button
-            hasIconOnly
-            renderIcon={Renew}
-            iconDescription="Refresh credentials"
-            kind="ghost"
-            size="md"
-            onClick={() => ctx.reloadProviderCredentials()}
-            className="!rounded-none !border !border-l-0 !border-gray-200 dark:!border-gray-700"
-          />
-          <Button
-            hasIconOnly
-            renderIcon={Add}
-            iconDescription="Create credential"
-            kind="ghost"
-            size="md"
-            onClick={() => setCreateProviderModalOpen(true)}
-            className="!rounded-none !border !border-l-0 !border-gray-200 dark:!border-gray-700"
-          />
-        </div>
-      </div>
+      <CredentialDropdownView
+        className={className}
+        provider={provider}
+        currentCredential={currentCredential}
+        credentials={currentProviderCredentials}
+        getProviderName={getProviderName}
+        onChangeCredential={onChangeCredential}
+        onReloadCredentials={ctx.reloadProviderCredentials}
+        onCreateCredential={() => setCreateProviderModalOpen(true)}
+      />
     </>
   );
-};
+}

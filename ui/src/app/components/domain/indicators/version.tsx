@@ -8,7 +8,7 @@ export function VersionIndicator({ id }: { id: string }) {
 
   const copyItem = () => {
     setCopied(true);
-    navigator.clipboard.writeText(version);
+    void navigator.clipboard.writeText(version);
     setTimeout(() => setCopied(false), 2000);
   };
 

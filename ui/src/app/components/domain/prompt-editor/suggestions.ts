@@ -7,7 +7,6 @@ export type PromptVariableSuggestion = {
   insertText: string;
 };
 
-// Detect unfinished template variables like "{{" or "{{assistant."
 const TEMPLATE_TRIGGER_REGEX = /\{\{\s*([a-zA-Z0-9_.]*)$/;
 
 export const extractPromptVariableQuery = (
@@ -24,9 +23,9 @@ export const getPromptVariableSuggestions = (
   const query = extractPromptVariableQuery(linePrefix);
   if (query === null) return [];
 
-  const normalizedQuery = query.toLowerCase();
+  const queryPrefix = query.toLowerCase();
   return RAPIDA_RESERVED_RUNTIME_VARIABLES.filter(item =>
-    item.key.toLowerCase().startsWith(normalizedQuery),
+    item.key.toLowerCase().startsWith(queryPrefix),
   ).map(item => ({
     key: item.key,
     label: item.variable,

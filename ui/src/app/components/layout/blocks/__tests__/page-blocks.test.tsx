@@ -28,7 +28,9 @@ describe('layout page blocks', () => {
     expect(screen.getByTestId('pagination-actions')).toHaveClass(
       'divide-border-subtle',
     );
-    expect(screen.getByRole('button', { name: 'Previous' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Previous' }),
+    ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Next' })).toBeInTheDocument();
 
     render(<SectionDivider className="mt-4" label="Provider" />);

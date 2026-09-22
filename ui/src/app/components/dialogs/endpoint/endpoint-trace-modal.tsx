@@ -1,7 +1,7 @@
-import React, { FC, useState } from 'react';
-import { EndpointLog } from '@rapidaai/react';
+import { useState } from 'react';
+import type { EndpointLog } from '@rapidaai/react';
 import { RightSideModal } from '@/app/components/dialogs/shared';
-import { ModalProps } from '@/app/components/ui/primitives';
+import type { ModalProps } from '@/app/components/ui/primitives';
 import { SourceIndicator } from '@/app/components/domain/indicators/source';
 import { EndpointArguments } from './endpoint-trace-arguments';
 import { EndpointMetadatas } from './endpoint-trace-metadatas';
@@ -17,11 +17,11 @@ interface EndpointTraceModalProps extends ModalProps {
   currentTrace: EndpointLog | null;
 }
 
-export const EndpointTraceModal: FC<EndpointTraceModalProps> = ({
+export function EndpointTraceModal({
   modalOpen,
   setModalOpen,
   currentTrace,
-}) => {
+}: EndpointTraceModalProps) {
   const [selectedTab, setSelectedTab] = useState(0);
   if (!currentTrace) return null;
 
@@ -39,9 +39,9 @@ export const EndpointTraceModal: FC<EndpointTraceModalProps> = ({
           selectedIndex={selectedTab}
           onChange={setSelectedTab}
           contained
+          fill
           aria-label="Endpoint trace tabs"
-          className="!h-full !min-h-0 !flex !flex-col [&_.cds--tabs__nav]:border-b [&_.cds--tabs__nav]:border-gray-200 dark:[&_.cds--tabs__nav]:border-gray-800 [&_.cds--tab-content]:!h-full [&_.cds--tab-content]:!min-h-0 [&_.cds--tab-content]:!p-0"
-          panelClassName="!h-full !min-h-0 !overflow-auto !p-0"
+          panelClassName="overflow-auto p-0"
         >
           <div className="divide-y divide-gray-200 dark:divide-gray-800 w-full">
             <OverviewRow label="Status">
@@ -81,4 +81,4 @@ export const EndpointTraceModal: FC<EndpointTraceModalProps> = ({
       </div>
     </RightSideModal>
   );
-};
+}

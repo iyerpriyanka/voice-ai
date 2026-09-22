@@ -5,59 +5,72 @@ import {
 import { MultiplePills } from '@/app/components/ui/primitives/pill';
 import { Tooltip } from '@/app/components/ui/primitives/tooltip';
 import { cn } from '@/utils';
-import { FC, HTMLAttributes, ReactNode } from 'react';
+import type {
+  HTMLAttributes,
+  KeyboardEvent,
+  MouseEvent,
+  ReactNode,
+} from 'react';
 import { Link } from 'react-router-dom';
 import { CornerBorderOverlay } from '@/app/components/ui/primitives/corner-border';
 
 // Shared card primitives.
 
 /** Static card: background + corner-bracket hover, no interactivity. */
-export const BaseCard: FC<HTMLAttributes<HTMLDivElement>> = ({
+export function BaseCard({
   className,
   children,
   ...props
-}) => (
-  <div
-    className={cn(
-      'bg-white dark:bg-gray-950/20 border border-gray-200 dark:border-gray-800 relative group flex flex-col transition-colors duration-100',
-      className,
-    )}
-    {...props}
-  >
-    <CornerBorderOverlay />
-    {children}
-  </div>
-);
+}: HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={cn(
+        'bg-white dark:bg-gray-950/20 border border-gray-200 dark:border-gray-800 relative group flex flex-col transition-colors duration-100',
+        className,
+      )}
+      {...props}
+    >
+      <CornerBorderOverlay />
+      {children}
+    </div>
+  );
+}
 
 /** Navigable card: wraps content in a react-router Link. */
-export const LinkCard: FC<{
+export function LinkCard({
+  to,
+  className,
+  children,
+}: {
   to: string;
   className?: string;
   children?: ReactNode;
-}> = ({ to, className, children }) => (
-  <Link
-    to={to}
-    className={cn(
-      'bg-white dark:bg-gray-950/20 border border-gray-200 dark:border-gray-800 relative group flex flex-col transition-colors duration-100',
-      className,
-    )}
-  >
-    <CornerBorderOverlay />
-    {children}
-  </Link>
-);
+}) {
+  return (
+    <Link
+      to={to}
+      className={cn(
+        'bg-white dark:bg-gray-950/20 border border-gray-200 dark:border-gray-800 relative group flex flex-col transition-colors duration-100',
+        className,
+      )}
+    >
+      <CornerBorderOverlay />
+      {children}
+    </Link>
+  );
+}
 
 /** Actionable card: div with role="button", keyboard support, and focus ring. */
-export const ActionCard: FC<HTMLAttributes<HTMLDivElement>> = ({
+export function ActionCard({
   className,
   children,
   onClick,
   onKeyDown,
   ...props
-}) => {
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+}: HTMLAttributes<HTMLDivElement>) {
+  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter' || e.key === ' ')
-      onClick?.(e as unknown as React.MouseEvent<HTMLDivElement>);
+      onClick?.(e as unknown as MouseEvent<HTMLDivElement>);
     onKeyDown?.(e);
   };
 
@@ -77,12 +90,12 @@ export const ActionCard: FC<HTMLAttributes<HTMLDivElement>> = ({
       {children}
     </div>
   );
-};
+}
 
 // Existing card primitives kept for compatibility.
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {}
-export const Card: FC<CardProps> = ({ children, className, ...props }) => {
+export function Card({ children, className, ...props }: CardProps) {
   return (
     <div
       className={cn(
@@ -96,16 +109,16 @@ export const Card: FC<CardProps> = ({ children, className, ...props }) => {
       {children}
     </div>
   );
-};
+}
 
 interface ClickableCardProps extends CardProps {}
 
-export const ClickableCard: FC<ClickableCardProps & CustomLinkProps> = ({
+export function ClickableCard({
   to,
   isExternal,
   children,
   className,
-}) => {
+}: ClickableCardProps & CustomLinkProps) {
   return (
     <CustomLink to={to} isExternal={isExternal}>
       {/* Carbon clickable tile: no shadow, hover = subtle bg tint */}
@@ -119,19 +132,19 @@ export const ClickableCard: FC<ClickableCardProps & CustomLinkProps> = ({
       </Card>
     </CustomLink>
   );
-};
+}
 
 interface CardTitleProps extends HTMLAttributes<HTMLDivElement> {
   status?: string;
   title?: string;
-  children?: any;
+  children?: ReactNode;
 }
-export const CardTitle: FC<CardTitleProps> = ({
+export function CardTitle({
   title,
   status,
   children,
   className,
-}) => {
+}: CardTitleProps) {
   return (
     <div className={cn('capitalize', className)}>
       <span className="text-sm/6 font-medium">
@@ -152,16 +165,16 @@ export const CardTitle: FC<CardTitleProps> = ({
       )}
     </div>
   );
-};
+}
 interface CardDescriptionProps extends HTMLAttributes<HTMLDivElement> {
   description?: string;
-  children?: any;
+  children?: ReactNode;
 }
-export const CardDescription: FC<CardDescriptionProps> = ({
+export function CardDescription({
   description,
   className,
   children,
-}) => {
+}: CardDescriptionProps) {
   return (
     <p
       className={cn(
@@ -173,16 +186,16 @@ export const CardDescription: FC<CardDescriptionProps> = ({
       {children}
     </p>
   );
-};
+}
 
 interface CardTagProps extends HTMLAttributes<HTMLDivElement> {
   tags?: string[];
 }
-export const CardTag: FC<CardTagProps> = ({ tags, className }) => {
+export function CardTag({ tags, className }: CardTagProps) {
   return (
     <MultiplePills
       tags={tags}
       className={cn('rounded-[2px] w-fit px-4 text-sm', className)}
     />
   );
-};
+}

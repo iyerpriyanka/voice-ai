@@ -1,7 +1,13 @@
-import type { FC } from 'react';
-import React, { useState } from 'react';
-import { Modal } from '@carbon/react';
-import { TextInput } from '@/app/components/ui/primitives';
+import { useState } from 'react';
+import {
+  DangerButton,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  SecondaryButton,
+  TextInput,
+} from '@/app/components/ui/primitives';
 
 type ConfirmDeleteDialogProps = {
   showing: boolean;
@@ -15,7 +21,7 @@ type ConfirmDeleteDialogProps = {
   onClose: () => void;
 };
 
-export const ConfirmDeleteDialog: FC<ConfirmDeleteDialogProps> = ({
+export function ConfirmDeleteDialog({
   showing,
   title,
   content,
@@ -25,8 +31,18 @@ export const ConfirmDeleteDialog: FC<ConfirmDeleteDialogProps> = ({
   onClose,
   onConfirm,
   onCancel,
-}) => {
+}: ConfirmDeleteDialogProps) {
   const [inputName, setInputName] = useState('');
+
+  const closeDialog = () => {
+    setInputName('');
+    onClose();
+  };
+
+  const cancelDialog = () => {
+    setInputName('');
+    onCancel();
+  };
 
   const handleConfirm = () => {
     if (inputName === objectName) {
@@ -36,33 +52,31 @@ export const ConfirmDeleteDialog: FC<ConfirmDeleteDialogProps> = ({
   };
 
   return (
-    <Modal
-      danger
-      open={showing}
-      modalHeading={title}
-      modalLabel="Confirm action"
-      primaryButtonText={confirmText}
-      secondaryButtonText={cancelText}
-      primaryButtonDisabled={inputName !== objectName}
-      onRequestSubmit={handleConfirm}
-      onRequestClose={() => {
-        setInputName('');
-        onClose();
-      }}
-      onSecondarySubmit={() => {
-        setInputName('');
-        onCancel();
-      }}
-      size="sm"
-    >
-      <p className="text-sm mb-4">{content}</p>
-      <TextInput
-        id="confirm-delete-input"
-        labelText={`Type "${objectName}" to confirm`}
-        value={inputName}
-        onChange={e => setInputName(e.target.value)}
-        placeholder={objectName}
-      />
+    <Modal danger open={showing} onClose={closeDialog} size="sm">
+      <ModalHeader label="Confirm action" title={title} onClose={closeDialog} />
+      <ModalBody hasForm>
+        <p className="text-sm text-foreground">{content}</p>
+        <TextInput
+          id="confirm-delete-input"
+          labelText={`Type "${objectName}" to confirm`}
+          value={inputName}
+          onChange={e => setInputName(e.target.value)}
+          placeholder={objectName}
+          autoComplete="off"
+        />
+      </ModalBody>
+      <ModalFooter danger>
+        <SecondaryButton size="lg" onClick={cancelDialog}>
+          {cancelText}
+        </SecondaryButton>
+        <DangerButton
+          size="lg"
+          onClick={handleConfirm}
+          disabled={inputName !== objectName}
+        >
+          {confirmText}
+        </DangerButton>
+      </ModalFooter>
     </Modal>
   );
-};
+}

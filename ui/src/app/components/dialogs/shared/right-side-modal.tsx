@@ -1,6 +1,6 @@
 import { IconOnlyButton, ModalHeader } from '@/app/components/ui/primitives';
 import type { ModalProps } from '@/app/components/ui/primitives';
-import type { FC, HTMLAttributes, MouseEvent, ReactNode } from 'react';
+import type { HTMLAttributes, MouseEvent, ReactNode } from 'react';
 import useMeasure from 'react-use-measure';
 import {
   useDragControls,
@@ -20,7 +20,7 @@ export interface SideModalProps
   loading?: boolean;
 }
 
-export const RightSideModal: FC<SideModalProps> = ({
+export function RightSideModal({
   title,
   label,
   modalOpen,
@@ -29,7 +29,7 @@ export const RightSideModal: FC<SideModalProps> = ({
   className,
   onClick,
   ...attributes
-}) => {
+}: SideModalProps) {
   const [scope, animate] = useAnimate();
   const [drawerRef, { width }] = useMeasure();
 
@@ -133,4 +133,4 @@ export const RightSideModal: FC<SideModalProps> = ({
       )}
     </>
   );
-};
+}

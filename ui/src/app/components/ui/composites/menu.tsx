@@ -1,4 +1,4 @@
-import React, { type FC, type ReactNode } from 'react';
+import { isValidElement, type ReactNode } from 'react';
 import { cn } from '@/utils';
 import { ChevronDown, OverflowMenuHorizontal } from '@carbon/icons-react';
 import {
@@ -13,7 +13,7 @@ interface OptionMenuProps {
 }
 
 const isDangerOption = (option: ReactNode) =>
-  React.isValidElement(option) &&
+  isValidElement<{ type?: string }>(option) &&
   option.type === OptionMenuItem &&
   option.props.type === 'danger';
 
@@ -33,7 +33,7 @@ function renderMenuItems(options: OptionMenuProps['options']) {
   });
 }
 
-export const OptionMenu: FC<OptionMenuProps> = ({ options, classNames }) => {
+export function OptionMenu({ options, classNames }: OptionMenuProps) {
   return (
     <OverflowMenu
       size="sm"
@@ -46,12 +46,9 @@ export const OptionMenu: FC<OptionMenuProps> = ({ options, classNames }) => {
       {renderMenuItems(options)}
     </OverflowMenu>
   );
-};
+}
 
-export const CardOptionMenu: FC<OptionMenuProps> = ({
-  options,
-  classNames,
-}) => {
+export function CardOptionMenu({ options, classNames }: OptionMenuProps) {
   return (
     <OverflowMenu
       size="sm"
@@ -64,7 +61,7 @@ export const CardOptionMenu: FC<OptionMenuProps> = ({
       {renderMenuItems(options)}
     </OverflowMenu>
   );
-};
+}
 
 export function OptionMenuItem(props: {
   type: 'danger' | 'info';

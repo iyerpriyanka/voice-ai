@@ -1,64 +1,55 @@
 import { Metadata } from '@rapidaai/react';
-import { ListboxDropdown as Dropdown } from '@/app/components/ui/primitives';
+import { Dropdown } from '@carbon/react';
 import { COHERE_RERANKER_MODEL } from '@/app/components/domain/providers/reranker/cohere/constants';
-import { cn } from '@/utils';
+import type { ProviderSelectionChange } from '@/app/components/domain/providers/provider-component-props';
 
-export const ConfigureCohereRerankerModel: React.FC<{
-  inputClass?: string;
+type RerankerModel = (typeof COHERE_RERANKER_MODEL)[number];
+
+const getModelName = (item: RerankerModel | null): string => item?.name ?? '';
+
+export function ConfigureCohereRerankerModel({
+  onParameterChange,
+  parameters,
+  disabled,
+}: {
   onParameterChange: (parameters: Metadata[]) => void;
   parameters: Metadata[] | null;
   disabled?: boolean;
-}> = ({ onParameterChange, parameters, disabled, inputClass }) => {
+}) {
+  const currentParameters = parameters ?? [];
   const getParamValue = (key: string) =>
-    parameters?.find(p => p.getKey() === key)?.getValue() ?? '';
+    currentParameters.find(p => p.getKey() === key)?.getValue() ?? '';
 
   return (
-    <div className="flex-1 flex">
-      <Dropdown
-        disable={disabled}
-        className={cn(
-          'bg-light-background max-w-full dark:bg-gray-950 focus-within:border-none! focus-within:outline-hidden! border-none!',
-          inputClass,
-        )}
-        currentValue={COHERE_RERANKER_MODEL.find(
-          x =>
-            x.id === getParamValue('model.id') &&
-            x.name === getParamValue('model.name'),
-        )}
-        setValue={v => {
-          const updatedParams = [...(parameters || [])];
-          const newIdParam = new Metadata();
-          const newNameParam = new Metadata();
+    <Dropdown
+      id="cohere-reranker-model"
+      disabled={disabled}
+      titleText="Reranker model"
+      label="Select reranker model"
+      items={COHERE_RERANKER_MODEL}
+      selectedItem={COHERE_RERANKER_MODEL.find(
+        x =>
+          x.id === getParamValue('model.id') &&
+          x.name === getParamValue('model.name'),
+      )}
+      itemToString={getModelName}
+      onChange={({ selectedItem }: ProviderSelectionChange<RerankerModel>) => {
+        if (!selectedItem) return;
+        const updatedParams = [...currentParameters];
+        const newIdParam = new Metadata();
+        const newNameParam = new Metadata();
 
-          newIdParam.setKey('model.id');
-          newIdParam.setValue(v.id);
-          newNameParam.setKey('model.name');
-          newNameParam.setValue(v.name);
+        newIdParam.setKey('model.id');
+        newIdParam.setValue(selectedItem.id);
+        newNameParam.setKey('model.name');
+        newNameParam.setValue(selectedItem.name);
 
-          // Remove existing parameters if they exist
-          const filteredParams = updatedParams.filter(
-            p => p.getKey() !== 'model.id' && p.getKey() !== 'model.name',
-          );
-          filteredParams.push(newIdParam, newNameParam);
-          onParameterChange(filteredParams);
-        }}
-        allValue={COHERE_RERANKER_MODEL}
-        placeholder="Select voice ouput provider"
-        option={c => {
-          return (
-            <span className="inline-flex items-center gap-2 sm:gap-2.5 max-w-full text-sm font-medium">
-              <span className="truncate capitalize">{c.name}</span>
-            </span>
-          );
-        }}
-        label={c => {
-          return (
-            <span className="inline-flex items-center gap-2 sm:gap-2.5 max-w-full text-sm font-medium">
-              <span className="truncate capitalize">{c.name}</span>
-            </span>
-          );
-        }}
-      />
-    </div>
+        const filteredParams = updatedParams.filter(
+          p => p.getKey() !== 'model.id' && p.getKey() !== 'model.name',
+        );
+        filteredParams.push(newIdParam, newNameParam);
+        onParameterChange(filteredParams);
+      }}
+    />
   );
-};
+}

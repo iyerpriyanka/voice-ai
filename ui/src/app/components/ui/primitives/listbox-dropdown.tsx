@@ -16,14 +16,24 @@ export interface DropdownProps<T> extends HTMLAttributes<HTMLDivElement> {
   onSearching?: (qry: ChangeEvent<HTMLInputElement>) => void;
 }
 
-const getItemLabel = (item: any): string => {
+type DropdownLabelItem = {
+  name?: unknown;
+  label?: unknown;
+  code?: unknown;
+  id?: unknown;
+};
+
+const getItemLabel = (item: unknown): string => {
   if (item == null) return '';
   if (typeof item === 'string' || typeof item === 'number') return String(item);
-  if (typeof item.name === 'string') return item.name;
-  if (typeof item.label === 'string') return item.label;
-  if (typeof item.code === 'string') return item.code;
-  if (typeof item.id === 'string' || typeof item.id === 'number') {
-    return String(item.id);
+  if (typeof item === 'object') {
+    const value = item as DropdownLabelItem;
+    if (typeof value.name === 'string') return value.name;
+    if (typeof value.label === 'string') return value.label;
+    if (typeof value.code === 'string') return value.code;
+    if (typeof value.id === 'string' || typeof value.id === 'number') {
+      return String(value.id);
+    }
   }
   return String(item);
 };

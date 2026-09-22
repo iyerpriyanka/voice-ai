@@ -1,4 +1,3 @@
-import { FC } from 'react';
 import { Select, SelectItem } from '@carbon/react';
 import { Stack, TextInput } from '@/app/components/ui/primitives';
 import { APiStringHeader } from '@/app/components/domain/external-api/api-header';
@@ -15,13 +14,13 @@ import {
 // Main Component
 // ============================================================================
 
-export const ConfigureAPIRequest: FC<ConfigureToolProps> = ({
+export function ConfigureAPIRequest({
   toolDefinition,
   onChangeToolDefinition,
   onParameterChange,
   parameters,
   inputClass,
-}) => {
+}: ConfigureToolProps) {
   const { getParamValue, updateParameter } = useParameterManager(
     parameters,
     onParameterChange,
@@ -81,4 +80,4 @@ export const ConfigureAPIRequest: FC<ConfigureToolProps> = ({
       )}
     </>
   );
-};
+}

@@ -1,4 +1,5 @@
-import { FC, ReactNode, useState } from 'react';
+import type { ReactNode } from 'react';
+import { useState } from 'react';
 import { Filter } from '@carbon/icons-react';
 import { Button, Checkbox, Popover, PopoverContent } from '@carbon/react';
 import { cn } from '@/utils';
@@ -21,7 +22,7 @@ export interface TableToolbarFilterProps {
   filtersTitle?: string;
 }
 
-export const TableToolbarFilter: FC<TableToolbarFilterProps> = ({
+export function TableToolbarFilter({
   filters,
   activeFilters,
   onApplyFilter,
@@ -32,7 +33,7 @@ export const TableToolbarFilter: FC<TableToolbarFilterProps> = ({
   onApply,
   onReset,
   filtersTitle = 'Filter by type',
-}) => {
+}: TableToolbarFilterProps) {
   const [open, setOpen] = useState(false);
   const [localFilters, setLocalFilters] = useState<Set<string>>(
     new Set(activeFilters),
@@ -135,4 +136,4 @@ export const TableToolbarFilter: FC<TableToolbarFilterProps> = ({
       )}
     </Popover>
   );
-};
+}

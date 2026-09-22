@@ -1,11 +1,11 @@
-import { FC, HTMLAttributes } from 'react';
+import type { HTMLAttributes, ReactNode } from 'react';
 import {
   Card,
   CardDescription,
   CardTitle,
   LinkCard,
 } from '@/app/components/ui/primitives';
-import { Knowledge } from '@rapidaai/react';
+import type { Knowledge } from '@rapidaai/react';
 import { cn } from '@/utils';
 import { CardOptionMenu } from '@/app/components/ui/composites';
 import { formatHumanReadableNumber } from '@/utils/format';
@@ -13,17 +13,17 @@ import { Folders } from '@carbon/icons-react';
 
 interface KnowledgeCardProps extends HTMLAttributes<HTMLDivElement> {
   knowledge: Knowledge;
-  knowledgeOptions?: { option: any; onActionClick: () => void }[];
+  knowledgeOptions?: { option: ReactNode; onActionClick: () => void }[];
   iconClasss?: string;
   titleClass?: string;
   descriptionClass?: string;
 }
 
-export const SelectKnowledgeCard: FC<KnowledgeCardProps> = ({
+export function SelectKnowledgeCard({
   knowledge,
   knowledgeOptions,
   className,
-}) => {
+}: KnowledgeCardProps) {
   return (
     <Card className={cn('p-0 rounded-[2px]', className)}>
       <div className="p-4 flex-1 flex flex-col">
@@ -43,12 +43,12 @@ export const SelectKnowledgeCard: FC<KnowledgeCardProps> = ({
       </div>
     </Card>
   );
-};
+}
 
-export const ClickableKnowledgeCard: FC<KnowledgeCardProps> = ({
+export function ClickableKnowledgeCard({
   knowledge,
   className,
-}) => {
+}: KnowledgeCardProps) {
   return (
     <LinkCard to={`/knowledge/${knowledge.getId()}`} className={className}>
       <div className="p-4 md:p-5 flex-1 flex flex-col">
@@ -75,4 +75,4 @@ export const ClickableKnowledgeCard: FC<KnowledgeCardProps> = ({
       </div>
     </LinkCard>
   );
-};
+}

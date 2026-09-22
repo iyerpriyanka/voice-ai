@@ -1,60 +1,73 @@
-import { Variable, Endpoint, EndpointProviderModel } from '@rapidaai/react';
+import { CodeSnippet, Tag } from '@carbon/react';
 import { Tab } from '@/app/components/ui/primitives';
-import { FC, ReactNode } from 'react';
-import { CodeHighlighting } from '@/app/components/ui/editor/code-highlighting';
 import { RapidaCredentialCard } from '@/app/components/domain/cards/rapida-credential-card';
+import type {
+  Endpoint,
+  EndpointProviderModel,
+  Variable,
+} from '@rapidaai/react';
+import type { ReactNode } from 'react';
 
-// Auto-sizes Monaco to its content.
-// CodeHighlighting uses flex-1 which requires a flex parent, and Monaco
-// needs an explicit pixel height — so we provide both.
-const CodeBlock: FC<{ code: string; language: string }> = ({
-  code,
-  language,
-}) => {
-  const height = Math.max(100, code.split('\n').length * 22 + 40);
-  return (
-    <div style={{ height }} className="flex flex-col">
-      <CodeHighlighting
-        language={language}
-        lineNumbers={false}
-        foldGutter={false}
-        code={code}
-        className="flex-1"
-      />
-    </div>
-  );
-};
+interface EndpointIntegrationProps {
+  endpoint: Endpoint;
+  credentialCard?: ReactNode;
+}
 
-// ─── Step layout helper ───────────────────────────────────────────────────────
+interface CodeBlockProps {
+  code: string;
+  language: string;
+}
 
-const Step: FC<{
+interface StepProps {
   number: number;
   title: string;
-  description?: string;
+  description: string;
   children: ReactNode;
-}> = ({ number, title, description, children }) => (
-  <section className="px-4 py-5 space-y-3 border-b border-gray-200 dark:border-gray-800 last:border-b-0">
-    <div className="flex items-center gap-2.5">
-      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary text-white text-[10px] font-bold shrink-0">
-        {number}
-      </span>
-      <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-        {title}
-      </h3>
+}
+
+function CodeBlock({ code, language }: CodeBlockProps) {
+  return (
+    <div className="w-full" data-language={language}>
+      <CodeSnippet
+        aria-label={`${language} code snippet`}
+        copyButtonDescription={`Copy ${language} snippet`}
+        copyText={code}
+        feedback="Copied"
+        maxCollapsedNumberOfRows={20}
+        maxExpandedNumberOfRows={40}
+        minCollapsedNumberOfRows={3}
+        type="multi"
+        wrapText
+      >
+        {code}
+      </CodeSnippet>
     </div>
-    {description && (
+  );
+}
+
+function Step({ number, title, description, children }: StepProps) {
+  return (
+    <section className="px-4 py-5 space-y-3 border-b border-gray-200 dark:border-gray-800 last:border-b-0">
+      <div className="flex items-center gap-2.5">
+        <Tag size="sm" type="blue">
+          Step {number}
+        </Tag>
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+          {title}
+        </h3>
+      </div>
       <p className="text-sm text-gray-500 dark:text-gray-400">{description}</p>
-    )}
-    {children}
-  </section>
-);
+      {children}
+    </section>
+  );
+}
 
-// ─── Main component ───────────────────────────────────────────────────────────
-
-export const EndpointIntegration: FC<{ endpoint: Endpoint }> = ({
+export function EndpointIntegration({
   endpoint,
-}) => {
+  credentialCard,
+}: EndpointIntegrationProps) {
   const epm = endpoint.getEndpointprovidermodel();
+  const credentials = credentialCard ?? <RapidaCredentialCard />;
 
   return (
     <Tab
@@ -78,7 +91,7 @@ export const EndpointIntegration: FC<{ endpoint: Endpoint }> = ({
                 title="Authenticate"
                 description={`Copy your publishable API key and replace RAPIDA_API_KEY in the code below.`}
               >
-                <RapidaCredentialCard />
+                {credentials}
               </Step>
 
               <Step
@@ -130,7 +143,7 @@ client = RapidaClient(
                 title="Authenticate"
                 description="Copy your publishable API key and replace RAPIDA_API_KEY in the code below."
               >
-                <RapidaCredentialCard />
+                {credentials}
               </Step>
 
               <Step
@@ -145,7 +158,12 @@ client = RapidaClient(
   RapidaClientOptions,
   RapidaEnvironment,
 } from '@rapidaai/rapida-node';
-import { StringValue } from '@rapidaai/rapida-node/values';
+import {
+  AudioValue,
+  FileValue,
+  StringValue,
+  URLValue,
+} from '@rapidaai/rapida-node/values';
 
 const client = new RapidaClient(
   new RapidaClientOptions({
@@ -189,7 +207,7 @@ const client = new RapidaClient(
                 title="Authenticate"
                 description="Copy your publishable API key and replace RAPIDA_API_KEY in the code below."
               >
-                <RapidaCredentialCard />
+                {credentials}
               </Step>
 
               <Step
@@ -228,9 +246,7 @@ if err != nil {
       ]}
     />
   );
-};
-
-// ─── Code builders ────────────────────────────────────────────────────────────
+}
 
 const buildPythonInvoke = (epm: EndpointProviderModel | undefined): string => {
   if (!epm) {
@@ -242,7 +258,7 @@ for item in response.get_data():
     print(item.to_text())`;
   }
 
-  const vars = epm.getChatcompleteprompt()?.getPromptvariablesList() ?? [];
+  const vars = getPromptVariables(epm);
   const inputs = buildPythonInputs(vars);
 
   return `response = await client.invoke(
@@ -281,7 +297,7 @@ for (const item of await response.getData()) {
 }`;
   }
 
-  const vars = epm.getChatcompleteprompt()?.getPromptvariablesList() ?? [];
+  const vars = getPromptVariables(epm);
   const inputs = buildTypeScriptInputs(vars);
 
   return `const response = await client.invoke({
@@ -296,7 +312,18 @@ for (const item of await response.getData()) {
 const buildTypeScriptInputs = (vars: Variable[]): string => {
   if (vars.length === 0) return '';
   return vars
-    .map(v => `\n    ${v.getName()}: new StringValue('example-value')`)
+    .map(v => {
+      if (v.getType() === 'audio-files') {
+        return `\n    ${v.getName()}: new AudioValue('/path/to/audio')`;
+      }
+      if (v.getType() === 'files') {
+        return `\n    ${v.getName()}: new FileValue('/path/to/file')`;
+      }
+      if (v.getType() === 'url') {
+        return `\n    ${v.getName()}: new URLValue('https://example.com')`;
+      }
+      return `\n    ${v.getName()}: new StringValue('example-value')`;
+    })
     .join(',');
 };
 
@@ -320,4 +347,12 @@ if err == nil && res.IsSuccess() {
         println(text)
     }
 }`;
+};
+
+const getPromptVariables = (epm: EndpointProviderModel): Variable[] => {
+  const prompt = epm.getChatcompleteprompt();
+  if (!prompt) {
+    return [];
+  }
+  return prompt.getPromptvariablesList();
 };

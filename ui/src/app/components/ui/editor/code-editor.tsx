@@ -1,4 +1,4 @@
-import type { FC, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { useRef } from 'react';
 import { useBoolean } from 'ahooks';
 import { cn } from '@/utils';
@@ -16,14 +16,14 @@ type CodeEditorProps = {
   helperText?: ReactNode;
 };
 
-export const CodeEditor: FC<CodeEditorProps> = ({
+export function CodeEditor({
   placeholder,
   value,
   onChange,
   className,
   labelText,
   helperText,
-}) => {
+}: CodeEditorProps) {
   const ref = useRef<HTMLDivElement>(null);
   const { isExpand, setIsExpand } = useToggleExpend(ref);
   const [isFocus, { setTrue: setFocus, setFalse: setBlur }] = useBoolean(false);
@@ -97,4 +97,4 @@ export const CodeEditor: FC<CodeEditorProps> = ({
       {helperText && <div className="cds--form__helper-text">{helperText}</div>}
     </div>
   );
-};
+}

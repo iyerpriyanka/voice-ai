@@ -1,5 +1,6 @@
 import { Metadata } from '@rapidaai/react';
-import { FC, useCallback, useMemo } from 'react';
+import type { ComponentType } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Dropdown } from '@carbon/react';
 import { CONFIG } from '@/configs';
 import { ConfigureAPIRequest } from '@/app/components/domain/tools/api-request';
@@ -92,7 +93,7 @@ interface ToolConfig {
   definition?: ToolDefinition;
   getDefaultOptions: (params: Metadata[]) => Metadata[];
   validateOptions: (params: Metadata[]) => string | undefined;
-  Component: FC<ConfigureToolProps>;
+  Component: ComponentType<ConfigureToolProps>;
 }
 
 const TOOL_REGISTRY: Record<ToolCode, ToolConfig> = {
@@ -230,19 +231,21 @@ export const ValidateToolDefaultOptions = (
 // Components
 // ============================================================================
 
-const ConfigureBuildinTool: FC<{
+interface ConfigureBuildinToolProps {
   toolDefinition: ToolDefinition;
   onChangeToolDefinition?: (value: ToolDefinition) => void;
   config: BuildinToolConfig;
   onParameterChange: (params: Metadata[]) => void;
   inputClass?: string;
-}> = ({
+}
+
+function ConfigureBuildinTool({
   config,
   inputClass,
   toolDefinition,
   onChangeToolDefinition,
   onParameterChange,
-}) => {
+}: ConfigureBuildinToolProps) {
   if (!isValidToolCode(config.code)) {
     return null;
   }
@@ -258,9 +261,9 @@ const ConfigureBuildinTool: FC<{
       onParameterChange={onParameterChange}
     />
   );
-};
+}
 
-export const BuildinTool: FC<{
+interface BuildinToolProps {
   toolDefinition: ToolDefinition;
   onChangeToolDefinition: (value: ToolDefinition) => void;
   onChangeBuildinTool: (code: string) => void;
@@ -268,7 +271,9 @@ export const BuildinTool: FC<{
   inputClass?: string;
   config: BuildinToolConfig;
   showDefinitionForm?: boolean;
-}> = ({
+}
+
+export function BuildinTool({
   toolDefinition,
   onChangeToolDefinition,
   onChangeBuildinTool,
@@ -276,7 +281,7 @@ export const BuildinTool: FC<{
   config,
   inputClass,
   showDefinitionForm = true,
-}) => {
+}: BuildinToolProps) {
   const conditionEntries = useMemo(
     () => getToolConditionEntries(config.parameters),
     [config.parameters],
@@ -336,8 +341,8 @@ export const BuildinTool: FC<{
           label="Select provider"
           items={availableTools}
           selectedItem={currentTool}
-          itemToString={(item: any) => item?.name || ''}
-          onChange={({ selectedItem }: any) => {
+          itemToString={item => item?.name || ''}
+          onChange={({ selectedItem }) => {
             if (selectedItem) onChangeBuildinTool(selectedItem.code);
           }}
         />
@@ -354,4 +359,4 @@ export const BuildinTool: FC<{
       />
     </>
   );
-};
+}

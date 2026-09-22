@@ -9,10 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@carbon/react';
-import {
-  ScrollableTableSection,
-  TableSection,
-} from './table-section';
+import { ScrollableTableSection, TableSection } from './table-section';
 
 const rows = [
   { id: 'assistant', name: 'Assistant service', status: 'Active' },

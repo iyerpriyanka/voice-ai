@@ -1,4 +1,4 @@
-import { FC, useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { FormGroup, Stack, TextArea } from '@/app/components/ui/primitives';
 import { Select, SelectItem, Slider, Tooltip } from '@carbon/react';
 import {
@@ -11,13 +11,13 @@ import ConfigSelect from '@/app/components/domain/configuration/config-var/confi
 import { SEPARATOR } from './transfer-call/constant';
 import { Information } from '@carbon/icons-react';
 
-export const ConfigureTransferCall: FC<ConfigureToolProps> = ({
+export function ConfigureTransferCall({
   toolDefinition,
   onChangeToolDefinition,
   inputClass,
   parameters,
   onParameterChange,
-}) => {
+}: ConfigureToolProps) {
   const { getParamValue, updateParameter } = useParameterManager(
     parameters,
     onParameterChange,
@@ -160,4 +160,4 @@ export const ConfigureTransferCall: FC<ConfigureToolProps> = ({
       )}
     </>
   );
-};
+}

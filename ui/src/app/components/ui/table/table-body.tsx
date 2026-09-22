@@ -1,10 +1,10 @@
 import { cn } from '@/utils';
-import { FC, HTMLAttributes } from 'react';
+import type { HTMLAttributes } from 'react';
 
-export const TableBody: FC<HTMLAttributes<HTMLTableSectionElement>> = props => {
+export function TableBody(props: HTMLAttributes<HTMLTableSectionElement>) {
   return (
     <tbody {...props} className={cn('text-[15px]', props.className)}>
       {props.children}
     </tbody>
   );
-};
+}

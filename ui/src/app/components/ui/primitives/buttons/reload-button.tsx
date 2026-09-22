@@ -1,6 +1,6 @@
 import { IconOnlyButton } from '@/app/components/ui/primitives/button';
 import { Renew } from '@carbon/icons-react';
-import type { FC, MouseEventHandler } from 'react';
+import type { MouseEventHandler } from 'react';
 
 interface ReloadButtonProps {
   onClick?: MouseEventHandler<HTMLButtonElement>;
@@ -8,11 +8,11 @@ interface ReloadButtonProps {
   className?: string;
 }
 
-export const ReloadButton: FC<ReloadButtonProps> = ({
+export function ReloadButton({
   onClick,
   isLoading,
   className,
-}) => {
+}: ReloadButtonProps) {
   return (
     <IconOnlyButton
       kind="ghost"
@@ -24,4 +24,4 @@ export const ReloadButton: FC<ReloadButtonProps> = ({
       className={className}
     />
   );
-};
+}

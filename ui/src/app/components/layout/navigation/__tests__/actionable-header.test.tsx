@@ -317,7 +317,9 @@ describe('Actionable header project switcher', () => {
       </AuthContext.Provider>,
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Switch to dark mode' }));
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Switch to dark mode' }),
+    );
 
     expect(mockToggleMode).toHaveBeenCalledTimes(1);
   });

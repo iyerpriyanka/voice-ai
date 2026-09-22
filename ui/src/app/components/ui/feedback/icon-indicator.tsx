@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import type { ComponentType } from 'react';
 import { preview__IconIndicator as IconIndicatorModule } from '@carbon/react';
 
 export type CarbonIconIndicatorKind =
@@ -24,14 +24,26 @@ export interface CarbonIconIndicatorProps {
   iconDescription?: string;
 }
 
-export const CarbonIconIndicator: FC<CarbonIconIndicatorProps> = ({
+type IconIndicatorComponent = ComponentType<{
+  align?: CarbonIconIndicatorProps['align'];
+  iconDescription?: string;
+  kind: CarbonIconIndicatorKind;
+  label: string;
+  size?: CarbonIconIndicatorProps['size'];
+}>;
+
+const IconIndicator =
+  (IconIndicatorModule as unknown as { default?: IconIndicatorComponent })
+    ?.default || (IconIndicatorModule as unknown as IconIndicatorComponent);
+
+export function CarbonIconIndicator({
   state,
   kind,
   label,
   size = 16,
   align,
   iconDescription,
-}) => {
+}: CarbonIconIndicatorProps) {
   const resolved = state
     ? recordStateToIconIndicator[state] || defaultRecordIconIndicator
     : {
@@ -43,16 +55,12 @@ export const CarbonIconIndicator: FC<CarbonIconIndicatorProps> = ({
     <IconIndicator
       align={align}
       iconDescription={iconDescription}
-      kind={resolved.kind as any}
+      kind={resolved.kind}
       label={resolved.label}
       size={size}
     />
   );
-};
-
-const IconIndicator =
-  (IconIndicatorModule as unknown as { default?: FC<any> })?.default ||
-  (IconIndicatorModule as unknown as FC<any>);
+}
 
 export const recordStateToIconIndicator: Record<
   string,

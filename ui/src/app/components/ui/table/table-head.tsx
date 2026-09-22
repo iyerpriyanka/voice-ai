@@ -1,14 +1,12 @@
 import { InputCheckbox } from '@/app/components/ui/primitives/input-checkbox';
 import { cn } from '@/utils';
-import { FC, memo } from 'react';
+import { memo } from 'react';
 
 interface TableHeadProps {
   columns: { name: string; key: string }[];
 }
 
-export const TableHead: FC<
-  TableHeadProps & { isActionable?: boolean }
-> = props => {
+export function TableHead(props: TableHeadProps & { isActionable?: boolean }) {
   return (
     <thead className="">
       <tr className="bg-light-background dark:bg-gray-950 border-b">
@@ -34,11 +32,11 @@ export const TableHead: FC<
       </tr>
     </thead>
   );
-};
+}
 
-export const TableHederWithCheckbox: FC<
-  TableHeadProps & { ontoggle: (checked: boolean) => void }
-> = memo(props => {
+function TableHederWithCheckboxComponent(
+  props: TableHeadProps & { ontoggle: (checked: boolean) => void },
+) {
   return (
     <thead className="dark:bg-gray-950/30 bg-gray-100/50 border-b dark:border-gray-800">
       <tr className="">
@@ -78,4 +76,6 @@ export const TableHederWithCheckbox: FC<
       </tr>
     </thead>
   );
-});
+}
+
+export const TableHederWithCheckbox = memo(TableHederWithCheckboxComponent);

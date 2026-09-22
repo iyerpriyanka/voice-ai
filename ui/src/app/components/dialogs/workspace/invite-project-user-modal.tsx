@@ -1,21 +1,23 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import {
   AddUserToProjects,
   AddUserToProjectsRequest,
   ProjectRoleAssignment,
-  User,
 } from '@rapidaai/react';
+import type { User } from '@rapidaai/react';
 import { ComboBox } from '@carbon/react';
 import toast from 'react-hot-toast/headless';
-import { ModalProps } from '@/app/components/ui/primitives';
 import {
   Modal,
-  ModalHeader,
   ModalBody,
   ModalFooter,
+  ModalHeader,
+  type ModalProps,
+  PrimaryButton,
+  SecondaryButton,
+  Stack,
+  TextInput,
 } from '@/app/components/ui/primitives';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
-import { Stack, TextInput } from '@/app/components/ui/primitives';
 import { ErrorMessage } from '@/app/components/ui/feedback';
 import { AuthContext } from '@/context/auth-context';
 import { useCurrentCredential } from '@/hooks/use-credential';
@@ -25,6 +27,9 @@ import {
   ProjectRoleRow,
   ProjectRoleTable,
 } from '@/app/components/domain/project-role-table';
+
+const PROJECT_ACTION_ERROR =
+  'Unable to process your request. please try again later.';
 
 const projectRoles = [
   { name: 'Super Admin', value: 'super admin' },
@@ -39,31 +44,35 @@ interface InviteProjectUserDialogProps extends ModalProps {
   onSuccess?: () => void;
 }
 
-export function InviteProjectUserDialog(props: InviteProjectUserDialogProps) {
+export function InviteProjectUserDialog({
+  modalOpen,
+  setModalOpen,
+  user,
+  projectId,
+  onSuccess,
+}: InviteProjectUserDialogProps) {
   const { authId, token, projectId: currentProjectId } = useCurrentCredential();
   const { projectRoles: availableProjects } = useContext(AuthContext);
   const { loading, showLoader, hideLoader } = useRapidaStore();
-  const userActions = useUserPageStore();
-  const [selectedUser, setSelectedUser] = useState<User | null>(
-    props.user || null,
-  );
+  const { users, getAllUser } = useUserPageStore();
+  const [selectedUser, setSelectedUser] = useState<User | null>(user || null);
   const [projectRoleRows, setProjectRoleRows] = useState<ProjectRoleRow[]>(
-    props.projectId ? [{ projectId: props.projectId, projectRole: '' }] : [],
+    projectId ? [{ projectId, projectRole: '' }] : [],
   );
   const [error, setError] = useState('');
 
+  const closeDialog = useCallback(() => {
+    setModalOpen(false);
+  }, [setModalOpen]);
+
   useEffect(() => {
-    if (props.modalOpen) {
-      setSelectedUser(props.user || null);
-      setProjectRoleRows(
-        props.projectId
-          ? [{ projectId: props.projectId, projectRole: '' }]
-          : [],
-      );
+    if (modalOpen) {
+      setSelectedUser(user || null);
+      setProjectRoleRows(projectId ? [{ projectId, projectRole: '' }] : []);
       setError('');
 
-      if (!props.user && userActions.users.length === 0) {
-        userActions.getAllUser(
+      if (!user && users.length === 0) {
+        getAllUser(
           token,
           authId,
           currentProjectId,
@@ -72,7 +81,16 @@ export function InviteProjectUserDialog(props: InviteProjectUserDialogProps) {
         );
       }
     }
-  }, [props.modalOpen, props.user, props.projectId]);
+  }, [
+    authId,
+    currentProjectId,
+    modalOpen,
+    projectId,
+    token,
+    user,
+    users.length,
+    getAllUser,
+  ]);
 
   const submitInvite = async () => {
     if (!selectedUser) {
@@ -115,74 +133,74 @@ export function InviteProjectUserDialog(props: InviteProjectUserDialogProps) {
       hideLoader();
 
       const responseError = response.getError();
-      const message =
-        responseError?.getHumanmessage() ||
-        'Unable to process your request. please try again later.';
+      const message = responseError?.getHumanmessage() || PROJECT_ACTION_ERROR;
 
       if (response.getSuccess()) {
         setSelectedUser(null);
         setProjectRoleRows(
-          props.projectId
+          projectId
             ? [
                 {
-                  projectId: props.projectId,
+                  projectId,
                   projectRole: '',
                 },
               ]
             : [],
         );
-        props.setModalOpen(false);
+        closeDialog();
         toast.success('The user was added to the project successfully.');
-        if (props.onSuccess) props.onSuccess();
+        onSuccess?.();
         return;
       }
 
       toast.error(message);
       setError(message);
-    } catch (err: any) {
+    } catch (err: unknown) {
       hideLoader();
-      const message =
-        err?.message ||
-        'Unable to process your request. please try again later.';
+      const message = err instanceof Error ? err.message : PROJECT_ACTION_ERROR;
       toast.error(message);
       setError(message);
     }
   };
 
-  const projectOptions = props.projectId
-    ? [
-        {
-          name:
-            (availableProjects || []).find(
-              project => project.projectid === props.projectId,
-            )?.projectname || props.projectId,
-          value: props.projectId,
-        },
-      ]
-    : (availableProjects || []).map(project => ({
-        name: project.projectname,
-        value: project.projectid,
-      }));
+  const projectOptions = useMemo(
+    () =>
+      projectId
+        ? [
+            {
+              name:
+                (availableProjects || []).find(
+                  project => project.projectid === projectId,
+                )?.projectname || projectId,
+              value: projectId,
+            },
+          ]
+        : (availableProjects || []).map(project => ({
+            name: project.projectname,
+            value: project.projectid,
+          })),
+    [availableProjects, projectId],
+  );
 
   return (
     <Modal
-      open={props.modalOpen}
-      onClose={() => props.setModalOpen(false)}
+      open={modalOpen}
+      onClose={closeDialog}
       size="md"
       preventCloseOnClickOutside
     >
       <ModalHeader
         label="Project Access"
         title="Invite user to project"
-        onClose={() => props.setModalOpen(false)}
+        onClose={closeDialog}
       />
       <ModalBody hasForm hasScrollingContent>
         <Stack gap={6}>
-          {props.user ? (
+          {user ? (
             <TextInput
               id="project-invite-selected-user"
               labelText="User"
-              value={`${props.user.getName()} (${props.user.getEmail()})`}
+              value={`${user.getName()} (${user.getEmail()})`}
               readOnly
             />
           ) : (
@@ -190,7 +208,7 @@ export function InviteProjectUserDialog(props: InviteProjectUserDialogProps) {
               id="project-invite-user"
               titleText="User"
               placeholder="Select user"
-              items={userActions.users}
+              items={users}
               selectedItem={selectedUser}
               itemToString={(item: User | null) =>
                 item ? `${item.getName()} (${item.getEmail()})` : ''
@@ -209,17 +227,17 @@ export function InviteProjectUserDialog(props: InviteProjectUserDialogProps) {
             }}
             projectOptions={projectOptions}
             roleOptions={projectRoles}
-            defaultProjectId={props.projectId || projectOptions[0]?.value || ''}
+            defaultProjectId={projectId || projectOptions[0]?.value || ''}
             title="Project roles"
             addButtonLabel="Add project role"
-            showAddButton={!props.projectId}
-            showRemoveColumn={!props.projectId}
+            showAddButton={!projectId}
+            showRemoveColumn={!projectId}
           />
           <ErrorMessage message={error} />
         </Stack>
       </ModalBody>
       <ModalFooter>
-        <SecondaryButton size="lg" onClick={() => props.setModalOpen(false)}>
+        <SecondaryButton size="lg" onClick={closeDialog}>
           Cancel
         </SecondaryButton>
         <PrimaryButton size="lg" onClick={submitInvite} isLoading={loading}>

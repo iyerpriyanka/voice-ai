@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import type { ComponentType } from 'react';
 import { Knowledge } from '@rapidaai/react';
 import {
   DataBase,
@@ -56,13 +56,13 @@ const SEARCH_TYPE_CONFIG = [
 // Main Component
 // ============================================================================
 
-export const ConfigureKnowledgeRetrieval: FC<ConfigureToolProps> = ({
+export function ConfigureKnowledgeRetrieval({
   toolDefinition,
   onChangeToolDefinition,
   inputClass,
   onParameterChange,
   parameters,
-}) => {
+}: ConfigureToolProps) {
   const { getParamValue, updateParameter } = useParameterManager(
     parameters,
     onParameterChange,
@@ -136,7 +136,7 @@ export const ConfigureKnowledgeRetrieval: FC<ConfigureToolProps> = ({
       )}
     </>
   );
-};
+}
 
 // ============================================================================
 // Search Type Card
@@ -145,14 +145,14 @@ export const ConfigureKnowledgeRetrieval: FC<ConfigureToolProps> = ({
 interface SearchTypeCardProps {
   id: string;
   value: string;
-  icon: FC<{ className?: string }>;
+  icon: ComponentType<{ className?: string }>;
   title: string;
   description: string;
   isSelected: boolean;
   onSelect: () => void;
 }
 
-const SearchTypeCard: FC<SearchTypeCardProps> = ({
+function SearchTypeCard({
   id,
   value,
   icon: Icon,
@@ -160,36 +160,38 @@ const SearchTypeCard: FC<SearchTypeCardProps> = ({
   description,
   isSelected,
   onSelect,
-}) => (
-  <SelectableTile
-    id={id}
-    data-value={value}
-    selected={isSelected}
-    onClick={onSelect}
-    className={cn(
-      'relative group !min-h-0 !p-4 !text-left !transition-colors !duration-100',
-      isSelected
-        ? '!border-gray-200 dark:!border-gray-800 !bg-white dark:!bg-gray-950/50'
-        : '!border-gray-200 dark:!border-gray-800 !bg-white dark:!bg-gray-950/50 hover:!bg-gray-50 dark:hover:!bg-gray-900/60',
-    )}
-  >
-    <CornerBorderOverlay className={isSelected ? 'opacity-100' : undefined} />
-    {isSelected && (
-      <span className="absolute top-3 right-3 h-5 w-5 inline-flex items-center justify-center bg-primary z-20">
-        <Checkmark size={14} className="text-white" />
-      </span>
-    )}
-    <div className="flex items-center gap-3 mb-2">
-      <div className="flex items-center justify-center bg-blue-100 dark:bg-blue-900/30 shrink-0 h-8 w-8">
-        <Icon className="text-blue-600" />
+}: SearchTypeCardProps) {
+  return (
+    <SelectableTile
+      id={id}
+      data-value={value}
+      selected={isSelected}
+      onClick={onSelect}
+      className={cn(
+        'relative group !min-h-0 !p-4 !text-left !transition-colors !duration-100',
+        isSelected
+          ? '!border-gray-200 dark:!border-gray-800 !bg-white dark:!bg-gray-950/50'
+          : '!border-gray-200 dark:!border-gray-800 !bg-white dark:!bg-gray-950/50 hover:!bg-gray-50 dark:hover:!bg-gray-900/60',
+      )}
+    >
+      <CornerBorderOverlay className={isSelected ? 'opacity-100' : undefined} />
+      {isSelected && (
+        <span className="absolute top-3 right-3 h-5 w-5 inline-flex items-center justify-center bg-primary z-20">
+          <Checkmark size={14} className="text-white" />
+        </span>
+      )}
+      <div className="flex items-center gap-3 mb-2">
+        <div className="flex items-center justify-center bg-blue-100 dark:bg-blue-900/30 shrink-0 h-8 w-8">
+          <Icon className="text-blue-600" />
+        </div>
+        <span className="text-sm font-medium">{title}</span>
       </div>
-      <span className="text-sm font-medium">{title}</span>
-    </div>
-    <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
-      {description}
-    </p>
-  </SelectableTile>
-);
+      <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+        {description}
+      </p>
+    </SelectableTile>
+  );
+}
 
 // ============================================================================
 // Slider Field
@@ -206,7 +208,7 @@ interface SliderFieldProps {
   onChange: (value: string) => void;
 }
 
-const SliderField: FC<SliderFieldProps> = ({
+function SliderField({
   id,
   label,
   tooltip,
@@ -215,23 +217,25 @@ const SliderField: FC<SliderFieldProps> = ({
   step,
   value,
   onChange,
-}) => (
-  <div className="[&_.cds--slider-container]:!mt-0 [&_.cds--slider__range-label]:hidden">
-    <Slider
-      id={id}
-      labelText={
-        <Tooltip align="top" label={tooltip}>
-          <span className="inline-flex items-center gap-1">
-            {label}
-            <Information size={14} />
-          </span>
-        </Tooltip>
-      }
-      min={min}
-      max={max}
-      step={step}
-      value={Number(value) || min}
-      onChange={({ value: v }: { value: number }) => onChange(v.toString())}
-    />
-  </div>
-);
+}: SliderFieldProps) {
+  return (
+    <div className="[&_.cds--slider-container]:!mt-0 [&_.cds--slider__range-label]:hidden">
+      <Slider
+        id={id}
+        labelText={
+          <Tooltip align="top" label={tooltip}>
+            <span className="inline-flex items-center gap-1">
+              {label}
+              <Information size={14} />
+            </span>
+          </Tooltip>
+        }
+        min={min}
+        max={max}
+        step={step}
+        value={Number(value) || min}
+        onChange={({ value: v }: { value: number }) => onChange(v.toString())}
+      />
+    </div>
+  );
+}

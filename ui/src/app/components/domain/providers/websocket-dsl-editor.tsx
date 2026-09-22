@@ -28,7 +28,7 @@ function getCompletionKind(
       : monacoInstance.languages.CompletionItemKind.Value;
 }
 
-export const WebsocketDslEditor: React.FC<WebsocketDslEditorProps> = ({
+export function WebsocketDslEditor({
   provider,
   mode,
   value,
@@ -36,7 +36,7 @@ export const WebsocketDslEditor: React.FC<WebsocketDslEditorProps> = ({
   placeholder,
   className,
   height = '160px',
-}) => {
+}: WebsocketDslEditorProps) {
   return (
     <JsonEditor
       value={value}
@@ -140,4 +140,4 @@ export const WebsocketDslEditor: React.FC<WebsocketDslEditorProps> = ({
       }}
     />
   );
-};
+}

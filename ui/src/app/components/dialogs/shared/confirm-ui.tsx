@@ -1,6 +1,13 @@
-import type { FC } from 'react';
-import React from 'react';
-import { Modal } from '@carbon/react';
+import { memo } from 'react';
+import {
+  DangerButton,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  PrimaryButton,
+  SecondaryButton,
+} from '@/app/components/ui/primitives';
 
 export type ConfirmDialogProps = {
   showing: boolean;
@@ -14,7 +21,7 @@ export type ConfirmDialogProps = {
   onClose: () => void;
 };
 
-const ConfirmDialog: FC<ConfirmDialogProps> = ({
+function ConfirmDialog({
   showing,
   type,
   title,
@@ -24,22 +31,33 @@ const ConfirmDialog: FC<ConfirmDialogProps> = ({
   onClose,
   onConfirm,
   onCancel,
-}) => {
+}: ConfirmDialogProps) {
+  const ConfirmButton = type === 'warning' ? DangerButton : PrimaryButton;
+
   return (
     <Modal
       danger={type === 'warning'}
       open={showing}
-      modalHeading={title}
-      modalLabel={type === 'warning' ? 'Warning' : 'Confirm'}
-      primaryButtonText={confirmText}
-      secondaryButtonText={cancelText}
-      onRequestSubmit={onConfirm}
-      onRequestClose={onClose}
-      onSecondarySubmit={onCancel}
       size="xs"
+      onClose={onClose}
     >
-      <p className="text-sm">{content}</p>
+      <ModalHeader
+        label={type === 'warning' ? 'Warning' : 'Confirm'}
+        title={title}
+        onClose={onClose}
+      />
+      <ModalBody>
+        <p className="text-sm text-foreground">{content}</p>
+      </ModalBody>
+      <ModalFooter danger={type === 'warning'}>
+        <SecondaryButton size="lg" onClick={onCancel}>
+          {cancelText}
+        </SecondaryButton>
+        <ConfirmButton size="lg" onClick={onConfirm}>
+          {confirmText}
+        </ConfirmButton>
+      </ModalFooter>
     </Modal>
   );
-};
-export default React.memo(ConfirmDialog);
+}
+export default memo(ConfirmDialog);

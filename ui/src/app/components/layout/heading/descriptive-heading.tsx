@@ -41,7 +41,10 @@ export function DescriptiveHeading({
       id={id}
     >
       <HeadingTag
-        className={cn('text-[28px] leading-9 text-foreground', headingClassName)}
+        className={cn(
+          'text-[28px] leading-9 text-foreground',
+          headingClassName,
+        )}
       >
         {heading}
         {info && (
@@ -52,7 +55,10 @@ export function DescriptiveHeading({
       </HeadingTag>
       {subheading && (
         <p
-          className={cn('mt-2 text-sm leading-5 text-muted', subheadingClassName)}
+          className={cn(
+            'mt-2 text-sm leading-5 text-muted',
+            subheadingClassName,
+          )}
           id={descriptionId}
         >
           {subheading}

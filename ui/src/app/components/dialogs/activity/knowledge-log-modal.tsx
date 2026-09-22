@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast/headless';
 import { useCredential } from '@/hooks/use-credential';
 import { OverviewRow } from '@/app/components/dialogs/shared';
@@ -9,33 +9,35 @@ import {
   KnowledgeLog,
 } from '@rapidaai/react';
 import { useRapidaStore } from '@/hooks';
-import { Tabs } from '@/app/components/ui/primitives';
 import { StatusIndicator } from '@/app/components/domain/indicators/status';
-import { ModalProps } from '@/app/components/ui/primitives';
+import type { ModalProps } from '@/app/components/ui/primitives';
 import { RightSideModal } from '@/app/components/dialogs/shared';
 import { connectionConfig } from '@/configs';
-import { CodeHighlighting } from '@/app/components/ui/editor/code-highlighting';
 import { toHumanReadableDateTime } from '@/utils/date';
+import { LogCodePanel, LogTabs } from './log-modal-primitives';
 
 interface KnowledgeLogModalProps extends ModalProps {
   currentActivityId: string;
 }
-/**
- *
- * @param props
- * @returns
- */
-export function KnowledgeLogDialog(props: KnowledgeLogModalProps) {
+
+export function KnowledgeLogDialog({
+  modalOpen,
+  setModalOpen,
+  currentActivityId,
+}: KnowledgeLogModalProps) {
   const [userId, token, projectId] = useCredential();
   const { showLoader, hideLoader } = useRapidaStore();
   const [activity, setActivity] = useState<KnowledgeLog | null>(null);
   const [selectedTab, setSelectedTab] = useState(0);
 
-  const getActivity = (currentProject: string, currentActivityId) => {
+  useEffect(() => {
+    showLoader('overlay');
+
     const request = new GetKnowledgeLogRequest();
     request.setId(currentActivityId);
-    request.setProjectid(currentProject);
-    return GetKnowledgeLog(
+    request.setProjectid(projectId);
+
+    GetKnowledgeLog(
       connectionConfig,
       request,
       ConnectionConfig.WithDebugger({
@@ -47,95 +49,80 @@ export function KnowledgeLogDialog(props: KnowledgeLogModalProps) {
       .then(at => {
         hideLoader();
         if (at?.getSuccess()) {
-          let data = at.getData();
+          const data = at.getData();
           if (data) {
             setActivity(data);
           }
         } else {
-          let err = at?.getError();
+          const err = at?.getError();
           if (err) toast.error(err?.getHumanmessage());
           toast.error('Unable to resolve the request, please try again later.');
         }
       })
-      .catch(x => {
+      .catch(() => {
         hideLoader();
         toast.error('Unable to resolve the request, please try again later.');
       });
-  };
-
-  /**
-   *
-   */
-  useEffect(() => {
-    showLoader('overlay');
-    getActivity(projectId, props.currentActivityId);
-  }, [projectId, props.currentActivityId]);
+  }, [currentActivityId, hideLoader, projectId, showLoader, token, userId]);
 
   return (
     <RightSideModal
-      modalOpen={props.modalOpen}
-      setModalOpen={props.setModalOpen}
+      modalOpen={modalOpen}
+      setModalOpen={setModalOpen}
       className="w-[580px]"
       label="Knowledge Log"
-      title={props.currentActivityId}
+      title={currentActivityId}
     >
-      <div className="relative flex-1 flex flex-col min-h-0">
-        <Tabs
-          tabs={['Overview', 'Request', 'Response']}
-          selectedIndex={selectedTab}
-          onChange={setSelectedTab}
-          contained
-          aria-label="Knowledge log tabs"
-          className="!h-full !min-h-0 !flex !flex-col [&_.cds--tabs__nav]:border-b [&_.cds--tabs__nav]:border-gray-200 dark:[&_.cds--tabs__nav]:border-gray-800 [&_.cds--tab-content]:!h-full [&_.cds--tab-content]:!min-h-0 [&_.cds--tab-content]:!p-0"
-          panelClassName="!h-full !min-h-0 !overflow-auto !p-0"
-        >
-          <div className="divide-y divide-gray-200 dark:divide-gray-800 w-full">
-            {activity && (
-              <>
-                <OverviewRow label="Status">
-                  <StatusIndicator state={activity.getStatus()} size="small" />
-                </OverviewRow>
-                <OverviewRow label="Time Taken">
-                  <span className="text-sm tabular-nums text-gray-900 dark:text-gray-100">
-                    {`${Number(activity.getTimetaken()) / 1000000}ms`}
-                  </span>
-                </OverviewRow>
-                <OverviewRow label="Created">
-                  <span className="text-sm text-gray-900 dark:text-gray-100">
-                    {toHumanReadableDateTime(activity.getCreateddate()!)}
-                  </span>
-                </OverviewRow>
-              </>
-            )}
-          </div>
-          <div className="h-full min-h-0">
-            <CodeHighlighting
-              className="!h-full !min-h-0"
-              lang="json"
-              lineNumbers={false}
-              foldGutter={false}
-              code={JSON.stringify(
-                activity?.getRequest()?.toJavaScript(),
-                null,
-                2,
-              )}
-            />
-          </div>
-          <div className="h-full min-h-0">
-            <CodeHighlighting
-              className="!h-full !min-h-0"
-              lang="json"
-              lineNumbers={false}
-              foldGutter={false}
-              code={JSON.stringify(
-                activity?.getResponse()?.toJavaScript(),
-                null,
-                2,
-              )}
-            />
-          </div>
-        </Tabs>
-      </div>
+      <KnowledgeLogContent
+        activity={activity}
+        selectedTab={selectedTab}
+        onTabChange={setSelectedTab}
+      />
     </RightSideModal>
+  );
+}
+
+interface KnowledgeLogContentProps {
+  activity: KnowledgeLog | null;
+  selectedTab: number;
+  onTabChange: (index: number) => void;
+}
+
+export function KnowledgeLogContent({
+  activity,
+  selectedTab,
+  onTabChange,
+}: KnowledgeLogContentProps) {
+  return (
+    <div className="relative flex-1 flex flex-col min-h-0">
+      <LogTabs
+        tabs={['Overview', 'Request', 'Response']}
+        selectedIndex={selectedTab}
+        onChange={onTabChange}
+        label="Knowledge log tabs"
+      >
+        <div className="divide-y divide-border-subtle w-full">
+          {activity && (
+            <>
+              <OverviewRow label="Status">
+                <StatusIndicator state={activity.getStatus()} size="small" />
+              </OverviewRow>
+              <OverviewRow label="Time Taken">
+                <span className="text-sm tabular-nums text-foreground">
+                  {`${Number(activity.getTimetaken()) / 1000000}ms`}
+                </span>
+              </OverviewRow>
+              <OverviewRow label="Created">
+                <span className="text-sm text-foreground">
+                  {toHumanReadableDateTime(activity.getCreateddate()!)}
+                </span>
+              </OverviewRow>
+            </>
+          )}
+        </div>
+        <LogCodePanel value={activity?.getRequest()?.toJavaScript()} />
+        <LogCodePanel value={activity?.getResponse()?.toJavaScript()} />
+      </LogTabs>
+    </div>
   );
 }

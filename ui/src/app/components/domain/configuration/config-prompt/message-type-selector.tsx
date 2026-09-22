@@ -1,42 +1,32 @@
-import type { FC } from 'react';
-import React from 'react';
-import cn from 'classnames';
+import { memo } from 'react';
+import { Dropdown } from '@carbon/react';
 import { PromptRole } from '@/models/prompt';
-import { ListboxDropdown as Dropdown } from '@/app/components/ui/primitives';
+
 type Props = {
   value?: PromptRole;
   onChange: (value: PromptRole) => void;
 };
 
 const allTypes = [PromptRole.system, PromptRole.user, PromptRole.assistant];
-const MessageTypeSelector: FC<Props> = ({ value, onChange }) => {
+
+const getPromptRoleName = (item: PromptRole | null): string => item ?? '';
+
+function MessageTypeSelector({ value, onChange }: Props) {
   return (
     <Dropdown
-      className={cn('min-w-[140px] !border-none !outline-none')}
-      allValue={allTypes}
-      currentValue={value}
-      setValue={onChange}
-      placeholder="Select a Role"
-      label={cs => {
-        return (
-          <span className={cn('block truncate capitalize font-medium text-sm')}>
-            {cs}
-          </span>
-        );
-      }}
-      option={(cs, selected) => {
-        return (
-          <span
-            className={cn(
-              'block truncate capitalize text-sm',
-              selected ? 'opacity-100 font-medium' : 'opacity-80',
-            )}
-          >
-            {cs}
-          </span>
-        );
+      id="prompt-message-role"
+      className="min-w-[140px] [&_.cds--list-box]:!border-none"
+      titleText="Message role"
+      hideLabel
+      label="Select a role"
+      items={allTypes}
+      selectedItem={value ?? null}
+      itemToString={getPromptRoleName}
+      onChange={({ selectedItem }: { selectedItem: PromptRole | null }) => {
+        if (selectedItem) onChange(selectedItem);
       }}
     />
   );
-};
-export default React.memo(MessageTypeSelector);
+}
+
+export default memo(MessageTypeSelector);

@@ -1,22 +1,24 @@
 import { Select } from '@/app/components/ui/primitives';
 import { cn } from '@/utils';
 import { InputVarType } from '@/models/common';
-import React, { FC } from 'react';
+import type { SelectHTMLAttributes } from 'react';
+import { memo } from 'react';
 
-/**
- *
- * @param props
- * @returns
- */
-export const TypeOfVariable: FC<
-  React.SelectHTMLAttributes<HTMLSelectElement> & {
-    type: string;
-    onChange: (type: string) => void;
-    allType: InputVarType[];
-  }
-> = React.memo(({ type, onChange, allType, className }) => {
+type TypeOfVariableProps = SelectHTMLAttributes<HTMLSelectElement> & {
+  type: string;
+  onChange: (type: string) => void;
+  allType: InputVarType[];
+};
+
+function TypeOfVariableComponent({
+  type,
+  onChange,
+  allType,
+  className,
+}: TypeOfVariableProps) {
   return (
     <Select
+      aria-label="Variable type"
       value={type}
       placeholder="Select type of variable"
       options={allType.map(x => {
@@ -26,4 +28,6 @@ export const TypeOfVariable: FC<
       onChange={v => onChange(v.currentTarget.value)}
     />
   );
-});
+}
+
+export const TypeOfVariable = memo(TypeOfVariableComponent);

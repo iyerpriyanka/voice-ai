@@ -1,5 +1,4 @@
-import { Metadata, VaultCredential } from '@rapidaai/react';
-import { ProviderComponentProps } from '@/app/components/domain/providers/provider-component-props';
+import { Metadata } from '@rapidaai/react';
 import { GetDefaultEOSConfig } from '@/app/components/domain/providers/end-of-speech/provider';
 import { loadProviderConfig } from '@/providers/config-loader';
 import {
@@ -11,11 +10,12 @@ import {
   parseCustomSttRequestRules,
 } from '@/providers/custom-stt/contract';
 import { ConfigRenderer } from '@/app/components/domain/providers/config-renderer';
-import { FC } from 'react';
 import {
   LEGACY_MICROPHONE_VAD_BARGE_IN_TRIGGER_KEY,
   MICROPHONE_BARGE_IN_TRIGGER_KEY,
 } from '@/app/components/domain/providers/microphone/barge-in-trigger-control';
+import type { VaultCredential } from '@rapidaai/react';
+import type { ProviderComponentProps } from '@/app/components/domain/providers/provider-component-props';
 
 type ProviderCredentialRef = string | VaultCredential;
 
@@ -97,7 +97,7 @@ const validateCustomSttHttpRequestRules = (
 export const GetDefaultSpeechToTextIfInvalid = (
   provider: string,
   parameters: Metadata[],
-) => {
+): Metadata[] => {
   const config = loadProviderConfig(provider);
   if (!config?.stt) return parameters;
   return getDefaultsFromConfig(config, 'stt', parameters, provider);
@@ -269,11 +269,11 @@ export const GetDefaultMicrophoneConfig = (
   return hydrated;
 };
 
-export const SpeechToTextConfigComponent: FC<ProviderComponentProps> = ({
+export function SpeechToTextConfigComponent({
   provider,
   parameters,
   onChangeParameter,
-}) => {
+}: ProviderComponentProps) {
   const config = loadProviderConfig(provider);
   if (!config?.stt) return null;
   return (
@@ -285,4 +285,4 @@ export const SpeechToTextConfigComponent: FC<ProviderComponentProps> = ({
       onParameterChange={onChangeParameter}
     />
   );
-};
+}

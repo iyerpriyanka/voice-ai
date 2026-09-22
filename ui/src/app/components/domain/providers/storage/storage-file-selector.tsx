@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import { useMemo } from 'react';
 import {
   Checkbox,
   StructuredListBody,
@@ -7,15 +7,25 @@ import {
   StructuredListRow,
   StructuredListWrapper,
 } from '@carbon/react';
-import { StorageFileGroup, storageFiles } from './storage-files';
+import { storageFiles } from './storage-files';
+import type { StorageFileGroup } from './storage-files';
 
-export const StorageFileSelector: FC<{
+interface StorageFileSelectorProps {
   group: StorageFileGroup;
   selectedFiles: string[];
   onChange: (files: string[]) => void;
-}> = ({ group, selectedFiles, onChange }) => {
+}
+
+export function StorageFileSelector({
+  group,
+  selectedFiles,
+  onChange,
+}: StorageFileSelectorProps) {
   const selectedSet = useMemo(() => new Set(selectedFiles), [selectedFiles]);
-  const groupFiles = storageFiles.filter(file => file.group === group);
+  const groupFiles = useMemo(
+    () => storageFiles.filter(file => file.group === group),
+    [group],
+  );
 
   const updateFile = (fileId: string, checked: boolean) => {
     if (checked) {
@@ -58,4 +68,4 @@ export const StorageFileSelector: FC<{
       </StructuredListBody>
     </StructuredListWrapper>
   );
-};
+}

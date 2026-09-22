@@ -1,8 +1,9 @@
 import { CONFIG } from '@/configs';
 import { LogoLinkedin, LogoGithub } from '@carbon/icons-react';
 import { Button } from '@carbon/react';
+import type { SVGProps } from 'react';
 
-const GoogleIcon = (props: any) => (
+const GoogleIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 48 48"

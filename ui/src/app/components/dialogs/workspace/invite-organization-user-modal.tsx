@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import { useCallback, useContext, useMemo, useState } from 'react';
 import {
   InviteUserToOrganization,
   InviteUserToOrganizationRequest,
@@ -6,15 +6,17 @@ import {
 } from '@rapidaai/react';
 import { Dropdown } from '@carbon/react';
 import toast from 'react-hot-toast/headless';
-import { ModalProps } from '@/app/components/ui/primitives';
 import {
   Modal,
-  ModalHeader,
   ModalBody,
   ModalFooter,
+  ModalHeader,
+  type ModalProps,
+  PrimaryButton,
+  SecondaryButton,
+  Stack,
+  TextInput,
 } from '@/app/components/ui/primitives';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
-import { Stack, TextInput } from '@/app/components/ui/primitives';
 import { ErrorMessage } from '@/app/components/ui/feedback';
 import { AuthContext } from '@/context/auth-context';
 import { useCurrentCredential } from '@/hooks/use-credential';
@@ -24,6 +26,14 @@ import {
   ProjectRoleRow,
   ProjectRoleTable,
 } from '@/app/components/domain/project-role-table';
+
+const PROJECT_ACTION_ERROR =
+  'Unable to process your request. please try again later.';
+
+type OrganizationInviteFailure = {
+  getHumanmessage?: () => string;
+  message?: string;
+};
 
 const organizationRoles = [
   { name: 'Admin', value: 'admin' },
@@ -40,9 +50,11 @@ interface InviteOrganizationUserDialogProps extends ModalProps {
   onSuccess?: () => void;
 }
 
-export function InviteOrganizationUserDialog(
-  props: InviteOrganizationUserDialogProps,
-) {
+export function InviteOrganizationUserDialog({
+  modalOpen,
+  setModalOpen,
+  onSuccess,
+}: InviteOrganizationUserDialogProps) {
   const { authId, token } = useCurrentCredential();
   const { projectRoles: availableProjects } = useContext(AuthContext);
   const { loading, showLoader, hideLoader } = useRapidaStore();
@@ -51,12 +63,16 @@ export function InviteOrganizationUserDialog(
   const [projectRoleRows, setProjectRoleRows] = useState<ProjectRoleRow[]>([]);
   const [error, setError] = useState('');
 
-  const resetForm = () => {
+  const closeDialog = useCallback(() => {
+    setModalOpen(false);
+  }, [setModalOpen]);
+
+  const resetForm = useCallback(() => {
     setEmail('');
     setOrganizationRole('');
     setProjectRoleRows([]);
     setError('');
-  };
+  }, []);
 
   const submitInvite = async () => {
     if (!email) {
@@ -104,47 +120,50 @@ export function InviteOrganizationUserDialog(
       hideLoader();
 
       const responseError = response.getError();
-      const message =
-        responseError?.getHumanmessage() ||
-        'Unable to process your request. please try again later.';
+      const message = responseError?.getHumanmessage() || PROJECT_ACTION_ERROR;
 
       if (response.getSuccess()) {
         resetForm();
-        props.setModalOpen(false);
+        closeDialog();
         toast.success('The organization invitation was sent successfully.');
-        if (props.onSuccess) props.onSuccess();
+        onSuccess?.();
         return;
       }
 
       toast.error(message);
       setError(message);
-    } catch (err: any) {
+    } catch (err: unknown) {
       hideLoader();
+      const inviteError = err as OrganizationInviteFailure;
       const message =
-        err?.getHumanmessage?.() ||
-        err?.message ||
-        'Unable to process your request. please try again later.';
+        inviteError.getHumanmessage?.() ||
+        inviteError.message ||
+        PROJECT_ACTION_ERROR;
       toast.error(message);
       setError(message);
     }
   };
 
-  const projectOptions = (availableProjects || []).map(project => ({
-    name: project.projectname,
-    value: project.projectid,
-  }));
+  const projectOptions = useMemo(
+    () =>
+      (availableProjects || []).map(project => ({
+        name: project.projectname,
+        value: project.projectid,
+      })),
+    [availableProjects],
+  );
 
   return (
     <Modal
-      open={props.modalOpen}
-      onClose={() => props.setModalOpen(false)}
+      open={modalOpen}
+      onClose={closeDialog}
       size="md"
       preventCloseOnClickOutside
     >
       <ModalHeader
         label="User Management"
         title="Invite user to organization"
-        onClose={() => props.setModalOpen(false)}
+        onClose={closeDialog}
       />
       <ModalBody hasForm hasScrollingContent>
         <Stack gap={6}>
@@ -192,7 +211,7 @@ export function InviteOrganizationUserDialog(
         </Stack>
       </ModalBody>
       <ModalFooter>
-        <SecondaryButton size="lg" onClick={() => props.setModalOpen(false)}>
+        <SecondaryButton size="lg" onClick={closeDialog}>
           Cancel
         </SecondaryButton>
         <PrimaryButton size="lg" onClick={submitInvite} isLoading={loading}>

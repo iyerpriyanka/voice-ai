@@ -1,11 +1,18 @@
 import { Metadata } from '@rapidaai/react';
-import { ListboxDropdown as Dropdown } from '@/app/components/ui/primitives';
 import { ConfigureCohereRerankerModel } from '@/app/components/domain/providers/reranker/cohere';
 import { GetCohereRerankerDefaultOptions } from '@/app/components/domain/providers/reranker/cohere/constants';
-import { cn } from '@/utils';
-import { FC } from 'react';
+import { Dropdown } from '@carbon/react';
+import { Stack } from '@/app/components/ui/primitives';
+import { HelpToggletip } from '@/app/components/domain/providers/help-label';
 import { RERANKER_PROVIDER } from '@/providers';
-import { ProviderComponentProps } from '@/app/components/domain/providers/provider-component-props';
+import type {
+  ProviderComponentProps,
+  ProviderSelectionChange,
+} from '@/app/components/domain/providers/provider-component-props';
+import type { RapidaProvider } from '@/providers';
+
+const getProviderName = (item: RapidaProvider | null): string =>
+  item?.name ?? '';
 
 export const GetDefaultRerankerConfigIfInvalid = (
   provider: string,
@@ -19,11 +26,11 @@ export const GetDefaultRerankerConfigIfInvalid = (
   }
 };
 
-export const RerankerConfigComponent: FC<{
-  provider;
-  parameters;
-  onChangeParameter;
-}> = ({ provider, parameters, onChangeParameter }) => {
+export function RerankerConfigComponent({
+  provider,
+  parameters,
+  onChangeParameter,
+}: ProviderComponentProps) {
   switch (provider) {
     case 'cohere':
       return (
@@ -35,68 +42,49 @@ export const RerankerConfigComponent: FC<{
     default:
       return null;
   }
-};
+}
 
-export const RerankerProvider: React.FC<ProviderComponentProps> = props => {
-  const { provider, onChangeProvider } = props;
+export function RerankerProvider({
+  provider,
+  parameters,
+  onChangeProvider,
+  onChangeParameter,
+}: ProviderComponentProps) {
+  const selectedProvider =
+    RERANKER_PROVIDER.find(x => x.code === provider) || null;
 
   return (
-    <div
-      className={cn(
-        'p-px',
-        'outline-solid outline-transparent',
-        'focus-within:outline-blue-600 focus:outline-blue-600 -outline-offset-1',
-        'border-b border-gray-300 dark:border-gray-700',
-        'dark:focus-within:border-blue-600 focus-within:border-blue-600',
-        'transition-all duration-200 ease-in-out',
-        'flex relative',
-      )}
-    >
-      <div className="w-44 relative">
-        <Dropdown
-          className={cn(
-            'bg-light-background max-w-full dark:bg-gray-950 focus-within:border-none! focus-within:outline-hidden! border-none! outline-hidden',
-          )}
-          currentValue={RERANKER_PROVIDER.find(x => x.code === provider)}
-          setValue={v => {
-            onChangeProvider(v.code);
-          }}
-          allValue={RERANKER_PROVIDER}
-          placeholder="Select provider"
-          option={c => {
-            return (
-              <span className="inline-flex items-center gap-2 sm:gap-2.5 max-w-full text-sm font-medium">
-                <img
-                  alt=""
-                  loading="lazy"
-                  width={16}
-                  height={16}
-                  className="sm:h-4 sm:w-4 w-4 h-4 align-middle block shrink-0"
-                  src={c.image}
-                />
-                <span className="truncate capitalize">{c.name}</span>
-              </span>
-            );
-          }}
-          label={c => {
-            return (
-              <span className="inline-flex items-center gap-2 sm:gap-2.5 max-w-full text-sm font-medium">
-                <img
-                  alt=""
-                  loading="lazy"
-                  width={16}
-                  height={16}
-                  className="sm:h-4 sm:w-4 w-4 h-4 align-middle block shrink-0"
-                  src={c.image}
-                />
-                <span className="truncate capitalize">{c.name}</span>
-              </span>
-            );
-          }}
+    <Stack gap={6}>
+      <Dropdown
+        id="reranker-provider"
+        titleText={
+          <span className="inline-flex items-center gap-1">
+            Reranker provider
+            <HelpToggletip
+              label="Reranker provider"
+              helpText="Select a reranker provider and model for knowledge retrieval ranking."
+            />
+          </span>
+        }
+        label="Select reranker provider"
+        items={RERANKER_PROVIDER}
+        selectedItem={selectedProvider}
+        itemToString={getProviderName}
+        onChange={({
+          selectedItem,
+        }: ProviderSelectionChange<RapidaProvider>) => {
+          if (!selectedItem) return;
+          onChangeProvider(selectedItem.code);
+        }}
+      />
+      {provider && (
+        <RerankerConfigComponent
+          provider={provider}
+          parameters={parameters}
+          onChangeProvider={onChangeProvider}
+          onChangeParameter={onChangeParameter}
         />
-      </div>
-      {/*  */}
-      <RerankerConfigComponent {...props} />
-    </div>
+      )}
+    </Stack>
   );
-};
+}

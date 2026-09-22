@@ -1,21 +1,23 @@
-import type { FC, HTMLAttributes } from 'react';
+import type { HTMLAttributes } from 'react';
 import { cn } from '@/utils';
 
-export const TableSection: FC<HTMLAttributes<HTMLDivElement>> = ({
+export function TableSection({
   className,
   children,
   ...attributes
-}) => {
+}: HTMLAttributes<HTMLDivElement>) {
   return (
     <div {...attributes} className={cn('flex-1 flex flex-col', className)}>
       {children}
     </div>
   );
-};
+}
 
-export const ScrollableTableSection: FC<
-  HTMLAttributes<HTMLDivElement>
-> = ({ className, children, ...attributes }) => {
+export function ScrollableTableSection({
+  className,
+  children,
+  ...attributes
+}: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       {...attributes}
@@ -24,4 +26,4 @@ export const ScrollableTableSection: FC<
       {children}
     </div>
   );
-};
+}

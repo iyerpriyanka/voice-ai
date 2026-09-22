@@ -25,6 +25,7 @@ const PromptEditor = ({
   onFocus,
   onBlur,
   editable = true,
+  height = '200px',
   className,
   placeholder = '',
   enableReservedVariableSuggestions = false,
@@ -128,9 +129,11 @@ const PromptEditor = ({
   };
   return (
     <Editor
+      width="100%"
+      height={height}
       language="twig"
       className={className}
-      defaultValue={value}
+      value={value}
       onMount={handleEditorDidMount}
       onChange={handleChange}
       theme={resolvedMode === 'dark' ? 'vs-dark' : 'vs'}
@@ -186,12 +189,11 @@ class PlaceholderContentWidget {
       this.domNode = document.createElement('div');
       this.domNode.innerText = this.placeholder;
       this.domNode.className = 'dark:text-gray-700 text-gray-400 relative!';
-      this.domNode.style.pointerEvents = 'auto'; // allow click
-      this.domNode.style.cursor = 'text'; // make it look like editable text
+      this.domNode.style.pointerEvents = 'auto';
+      this.domNode.style.cursor = 'text';
       this.domNode.onclick = () => {
         this.editor.focus();
       };
-      //   this.editor.applyFontInfo(this.domNode);
     }
 
     return this.domNode;
@@ -202,9 +204,5 @@ class PlaceholderContentWidget {
       position: { lineNumber: 1, column: 1 },
       preference: [this.mEditor.editor.ContentWidgetPositionPreference.EXACT],
     };
-  }
-
-  dispose() {
-    this.editor.removeContentWidget(this);
   }
 }

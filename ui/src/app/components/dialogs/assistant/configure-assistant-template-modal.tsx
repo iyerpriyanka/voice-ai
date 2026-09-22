@@ -1,19 +1,15 @@
-import React, { FC, useState } from 'react';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
-import { ModalProps } from '@/app/components/ui/primitives';
+import { useCallback, useMemo, useState } from 'react';
 import {
   Modal,
-  ModalHeader,
   ModalBody,
   ModalFooter,
+  ModalHeader,
+  type ModalProps,
+  PrimaryButton,
+  SecondaryButton,
 } from '@/app/components/ui/primitives';
-import { cn } from '@/utils';
 import assistantTemplates from '@/prompts/assistants/index.json';
-import { Checkmark } from '@carbon/icons-react';
-import { CornerBorderOverlay } from '@/app/components/ui/primitives';
-import { Tag, ContentSwitcher, Switch } from '@carbon/react';
-
-// Types
+import { ContentSwitcher, SelectableTile, Switch, Tag } from '@carbon/react';
 
 export interface AssistantTemplate {
   name: string;
@@ -34,44 +30,54 @@ interface ConfigureAssistantTemplateDialogProps extends ModalProps {
   onSelectTemplate?: (template: AssistantTemplate) => void;
 }
 
-// Component
-
-export const ConfigureAssistantTemplateDialog: FC<
-  ConfigureAssistantTemplateDialogProps
-> = props => {
+export function ConfigureAssistantTemplateDialog({
+  modalOpen,
+  setModalOpen,
+  onSelectTemplate,
+}: ConfigureAssistantTemplateDialogProps) {
   const [selectedTemplate, setSelectedTemplate] =
     useState<AssistantTemplate | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>('All');
 
-  const templates = assistantTemplates as AssistantTemplate[];
-  const categories = [
-    'All',
-    ...Array.from(new Set(templates.map(t => t.category))),
-  ];
+  const templates = useMemo(
+    () => assistantTemplates as AssistantTemplate[],
+    [],
+  );
+  const categories = useMemo(
+    () => ['All', ...Array.from(new Set(templates.map(t => t.category)))],
+    [templates],
+  );
 
-  const visible =
-    activeCategory === 'All'
-      ? templates
-      : templates.filter(t => t.category === activeCategory);
+  const visible = useMemo(
+    () =>
+      activeCategory === 'All'
+        ? templates
+        : templates.filter(t => t.category === activeCategory),
+    [activeCategory, templates],
+  );
 
-  const handleContinue = () => {
-    if (selectedTemplate && props.onSelectTemplate) {
-      props.onSelectTemplate(selectedTemplate);
+  const closeDialog = useCallback(() => {
+    setModalOpen(false);
+  }, [setModalOpen]);
+
+  const handleContinue = useCallback(() => {
+    if (selectedTemplate) {
+      onSelectTemplate?.(selectedTemplate);
     }
-    props.setModalOpen(false);
-  };
+    closeDialog();
+  }, [closeDialog, onSelectTemplate, selectedTemplate]);
 
   return (
     <Modal
-      open={props.modalOpen}
-      onClose={() => props.setModalOpen(false)}
+      open={modalOpen}
+      onClose={closeDialog}
       size="lg"
       containerClassName="!h-[90vh] !w-[90vw] !max-h-[90vh] !max-w-[90vw]"
     >
       <ModalHeader
         label="Assistant"
         title="Select a usecase template"
-        onClose={() => props.setModalOpen(false)}
+        onClose={closeDialog}
       />
 
       <ModalBody hasScrollingContent>
@@ -80,7 +86,6 @@ export const ConfigureAssistantTemplateDialog: FC<
           prompt, and parameters. You can customise everything after selecting.
         </p>
 
-        {/* Category filter */}
         <div className="flex items-center gap-2 flex-wrap mb-4">
           <ContentSwitcher
             onChange={({ name }) => {
@@ -104,41 +109,17 @@ export const ConfigureAssistantTemplateDialog: FC<
           )}
         </div>
 
-        {/* Tile grid */}
-        <div className="grid grid-cols-3 border-l border-t border-gray-200 dark:border-gray-800">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
           {visible.map((template, index) => {
             const isSelected = selectedTemplate?.name === template.name;
             return (
-              <div
+              <SelectableTile
+                id={`assistant-template-${index}`}
                 key={index}
-                role="button"
-                tabIndex={0}
+                selected={isSelected}
                 onClick={() => setSelectedTemplate(template)}
-                onKeyDown={e =>
-                  (e.key === 'Enter' || e.key === ' ') &&
-                  setSelectedTemplate(template)
-                }
-                className={cn(
-                  'relative flex flex-col p-4 border-r border-b border-gray-200 dark:border-gray-800 cursor-pointer transition-colors duration-100 select-none outline-none group',
-                  'focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary',
-                  isSelected
-                    ? 'bg-primary/5 dark:bg-primary/10'
-                    : 'hover:bg-gray-100 dark:hover:bg-gray-800',
-                )}
+                className="flex min-h-56 flex-col text-left"
               >
-                <CornerBorderOverlay
-                  className={isSelected ? 'opacity-100' : undefined}
-                />
-
-                <div
-                  className={cn(
-                    'absolute top-0 right-0 w-6 h-6 flex items-center justify-center transition-colors duration-100 z-20',
-                    isSelected ? 'bg-primary' : 'bg-transparent',
-                  )}
-                >
-                  {isSelected && <Checkmark size={14} className="text-white" />}
-                </div>
-
                 <Tag size="sm" type="blue" className="!self-start !mb-2">
                   {template.category}
                 </Tag>
@@ -162,14 +143,14 @@ export const ConfigureAssistantTemplateDialog: FC<
                     Temp {template.parameters.temperature}
                   </Tag>
                 </div>
-              </div>
+              </SelectableTile>
             );
           })}
         </div>
       </ModalBody>
 
       <ModalFooter>
-        <SecondaryButton size="lg" onClick={() => props.setModalOpen(false)}>
+        <SecondaryButton size="lg" onClick={closeDialog}>
           Cancel
         </SecondaryButton>
         <PrimaryButton
@@ -182,4 +163,4 @@ export const ConfigureAssistantTemplateDialog: FC<
       </ModalFooter>
     </Modal>
   );
-};
+}

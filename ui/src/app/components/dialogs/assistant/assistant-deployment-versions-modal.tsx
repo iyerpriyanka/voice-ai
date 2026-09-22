@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Button,
   Loading,
@@ -11,12 +11,20 @@ import {
 } from '@carbon/react';
 import { Copy, Checkmark } from '@carbon/icons-react';
 import {
+  type AssistantApiDeployment,
+  type AssistantDebuggerDeployment,
+  type AssistantPhoneDeployment,
+  type AssistantWebpluginDeployment,
   ConnectionConfig,
   GetAllAssistantApiDeployment,
+  type GetAllAssistantApiDeploymentResponse,
   GetAllAssistantDebuggerDeployment,
+  type GetAllAssistantDebuggerDeploymentResponse,
   GetAllAssistantDeploymentRequest,
   GetAllAssistantPhoneDeployment,
+  type GetAllAssistantPhoneDeploymentResponse,
   GetAllAssistantWebpluginDeployment,
+  type GetAllAssistantWebpluginDeploymentResponse,
   Paginate,
 } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
@@ -37,8 +45,20 @@ interface AssistantDeploymentVersionsModalProps extends ModalProps {
 
 type DeploymentVersionRow = {
   id: string;
-  createdDate: unknown;
+  createdDate: ReturnType<AssistantApiDeployment['getCreateddate']>;
 };
+
+type DeploymentRecord =
+  | AssistantApiDeployment
+  | AssistantDebuggerDeployment
+  | AssistantPhoneDeployment
+  | AssistantWebpluginDeployment;
+
+type DeploymentVersionsResponse =
+  | GetAllAssistantApiDeploymentResponse
+  | GetAllAssistantDebuggerDeploymentResponse
+  | GetAllAssistantPhoneDeploymentResponse
+  | GetAllAssistantWebpluginDeploymentResponse;
 
 const labelByType: Record<AssistantDeploymentType, string> = {
   api: 'SDK / API',
@@ -47,9 +67,7 @@ const labelByType: Record<AssistantDeploymentType, string> = {
   web: 'Web Widget',
 };
 
-export const AssistantDeploymentVersionsModal: FC<
-  AssistantDeploymentVersionsModalProps
-> = ({
+export function AssistantDeploymentVersionsModal({
   modalOpen,
   setModalOpen,
   assistantId,
@@ -57,7 +75,7 @@ export const AssistantDeploymentVersionsModal: FC<
   authId,
   token,
   projectId,
-}) => {
+}: AssistantDeploymentVersionsModalProps) {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [rows, setRows] = useState<DeploymentVersionRow[]>([]);
@@ -87,12 +105,10 @@ export const AssistantDeploymentVersionsModal: FC<
 
     const request = new GetAllAssistantDeploymentRequest();
     request.setAssistantid(assistantId);
-    if ((request as any).setPaginate) {
-      const paginate = new Paginate();
-      paginate.setPage(1);
-      paginate.setPagesize(100);
-      (request as any).setPaginate(paginate);
-    }
+    const paginate = new Paginate();
+    paginate.setPage(1);
+    paginate.setPagesize(100);
+    request.setPaginate(paginate);
 
     const fetchByType = {
       api: GetAllAssistantApiDeployment,
@@ -112,11 +128,14 @@ export const AssistantDeploymentVersionsModal: FC<
           return;
         }
 
-        const data = (response as any).getDataList?.() || [];
-        const mapped: DeploymentVersionRow[] = data.map((d: any) => ({
-          id: d.getId?.() || '',
-          createdDate: d.getCreateddate?.(),
-        }));
+        const mapped: DeploymentVersionRow[] = (
+          response as DeploymentVersionsResponse
+        )
+          .getDataList()
+          .map((deployment: DeploymentRecord) => ({
+            id: deployment.getId(),
+            createdDate: deployment.getCreateddate(),
+          }));
         setRows(mapped);
       })
       .catch(() => {
@@ -194,7 +213,7 @@ export const AssistantDeploymentVersionsModal: FC<
                     </TableCell>
                     <TableCell className="!text-xs whitespace-nowrap">
                       {row.createdDate
-                        ? toHumanReadableDateTime(row.createdDate as any)
+                        ? toHumanReadableDateTime(row.createdDate)
                         : '—'}
                     </TableCell>
                   </TableRow>
@@ -206,4 +225,4 @@ export const AssistantDeploymentVersionsModal: FC<
       </div>
     </RightSideModal>
   );
-};
+}

@@ -1,6 +1,8 @@
 import { useProviderContext } from '@/context/provider-context';
 import { cn } from '@/utils';
-import { FC, HTMLAttributes, useEffect, useState } from 'react';
+import { Tag } from '@carbon/react';
+import type { HTMLAttributes } from 'react';
+import { useMemo } from 'react';
 
 type ToolProviderLike = {
   getId: () => string;
@@ -13,43 +15,45 @@ interface ToolProviderPillProps extends HTMLAttributes<HTMLSpanElement> {
   toolProviderId?: string;
 }
 
-export const ToolProviderPill: FC<ToolProviderPillProps> = props => {
+export function ToolProviderPill({
+  toolProvider,
+  toolProviderId,
+  className,
+  onClick,
+}: ToolProviderPillProps) {
   const { toolProviders = [] } = useProviderContext() as ReturnType<
     typeof useProviderContext
   > & {
     toolProviders?: ToolProviderLike[];
   };
-  const [currentTool, setCurrentTool] = useState<ToolProviderLike | null>(
-    props.toolProvider || null,
+
+  const currentTool = useMemo(
+    () =>
+      toolProvider ||
+      toolProviders.find(provider => provider.getId() === toolProviderId) ||
+      null,
+    [toolProvider, toolProviderId, toolProviders],
   );
 
-  useEffect(() => {
-    if (props.toolProviderId) {
-      const cTool = toolProviders.find(
-        toolProvider => toolProvider.getId() === props.toolProviderId,
-      );
-      if (cTool) setCurrentTool(cTool);
-    }
-  }, [props.toolProviderId, toolProviders]);
+  const label = currentTool?.getName() || toolProviderId || 'Unknown tool';
 
   return (
-    <span
-      onClick={props.onClick}
-      className={cn(
-        'shrink-0 inline-flex items-center divide-x divide-blue-200 dark:divide-blue-700',
-        'bg-blue-100 dark:bg-blue-900/30 ring-[0.5px] ring-inset ring-blue-200 dark:ring-blue-700',
-        'text-sm text-blue-700 dark:text-blue-400 font-medium',
-        props.className,
-      )}
+    <Tag
+      size="md"
+      type="blue"
+      onClick={onClick}
+      className={cn('!inline-flex !max-w-full !items-center', className)}
     >
-      <span className="px-2.5 py-1 flex items-center">
-        <img
-          alt={currentTool?.getName()}
-          src={currentTool?.getImage()}
-          className="w-4 h-4 shrink-0"
-        />
+      <span className="flex min-w-0 items-center gap-1.5">
+        {currentTool?.getImage() && (
+          <img
+            alt={currentTool.getName()}
+            src={currentTool.getImage()}
+            className="h-4 w-4 shrink-0"
+          />
+        )}
+        <span className="truncate">{label}</span>
       </span>
-      <span className="px-2.5 py-1 truncate">{currentTool?.getName()}</span>
-    </span>
+    </Tag>
   );
-};
+}

@@ -1,5 +1,5 @@
-import React, { FC, useEffect, useState } from 'react';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { FormEvent } from 'react';
 import { CONFIG } from '@/configs';
 import {
   BuildinTool,
@@ -8,12 +8,14 @@ import {
   GetDefaultToolDefintion,
   ValidateToolDefaultOptions,
 } from '@/app/components/domain/tools/tool-registry';
-import { ModalProps } from '@/app/components/ui/primitives';
 import {
   Modal,
-  ModalHeader,
   ModalBody,
   ModalFooter,
+  ModalHeader,
+  type ModalProps,
+  PrimaryButton,
+  SecondaryButton,
 } from '@/app/components/ui/primitives';
 import { Notification } from '@/app/components/ui/feedback';
 
@@ -38,26 +40,35 @@ interface ConfigureAssistantToolDialogProps extends ModalProps {
   }) => string | null; // Return error message or null if valid
 }
 
-export const ConfigureAssistantToolDialog: FC<
-  ConfigureAssistantToolDialogProps
-> = props => {
-  const defaultToolCode =
-    CONFIG.workspace.features?.knowledge !== false
-      ? 'knowledge_retrieval'
-      : 'endpoint';
+export function ConfigureAssistantToolDialog({
+  modalOpen,
+  setModalOpen,
+  initialData,
+  onChange,
+  onValidateConfig,
+}: ConfigureAssistantToolDialogProps) {
+  const defaultToolCode = useMemo(
+    () =>
+      CONFIG.workspace.features?.knowledge !== false
+        ? 'knowledge_retrieval'
+        : 'endpoint',
+    [],
+  );
 
-  const normalizeToolCode = (code?: string) => {
-    if (!code) return defaultToolCode;
-    if (
-      CONFIG.workspace.features?.knowledge === false &&
-      code === 'knowledge_retrieval'
-    ) {
-      return 'endpoint';
-    }
-    return code;
-  };
+  const resolveToolCode = useCallback(
+    (code?: string) => {
+      if (!code) return defaultToolCode;
+      if (
+        CONFIG.workspace.features?.knowledge === false &&
+        code === 'knowledge_retrieval'
+      ) {
+        return 'endpoint';
+      }
+      return code;
+    },
+    [defaultToolCode],
+  );
 
-  //
   const [toolDefinition, setToolDefinition] = useState<{
     name: string;
     description: string;
@@ -70,7 +81,6 @@ export const ConfigureAssistantToolDialog: FC<
     }),
   );
 
-  //
   const [buildinToolConfig, setBuildinToolConfig] = useState<BuildinToolConfig>(
     {
       code: defaultToolCode,
@@ -79,7 +89,12 @@ export const ConfigureAssistantToolDialog: FC<
   );
 
   const [errorMessage, setErrorMessage] = useState('');
-  const resetState = () => {
+
+  const closeDialog = useCallback(() => {
+    setModalOpen(false);
+  }, [setModalOpen]);
+
+  const resetState = useCallback(() => {
     setBuildinToolConfig({
       code: defaultToolCode,
       parameters: GetDefaultToolConfigIfInvalid(defaultToolCode, []),
@@ -93,48 +108,49 @@ export const ConfigureAssistantToolDialog: FC<
     );
 
     setErrorMessage('');
-  };
+  }, [defaultToolCode]);
 
   useEffect(() => {
-    if (props.modalOpen && props.initialData) {
-      const toolCode = normalizeToolCode(
-        props.initialData.buildinToolConfig.code,
-      );
+    if (modalOpen && initialData) {
+      const toolCode = resolveToolCode(initialData.buildinToolConfig.code);
       setToolDefinition(
         GetDefaultToolDefintion(toolCode, {
-          name: props.initialData.name || '',
-          description: props.initialData.description || '',
-          parameters: props.initialData.fields || '',
+          name: initialData.name || '',
+          description: initialData.description || '',
+          parameters: initialData.fields || '',
         }),
       );
       setBuildinToolConfig({
         code: toolCode,
         parameters: GetDefaultToolConfigIfInvalid(
           toolCode,
-          props.initialData.buildinToolConfig.parameters || [],
+          initialData.buildinToolConfig.parameters || [],
         ),
       });
-    } else if (!props.modalOpen) {
+    } else if (!modalOpen) {
       resetState();
     }
-  }, [defaultToolCode, props.initialData, props.modalOpen]);
+  }, [initialData, modalOpen, resetState, resolveToolCode]);
 
-  const onChangeBuildinToolConfig = (code: string) => {
-    setBuildinToolConfig({
-      code: code,
-      parameters: GetDefaultToolConfigIfInvalid(
+  const onChangeBuildinToolConfig = useCallback(
+    (code: string) => {
+      setBuildinToolConfig({
         code,
-        buildinToolConfig.parameters,
-      ),
-    });
-    setToolDefinition(
-      GetDefaultToolDefintion(code, {
-        name: '',
-        description: '',
-        parameters: '',
-      }),
-    );
-  };
+        parameters: GetDefaultToolConfigIfInvalid(
+          code,
+          buildinToolConfig.parameters,
+        ),
+      });
+      setToolDefinition(
+        GetDefaultToolDefintion(code, {
+          name: '',
+          description: '',
+          parameters: '',
+        }),
+      );
+    },
+    [buildinToolConfig.parameters],
+  );
 
   const validateForm = () => {
     if (!toolDefinition.name) {
@@ -177,12 +193,12 @@ export const ConfigureAssistantToolDialog: FC<
     return true;
   };
 
-  const onSubmit = async (e: React.FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
     if (!validateForm()) return;
-    if (props.onValidateConfig) {
-      const parentError = props.onValidateConfig({
+    if (onValidateConfig) {
+      const parentError = onValidateConfig({
         name: toolDefinition.name,
         description: toolDefinition.description,
         fields: toolDefinition.parameters,
@@ -194,8 +210,8 @@ export const ConfigureAssistantToolDialog: FC<
       }
     }
 
-    if (props.onChange) {
-      props.onChange({
+    if (onChange) {
+      onChange({
         name: toolDefinition.name,
         description: toolDefinition.description,
         fields: toolDefinition.parameters,
@@ -205,15 +221,11 @@ export const ConfigureAssistantToolDialog: FC<
   };
 
   return (
-    <Modal
-      open={props.modalOpen}
-      onClose={() => props.setModalOpen(false)}
-      size="lg"
-    >
+    <Modal open={modalOpen} onClose={closeDialog} size="lg">
       <ModalHeader
         label="Tools"
         title="Configure Assistant Tool"
-        onClose={() => props.setModalOpen(false)}
+        onClose={closeDialog}
       />
       <ModalBody hasForm hasScrollingContent>
         <BuildinTool
@@ -228,12 +240,7 @@ export const ConfigureAssistantToolDialog: FC<
         )}
       </ModalBody>
       <ModalFooter>
-        <SecondaryButton
-          size="lg"
-          onClick={() => {
-            props.setModalOpen(false);
-          }}
-        >
+        <SecondaryButton size="lg" onClick={closeDialog}>
           Cancel
         </SecondaryButton>
         <PrimaryButton size="lg" type="button" onClick={onSubmit}>
@@ -242,4 +249,4 @@ export const ConfigureAssistantToolDialog: FC<
       </ModalFooter>
     </Modal>
   );
-};
+}

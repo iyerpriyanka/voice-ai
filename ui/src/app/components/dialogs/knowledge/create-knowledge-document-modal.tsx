@@ -1,14 +1,15 @@
-import React, { FC, useCallback, useEffect, useState } from 'react';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
+import { useCallback, useEffect, useState } from 'react';
+import type { KnowledgeDocument } from '@rapidaai/react';
 import {
   Modal,
   ModalHeader,
   ModalBody,
   ModalFooter,
+  PrimaryButton,
+  SecondaryButton,
 } from '@/app/components/ui/primitives';
-import { ModalProps } from '@/app/components/ui/primitives';
+import type { ModalProps } from '@/app/components/ui/primitives';
 import { ManualFile } from '@/app/pages/knowledge-base/action/components/datasource-uploader/manual-file';
-import { KnowledgeDocument } from '@rapidaai/react';
 import { useCreateKnowledgeDocumentPageStore } from '@/hooks/use-create-knowledge-document-page-store';
 import { useCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/hooks/use-rapida-store';
@@ -19,27 +20,29 @@ interface CreateKnowledgeDocumentDialogProps extends ModalProps {
   onReload: () => void;
 }
 
-export const CreateKnowledgeDocumentDialog: FC<
-  CreateKnowledgeDocumentDialogProps
-> = props => {
+export function CreateKnowledgeDocumentDialog(
+  props: CreateKnowledgeDocumentDialogProps,
+) {
+  const { knowledgeId, modalOpen, onReload, setModalOpen } = props;
   const [errorMessage, setErrorMessage] = useState('');
   const { clear } = useCreateKnowledgeDocumentPageStore();
+  const closeDialog = useCallback(() => setModalOpen(false), [setModalOpen]);
 
   useEffect(() => {
     clear();
-  }, [props.knowledgeId]);
+  }, [clear, knowledgeId]);
 
   const [userId, token, projectId] = useCredential();
   const { loading, showLoader, hideLoader } = useRapidaStore();
   const knowledgeDocumentAction = useCreateKnowledgeDocumentPageStore();
 
   const onSuccess = useCallback(
-    (d: KnowledgeDocument[]) => {
+    (_documents: KnowledgeDocument[]) => {
       hideLoader();
-      props.setModalOpen(false);
-      props.onReload();
+      closeDialog();
+      onReload();
     },
-    [props.knowledgeId],
+    [closeDialog, hideLoader, onReload],
   );
 
   const onError = useCallback(
@@ -47,13 +50,14 @@ export const CreateKnowledgeDocumentDialog: FC<
       hideLoader();
       setErrorMessage(e);
     },
-    [props.knowledgeId],
+    [hideLoader],
   );
 
   const onCreateKnowledgeDocument = () => {
+    setErrorMessage('');
     showLoader('overlay');
     knowledgeDocumentAction.onCreateKnowledgeDocument(
-      props.knowledgeId!,
+      knowledgeId,
       projectId,
       token,
       userId,
@@ -64,8 +68,8 @@ export const CreateKnowledgeDocumentDialog: FC<
 
   return (
     <Modal
-      open={props.modalOpen}
-      onClose={() => props.setModalOpen(false)}
+      open={modalOpen}
+      onClose={closeDialog}
       size="lg"
       containerClassName="!w-[1000px] !max-w-[1000px]"
       preventCloseOnClickOutside
@@ -73,7 +77,7 @@ export const CreateKnowledgeDocumentDialog: FC<
       <ModalHeader
         label="Knowledge"
         title="Add document to knowledge"
-        onClose={() => props.setModalOpen(false)}
+        onClose={closeDialog}
       />
       <ModalBody hasForm hasScrollingContent>
         <ManualFile />
@@ -82,7 +86,7 @@ export const CreateKnowledgeDocumentDialog: FC<
         )}
       </ModalBody>
       <ModalFooter>
-        <SecondaryButton size="lg" onClick={() => props.setModalOpen(false)}>
+        <SecondaryButton size="lg" onClick={closeDialog}>
           Cancel
         </SecondaryButton>
         <PrimaryButton
@@ -95,4 +99,4 @@ export const CreateKnowledgeDocumentDialog: FC<
       </ModalFooter>
     </Modal>
   );
-};
+}

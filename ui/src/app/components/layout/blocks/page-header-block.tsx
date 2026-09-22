@@ -1,11 +1,11 @@
-import type { FC, HTMLAttributes } from 'react';
+import type { HTMLAttributes } from 'react';
 import { cn } from '@/utils';
 
-export const PageHeaderBlock: FC<HTMLAttributes<HTMLDivElement>> = ({
+export function PageHeaderBlock({
   className,
   children,
   ...attributes
-}) => {
+}: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       {...attributes}
@@ -17,4 +17,4 @@ export const PageHeaderBlock: FC<HTMLAttributes<HTMLDivElement>> = ({
       {children}
     </div>
   );
-};
+}

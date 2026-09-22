@@ -1,17 +1,16 @@
 import { Metadata } from '@rapidaai/react';
-import { ProviderComponentProps } from '@/app/components/domain/providers/provider-component-props';
 import { loadProviderConfig } from '@/providers/config-loader';
 import {
   getDefaultsFromConfig,
   validateFromConfig,
 } from '@/providers/config-defaults';
 import { ConfigRenderer } from '@/app/components/domain/providers/config-renderer';
-import { FC } from 'react';
+import type { ProviderComponentProps } from '@/app/components/domain/providers/provider-component-props';
 
 export const GetDefaultTelemetryIfInvalid = (
   provider: string,
   parameters: Metadata[],
-) => {
+): Metadata[] => {
   const config = loadProviderConfig(provider);
   if (!config?.telemetry) return parameters;
   return getDefaultsFromConfig(config, 'telemetry', parameters, provider, {
@@ -35,9 +34,14 @@ export const ValidateTelemetry = (
   return validateFromConfig(config, 'telemetry', provider, parameters);
 };
 
-export const TelemetryConfigComponent: FC<
-  Pick<ProviderComponentProps, 'provider' | 'parameters' | 'onChangeParameter'>
-> = ({ provider, parameters, onChangeParameter }) => {
+export function TelemetryConfigComponent({
+  provider,
+  parameters,
+  onChangeParameter,
+}: Pick<
+  ProviderComponentProps,
+  'provider' | 'parameters' | 'onChangeParameter'
+>) {
   const config = loadProviderConfig(provider);
   if (!config?.telemetry) return null;
   return (
@@ -49,4 +53,4 @@ export const TelemetryConfigComponent: FC<
       onParameterChange={onChangeParameter}
     />
   );
-};
+}

@@ -1,4 +1,4 @@
-import { FC, useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { PromptRole } from '@/models/prompt';
 import AdvancedMessageInput from '@/app/components/domain/configuration/config-prompt/advanced-prompt-input';
 import {
@@ -18,6 +18,13 @@ import {
 } from '@/utils/prompt-reserved-variables';
 import {
   Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableHeader,
+  TableRow,
   Toggletip,
   ToggletipButton,
   ToggletipContent,
@@ -42,14 +49,14 @@ export type IPromptProps = {
   }) => void;
 };
 
-export const ConfigPrompt: FC<IPromptProps> = ({
+export function ConfigPrompt({
   existingPrompt,
   onChange,
   instanceId,
   showRuntimeReplacementHint = false,
   hideArgumentRuntimeHint = false,
   enableReservedVariableSuggestions = false,
-}) => {
+}: IPromptProps) {
   const [showReservedVariables, setShowReservedVariables] = useState(false);
 
   const handlePromptChange = useCallback(
@@ -174,31 +181,28 @@ export const ConfigPrompt: FC<IPromptProps> = ({
 
             {showReservedVariables && (
               <div className="mt-2 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950">
-                <div className="grid grid-cols-2 divide-x divide-gray-200 dark:divide-gray-800 bg-gray-100 dark:bg-gray-900">
-                  <div className="px-3 py-2 text-[11px] font-semibold tracking-[0.08em] uppercase text-gray-500">
-                    Variable
-                  </div>
-                  <div className="px-3 py-2 text-[11px] font-semibold tracking-[0.08em] uppercase text-gray-500">
-                    Runtime value
-                  </div>
-                </div>
-                <div className="divide-y divide-gray-200 dark:divide-gray-800">
-                  {RAPIDA_RESERVED_RUNTIME_VARIABLES.map(item => (
-                    <div
-                      key={item.variable}
-                      className="grid grid-cols-2 divide-x divide-gray-200 dark:divide-gray-800"
-                    >
-                      <div className="px-3 py-2">
-                        <code className="text-xs text-gray-700 dark:text-gray-200">
-                          {item.variable}
-                        </code>
-                      </div>
-                      <div className="px-3 py-2 text-xs text-gray-600 dark:text-gray-300">
-                        {item.runtimeValue}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <TableContainer>
+                  <Table size="sm" useZebraStyles={false}>
+                    <TableHead>
+                      <TableRow>
+                        <TableHeader>Variable</TableHeader>
+                        <TableHeader>Runtime value</TableHeader>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {RAPIDA_RESERVED_RUNTIME_VARIABLES.map(item => (
+                        <TableRow key={item.variable}>
+                          <TableCell>
+                            <code className="text-xs text-gray-700 dark:text-gray-200">
+                              {item.variable}
+                            </code>
+                          </TableCell>
+                          <TableCell>{item.runtimeValue}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
               </div>
             )}
           </div>
@@ -247,64 +251,66 @@ export const ConfigPrompt: FC<IPromptProps> = ({
               are preserved and replaced at runtime.
             </InputHelper>
           )}
-          <div className="text-sm grid bg-light-background dark:bg-gray-950 w-full border border-gray-300 dark:border-gray-700 divide-y divide-gray-300 dark:divide-gray-700">
-            {/* Carbon table header row */}
-            <div className="grid grid-cols-3 divide-x divide-gray-300 dark:divide-gray-700 bg-gray-50 dark:bg-gray-900">
-              <div className="px-4 py-2 text-xs font-semibold tracking-[0.08em] uppercase text-gray-500 dark:text-gray-500">
-                Variable
-              </div>
-              <div className="px-4 py-2 text-xs font-semibold tracking-[0.08em] uppercase text-gray-500 dark:text-gray-500">
-                Type
-              </div>
-              <div className="px-4 py-2 text-xs font-semibold tracking-[0.08em] uppercase text-gray-500 dark:text-gray-500">
-                Default value
-              </div>
-            </div>
-            {existingPrompt.variables.map((v, idx) => (
-              <div
-                key={idx}
-                className="grid grid-cols-3 divide-x divide-gray-300 dark:divide-gray-700"
-              >
-                <div className="flex col-span-1 items-center gap-2 px-4 py-2.5 text-sm text-gray-800 dark:text-gray-200 font-medium">
-                  {v.name}
-                  {showRuntimeReplacementHint &&
-                    isRapidaReservedRuntimeVariable(v.name) && (
-                      <span className="px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-blue-700 dark:text-blue-300 border border-blue-300/70 dark:border-blue-700/70">
-                        Reserved
+          <TableContainer>
+            <Table size="sm" useZebraStyles={false}>
+              <TableHead>
+                <TableRow>
+                  <TableHeader>Variable</TableHeader>
+                  <TableHeader>Type</TableHeader>
+                  <TableHeader>Default value</TableHeader>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {existingPrompt.variables.map(v => (
+                  <TableRow key={v.name}>
+                    <TableCell>
+                      <span className="flex items-center gap-2 font-medium text-gray-800 dark:text-gray-200">
+                        {v.name}
+                        {showRuntimeReplacementHint &&
+                          isRapidaReservedRuntimeVariable(v.name) && (
+                            <span className="px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-blue-700 dark:text-blue-300 border border-blue-300/70 dark:border-blue-700/70">
+                              Reserved
+                            </span>
+                          )}
                       </span>
-                    )}
-                </div>
-                <TypeOfVariable
-                  allType={SUPPORTED_PROMPT_VARIABLE_TYPE()}
-                  className="col-span-1 h-full border-0"
-                  type={v.type}
-                  onChange={t =>
-                    handleVariableChange(v.name, t, v.defaultvalue)
-                  }
-                />
-                <div className="col-span-1 h-full">
-                  <ScalableTextarea
-                    wrapperClassName="border-0 bg-transparent h-full"
-                    placeholder={`Default value for '${v.name}'`}
-                    value={v.defaultvalue}
-                    row={1}
-                    onChange={e =>
-                      handleVariableChange(v.name, v.type, e.target.value)
-                    }
-                  />
-                </div>
-              </div>
-            ))}
-            {existingPrompt.variables.length === 0 && (
-              <div className="px-4 py-3 text-xs text-gray-500 dark:text-gray-400">
-                No template-specific variables yet. Add placeholders like{' '}
-                <code>{'{{customer_name}}'}</code> in instruction messages to
-                populate this list.
-              </div>
-            )}
-          </div>
+                    </TableCell>
+                    <TableCell>
+                      <TypeOfVariable
+                        allType={SUPPORTED_PROMPT_VARIABLE_TYPE()}
+                        className="h-full border-0"
+                        type={v.type}
+                        onChange={t =>
+                          handleVariableChange(v.name, t, v.defaultvalue)
+                        }
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <ScalableTextarea
+                        wrapperClassName="border-0 bg-transparent h-full"
+                        placeholder={`Default value for '${v.name}'`}
+                        value={v.defaultvalue}
+                        row={1}
+                        onChange={e =>
+                          handleVariableChange(v.name, v.type, e.target.value)
+                        }
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {existingPrompt.variables.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={3}>
+                      No template-specific variables yet. Add placeholders like{' '}
+                      <code>{'{{customer_name}}'}</code> in instruction messages
+                      to populate this list.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </FieldSet>
       )}
     </>
   );
-};
+}

@@ -1,27 +1,31 @@
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
-import { ModalProps } from '@/app/components/ui/primitives';
+import { useCallback } from 'react';
 import {
   Modal,
-  ModalHeader,
   ModalBody,
   ModalFooter,
+  ModalHeader,
+  type ModalProps,
+  PrimaryButton,
+  SecondaryButton,
 } from '@/app/components/ui/primitives';
 import { Launch } from '@carbon/icons-react';
-import type { FC } from 'react';
 
 interface DebuggerDeploymentSuccessDialogProps extends ModalProps {
   assistantId: string;
 }
 
-export const DebuggerDeploymentSuccessDialog: FC<
-  DebuggerDeploymentSuccessDialogProps
-> = ({ modalOpen, setModalOpen, assistantId }) => {
+export function DebuggerDeploymentSuccessDialog({
+  modalOpen,
+  setModalOpen,
+  assistantId,
+}: DebuggerDeploymentSuccessDialogProps) {
+  const closeDialog = useCallback(() => {
+    setModalOpen(false);
+  }, [setModalOpen]);
+
   return (
-    <Modal open={modalOpen} onClose={() => setModalOpen(false)} size="sm">
-      <ModalHeader
-        title="Deployment completed"
-        onClose={() => setModalOpen(false)}
-      />
+    <Modal open={modalOpen} onClose={closeDialog} size="sm">
+      <ModalHeader title="Deployment completed" onClose={closeDialog} />
       <ModalBody>
         <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
           Your debugger is ready. Use the preview to test your assistant in a
@@ -29,7 +33,7 @@ export const DebuggerDeploymentSuccessDialog: FC<
         </p>
       </ModalBody>
       <ModalFooter>
-        <SecondaryButton size="lg" onClick={() => setModalOpen(false)}>
+        <SecondaryButton size="lg" onClick={closeDialog}>
           Close
         </SecondaryButton>
         <PrimaryButton
@@ -43,4 +47,4 @@ export const DebuggerDeploymentSuccessDialog: FC<
       </ModalFooter>
     </Modal>
   );
-};
+}

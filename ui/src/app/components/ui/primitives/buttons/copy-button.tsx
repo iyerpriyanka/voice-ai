@@ -1,6 +1,6 @@
 import { IconOnlyButton } from '@/app/components/ui/primitives/button';
 import { Copy, Checkmark } from '@carbon/icons-react';
-import type { FC, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { cn } from '@/utils';
 
@@ -11,17 +11,17 @@ interface CopyButtonProps {
   copiedDescription?: string;
 }
 
-export const CopyButton: FC<CopyButtonProps> = ({
+export function CopyButton({
   children,
   className,
   copyDescription = 'Copy',
   copiedDescription = 'Copied',
-}) => {
+}: CopyButtonProps) {
   const [copied, setCopied] = useState(false);
 
-  const copyItem = (item: any) => {
+  const copyItem = (item: ReactNode) => {
     setCopied(true);
-    navigator.clipboard.writeText(item);
+    navigator.clipboard.writeText(String(item ?? ''));
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -35,4 +35,4 @@ export const CopyButton: FC<CopyButtonProps> = ({
       className={cn(copied && 'text-green-600', className)}
     />
   );
-};
+}

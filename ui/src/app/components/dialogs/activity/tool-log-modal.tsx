@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast/headless';
 import { useCredential } from '@/hooks/use-credential';
 
@@ -9,32 +9,32 @@ import {
   AssistantToolLog,
 } from '@rapidaai/react';
 import { useRapidaStore } from '@/hooks';
-import { Tabs } from '@/app/components/ui/primitives';
-import { ModalProps } from '@/app/components/ui/primitives';
+import type { ModalProps } from '@/app/components/ui/primitives';
 import { RightSideModal } from '@/app/components/dialogs/shared';
 import { connectionConfig } from '@/configs';
-import { CodeHighlighting } from '@/app/components/ui/editor/code-highlighting';
+import { LogCodePanel, LogTabs } from './log-modal-primitives';
 
 interface ToolLogModalProps extends ModalProps {
   currentActivityId: string;
 }
-/**
- *
- * @param props
- * @returns
- */
-export function ToolLogDialog(props: ToolLogModalProps) {
-  /**
-   * user credentials
-   */
+
+export function ToolLogDialog({
+  modalOpen,
+  setModalOpen,
+  currentActivityId,
+}: ToolLogModalProps) {
   const [userId, token, projectId] = useCredential();
   const { showLoader, hideLoader } = useRapidaStore();
   const [activity, setActivity] = useState<AssistantToolLog | null>(null);
   const [selectedTab, setSelectedTab] = useState(0);
-  const getActivity = (currentProject: string, currentActivityId) => {
+
+  useEffect(() => {
+    showLoader('overlay');
+
     const request = new GetAssistantToolLogRequest();
-    request.setProjectid(currentProject);
+    request.setProjectid(projectId);
     request.setId(currentActivityId);
+
     GetAssistantToolLog(
       connectionConfig,
       request,
@@ -43,69 +43,65 @@ export function ToolLogDialog(props: ToolLogModalProps) {
         projectId: projectId,
         userId: userId,
       }),
-    ).then(at => {
-      hideLoader();
-      if (at?.getSuccess()) {
-        let data = at.getData();
-        if (data) {
-          setActivity(data);
+    )
+      .then(at => {
+        hideLoader();
+        if (at?.getSuccess()) {
+          const data = at.getData();
+          if (data) {
+            setActivity(data);
+          }
+        } else {
+          const err = at?.getError();
+          if (err) toast.error(err?.getHumanmessage());
+          toast.error('Unable to resolve the request, please try again later.');
         }
-      } else {
-        let err = at?.getError();
-        if (err) toast.error(err?.getHumanmessage());
+      })
+      .catch(() => {
+        hideLoader();
         toast.error('Unable to resolve the request, please try again later.');
-      }
-    });
-  };
-
-  /**
-   *
-   */
-  useEffect(() => {
-    showLoader('overlay');
-    getActivity(projectId, props.currentActivityId);
-  }, [projectId, props.currentActivityId]);
+      });
+  }, [currentActivityId, hideLoader, projectId, showLoader, token, userId]);
 
   return (
     <RightSideModal
-      modalOpen={props.modalOpen}
-      setModalOpen={props.setModalOpen}
+      modalOpen={modalOpen}
+      setModalOpen={setModalOpen}
       className="w-[580px]"
       label="Tool Log"
-      title={props.currentActivityId}
+      title={currentActivityId}
     >
-      <div className="relative flex-1 flex flex-col min-h-0">
-        <Tabs
-          tabs={['Request', 'Response']}
-          selectedIndex={selectedTab}
-          onChange={setSelectedTab}
-          contained
-          aria-label="Tool log tabs"
-          className="!h-full !min-h-0 !flex !flex-col [&_.cds--tabs__nav]:border-b [&_.cds--tabs__nav]:border-gray-200 dark:[&_.cds--tabs__nav]:border-gray-800 [&_.cds--tab-content]:!h-full [&_.cds--tab-content]:!min-h-0 [&_.cds--tab-content]:!p-0"
-          panelClassName="!h-full !min-h-0 !overflow-auto !p-0"
-        >
-          <div className="h-full min-h-0">
-            <CodeHighlighting
-              className="!h-full !min-h-0"
-              code={JSON.stringify(
-                activity?.getRequest()?.toJavaScript(),
-                null,
-                2,
-              )}
-            />
-          </div>
-          <div className="h-full min-h-0">
-            <CodeHighlighting
-              className="!h-full !min-h-0"
-              code={JSON.stringify(
-                activity?.getResponse()?.toJavaScript(),
-                null,
-                2,
-              )}
-            />
-          </div>
-        </Tabs>
-      </div>
+      <ToolLogContent
+        activity={activity}
+        selectedTab={selectedTab}
+        onTabChange={setSelectedTab}
+      />
     </RightSideModal>
+  );
+}
+
+interface ToolLogContentProps {
+  activity: AssistantToolLog | null;
+  selectedTab: number;
+  onTabChange: (index: number) => void;
+}
+
+export function ToolLogContent({
+  activity,
+  selectedTab,
+  onTabChange,
+}: ToolLogContentProps) {
+  return (
+    <div className="relative flex-1 flex flex-col min-h-0">
+      <LogTabs
+        tabs={['Request', 'Response']}
+        selectedIndex={selectedTab}
+        onChange={onTabChange}
+        label="Tool log tabs"
+      >
+        <LogCodePanel value={activity?.getRequest()?.toJavaScript()} />
+        <LogCodePanel value={activity?.getResponse()?.toJavaScript()} />
+      </LogTabs>
+    </div>
   );
 }

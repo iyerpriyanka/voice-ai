@@ -1,4 +1,3 @@
-import type { FC } from 'react';
 import { ToastNotification as CarbonToastNotification } from '@carbon/react';
 import { cn } from '@/utils';
 import toast, { useToaster } from 'react-hot-toast/headless';
@@ -42,8 +41,6 @@ export const Toast = () => {
   );
 };
 
-// Types
-
 type ToastKind =
   | 'info'
   | 'success'
@@ -51,8 +48,6 @@ type ToastKind =
   | 'error'
   | 'info-square'
   | 'warning-alt';
-
-// Toast Notification
 
 export interface ToastNotificationProps {
   kind?: ToastKind;
@@ -70,7 +65,7 @@ export interface ToastNotificationProps {
 }
 
 /** Carbon ToastNotification: floating notification toast. */
-export const ToastNotification: FC<ToastNotificationProps> = ({
+export function ToastNotification({
   kind = 'info',
   title,
   subtitle,
@@ -83,19 +78,21 @@ export const ToastNotification: FC<ToastNotificationProps> = ({
   statusIconDescription = 'notification',
   onClose,
   onCloseButtonClick,
-}) => (
-  <CarbonToastNotification
-    kind={kind}
-    title={title}
-    subtitle={subtitle}
-    caption={caption}
-    lowContrast={lowContrast}
-    hideCloseButton={hideCloseButton}
-    timeout={timeout}
-    role={role}
-    statusIconDescription={statusIconDescription}
-    onClose={onClose}
-    onCloseButtonClick={onCloseButtonClick}
-    className={cn('!max-w-full', className)}
-  />
-);
+}: ToastNotificationProps) {
+  return (
+    <CarbonToastNotification
+      kind={kind}
+      title={title}
+      subtitle={subtitle}
+      caption={caption}
+      lowContrast={lowContrast}
+      hideCloseButton={hideCloseButton}
+      timeout={timeout}
+      role={role}
+      statusIconDescription={statusIconDescription}
+      onClose={onClose}
+      onCloseButtonClick={onCloseButtonClick}
+      className={cn('!max-w-full', className)}
+    />
+  );
+}

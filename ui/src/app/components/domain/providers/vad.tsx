@@ -1,12 +1,23 @@
-import { ProviderComponentProps } from '@/app/components/domain/providers/provider-component-props';
 import { VAD } from '@/providers';
 import { VADConfigComponent } from '@/app/components/domain/providers/vad/provider';
 import { useMemo } from 'react';
 import { Dropdown } from '@carbon/react';
 import { Stack } from '@/app/components/ui/primitives';
+import type {
+  ProviderComponentProps,
+  ProviderSelectionChange,
+} from '@/app/components/domain/providers/provider-component-props';
+import type { RapidaProvider } from '@/providers';
 
-export const VADProvider: React.FC<ProviderComponentProps> = props => {
-  const { provider, onChangeProvider } = props;
+const getProviderName = (item: RapidaProvider | null): string =>
+  item?.name ?? '';
+
+export function VADProvider({
+  provider,
+  parameters,
+  onChangeProvider,
+  onChangeParameter,
+}: ProviderComponentProps) {
   const providers = useMemo(() => VAD(), []);
   const selectedProvider = providers.find(x => x.code === provider) || null;
 
@@ -18,12 +29,21 @@ export const VADProvider: React.FC<ProviderComponentProps> = props => {
         label="Select VAD provider"
         items={providers}
         selectedItem={selectedProvider}
-        itemToString={(item: any) => item?.name || ''}
-        onChange={({ selectedItem }: any) => {
+        itemToString={getProviderName}
+        onChange={({
+          selectedItem,
+        }: ProviderSelectionChange<RapidaProvider>) => {
           if (selectedItem) onChangeProvider(selectedItem.code);
         }}
       />
-      {provider && <VADConfigComponent {...props} />}
+      {provider && (
+        <VADConfigComponent
+          provider={provider}
+          parameters={parameters}
+          onChangeProvider={onChangeProvider}
+          onChangeParameter={onChangeParameter}
+        />
+      )}
     </Stack>
   );
-};
+}

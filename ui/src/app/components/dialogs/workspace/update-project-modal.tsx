@@ -1,88 +1,118 @@
-import React, { useCallback, useContext, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { UpdateProject } from '@rapidaai/react';
-import { Project, UpdateProjectResponse } from '@rapidaai/react';
+import type {
+  Project,
+  ServiceError,
+  UpdateProjectResponse,
+} from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
 import { useForm } from 'react-hook-form';
 import { useCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/hooks';
 import { ErrorMessage } from '@/app/components/ui/feedback';
-import { ModalProps } from '@/app/components/ui/primitives';
-import { ServiceError } from '@rapidaai/react';
 import { AuthContext } from '@/context/auth-context';
 import {
+  Form,
   Modal,
-  ModalHeader,
   ModalBody,
   ModalFooter,
-} from '@/app/components/ui/primitives';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
-import {
-  Form,
+  ModalHeader,
+  type ModalProps,
+  PrimaryButton,
+  SecondaryButton,
   Stack,
-  TextInput,
   TextArea,
+  TextInput,
 } from '@/app/components/ui/primitives';
 import { connectionConfig } from '@/configs';
+
+const PROJECT_ACTION_ERROR =
+  'Unable to process your request. please try again later.';
 
 interface UpdateProjectDialogProps extends ModalProps {
   afterUpdateProject: () => void;
   existingProject: Project.AsObject;
 }
 
-export const UpdateProjectDialog = (props: UpdateProjectDialogProps) => {
-  const { register, handleSubmit } = useForm();
-  const [project, setProject] = useState<Partial<Project.AsObject>>(
-    props.existingProject,
-  );
+type ProjectFormValues = {
+  projectId: string;
+  projectName: string;
+  projectDescription: string;
+};
+
+export const UpdateProjectDialog = ({
+  afterUpdateProject,
+  existingProject,
+  modalOpen,
+  setModalOpen,
+}: UpdateProjectDialogProps) => {
+  const { register, handleSubmit } = useForm<ProjectFormValues>({
+    defaultValues: {
+      projectId: existingProject.id,
+      projectName: existingProject.name,
+      projectDescription: existingProject.description,
+    },
+  });
   const [error, setError] = useState<string>();
   const [userId, token] = useCredential();
   const { loading, showLoader, hideLoader } = useRapidaStore();
   const { authorize } = useContext(AuthContext);
 
-  const afterUpdateProject = useCallback(
+  const closeDialog = useCallback(() => {
+    setModalOpen(false);
+  }, [setModalOpen]);
+
+  const handleUpdateProject = useCallback(
     (err: ServiceError | null, upr: UpdateProjectResponse | null) => {
       if (err) {
         hideLoader();
-        toast.error('Unable to process your request. please try again later.');
-        setError('Unable to process your request. please try again later.');
+        toast.error(PROJECT_ACTION_ERROR);
+        setError(PROJECT_ACTION_ERROR);
         return;
       }
+
       if (upr?.getSuccess()) {
-        if (authorize)
+        if (authorize) {
           authorize(
             () => {
+              hideLoader();
               toast.success('Your project has been updated successfully.');
-              props.setModalOpen(false);
-              props.afterUpdateProject();
+              closeDialog();
+              afterUpdateProject();
             },
-            err => {
-              props.setModalOpen(false);
+            () => {
+              hideLoader();
+              toast.error(PROJECT_ACTION_ERROR);
+              setError(PROJECT_ACTION_ERROR);
             },
           );
+        } else {
+          hideLoader();
+        }
+        return;
       } else {
         hideLoader();
-        let errorMessage = upr?.getError();
+        const errorMessage = upr?.getError();
         if (errorMessage) {
           toast.error(errorMessage.getHumanmessage());
           setError(errorMessage.getHumanmessage());
         } else {
-          setError('Unable to process your request. please try again later.');
-          toast.error(
-            'Unable to process your request. please try again later.',
-          );
+          setError(PROJECT_ACTION_ERROR);
+          toast.error(PROJECT_ACTION_ERROR);
         }
         return;
       }
     },
-    [],
+    [afterUpdateProject, authorize, closeDialog, hideLoader],
   );
 
-  const onUpdateProject = data => {
+  const onUpdateProject = (data: ProjectFormValues) => {
+    setError(undefined);
     showLoader();
     UpdateProject(
       connectionConfig,
-      props.existingProject.id,
-      afterUpdateProject,
+      existingProject.id,
+      handleUpdateProject,
       {
         authorization: token,
         'x-auth-id': userId,
@@ -93,21 +123,14 @@ export const UpdateProjectDialog = (props: UpdateProjectDialogProps) => {
   };
 
   return (
-    <Modal
-      open={props.modalOpen}
-      onClose={() => props.setModalOpen(false)}
-      size="sm"
-    >
+    <Modal open={modalOpen} onClose={closeDialog} size="sm">
       <ModalHeader
         label="Project"
         title="Update the project"
-        onClose={() => props.setModalOpen(false)}
+        onClose={closeDialog}
       />
       <Form onSubmit={handleSubmit(onUpdateProject)}>
-        <input
-          {...register('projectId', { value: project?.id })}
-          type="hidden"
-        />
+        <input {...register('projectId')} type="hidden" />
         <ModalBody hasForm>
           <Stack gap={6}>
             <TextInput
@@ -115,11 +138,7 @@ export const UpdateProjectDialog = (props: UpdateProjectDialogProps) => {
               labelText="Project Name"
               placeholder="eg: your favorite project"
               required
-              value={project?.name || ''}
               {...register('projectName')}
-              onChange={e => {
-                setProject({ ...project, name: e.target.value });
-              }}
             />
             <TextArea
               id="projectDescription"
@@ -127,17 +146,13 @@ export const UpdateProjectDialog = (props: UpdateProjectDialogProps) => {
               placeholder="A description of what this project is about..."
               rows={3}
               required
-              value={project?.description || ''}
               {...register('projectDescription')}
-              onChange={e => {
-                setProject({ ...project, description: e.target.value });
-              }}
             />
             <ErrorMessage message={error} />
           </Stack>
         </ModalBody>
         <ModalFooter>
-          <SecondaryButton size="lg" onClick={() => props.setModalOpen(false)}>
+          <SecondaryButton size="lg" onClick={closeDialog}>
             Cancel
           </SecondaryButton>
           <PrimaryButton size="lg" type="submit" isLoading={loading}>

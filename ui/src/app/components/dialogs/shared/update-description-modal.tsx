@@ -1,15 +1,18 @@
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
-import { ModalProps } from '@/app/components/ui/primitives';
+import type { ModalProps } from '@/app/components/ui/primitives';
 import {
   Modal,
   ModalHeader,
   ModalBody,
   ModalFooter,
+  PrimaryButton,
+  SecondaryButton,
+  Stack,
+  TextInput,
+  TextArea,
 } from '@/app/components/ui/primitives';
 import { Notification } from '@/app/components/ui/feedback';
-import { Stack, TextInput, TextArea } from '@/app/components/ui/primitives';
 import { useRapidaStore } from '@/hooks';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface UpdateDescriptionDialogProps extends ModalProps {
   title?: string;
@@ -24,10 +27,17 @@ interface UpdateDescriptionDialogProps extends ModalProps {
 }
 
 export function UpdateDescriptionDialog(props: UpdateDescriptionDialogProps) {
+  const {
+    title = 'Edit details',
+    modalOpen,
+    setModalOpen,
+    onUpdateDescription: updateDescription,
+  } = props;
   const [error, setError] = useState('');
   const [name, setName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const rapidaStore = useRapidaStore();
+  const closeDialog = () => setModalOpen(false);
 
   useEffect(() => {
     if (props.name) setName(props.name);
@@ -36,7 +46,7 @@ export function UpdateDescriptionDialog(props: UpdateDescriptionDialogProps) {
 
   const onUpdateDescription = () => {
     rapidaStore.showLoader('overlay');
-    props.onUpdateDescription(
+    updateDescription(
       name,
       description,
       err => {
@@ -45,22 +55,14 @@ export function UpdateDescriptionDialog(props: UpdateDescriptionDialogProps) {
       },
       () => {
         rapidaStore.hideLoader();
-        props.setModalOpen(false);
+        closeDialog();
       },
     );
   };
 
   return (
-    <Modal
-      open={props.modalOpen}
-      onClose={() => props.setModalOpen(false)}
-      size="sm"
-    >
-      <ModalHeader
-        label="Details"
-        title={props.title || 'Edit details'}
-        onClose={() => props.setModalOpen(false)}
-      />
+    <Modal open={modalOpen} onClose={closeDialog} size="sm">
+      <ModalHeader label="Details" title={title} onClose={closeDialog} />
       <ModalBody hasForm>
         <Stack gap={6}>
           <TextInput
@@ -84,7 +86,7 @@ export function UpdateDescriptionDialog(props: UpdateDescriptionDialogProps) {
         </Stack>
       </ModalBody>
       <ModalFooter>
-        <SecondaryButton size="lg" onClick={() => props.setModalOpen(false)}>
+        <SecondaryButton size="lg" onClick={closeDialog}>
           Cancel
         </SecondaryButton>
         <PrimaryButton

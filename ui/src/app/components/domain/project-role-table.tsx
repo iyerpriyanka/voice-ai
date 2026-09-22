@@ -1,6 +1,15 @@
-import React from 'react';
 import { Add, TrashCan } from '@carbon/icons-react';
-import { Button, Dropdown } from '@carbon/react';
+import {
+  Button,
+  Dropdown,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@carbon/react';
 import { TertiaryButton } from '@/app/components/ui/primitives';
 
 export type ProjectRoleRow = {
@@ -34,117 +43,103 @@ export function ProjectRoleTable(props: ProjectRoleTableProps) {
   const showAddButton = props.showAddButton ?? true;
   const showRemoveColumn = props.showRemoveColumn ?? true;
   const addButtonLabel = props.addButtonLabel || 'Add project role';
+  const columnCount = showRemoveColumn ? 3 : 2;
 
   return (
     <div>
-      {props.title && (
-        <p className="text-xs font-medium mb-2">
-          {props.title} ({props.rows.length})
-        </p>
-      )}
-      <table className="w-full border-collapse border border-gray-200 dark:border-gray-700 text-sm [&_.cds--list-box]:!border-none [&_.cds--form-item]:!m-0">
-        <thead>
-          <tr className="bg-gray-50 dark:bg-gray-900">
-            <th className="text-left text-xs font-medium text-gray-500 dark:text-gray-400 px-3 py-2 border-b border-r border-gray-200 dark:border-gray-700 w-1/2">
-              Project
-            </th>
-            <th className="text-left text-xs font-medium text-gray-500 dark:text-gray-400 px-3 py-2 border-b border-r border-gray-200 dark:border-gray-700 w-1/2">
-              Role
-            </th>
-            {showRemoveColumn && (
-              <th className="border-b border-gray-200 dark:border-gray-700 w-8" />
+      <TableContainer
+        title={props.title ? `${props.title} (${props.rows.length})` : ''}
+      >
+        <Table size="sm" useZebraStyles={false}>
+          <TableHead>
+            <TableRow>
+              <TableHeader>Project</TableHeader>
+              <TableHeader>Role</TableHeader>
+              {showRemoveColumn && <TableHeader>Actions</TableHeader>}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {props.rows.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={columnCount}>
+                  No project roles yet. Click <strong>{addButtonLabel}</strong>{' '}
+                  below.
+                </TableCell>
+              </TableRow>
             )}
-          </tr>
-        </thead>
-        <tbody>
-          {props.rows.length === 0 && (
-            <tr>
-              <td
-                colSpan={showRemoveColumn ? 3 : 2}
-                className="px-4 py-3 text-xs text-gray-500 dark:text-gray-400"
-              >
-                No project roles yet. Click <strong>{addButtonLabel}</strong>{' '}
-                below.
-              </td>
-            </tr>
-          )}
-          {props.rows.map((row, index) => (
-            <tr
-              key={index}
-              className="border-b border-gray-200 dark:border-gray-700 last:border-b-0"
-            >
-              <td className="border-r border-gray-200 dark:border-gray-700 p-0">
-                <Dropdown
-                  id={`project-role-project-${index}`}
-                  titleText=""
-                  label="Select project"
-                  items={props.projectOptions}
-                  selectedItem={
-                    props.projectOptions.find(
-                      project => project.value === row.projectId,
-                    ) || null
-                  }
-                  itemToString={(item: ProjectOption | null) =>
-                    item?.name || ''
-                  }
-                  onChange={({ selectedItem }) => {
-                    const next = [...props.rows];
-                    next[index] = {
-                      ...row,
-                      projectId: selectedItem?.value || '',
-                    };
-                    props.onChange(next);
-                  }}
-                  size="md"
-                  direction="top"
-                  className="!w-full"
-                />
-              </td>
-              <td className="border-r border-gray-200 dark:border-gray-700 p-0">
-                <Dropdown
-                  id={`project-role-role-${index}`}
-                  titleText=""
-                  label="Select role"
-                  items={props.roleOptions}
-                  selectedItem={
-                    props.roleOptions.find(
-                      role => role.value === row.projectRole,
-                    ) || null
-                  }
-                  itemToString={(item: RoleOption | null) => item?.name || ''}
-                  onChange={({ selectedItem }) => {
-                    const next = [...props.rows];
-                    next[index] = {
-                      ...row,
-                      projectRole: selectedItem?.value || '',
-                    };
-                    props.onChange(next);
-                  }}
-                  size="md"
-                  direction="top"
-                  className="!w-full"
-                />
-              </td>
-              {showRemoveColumn && (
-                <td className="p-0 text-center">
-                  <Button
-                    hasIconOnly
-                    renderIcon={TrashCan}
-                    iconDescription="Remove project role"
-                    kind="danger--ghost"
-                    size="sm"
-                    onClick={() =>
-                      props.onChange(props.rows.filter((_, i) => i !== index))
+            {props.rows.map((row, index) => (
+              <TableRow key={index}>
+                <TableCell>
+                  <Dropdown
+                    id={`project-role-project-${index}`}
+                    titleText=""
+                    label="Select project"
+                    items={props.projectOptions}
+                    selectedItem={
+                      props.projectOptions.find(
+                        project => project.value === row.projectId,
+                      ) || null
                     }
+                    itemToString={(item: ProjectOption | null) =>
+                      item?.name || ''
+                    }
+                    onChange={({ selectedItem }) => {
+                      const next = [...props.rows];
+                      next[index] = {
+                        ...row,
+                        projectId: selectedItem?.value || '',
+                      };
+                      props.onChange(next);
+                    }}
+                    size="md"
+                    direction="top"
                   />
-                </td>
-              )}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                </TableCell>
+                <TableCell>
+                  <Dropdown
+                    id={`project-role-role-${index}`}
+                    titleText=""
+                    label="Select role"
+                    items={props.roleOptions}
+                    selectedItem={
+                      props.roleOptions.find(
+                        role => role.value === row.projectRole,
+                      ) || null
+                    }
+                    itemToString={(item: RoleOption | null) => item?.name || ''}
+                    onChange={({ selectedItem }) => {
+                      const next = [...props.rows];
+                      next[index] = {
+                        ...row,
+                        projectRole: selectedItem?.value || '',
+                      };
+                      props.onChange(next);
+                    }}
+                    size="md"
+                    direction="top"
+                  />
+                </TableCell>
+                {showRemoveColumn && (
+                  <TableCell>
+                    <Button
+                      hasIconOnly
+                      renderIcon={TrashCan}
+                      iconDescription="Remove project role"
+                      kind="danger--ghost"
+                      size="sm"
+                      onClick={() =>
+                        props.onChange(props.rows.filter((_, i) => i !== index))
+                      }
+                    />
+                  </TableCell>
+                )}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
       {showAddButton && (
-        <div className="pt-2">
+        <div>
           <TertiaryButton
             size="md"
             renderIcon={Add}
@@ -160,7 +155,6 @@ export function ProjectRoleTable(props: ProjectRoleTableProps) {
                 },
               ])
             }
-            className="!w-full !max-w-none"
           >
             {addButtonLabel}
           </TertiaryButton>

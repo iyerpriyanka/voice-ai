@@ -1,55 +1,53 @@
 import { Metadata } from '@rapidaai/react';
-import { ListboxDropdown as Dropdown } from '@/app/components/ui/primitives';
+import { Dropdown } from '@carbon/react';
 import { GEMINI_EMBEDDING_MODEL } from '@/providers';
+import type { ProviderSelectionChange } from '@/app/components/domain/providers/provider-component-props';
 
-export const ConfigureGeminiEmbeddingModel: React.FC<{
+type EmbeddingModel = ReturnType<typeof GEMINI_EMBEDDING_MODEL>[number];
+
+const getModelName = (item: EmbeddingModel | null): string => item?.name ?? '';
+
+export function ConfigureGeminiEmbeddingModel({
+  onParameterChange,
+  parameters,
+}: {
   onParameterChange: (parameters: Metadata[]) => void;
   parameters: Metadata[] | null;
-}> = ({ onParameterChange, parameters }) => {
+}) {
+  const currentParameters = parameters ?? [];
+  const embeddingModels = GEMINI_EMBEDDING_MODEL();
   const getParamValue = (key: string) =>
-    parameters?.find(p => p.getKey() === key)?.getValue() ?? '';
+    currentParameters.find(p => p.getKey() === key)?.getValue() ?? '';
 
   return (
     <Dropdown
-      className="bg-light-background max-w-full dark:bg-gray-950 focus-within:border-none! focus-within:outline-hidden! border-none!"
-      currentValue={GEMINI_EMBEDDING_MODEL().find(
+      id="gemini-embedding-model"
+      titleText="Embedding model"
+      label="Select embedding model"
+      items={embeddingModels}
+      selectedItem={embeddingModels.find(
         x =>
           x.id === getParamValue('model.id') &&
           getParamValue('model.name') === x.name,
       )}
-      setValue={v => {
-        const updatedParams = [...(parameters || [])];
+      itemToString={getModelName}
+      onChange={({ selectedItem }: ProviderSelectionChange<EmbeddingModel>) => {
+        if (!selectedItem) return;
+        const updatedParams = [...currentParameters];
         const newIdParam = new Metadata();
         const newNameParam = new Metadata();
 
         newIdParam.setKey('model.id');
-        newIdParam.setValue(v.id);
+        newIdParam.setValue(selectedItem.id);
         newNameParam.setKey('model.name');
-        newNameParam.setValue(v.name);
+        newNameParam.setValue(selectedItem.name);
 
-        // Remove existing parameters if they exist
         const filteredParams = updatedParams.filter(
           p => p.getKey() !== 'model.id' && p.getKey() !== 'model.name',
         );
         filteredParams.push(newIdParam, newNameParam);
         onParameterChange(filteredParams);
       }}
-      allValue={GEMINI_EMBEDDING_MODEL()}
-      placeholder="Select embedding model"
-      option={c => {
-        return (
-          <span className="inline-flex items-center gap-2 sm:gap-2.5 max-w-full text-sm font-medium">
-            <span className="truncate capitalize">{c.name}</span>
-          </span>
-        );
-      }}
-      label={c => {
-        return (
-          <span className="inline-flex items-center gap-2 sm:gap-2.5 max-w-full text-sm font-medium">
-            <span className="truncate capitalize">{c.name}</span>
-          </span>
-        );
-      }}
     />
   );
-};
+}

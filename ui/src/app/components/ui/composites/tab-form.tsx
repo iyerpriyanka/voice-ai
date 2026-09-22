@@ -1,5 +1,6 @@
 import { cn } from '@/utils';
-import { FC, HTMLAttributes, ReactElement } from 'react';
+import { Checkmark } from '@carbon/icons-react';
+import type { HTMLAttributes, ReactElement } from 'react';
 import { Notification } from '@/app/components/ui/feedback/notification';
 
 interface TabFormProps extends HTMLAttributes<HTMLDivElement> {
@@ -16,18 +17,17 @@ interface TabFormProps extends HTMLAttributes<HTMLDivElement> {
   }[];
 }
 
-export const TabForm: FC<TabFormProps> = ({
+export function TabForm({
   activeTab,
   onChangeActiveTab,
   errorMessage,
   formHeading,
   form,
-}) => {
+}: TabFormProps) {
   const activeIndex = form.findIndex(f => f.code === activeTab);
 
   return (
     <section className="flex flex-1 min-h-0 overflow-hidden">
-      {/* IBM Carbon Progress Indicator: sidebar */}
       <aside className="w-80 hidden md:flex flex-col shrink-0 border-r border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950">
         <div className="px-6 pt-6 pb-5 border-b border-gray-200 dark:border-gray-800">
           <p className="text-[10px] font-semibold tracking-[0.12em] uppercase text-gray-500 dark:text-gray-400 mb-1.5">
@@ -49,9 +49,7 @@ export const TabForm: FC<TabFormProps> = ({
 
               return (
                 <li key={item.code} className="relative flex gap-0">
-                  {/* Vertical connecting line: centered under the 32px circle */}
                   <div className="flex flex-col items-center mr-4 shrink-0">
-                    {/* Step circle */}
                     <span
                       className={cn(
                         'flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full text-xs font-semibold transition-colors duration-150',
@@ -65,25 +63,11 @@ export const TabForm: FC<TabFormProps> = ({
                       )}
                     >
                       {isCompleted ? (
-                        <svg
-                          className="w-3.5 h-3.5"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          aria-hidden="true"
-                        >
-                          <path
-                            d="M5 13L9 17L19 7"
-                            stroke="currentColor"
-                            strokeWidth="2.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
+                        <Checkmark className="w-3.5 h-3.5" />
                       ) : (
                         <span>{String(index + 1).padStart(2, '0')}</span>
                       )}
                     </span>
-                    {/* Connecting line */}
                     {!isLast && (
                       <span
                         className={cn(
@@ -96,7 +80,6 @@ export const TabForm: FC<TabFormProps> = ({
                     )}
                   </div>
 
-                  {/* Step labels */}
                   <button
                     type="button"
                     className={cn(
@@ -142,7 +125,6 @@ export const TabForm: FC<TabFormProps> = ({
 
       {/* Content area: flex column so footer sits below scroll */}
       <div className="flex-1 min-h-0 flex flex-col bg-white dark:bg-gray-900">
-        {/* Scrollable region */}
         <div className="flex-1 min-h-0 overflow-y-auto flex flex-col">
           {form.map(
             item =>
@@ -151,7 +133,6 @@ export const TabForm: FC<TabFormProps> = ({
                   key={`form-body-${item.code}`}
                   className="flex flex-col flex-1"
                 >
-                  {/* IBM Carbon step content header */}
                   <header className="px-4 pt-8 pb-6 border-b border-gray-200 dark:border-gray-800">
                     <p className="text-[10px] font-semibold tracking-[0.12em] uppercase text-gray-500 dark:text-gray-400 mb-1.5">
                       Step {activeIndex + 1} of {form.length}
@@ -172,7 +153,6 @@ export const TabForm: FC<TabFormProps> = ({
           )}
         </div>
 
-        {/* Footer: full width buttons like Carbon modal footer */}
         {form.map(
           item =>
             item.code === activeTab && (
@@ -193,4 +173,4 @@ export const TabForm: FC<TabFormProps> = ({
       </div>
     </section>
   );
-};
+}

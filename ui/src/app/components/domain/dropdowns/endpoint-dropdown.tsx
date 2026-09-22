@@ -1,10 +1,11 @@
-import { Endpoint } from '@rapidaai/react';
+import type { Endpoint } from '@rapidaai/react';
 import { useEndpointPageStore } from '@/hooks';
 import { useCredential } from '@/hooks/use-credential';
-import { Renew, Launch } from '@carbon/icons-react';
-import { FC, useCallback, useEffect, useState } from 'react';
+import { Launch, Renew } from '@carbon/icons-react';
+import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast/headless';
 import { Dropdown, Button } from '@carbon/react';
+import { cn } from '@/utils';
 
 interface EndpointDropdownProps {
   className?: string;
@@ -12,13 +13,77 @@ interface EndpointDropdownProps {
   onChangeEndpoint: (endpoint: Endpoint) => void;
 }
 
-export const EndpointDropdown: FC<EndpointDropdownProps> = props => {
+interface EndpointDropdownViewProps extends EndpointDropdownProps {
+  endpoints: Endpoint[];
+  isLoading?: boolean;
+  onCreateEndpoint: () => void;
+  onRefresh: () => void;
+}
+
+export function EndpointDropdownView({
+  className,
+  currentEndpoint,
+  endpoints,
+  isLoading = false,
+  onChangeEndpoint,
+  onCreateEndpoint,
+  onRefresh,
+}: EndpointDropdownViewProps) {
+  const selectedItem =
+    endpoints.find(endpoint => endpoint.getId() === currentEndpoint) || null;
+
+  return (
+    <div className={cn(className)}>
+      <div className="flex">
+        <div className="flex-1 [&_.cds--dropdown]:!rounded-none [&_.cds--list-box]:!rounded-none">
+          <Dropdown
+            id="endpoint-dropdown"
+            titleText="Endpoint"
+            label="Select endpoint"
+            items={endpoints}
+            selectedItem={selectedItem}
+            disabled={isLoading}
+            itemToString={(item: Endpoint | null) =>
+              item ? `${item.getName()} [${item.getId()}]` : ''
+            }
+            onChange={({ selectedItem }) => {
+              if (selectedItem) {
+                onChangeEndpoint(selectedItem);
+              }
+            }}
+          />
+        </div>
+        <Button
+          hasIconOnly
+          renderIcon={Renew}
+          iconDescription="Refresh endpoints"
+          kind="ghost"
+          size="md"
+          disabled={isLoading}
+          onClick={onRefresh}
+          className="!rounded-none !border !border-l-0 !border-gray-200 dark:!border-gray-700"
+        />
+        <Button
+          hasIconOnly
+          renderIcon={Launch}
+          iconDescription="Create endpoint"
+          kind="ghost"
+          size="md"
+          onClick={onCreateEndpoint}
+          className="!rounded-none !border !border-l-0 !border-gray-200 dark:!border-gray-700"
+        />
+      </div>
+    </div>
+  );
+}
+
+export function EndpointDropdown(props: EndpointDropdownProps) {
   const [userId, token, projectId] = useCredential();
   const endpointActions = useEndpointPageStore();
-  const [, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const showLoader = () => setLoading(true);
-  const hideLoader = () => setLoading(false);
+  const showLoader = () => setIsLoading(true);
+  const hideLoader = () => setIsLoading(false);
 
   const onError = useCallback((err: string) => {
     hideLoader();
@@ -53,51 +118,17 @@ export const EndpointDropdown: FC<EndpointDropdownProps> = props => {
     props.currentEndpoint,
   ]);
 
-  const selectedItem =
-    endpointActions.endpoints.find(x => x.getId() === props.currentEndpoint) ||
-    null;
-
   return (
-    <div>
-      <p className="text-xs font-medium mb-1">Endpoint</p>
-      <div className="flex">
-        <div className="flex-1 [&_.cds--dropdown]:!rounded-none [&_.cds--list-box]:!rounded-none">
-          <Dropdown
-            id="endpoint-dropdown"
-            titleText=""
-            hideLabel
-            label="Select endpoint"
-            items={endpointActions.endpoints}
-            selectedItem={selectedItem}
-            itemToString={(item: Endpoint | null) =>
-              item ? `${item.getName()} [${item.getId()}]` : ''
-            }
-            onChange={({ selectedItem }: any) => {
-              if (selectedItem) props.onChangeEndpoint(selectedItem);
-            }}
-          />
-        </div>
-        <Button
-          hasIconOnly
-          renderIcon={Renew}
-          iconDescription="Refresh"
-          kind="ghost"
-          size="md"
-          onClick={() => getEndpoints(projectId, token, userId)}
-          className="!rounded-none !border !border-l-0 !border-gray-200 dark:!border-gray-700"
-        />
-        <Button
-          hasIconOnly
-          renderIcon={Launch}
-          iconDescription="Create endpoint"
-          kind="ghost"
-          size="md"
-          onClick={() =>
-            window.open('/deployment/endpoint/create-endpoint', '_blank')
-          }
-          className="!rounded-none !border !border-l-0 !border-gray-200 dark:!border-gray-700"
-        />
-      </div>
-    </div>
+    <EndpointDropdownView
+      className={props.className}
+      currentEndpoint={props.currentEndpoint}
+      endpoints={endpointActions.endpoints}
+      isLoading={isLoading}
+      onChangeEndpoint={props.onChangeEndpoint}
+      onRefresh={() => getEndpoints(projectId, token, userId)}
+      onCreateEndpoint={() =>
+        window.open('/deployment/endpoint/create-endpoint', '_blank')
+      }
+    />
   );
-};
+}

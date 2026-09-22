@@ -16,7 +16,6 @@ import {
   ArrowRight,
   Launch,
 } from '@carbon/icons-react';
-import { FC } from 'react';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { Assistant } from '@rapidaai/react';
 import { ClickableTile } from '@carbon/react';
@@ -77,9 +76,11 @@ const makeAutomationOptions = (
   },
 ];
 
-export const ConfigureAssistantNextDialog: FC<
-  ConfigureAssistantNextDialogProps
-> = ({ assistant, modalOpen, setModalOpen }) => {
+export function ConfigureAssistantNextDialog({
+  assistant,
+  modalOpen,
+  setModalOpen,
+}: ConfigureAssistantNextDialogProps) {
   const nav = useGlobalNavigation();
   const assistantId = assistant.getId();
 
@@ -173,4 +174,4 @@ export const ConfigureAssistantNextDialog: FC<
       </ModalFooter>
     </Modal>
   );
-};
+}

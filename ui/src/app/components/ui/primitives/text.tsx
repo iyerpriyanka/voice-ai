@@ -1,8 +1,6 @@
-import type { FC, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { SkeletonText } from '@carbon/react';
 import { cn } from '@/utils';
-
-// Types
 
 export interface CarbonTextProps {
   children: ReactNode;
@@ -19,7 +17,7 @@ export interface CarbonTextProps {
 }
 
 /** Carbon Text: renders children or a SkeletonText placeholder when loading. */
-export const Text: FC<CarbonTextProps> = ({
+export function Text({
   children,
   className,
   isLoading = false,
@@ -27,7 +25,7 @@ export const Text: FC<CarbonTextProps> = ({
   skeletonWidth = '75%',
   lineCount = 1,
   as: Tag = 'span',
-}) => {
+}: CarbonTextProps) {
   if (isLoading) {
     return (
       <SkeletonText
@@ -41,4 +39,4 @@ export const Text: FC<CarbonTextProps> = ({
   }
 
   return <Tag className={className}>{children}</Tag>;
-};
+}

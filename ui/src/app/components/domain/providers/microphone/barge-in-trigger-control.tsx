@@ -1,7 +1,5 @@
-import React from 'react';
 import { Metadata } from '@rapidaai/react';
 import { Select as CarbonSelect, SelectItem } from '@carbon/react';
-import { FormLabel } from '@/app/components/ui/primitives';
 import { HelpToggletip } from '@/app/components/domain/providers/help-label';
 
 export const MICROPHONE_BARGE_IN_TRIGGER_KEY = 'microphone.barge_in_trigger';
@@ -16,10 +14,15 @@ const BARGE_IN_TRIGGER_CHOICES = [
   { label: 'Word', value: 'word' },
 ];
 
-export const BargeInTriggerControl: React.FC<{
+interface BargeInTriggerControlProps {
   parameters: Metadata[];
   onChangeParameter: (parameters: Metadata[]) => void;
-}> = ({ parameters, onChangeParameter }) => {
+}
+
+export function BargeInTriggerControl({
+  parameters,
+  onChangeParameter,
+}: BargeInTriggerControlProps) {
   const value =
     parameters
       .find(p => p.getKey() === MICROPHONE_BARGE_IN_TRIGGER_KEY)
@@ -46,18 +49,17 @@ export const BargeInTriggerControl: React.FC<{
 
   return (
     <div className="min-w-0">
-      <span className="inline-flex items-center gap-1">
-        <FormLabel htmlFor="microphone-barge-in-trigger">
-          Barge-in Trigger
-        </FormLabel>
-        <HelpToggletip
-          label="Barge-in Trigger"
-          helpText={BARGE_IN_TRIGGER_HELP_TEXT}
-        />
-      </span>
       <CarbonSelect
         id="microphone-barge-in-trigger"
-        labelText=""
+        labelText={
+          <span className="inline-flex items-center gap-1">
+            Barge-in Trigger
+            <HelpToggletip
+              label="Barge-in Trigger"
+              helpText={BARGE_IN_TRIGGER_HELP_TEXT}
+            />
+          </span>
+        }
         value={value}
         onChange={e => updateValue(e.target.value)}
       >
@@ -71,4 +73,4 @@ export const BargeInTriggerControl: React.FC<{
       </CarbonSelect>
     </div>
   );
-};
+}

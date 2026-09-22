@@ -1,4 +1,4 @@
-import { FC, useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { CodeEditor } from '@/app/components/ui/editor/code-editor';
 import { DocNoticeBlock } from '@/app/components/layout/container/message/notice-block/doc-notice-block';
 import { Add, TrashCan, ArrowRight, Information } from '@carbon/icons-react';
@@ -25,10 +25,12 @@ interface DocumentationNoticeProps {
   documentationPath: string;
 }
 
-export const DocumentationNotice: FC<DocumentationNoticeProps> = ({
+export function DocumentationNotice({
   title = 'Know more about supported knowledge tool definitions',
   documentationPath,
-}) => <DocNoticeBlock docPath={documentationPath}>{title}</DocNoticeBlock>;
+}: DocumentationNoticeProps) {
+  return <DocNoticeBlock docPath={documentationPath}>{title}</DocNoticeBlock>;
+}
 
 // ============================================================================
 // Tool Definition Form
@@ -42,13 +44,13 @@ interface ToolDefinitionFormProps {
   documentationTitle?: string;
 }
 
-export const ToolDefinitionForm: FC<ToolDefinitionFormProps> = ({
+export function ToolDefinitionForm({
   toolDefinition,
   onChangeToolDefinition,
   inputClass,
   documentationPath = '/assistants/overview',
   documentationTitle,
-}) => {
+}: ToolDefinitionFormProps) {
   const llmTooltip =
     'This value is sent to the LLM as part of the tool definition.';
 
@@ -118,7 +120,7 @@ export const ToolDefinitionForm: FC<ToolDefinitionFormProps> = ({
       </div>
     </div>
   );
-};
+}
 
 // ============================================================================
 // Type Key Selector
@@ -143,7 +145,7 @@ interface TypeKeySelectorProps {
   inputClass?: string;
 }
 
-export const TypeKeySelector: FC<TypeKeySelectorProps> = ({
+export function TypeKeySelector({
   id,
   type,
   value,
@@ -151,7 +153,7 @@ export const TypeKeySelector: FC<TypeKeySelectorProps> = ({
   keyOptionsByType = DEFAULT_KEY_OPTIONS_BY_TYPE,
   includeEmptyKeyOption = false,
   inputClass,
-}) => {
+}: TypeKeySelectorProps) {
   const options = keyOptionsByType[type] ?? null;
 
   if (options) {
@@ -185,7 +187,7 @@ export const TypeKeySelector: FC<TypeKeySelectorProps> = ({
       className={inputClass}
     />
   );
-};
+}
 
 // ============================================================================
 // Assistant Mapping Table
@@ -420,7 +422,7 @@ interface ParameterEditorProps {
   inputClass?: string;
 }
 
-export const ParameterEditor: FC<ParameterEditorProps> = ({
+export function ParameterEditor({
   value,
   onChange,
   typeOptions = [...PARAMETER_TYPE_OPTIONS],
@@ -433,7 +435,7 @@ export const ParameterEditor: FC<ParameterEditorProps> = ({
   addButtonLabel = 'Add parameter',
   valuePlaceholder = 'Value',
   removeButtonKind = 'ghost',
-}) => {
+}: ParameterEditorProps) {
   const [params, setParams] = useState<AssistantMappingItem[]>(() =>
     parseJsonParameters(value).map(({ key, value: parameterValue }) => {
       const [type, parameterKey = ''] = key.split('.');
@@ -478,4 +480,4 @@ export const ParameterEditor: FC<ParameterEditorProps> = ({
       removeButtonKind={removeButtonKind}
     />
   );
-};
+}

@@ -1,7 +1,6 @@
-import { Metadata, VaultCredential } from '@rapidaai/react';
+import { Metadata } from '@rapidaai/react';
 import { CredentialDropdown } from '@/app/components/domain/dropdowns/credential-dropdown';
 import { useCallback } from 'react';
-import { ProviderComponentProps } from '@/app/components/domain/providers/provider-component-props';
 import { TELEPHONY_PROVIDER } from '@/providers';
 import { Dropdown } from '@carbon/react';
 import { Stack } from '@/app/components/ui/primitives';
@@ -12,7 +11,12 @@ import {
 } from '@/providers/config-defaults';
 import { ConfigRenderer } from '@/app/components/domain/providers/config-renderer';
 import { HelpToggletip } from '@/app/components/domain/providers/help-label';
-import { FormLabel } from '@/app/components/ui/primitives';
+import type { VaultCredential } from '@rapidaai/react';
+import type {
+  ProviderComponentProps,
+  ProviderSelectionChange,
+} from '@/app/components/domain/providers/provider-component-props';
+import type { RapidaProvider } from '@/providers';
 
 const VONAGE_PHONE_REGEX = /^\+?[1-9]\d{1,14}$/;
 
@@ -61,11 +65,14 @@ export const ValidateTelephonyOptions = (
   return true;
 };
 
-export const ConfigureTelephonyComponent: React.FC<ProviderComponentProps> = ({
+const getProviderName = (item: RapidaProvider | null): string =>
+  item?.name ?? '';
+
+export function ConfigureTelephonyComponent({
   provider,
   parameters,
   onChangeParameter,
-}) => {
+}: ProviderComponentProps) {
   const config = loadProviderConfig(provider);
   if (!config?.telephony) return null;
 
@@ -78,18 +85,21 @@ export const ConfigureTelephonyComponent: React.FC<ProviderComponentProps> = ({
       onParameterChange={onChangeParameter}
     />
   );
-};
+}
 
-export const TelephonyProvider: React.FC<ProviderComponentProps> = props => {
-  const { provider, onChangeParameter, onChangeProvider, parameters } = props;
+export function TelephonyProvider({
+  provider,
+  onChangeParameter,
+  onChangeProvider,
+  parameters,
+}: ProviderComponentProps) {
   const getParamValue = useCallback(
-    (key: string) =>
-      parameters?.find(p => p.getKey() === key)?.getValue() ?? '',
+    (key: string) => parameters.find(p => p.getKey() === key)?.getValue() ?? '',
     [parameters],
   );
 
   const updateParameter = (key: string, value: string) => {
-    const updatedParams = [...(parameters || [])];
+    const updatedParams = [...parameters];
     const existingIndex = updatedParams.findIndex(p => p.getKey() === key);
     const newParam = new Metadata();
     newParam.setKey(key);
@@ -107,25 +117,28 @@ export const TelephonyProvider: React.FC<ProviderComponentProps> = props => {
 
   return (
     <Stack gap={6}>
-      <div className="inline-flex items-center gap-1">
-        <FormLabel htmlFor="telephony-provider">Telephony provider</FormLabel>
-        <HelpToggletip
-          label="Telephony provider"
-          helpText="Select a telephony provider for inbound and outbound phone calls."
-        />
-      </div>
       <Dropdown
         id="telephony-provider"
-        titleText=""
+        titleText={
+          <span className="inline-flex items-center gap-1">
+            Telephony provider
+            <HelpToggletip
+              label="Telephony provider"
+              helpText="Select a telephony provider for inbound and outbound phone calls."
+            />
+          </span>
+        }
         label="Select telephony provider"
         items={TELEPHONY_PROVIDER}
         selectedItem={selectedProvider}
-        itemToString={(item: any) => item?.name || ''}
-        onChange={({ selectedItem }: any) => {
+        itemToString={getProviderName}
+        onChange={({
+          selectedItem,
+        }: ProviderSelectionChange<RapidaProvider>) => {
           if (!selectedItem) return;
           onChangeProvider(selectedItem.code);
           onChangeParameter(
-            GetDefaultTelephonyConfigIfInvalid(selectedItem.code, []),
+            GetDefaultTelephonyConfigIfInvalid(selectedItem.code, parameters),
           );
         }}
       />
@@ -140,9 +153,14 @@ export const TelephonyProvider: React.FC<ProviderComponentProps> = props => {
       )}
       {provider && (
         <div className="grid grid-cols-3 gap-x-6 gap-y-3">
-          <ConfigureTelephonyComponent {...props} />
+          <ConfigureTelephonyComponent
+            parameters={parameters}
+            provider={provider}
+            onChangeParameter={onChangeParameter}
+            onChangeProvider={onChangeProvider}
+          />
         </div>
       )}
     </Stack>
   );
-};
+}

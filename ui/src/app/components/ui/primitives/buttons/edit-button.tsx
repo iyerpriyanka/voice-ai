@@ -1,6 +1,6 @@
 import { IconOnlyButton } from '@/app/components/ui/primitives/button';
 import { Edit } from '@carbon/icons-react';
-import type { FC, MouseEventHandler } from 'react';
+import type { MouseEventHandler } from 'react';
 
 interface EditButtonProps {
   onClick?: MouseEventHandler<HTMLButtonElement>;
@@ -8,11 +8,7 @@ interface EditButtonProps {
   disabled?: boolean;
 }
 
-export const EditButton: FC<EditButtonProps> = ({
-  onClick,
-  className,
-  disabled,
-}) => {
+export function EditButton({ onClick, className, disabled }: EditButtonProps) {
   return (
     <IconOnlyButton
       kind="ghost"
@@ -24,4 +20,4 @@ export const EditButton: FC<EditButtonProps> = ({
       className={className}
     />
   );
-};
+}

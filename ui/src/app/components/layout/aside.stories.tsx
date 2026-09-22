@@ -1,5 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-webpack5';
-import { DataTable, Table, TableBody, TableCell, TableRow } from '@carbon/react';
+import {
+  DataTable,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+} from '@carbon/react';
 import { SidebarProvider } from '@/context/sidebar-context';
 import { Aside } from './aside';
 

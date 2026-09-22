@@ -66,17 +66,16 @@ describe('sidebar navigation items', () => {
     expect(
       screen.getByRole('link', { name: /External integrations/i }),
     ).toHaveAttribute('href', '/integration/models');
-    expect(screen.getByRole('link', { name: /Users and Teams/i })).toHaveAttribute(
-      'href',
-      '/organization/users',
-    );
+    expect(
+      screen.getByRole('link', { name: /Users and Teams/i }),
+    ).toHaveAttribute('href', '/organization/users');
     expect(screen.getByRole('link', { name: /Projects/i })).toHaveAttribute(
       'href',
       '/organization/projects',
     );
-    expect(screen.getByRole('link', { name: /Assistants/i }).firstChild).toHaveClass(
-      'text-foreground',
-    );
+    expect(
+      screen.getByRole('link', { name: /Assistants/i }).firstChild,
+    ).toHaveClass('text-foreground');
   });
 
   it('renders observability links', () => {
@@ -86,10 +85,9 @@ describe('sidebar navigation items', () => {
       'href',
       '/logs/traces',
     );
-    expect(screen.getByRole('link', { name: /Knowledge logs/i })).toHaveAttribute(
-      'href',
-      '/logs/knowledge',
-    );
+    expect(
+      screen.getByRole('link', { name: /Knowledge logs/i }),
+    ).toHaveAttribute('href', '/logs/knowledge');
     expect(screen.getByRole('link', { name: /LLM logs/i })).toHaveAttribute(
       'href',
       '/logs',
@@ -105,7 +103,6 @@ describe('sidebar navigation items', () => {
     expect(
       screen.getByRole('link', { name: /Conversation logs/i }),
     ).toHaveAttribute('href', '/logs/conversation');
-
   });
 
   it('hides observability links for disabled feature flags', () => {
@@ -113,7 +110,9 @@ describe('sidebar navigation items', () => {
 
     renderAtPath('/logs', <Observability />);
 
-    expect(screen.queryByRole('link', { name: /Trace/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('link', { name: /Trace/i }),
+    ).not.toBeInTheDocument();
     expect(
       screen.queryByRole('link', { name: /Knowledge logs/i }),
     ).not.toBeInTheDocument();
@@ -122,16 +121,15 @@ describe('sidebar navigation items', () => {
   it('expands credential links from the active vault route and can collapse them', () => {
     renderAtPath('/integration/personal-credential', <Vault />);
 
-    expect(screen.getByRole('link', { name: /Credentials/i }).firstChild).toHaveClass(
-      'text-foreground',
-    );
+    expect(
+      screen.getByRole('link', { name: /Credentials/i }).firstChild,
+    ).toHaveClass('text-foreground');
     expect(
       screen.getByRole('link', { name: /Project Credential/i }),
     ).toHaveAttribute('href', '/integration/project-credential');
-    expect(screen.getByRole('link', { name: /Personal Token/i })).toHaveAttribute(
-      'href',
-      '/integration/personal-credential',
-    );
+    expect(
+      screen.getByRole('link', { name: /Personal Token/i }),
+    ).toHaveAttribute('href', '/integration/personal-credential');
 
     fireEvent.click(screen.getByText('Credentials'));
 

@@ -4,57 +4,56 @@ import {
   ModalBody,
   ModalFooter,
 } from '@/app/components/ui/primitives';
-import React, { type FC } from 'react';
+import type { ReactElement } from 'react';
+import { memo } from 'react';
 import type { ModalProps } from '@/app/components/ui/primitives';
 import { Button } from '@carbon/react';
 import { Checkmark } from '@carbon/icons-react';
 
-export const HowItWorksDialog: FC<
-  ModalProps & {
-    steps: Array<{
-      title: string;
-      icon: React.ReactElement;
-      description: string;
-    }>;
-    title?: string;
-    className?: string;
-  }
-> = ({
+type HowItWorksStep = {
+  title: string;
+  icon: ReactElement;
+  description: string;
+};
+
+type HowItWorksDialogProps = ModalProps & {
+  steps: HowItWorksStep[];
+  title?: string;
+  className?: string;
+};
+
+export function HowItWorksDialog({
   modalOpen,
   setModalOpen,
   steps,
   title = 'How it works',
   className = 'w-[800px]',
-}) => (
-  <Modal
-    open={modalOpen}
-    onClose={() => setModalOpen(false)}
-    size="lg"
-    containerClassName={className}
-  >
-    <ModalHeader title={title} onClose={() => setModalOpen(false)} />
-    <HowItWorks steps={steps} />
-    <ModalFooter>
-      <Button
-        type="button"
-        kind="primary"
-        size="md"
-        renderIcon={Checkmark}
-        onClick={() => setModalOpen(false)}
-      >
-        Got it
-      </Button>
-    </ModalFooter>
-  </Modal>
-);
+}: HowItWorksDialogProps) {
+  return (
+    <Modal
+      open={modalOpen}
+      onClose={() => setModalOpen(false)}
+      size="lg"
+      containerClassName={className}
+    >
+      <ModalHeader title={title} onClose={() => setModalOpen(false)} />
+      <HowItWorks steps={steps} />
+      <ModalFooter>
+        <Button
+          type="button"
+          kind="primary"
+          size="md"
+          renderIcon={Checkmark}
+          onClick={() => setModalOpen(false)}
+        >
+          Got it
+        </Button>
+      </ModalFooter>
+    </Modal>
+  );
+}
 
-export const HowItWorks: FC<{
-  steps: Array<{
-    title: string;
-    icon: React.ReactElement;
-    description: string;
-  }>;
-}> = React.memo(({ steps }) => {
+function HowItWorksComponent({ steps }: { steps: HowItWorksStep[] }) {
   return (
     <ModalBody>
       <div className="-mx-8 grid grid-flow-col divide-x divide-border-subtle">
@@ -80,4 +79,6 @@ export const HowItWorks: FC<{
       </div>
     </ModalBody>
   );
-});
+}
+
+export const HowItWorks = memo(HowItWorksComponent);

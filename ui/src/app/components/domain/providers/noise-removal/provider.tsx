@@ -1,9 +1,8 @@
 import { Metadata } from '@rapidaai/react';
 import { loadProviderConfig } from '@/providers/config-loader';
 import { getDefaultsFromConfig } from '@/providers/config-defaults';
-import { ProviderComponentProps } from '@/app/components/domain/providers/provider-component-props';
 import { ConfigRenderer } from '@/app/components/domain/providers/config-renderer';
-import { FC } from 'react';
+import type { ProviderComponentProps } from '@/app/components/domain/providers/provider-component-props';
 
 const updateProviderOnly = (
   current: Metadata[],
@@ -44,11 +43,11 @@ export const GetDefaultNoiseCancellationConfig = (
   return updateProviderOnly(defaults, provider);
 };
 
-export const NoiseCancellationConfigComponent: FC<ProviderComponentProps> = ({
+export function NoiseCancellationConfigComponent({
   provider,
   parameters,
   onChangeParameter,
-}) => {
+}: ProviderComponentProps) {
   const config = loadProviderConfig(provider);
   if (!config?.noise || config.noise.parameters.length === 0) return null;
 
@@ -61,4 +60,4 @@ export const NoiseCancellationConfigComponent: FC<ProviderComponentProps> = ({
       onParameterChange={onChangeParameter}
     />
   );
-};
+}

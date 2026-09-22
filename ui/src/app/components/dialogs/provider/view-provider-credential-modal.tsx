@@ -1,40 +1,43 @@
-import React, { FC, useCallback, useEffect, useState } from 'react';
-import { ConnectionConfig } from '@rapidaai/react';
+import { useCallback, useEffect, useState } from 'react';
+import {
+  ConnectionConfig,
+  DeleteProviderKey,
+  GetCredentialResponse,
+  VaultCredential,
+} from '@rapidaai/react';
 import { useCurrentCredential } from '@/hooks/use-credential';
-import { DeleteProviderKey } from '@rapidaai/react';
-import { GetCredentialResponse, VaultCredential } from '@rapidaai/react';
 import { useRapidaStore } from '@/hooks';
 import toast from 'react-hot-toast/headless';
-import { ModalProps } from '@/app/components/ui/primitives';
+import type { ModalProps } from '@/app/components/ui/primitives';
 import { useAllProviderCredentials } from '@/hooks/use-model';
 import { useProviderContext } from '@/context/provider-context';
 import { toHumanReadableRelativeTime } from '@/utils/date';
-import { ServiceError } from '@rapidaai/react';
+import type { ServiceError } from '@rapidaai/react';
 import { connectionConfig } from '@/configs';
-import { RapidaProvider } from '@/providers';
+import type { RapidaProvider } from '@/providers';
 import {
   Modal,
   ModalHeader,
   ModalBody,
   ModalFooter,
 } from '@/app/components/ui/primitives';
-import {
-  PrimaryButton,
-  TertiaryButton,
-  DangerButton,
-} from '@/app/components/ui/primitives';
+import { PrimaryButton, DangerButton } from '@/app/components/ui/primitives';
 import { Stack } from '@/app/components/ui/primitives';
-import { TrashCan } from '@carbon/icons-react';
+import { Key, TrashCan } from '@carbon/icons-react';
 import { CopyButton } from '@/app/components/ui/primitives';
+import { EmptyState } from '@/app/components/ui/feedback';
 
 interface ViewProviderCredentialDialogProps extends ModalProps {
   currentProvider: RapidaProvider;
   onSetupCredential: () => void;
 }
 
-export const ViewProviderCredentialDialog: FC<
-  ViewProviderCredentialDialogProps
-> = props => {
+export function ViewProviderCredentialDialog({
+  currentProvider,
+  modalOpen,
+  onSetupCredential,
+  setModalOpen,
+}: ViewProviderCredentialDialogProps) {
   const { authId, projectId, token } = useCurrentCredential();
   const { showLoader, hideLoader } = useRapidaStore();
   const { providerCredentials } = useAllProviderCredentials();
@@ -45,11 +48,9 @@ export const ViewProviderCredentialDialog: FC<
 
   useEffect(() => {
     setCurrentProviderCredentials(
-      providerCredentials.filter(
-        y => y.getProvider() === props.currentProvider.code,
-      ),
+      providerCredentials.filter(y => y.getProvider() === currentProvider.code),
     );
-  }, [providerCredentials, props.currentProvider]);
+  }, [currentProvider.code, providerCredentials]);
 
   const afterCredentialDelete = useCallback(
     (err: ServiceError | null, gapcr: GetCredentialResponse | null) => {
@@ -57,17 +58,18 @@ export const ViewProviderCredentialDialog: FC<
       if (gapcr?.getSuccess()) {
         providerCtx.reloadProviderCredentials();
       } else {
-        let errorMessage = gapcr?.getError();
+        const errorMessage = gapcr?.getError();
         if (errorMessage) {
           toast.error(errorMessage.getHumanmessage());
-        } else
+        } else {
           toast.error(
             'Unable to process your request. please try again later.',
           );
+        }
         return;
       }
     },
-    [],
+    [hideLoader, providerCtx],
   );
 
   const onDelete = (credId: string) => {
@@ -85,97 +87,118 @@ export const ViewProviderCredentialDialog: FC<
   };
 
   return (
-    <Modal
-      open={props.modalOpen}
-      onClose={() => props.setModalOpen(false)}
-      size="sm"
-    >
+    <Modal open={modalOpen} onClose={() => setModalOpen(false)} size="sm">
       <ModalHeader
         label="Credentials"
         title="View provider credential"
-        onClose={() => props.setModalOpen(false)}
+        onClose={() => setModalOpen(false)}
       />
       <ModalBody>
-        {currentProviderCredentials.length > 0 ? (
-          <Stack gap={4}>
-            {currentProviderCredentials.map(x => (
-              <div
-                className="group border border-border-subtle bg-layer"
-                key={x.getId()}
-              >
-                <div className="flex items-center px-4 py-3">
-                  <div className="border border-border-subtle bg-surface flex items-center justify-center shrink-0 h-10 w-10 p-1 mr-3">
-                    <img
-                      src={props.currentProvider.image}
-                      alt={props.currentProvider.name}
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold capitalize truncate">
-                      {x.getName()}
-                    </p>
-                    <div className="flex gap-2 text-xs text-muted">
-                      <span>
-                        Updated{' '}
-                        {x.getCreateddate() &&
-                          toHumanReadableRelativeTime(x.getCreateddate()!)}
-                      </span>
-                      <span>·</span>
-                      <span>
-                        Last activity{' '}
-                        {x.getLastuseddate()
-                          ? toHumanReadableRelativeTime(x.getLastuseddate()!)
-                          : 'No activity'}
-                      </span>
-                    </div>
-                  </div>
-                  <DangerButton
-                    size="sm"
-                    renderIcon={TrashCan}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity"
-                    onClick={() => onDelete(x.getId())}
-                  >
-                    Delete
-                  </DangerButton>
-                </div>
-                <div className="flex items-center gap-3 border-t border-border-subtle px-4 py-2">
-                  <span className="shrink-0 text-xs font-medium text-muted">
-                    Credential ID
-                  </span>
-                  <code
-                    className="min-w-0 flex-1 truncate text-xs text-foreground"
-                    title={x.getId()}
-                  >
-                    {x.getId()}
-                  </code>
-                  <CopyButton
-                    className="h-7 w-7 shrink-0"
-                    copyDescription="Copy credential ID"
-                    copiedDescription="Credential ID copied"
-                  >
-                    {x.getId()}
-                  </CopyButton>
-                </div>
-              </div>
-            ))}
-          </Stack>
-        ) : (
-          <div className="px-4 py-8 flex flex-col items-center text-center">
-            <p className="text-sm font-semibold mb-1">No Credential</p>
-            <p className="text-sm text-muted mb-4">
-              No provider credential to display
-            </p>
-            <TertiaryButton size="sm" onClick={() => props.onSetupCredential()}>
-              Setup Credential
-            </TertiaryButton>
-          </div>
-        )}
+        <ProviderCredentialList
+          credentials={currentProviderCredentials}
+          currentProvider={currentProvider}
+          onDelete={onDelete}
+          onSetupCredential={onSetupCredential}
+        />
       </ModalBody>
       <ModalFooter>
-        <PrimaryButton size="lg" onClick={() => props.setModalOpen(false)}>
+        <PrimaryButton size="lg" onClick={() => setModalOpen(false)}>
           Got it
         </PrimaryButton>
       </ModalFooter>
     </Modal>
   );
-};
+}
+
+interface ProviderCredentialListProps {
+  credentials: VaultCredential[];
+  currentProvider: RapidaProvider;
+  onDelete: (credentialId: string) => void;
+  onSetupCredential: () => void;
+}
+
+export function ProviderCredentialList({
+  credentials,
+  currentProvider,
+  onDelete,
+  onSetupCredential,
+}: ProviderCredentialListProps) {
+  if (credentials.length === 0) {
+    return (
+      <EmptyState
+        icon={Key}
+        title="No Credential"
+        subtitle="No provider credential to display"
+        action="Setup Credential"
+        onAction={onSetupCredential}
+      />
+    );
+  }
+
+  return (
+    <Stack gap={4}>
+      {credentials.map(credential => (
+        <div
+          className="group border border-border-subtle bg-layer"
+          key={credential.getId()}
+        >
+          <div className="flex items-center px-4 py-3">
+            <div className="border border-border-subtle bg-surface flex items-center justify-center shrink-0 h-10 w-10 p-1 mr-3">
+              {currentProvider.image ? (
+                <img src={currentProvider.image} alt={currentProvider.name} />
+              ) : (
+                <Key size={20} className="text-muted" />
+              )}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold capitalize truncate">
+                {credential.getName()}
+              </p>
+              <div className="flex gap-2 text-xs text-muted">
+                <span>
+                  Updated{' '}
+                  {credential.getCreateddate()
+                    ? toHumanReadableRelativeTime(credential.getCreateddate()!)
+                    : 'Unknown'}
+                </span>
+                <span aria-hidden="true">·</span>
+                <span>
+                  Last activity{' '}
+                  {credential.getLastuseddate()
+                    ? toHumanReadableRelativeTime(credential.getLastuseddate()!)
+                    : 'No activity'}
+                </span>
+              </div>
+            </div>
+            <DangerButton
+              size="sm"
+              renderIcon={TrashCan}
+              className="opacity-0 group-hover:opacity-100 transition-opacity"
+              onClick={() => onDelete(credential.getId())}
+            >
+              Delete
+            </DangerButton>
+          </div>
+          <div className="flex items-center gap-3 border-t border-border-subtle px-4 py-2">
+            <span className="shrink-0 text-xs font-medium text-muted">
+              Credential ID
+            </span>
+            <code
+              className="min-w-0 flex-1 truncate text-xs text-foreground"
+              title={credential.getId()}
+            >
+              {credential.getId()}
+            </code>
+            <CopyButton
+              className="h-7 w-7 shrink-0"
+              copyDescription="Copy credential ID"
+              copiedDescription="Credential ID copied"
+            >
+              {credential.getId()}
+            </CopyButton>
+          </div>
+        </div>
+      ))}
+    </Stack>
+  );
+}

@@ -1,28 +1,37 @@
 import { CredentialDropdown } from '@/app/components/domain/dropdowns/credential-dropdown';
-import { ProviderComponentProps } from '@/app/components/domain/providers/provider-component-props';
 import {
   GetDefaultTelemetryIfInvalid,
   TelemetryConfigComponent,
 } from '@/app/components/domain/providers/telemetry/provider';
 import { TELEMETRY_PROVIDER } from '@/providers';
-import { Metadata, VaultCredential } from '@rapidaai/react';
+import { Metadata } from '@rapidaai/react';
 import { useCallback } from 'react';
 import { Dropdown } from '@carbon/react';
 import { Stack } from '@/app/components/ui/primitives';
 import { HelpToggletip } from '@/app/components/domain/providers/help-label';
-import { FormLabel } from '@/app/components/ui/primitives';
+import type { VaultCredential } from '@rapidaai/react';
+import type {
+  ProviderComponentProps,
+  ProviderSelectionChange,
+} from '@/app/components/domain/providers/provider-component-props';
+import type { RapidaProvider } from '@/providers';
 
-export const TelemetryProvider: React.FC<ProviderComponentProps> = props => {
-  const { parameters, provider, onChangeParameter, onChangeProvider } = props;
+const getProviderName = (item: RapidaProvider | null): string =>
+  item?.name ?? '';
 
+export function TelemetryProvider({
+  parameters,
+  provider,
+  onChangeParameter,
+  onChangeProvider,
+}: ProviderComponentProps) {
   const getParamValue = useCallback(
-    (key: string) =>
-      parameters?.find(p => p.getKey() === key)?.getValue() ?? '',
+    (key: string) => parameters.find(p => p.getKey() === key)?.getValue() ?? '',
     [parameters],
   );
 
   const updateParameter = (key: string, value: string) => {
-    const updatedParams = [...(parameters || [])];
+    const updatedParams = [...parameters];
     const existingIndex = updatedParams.findIndex(p => p.getKey() === key);
     const newParam = new Metadata();
     newParam.setKey(key);
@@ -40,25 +49,28 @@ export const TelemetryProvider: React.FC<ProviderComponentProps> = props => {
 
   return (
     <Stack gap={6}>
-      <div className="inline-flex items-center gap-1">
-        <FormLabel htmlFor="telemetry-provider">Telemetry provider</FormLabel>
-        <HelpToggletip
-          label="Telemetry provider"
-          helpText="Select a telemetry provider for assistant observability."
-        />
-      </div>
       <Dropdown
         id="telemetry-provider"
-        titleText=""
+        titleText={
+          <span className="inline-flex items-center gap-1">
+            Telemetry provider
+            <HelpToggletip
+              label="Telemetry provider"
+              helpText="Select a telemetry provider for assistant observability."
+            />
+          </span>
+        }
         label="Select telemetry provider"
         items={TELEMETRY_PROVIDER}
         selectedItem={selectedProvider}
-        itemToString={(item: any) => item?.name || ''}
-        onChange={({ selectedItem }: any) => {
+        itemToString={getProviderName}
+        onChange={({
+          selectedItem,
+        }: ProviderSelectionChange<RapidaProvider>) => {
           if (!selectedItem) return;
           onChangeProvider(selectedItem.code);
           onChangeParameter(
-            GetDefaultTelemetryIfInvalid(selectedItem.code, parameters || []),
+            GetDefaultTelemetryIfInvalid(selectedItem.code, parameters),
           );
         }}
       />
@@ -73,9 +85,13 @@ export const TelemetryProvider: React.FC<ProviderComponentProps> = props => {
       )}
       {provider && (
         <div className="grid grid-cols-3 gap-x-6 gap-y-3">
-          <TelemetryConfigComponent {...props} />
+          <TelemetryConfigComponent
+            parameters={parameters}
+            provider={provider}
+            onChangeParameter={onChangeParameter}
+          />
         </div>
       )}
     </Stack>
   );
-};
+}

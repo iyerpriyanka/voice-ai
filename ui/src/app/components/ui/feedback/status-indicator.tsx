@@ -1,8 +1,24 @@
-import { FC } from 'react';
-import { unstable__ShapeIndicator as ShapeIndicatorModule } from '@carbon/react';
+import type { ComponentType } from 'react';
+import { preview__ShapeIndicator as ShapeIndicatorModule } from '@carbon/react';
 import { CarbonIconIndicator } from './icon-indicator';
 
-const statusMap: Record<string, { kind: string; label: string }> = {
+export type CarbonStatusIndicatorKind =
+  | 'failed'
+  | 'critical'
+  | 'high'
+  | 'medium'
+  | 'low'
+  | 'cautious'
+  | 'undefined'
+  | 'stable'
+  | 'informative'
+  | 'incomplete'
+  | 'draft';
+
+const statusMap: Record<
+  string,
+  { kind: CarbonStatusIndicatorKind; label: string }
+> = {
   // Success / complete: stable (green)
   SUCCESS: { kind: 'stable', label: 'Success' },
   success: { kind: 'stable', label: 'Success' },
@@ -57,22 +73,35 @@ const statusMap: Record<string, { kind: string; label: string }> = {
   interrupted: { kind: 'high', label: 'Interrupted' },
 };
 
-const defaultStatus = { kind: 'undefined', label: 'Unknown' };
-const ShapeIndicator =
-  (ShapeIndicatorModule as unknown as { default?: FC<any> })?.default ||
-  (ShapeIndicatorModule as unknown as FC<any>);
+export const defaultStatus = {
+  kind: 'undefined' as CarbonStatusIndicatorKind,
+  label: 'Unknown',
+};
 
-// Component
+type ShapeIndicatorComponent = ComponentType<{
+  kind: CarbonStatusIndicatorKind;
+  label: string;
+  textSize?: 12 | 14;
+}>;
+
+const ShapeIndicator =
+  (ShapeIndicatorModule as unknown as { default?: ShapeIndicatorComponent })
+    ?.default || (ShapeIndicatorModule as unknown as ShapeIndicatorComponent);
+
+export const statusToShapeIndicator = (
+  state: string,
+): { kind: CarbonStatusIndicatorKind; label: string } =>
+  statusMap[state] || defaultStatus;
 
 export interface CarbonStatusIndicatorProps {
   state: string;
   textSize?: 12 | 14;
 }
 
-export const CarbonStatusIndicator: FC<CarbonStatusIndicatorProps> = ({
+export function CarbonStatusIndicator({
   state,
   textSize = 12,
-}) => {
+}: CarbonStatusIndicatorProps) {
   if (state === 'IN_PROGRESS') {
     return (
       <CarbonIconIndicator
@@ -97,9 +126,7 @@ export const CarbonStatusIndicator: FC<CarbonStatusIndicatorProps> = ({
     );
   }
 
-  const { kind, label } = statusMap[state] || defaultStatus;
+  const { kind, label } = statusToShapeIndicator(state);
 
-  return (
-    <ShapeIndicator kind={kind as any} label={label} textSize={textSize} />
-  );
-};
+  return <ShapeIndicator kind={kind} label={label} textSize={textSize} />;
+}

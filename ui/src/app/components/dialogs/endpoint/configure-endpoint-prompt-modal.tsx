@@ -1,17 +1,15 @@
-import React, { FC, useState } from 'react';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
+import { useCallback, useState } from 'react';
 import {
   Modal,
-  ModalHeader,
   ModalBody,
   ModalFooter,
+  ModalHeader,
+  type ModalProps,
+  PrimaryButton,
+  SecondaryButton,
 } from '@/app/components/ui/primitives';
-import { ModalProps } from '@/app/components/ui/primitives';
-import { cn } from '@/utils';
 import endpointTemplates from '@/prompts/endpoints/index.json';
-import { Checkmark } from '@carbon/icons-react';
-import { CornerBorderOverlay } from '@/app/components/ui/primitives';
-import { Tag } from '@carbon/react';
+import { SelectableTile, Tag } from '@carbon/react';
 
 interface EndpointTemplate {
   name: string;
@@ -32,30 +30,36 @@ interface ConfigureEndpointPromptDialogProps extends ModalProps {
   onSelectTemplate?: (template: EndpointTemplate) => void;
 }
 
-export const ConfigureEndpointPromptDialog: FC<
-  ConfigureEndpointPromptDialogProps
-> = props => {
+export function ConfigureEndpointPromptDialog({
+  modalOpen,
+  setModalOpen,
+  onSelectTemplate,
+}: ConfigureEndpointPromptDialogProps) {
   const [selectedTemplate, setSelectedTemplate] =
     useState<EndpointTemplate | null>(null);
 
-  const handleContinue = () => {
-    if (selectedTemplate && props.onSelectTemplate) {
-      props.onSelectTemplate(selectedTemplate);
+  const closeDialog = useCallback(() => {
+    setModalOpen(false);
+  }, [setModalOpen]);
+
+  const handleContinue = useCallback(() => {
+    if (selectedTemplate) {
+      onSelectTemplate?.(selectedTemplate);
     }
-    props.setModalOpen(false);
-  };
+    closeDialog();
+  }, [closeDialog, onSelectTemplate, selectedTemplate]);
 
   return (
     <Modal
-      open={props.modalOpen}
-      onClose={() => props.setModalOpen(false)}
+      open={modalOpen}
+      onClose={closeDialog}
       size="lg"
       containerClassName="!w-[900px] !max-w-[900px]"
     >
       <ModalHeader
         label="Endpoint"
         title="Select a usecase template"
-        onClose={() => props.setModalOpen(false)}
+        onClose={closeDialog}
       />
 
       <ModalBody hasForm hasScrollingContent>
@@ -64,40 +68,17 @@ export const ConfigureEndpointPromptDialog: FC<
           parameters. You can customise everything after selecting.
         </p>
 
-        <div className="grid grid-cols-2 border-l border-t border-gray-200 dark:border-gray-800">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           {(endpointTemplates as EndpointTemplate[]).map((template, index) => {
             const isSelected = selectedTemplate?.name === template.name;
             return (
-              <div
+              <SelectableTile
+                id={`endpoint-template-${index}`}
                 key={index}
-                role="button"
-                tabIndex={0}
+                selected={isSelected}
                 onClick={() => setSelectedTemplate(template)}
-                onKeyDown={e =>
-                  (e.key === 'Enter' || e.key === ' ') &&
-                  setSelectedTemplate(template)
-                }
-                className={cn(
-                  'relative flex flex-col p-4 border-r border-b border-gray-200 dark:border-gray-800 cursor-pointer transition-colors duration-100 select-none outline-none group',
-                  'focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary',
-                  isSelected
-                    ? 'bg-primary/5 dark:bg-primary/10'
-                    : 'hover:bg-gray-100 dark:hover:bg-gray-800',
-                )}
+                className="flex min-h-52 flex-col text-left"
               >
-                <CornerBorderOverlay
-                  className={isSelected ? 'opacity-100' : undefined}
-                />
-
-                <div
-                  className={cn(
-                    'absolute top-0 right-0 w-6 h-6 flex items-center justify-center transition-colors duration-100 z-20',
-                    isSelected ? 'bg-primary' : 'bg-transparent',
-                  )}
-                >
-                  {isSelected && <Checkmark size={14} className="text-white" />}
-                </div>
-
                 <h3 className="text-sm font-semibold leading-snug mb-1.5 pr-6">
                   {template.name}
                 </h3>
@@ -122,14 +103,14 @@ export const ConfigureEndpointPromptDialog: FC<
                     </Tag>
                   )}
                 </div>
-              </div>
+              </SelectableTile>
             );
           })}
         </div>
       </ModalBody>
 
       <ModalFooter>
-        <SecondaryButton size="lg" onClick={() => props.setModalOpen(false)}>
+        <SecondaryButton size="lg" onClick={closeDialog}>
           Cancel
         </SecondaryButton>
         <PrimaryButton
@@ -142,4 +123,4 @@ export const ConfigureEndpointPromptDialog: FC<
       </ModalFooter>
     </Modal>
   );
-};
+}

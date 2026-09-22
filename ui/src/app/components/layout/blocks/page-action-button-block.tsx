@@ -1,18 +1,18 @@
 import { RedNoticeBlock } from '@/app/components/layout/container/message/notice-block';
 import { WarningAlt } from '@carbon/icons-react';
-import type { FC, HTMLAttributes } from 'react';
+import type { HTMLAttributes } from 'react';
 import { cn } from '@/utils';
 
 interface PageActionButtonBlockProps extends HTMLAttributes<HTMLDivElement> {
   errorMessage?: string;
 }
 
-export const PageActionButtonBlock: FC<PageActionButtonBlockProps> = ({
+export function PageActionButtonBlock({
   errorMessage,
   children,
   className,
   ...attributes
-}) => {
+}: PageActionButtonBlockProps) {
   return (
     <div {...attributes} className={cn('w-full shrink-0', className)}>
       {errorMessage && (
@@ -21,9 +21,7 @@ export const PageActionButtonBlock: FC<PageActionButtonBlockProps> = ({
           <span role="alert">{errorMessage}</span>
         </RedNoticeBlock>
       )}
-      <div className="flex h-12 border-t border-border-subtle">
-        {children}
-      </div>
+      <div className="flex h-12 border-t border-border-subtle">{children}</div>
     </div>
   );
-};
+}

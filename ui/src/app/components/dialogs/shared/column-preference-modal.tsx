@@ -1,80 +1,96 @@
 import React, { useEffect, useState } from 'react';
 import { ErrorMessage } from '@/app/components/ui/feedback/error-message';
 import {
+  Checkbox,
+  FormGroup,
   Modal,
   ModalHeader,
   ModalBody,
   ModalFooter,
+  PrimaryButton,
+  SecondaryButton,
+  Stack,
 } from '@/app/components/ui/primitives';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
-import { Stack, Checkbox, FormGroup } from '@/app/components/ui/primitives';
 import { RadioButton, RadioButtonGroup } from '@carbon/react';
+
+type TableColumnPreference = {
+  name: string;
+  key: string;
+  visible: boolean;
+};
 
 interface TablePreferenceModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
   defaultPageSize: number[];
-  columns: { name: string; key: string; visible: boolean }[];
-  onChangeColumns: (
-    clmns: { name: string; key: string; visible: boolean }[],
-  ) => void;
+  columns: TableColumnPreference[];
+  onChangeColumns: (columns: TableColumnPreference[]) => void;
   pageSize: number;
   onChangePageSize: (size: number) => void;
 }
 
-export function ColumnPreferencesDialog(props: TablePreferenceModalProps) {
-  const [pgs, setPgs] = useState(props.pageSize);
-  const [clmns, setClmns] = useState<
-    { name: string; key: string; visible: boolean }[]
+export function ColumnPreferencesDialog({
+  open,
+  setOpen,
+  defaultPageSize,
+  columns,
+  onChangeColumns,
+  pageSize,
+  onChangePageSize,
+}: TablePreferenceModalProps) {
+  const [selectedPageSize, setSelectedPageSize] = useState(pageSize);
+  const [selectedColumns, setSelectedColumns] = useState<
+    TableColumnPreference[]
   >([]);
   const [error, setError] = useState('');
+  const closeDialog = () => setOpen(false);
 
   useEffect(() => {
-    setPgs(props.pageSize);
-  }, [props.pageSize]);
+    setSelectedPageSize(pageSize);
+  }, [pageSize]);
 
   useEffect(() => {
-    setClmns(props.columns);
-  }, [props.columns]);
+    setSelectedColumns(columns);
+  }, [columns]);
 
-  const changeVisibility = (k: string) => {
-    setClmns(prevClmns =>
-      prevClmns.map(column =>
-        column.key === k ? { ...column, visible: !column.visible } : column,
+  const changeVisibility = (key: string) => {
+    setSelectedColumns(currentColumns =>
+      currentColumns.map(column =>
+        column.key === key ? { ...column, visible: !column.visible } : column,
       ),
     );
   };
 
   const onAction = () => {
-    const cnt = clmns.filter(x => x.visible);
-    if (cnt.length < 1 && clmns.length > 0) {
-      setError('Please have 2 or more column visibility selected');
+    const visibleColumns = selectedColumns.filter(column => column.visible);
+    if (visibleColumns.length < 1 && selectedColumns.length > 0) {
+      setError('Select at least one visible column');
       return;
     }
-    props.onChangePageSize(pgs);
-    props.onChangeColumns(clmns);
-    props.setOpen(false);
+    onChangePageSize(selectedPageSize);
+    onChangeColumns(selectedColumns);
+    closeDialog();
   };
 
   return (
-    <Modal open={props.open} onClose={() => props.setOpen(false)} size="sm">
+    <Modal open={open} onClose={closeDialog} size="sm">
       <ModalHeader
         label="Table Settings"
         title="Column Preferences"
-        onClose={() => props.setOpen(false)}
+        onClose={closeDialog}
       />
       <ModalBody>
         <Stack gap={6}>
-          {clmns.length > 0 && (
+          {selectedColumns.length > 0 && (
             <FormGroup legendText="Visible Columns">
               <Stack gap={3}>
-                {clmns.map((cl, idx) => (
+                {selectedColumns.map(column => (
                   <Checkbox
-                    key={cl.key}
-                    id={`col-pref-${cl.key}`}
-                    labelText={cl.name}
-                    checked={cl.visible}
-                    onChange={() => changeVisibility(cl.key)}
+                    key={column.key}
+                    id={`col-pref-${column.key}`}
+                    labelText={column.name}
+                    checked={column.visible}
+                    onChange={() => changeVisibility(column.key)}
                   />
                 ))}
               </Stack>
@@ -83,13 +99,13 @@ export function ColumnPreferencesDialog(props: TablePreferenceModalProps) {
           <FormGroup legendText="Page Size">
             <RadioButtonGroup
               name="page-size"
-              valueSelected={String(pgs)}
+              valueSelected={String(selectedPageSize)}
               onChange={(value: string | number | undefined) => {
-                if (value !== undefined) setPgs(Number(value));
+                if (value !== undefined) setSelectedPageSize(Number(value));
               }}
               orientation="vertical"
             >
-              {props.defaultPageSize.map(sz => (
+              {defaultPageSize.map(sz => (
                 <RadioButton
                   key={sz}
                   id={`page-size-${sz}`}
@@ -103,7 +119,7 @@ export function ColumnPreferencesDialog(props: TablePreferenceModalProps) {
         </Stack>
       </ModalBody>
       <ModalFooter>
-        <SecondaryButton size="lg" onClick={() => props.setOpen(false)}>
+        <SecondaryButton size="lg" onClick={closeDialog}>
           Cancel
         </SecondaryButton>
         <PrimaryButton size="lg" onClick={onAction}>

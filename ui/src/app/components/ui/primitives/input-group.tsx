@@ -1,29 +1,29 @@
 import { cn } from '@/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown } from '@carbon/icons-react';
-import { FC, HTMLAttributes, useState } from 'react';
+import type { HTMLAttributes, ReactNode } from 'react';
+import { useState } from 'react';
 
-interface InputGroupProps extends HTMLAttributes<HTMLDivElement> {
-  title?: any;
+interface InputGroupProps extends Omit<HTMLAttributes<HTMLElement>, 'title'> {
+  title?: ReactNode;
   initiallyExpanded?: boolean;
   childClass?: string;
 }
-export const InputGroup: FC<InputGroupProps> = ({
+export function InputGroup({
   initiallyExpanded = true,
   childClass,
+  children,
+  className,
+  title,
   ...props
-}) => {
+}: InputGroupProps) {
   const [isExpanded, setIsExpanded] = useState(initiallyExpanded);
 
   return (
     <section
       {...props}
-      className={cn(
-        'border-b border-gray-200 dark:border-gray-800',
-        props.className,
-      )}
+      className={cn('border-b border-gray-200 dark:border-gray-800', className)}
     >
-      {/* Carbon accordion trigger */}
       <div
         onClick={() => setIsExpanded(!isExpanded)}
         className={cn(
@@ -33,7 +33,7 @@ export const InputGroup: FC<InputGroupProps> = ({
         )}
       >
         <div className="flex-none text-sm font-semibold text-gray-900 dark:text-gray-100">
-          {props.title}
+          {title}
         </div>
         <ChevronDown
           size={16}
@@ -52,9 +52,9 @@ export const InputGroup: FC<InputGroupProps> = ({
           transition={{ duration: 0.2, ease: 'easeInOut' }}
           style={{ display: isExpanded ? 'block' : 'none' }}
         >
-          {props.children}
+          {children}
         </motion.div>
       </AnimatePresence>
     </section>
   );
-};
+}

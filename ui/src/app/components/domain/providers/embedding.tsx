@@ -1,6 +1,4 @@
-import { Metadata, VaultCredential } from '@rapidaai/react';
-import { ListboxDropdown as Dropdown } from '@/app/components/ui/primitives';
-import { ProviderComponentProps } from '@/app/components/domain/providers/provider-component-props';
+import { Metadata } from '@rapidaai/react';
 import { ConfigureCohereEmbeddingModel } from '@/app/components/domain/providers/embedding/cohere';
 import {
   GetCohereEmbeddingDefaultOptions,
@@ -21,12 +19,18 @@ import {
   GetVoyageEmbeddingDefaultOptions,
   ValidateVoyageEmbeddingDefaultOptions,
 } from '@/app/components/domain/providers/embedding/voyageai/constants';
-import { cn } from '@/utils';
-import { FC, useCallback } from 'react';
+import { useCallback } from 'react';
 import { CredentialDropdown } from '@/app/components/domain/dropdowns/credential-dropdown';
-import { FieldSet } from '@/app/components/ui/primitives';
-import { FormLabel } from '@/app/components/ui/primitives';
+import { Dropdown } from '@carbon/react';
+import { Stack } from '@/app/components/ui/primitives';
+import { HelpToggletip } from '@/app/components/domain/providers/help-label';
 import { EMBEDDING_PROVIDERS } from '@/providers';
+import type { VaultCredential } from '@rapidaai/react';
+import type {
+  ProviderComponentProps,
+  ProviderSelectionChange,
+} from '@/app/components/domain/providers/provider-component-props';
+import type { RapidaProvider } from '@/providers';
 
 /**
  *
@@ -81,11 +85,14 @@ export const ValidateEmbeddingDefaultOptions = (
  * @param param0
  * @returns
  */
-export const EmbeddingConfigComponent: FC<ProviderComponentProps> = ({
+const getProviderName = (item: RapidaProvider | null): string =>
+  item?.name ?? '';
+
+export function EmbeddingConfigComponent({
   provider,
   parameters,
   onChangeParameter,
-}) => {
+}: ProviderComponentProps) {
   switch (provider) {
     case 'cohere':
       return (
@@ -118,35 +125,28 @@ export const EmbeddingConfigComponent: FC<ProviderComponentProps> = ({
     default:
       return null;
   }
-};
+}
 
 /**
  *
  * @param props
  * @returns
  */
-export const EmbeddingProvider: React.FC<ProviderComponentProps> = props => {
-  /**
-   * all the parameters
-   */
-  const { provider, parameters, onChangeProvider, onChangeParameter } = props;
-  /**
-   * getter from paramerters
-   */
+export function EmbeddingProvider({
+  provider,
+  parameters,
+  onChangeProvider,
+  onChangeParameter,
+}: ProviderComponentProps) {
   const getParamValue = useCallback(
     (key: string) => {
-      return parameters?.find(p => p.getKey() === key)?.getValue() ?? '';
+      return parameters.find(p => p.getKey() === key)?.getValue() ?? '';
     },
-    [JSON.stringify(parameters)],
+    [parameters],
   );
 
-  /**
-   *
-   * @param key
-   * @param value
-   */
   const updateParameter = (key: string, value: string) => {
-    const updatedParams = [...(parameters || [])];
+    const updatedParams = [...parameters];
     const existingIndex = updatedParams.findIndex(p => p.getKey() === key);
     const newParam = new Metadata();
     newParam.setKey(key);
@@ -159,71 +159,42 @@ export const EmbeddingProvider: React.FC<ProviderComponentProps> = props => {
     onChangeParameter(updatedParams);
   };
 
-  /**
-   *
-   */
+  const selectedProvider =
+    EMBEDDING_PROVIDERS.find(x => x.code === provider) || null;
+
   return (
-    <>
-      <FieldSet>
-        <FormLabel>Provider Model</FormLabel>
-        <div
-          className={cn(
-            'p-px',
-            'outline-solid outline-transparent',
-            'focus-within:outline-blue-600 focus:outline-blue-600 -outline-offset-1',
-            'border-b border-gray-300 dark:border-gray-700',
-            'dark:focus-within:border-blue-600 focus-within:border-blue-600',
-            'transition-all duration-200 ease-in-out',
-            'bg-light-background dark:bg-gray-950',
-            'divide-x',
-            'flex relative',
-          )}
-        >
-          <div className="w-44 relative">
-            <Dropdown
-              className="max-w-full focus-within:border-none! focus-within:outline-hidden! border-none! outline-hidden"
-              currentValue={EMBEDDING_PROVIDERS.find(x => x.code === provider)}
-              setValue={v => {
-                onChangeProvider(v.code);
-              }}
-              allValue={EMBEDDING_PROVIDERS}
-              placeholder="Select provider"
-              option={c => {
-                return (
-                  <span className="inline-flex items-center gap-2 sm:gap-2.5 max-w-full text-sm font-medium">
-                    <img
-                      alt=""
-                      loading="lazy"
-                      width={16}
-                      height={16}
-                      className="sm:h-4 sm:w-4 w-4 h-4 align-middle block shrink-0"
-                      src={c.image}
-                    />
-                    <span className="truncate capitalize">{c.name}</span>
-                  </span>
-                );
-              }}
-              label={c => {
-                return (
-                  <span className="inline-flex items-center gap-2 sm:gap-2.5 max-w-full text-sm font-medium">
-                    <img
-                      alt=""
-                      loading="lazy"
-                      width={16}
-                      height={16}
-                      className="sm:h-4 sm:w-4 w-4 h-4 align-middle block shrink-0"
-                      src={c.image}
-                    />
-                    <span className="truncate capitalize">{c.name}</span>
-                  </span>
-                );
-              }}
+    <Stack gap={6}>
+      <Dropdown
+        id="embedding-provider"
+        titleText={
+          <span className="inline-flex items-center gap-1">
+            Embedding provider
+            <HelpToggletip
+              label="Embedding provider"
+              helpText="Select an embedding provider and model for knowledge retrieval."
             />
-          </div>
-          <EmbeddingConfigComponent {...props} />
-        </div>
-      </FieldSet>
-      {props && (
+          </span>
+        }
+        label="Select embedding provider"
+        items={EMBEDDING_PROVIDERS}
+        selectedItem={selectedProvider}
+        itemToString={getProviderName}
+        onChange={({
+          selectedItem,
+        }: ProviderSelectionChange<RapidaProvider>) => {
+          if (!selectedItem) return;
+          onChangeProvider(selectedItem.code);
+        }}
+      />
+      {provider && (
+        <EmbeddingConfigComponent
+          parameters={parameters}
+          provider={provider}
+          onChangeParameter={onChangeParameter}
+          onChangeProvider={onChangeProvider}
+        />
+      )}
+      {provider && (
         <CredentialDropdown
           className="bg-white"
           onChangeCredential={(c: VaultCredential) => {
@@ -233,6 +204,6 @@ export const EmbeddingProvider: React.FC<ProviderComponentProps> = props => {
           provider={provider}
         />
       )}
-    </>
+    </Stack>
   );
-};
+}

@@ -30,7 +30,7 @@ type LatencyTooltipPayloadItem = {
   payload?: LatencySeriesPoint;
 };
 
-const getVisibleLatencyTooltipItems = (
+export const getVisibleLatencyTooltipItems = (
   payload: LatencyTooltipPayloadItem[] | undefined,
   metricOrder: LatencyMetricName[],
 ): LatencyTooltipPayloadItem[] => {
@@ -56,7 +56,7 @@ const getVisibleLatencyTooltipItems = (
     );
 };
 
-const buildAverageLatencyByMetric = (
+export const buildAverageLatencyByMetric = (
   latencySeries: LatencySeriesPoint[],
   metricNames: LatencyMetricName[],
 ): Record<LatencyMetricName, number> =>
@@ -100,7 +100,7 @@ export function LatencyStackChart(props: LatencyStackChartProps) {
 
   if (latencySeries.length === 0) {
     return (
-      <div className="flex items-center justify-center py-16 text-gray-400 dark:text-gray-500 text-sm">
+      <div className="flex items-center justify-center py-16 text-sm text-muted">
         No latency metrics found
       </div>
     );
@@ -111,12 +111,12 @@ export function LatencyStackChart(props: LatencyStackChartProps) {
       <div className="flex flex-wrap items-center gap-6 px-4 pt-3 pb-2">
         {latencyMetricNames.map(metricName => (
           <div key={metricName}>
-            <p className="text-[10px] text-gray-400 uppercase">
+            <p className="text-[10px] uppercase text-muted">
               {LATENCY_METRIC_META[metricName].shortLabel}
             </p>
             <p className="text-xl font-light tabular-nums">
               {avgLatencyByMetric[metricName]}{' '}
-              <span className="text-xs text-gray-500">ms</span>
+              <span className="text-xs text-muted">ms</span>
             </p>
           </div>
         ))}
@@ -176,13 +176,13 @@ export function LatencyStackChart(props: LatencyStackChartProps) {
                 );
 
                 return (
-                  <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-lg px-3 py-2 text-sm min-w-[180px]">
-                    <p className="text-gray-400 text-xs mb-1.5">
+                  <div className="min-w-[180px] border border-border-subtle bg-layer px-3 py-2 text-sm shadow-lg">
+                    <p className="mb-1.5 text-xs text-muted">
                       {point?.contextId
                         ? `${point.timeLabel} • ${point.contextId}`
                         : point?.timeLabel || ''}
                     </p>
-                    <p className="text-[11px] text-gray-500 mb-1.5">
+                    <p className="mb-1.5 text-[11px] text-muted">
                       Stack: {stackOrderText}
                     </p>
                     {visiblePayload.map(item => {
@@ -201,7 +201,7 @@ export function LatencyStackChart(props: LatencyStackChartProps) {
                               backgroundColor: item.color || meta?.color,
                             }}
                           />
-                          <span className="text-gray-600 dark:text-gray-300 uppercase text-xs">
+                          <span className="text-xs uppercase text-foreground">
                             {orderPosition}.{' '}
                             {meta?.shortLabel || String(item.dataKey)}
                           </span>
@@ -211,8 +211,8 @@ export function LatencyStackChart(props: LatencyStackChartProps) {
                         </div>
                       );
                     })}
-                    <div className="mt-2 border-t border-gray-200 dark:border-gray-700 pt-1.5 flex items-center">
-                      <span className="text-[11px] uppercase tracking-wide text-gray-500">
+                    <div className="mt-2 flex items-center border-t border-border-subtle pt-1.5">
+                      <span className="text-[11px] uppercase tracking-wide text-muted">
                         Total
                       </span>
                       <span className="ml-auto font-semibold tabular-nums">

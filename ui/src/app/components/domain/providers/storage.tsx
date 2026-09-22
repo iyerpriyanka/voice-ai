@@ -1,10 +1,9 @@
-import { Metadata, VaultCredential } from '@rapidaai/react';
+import { Metadata } from '@rapidaai/react';
 import { CredentialDropdown } from '@/app/components/domain/dropdowns/credential-dropdown';
 import { useCallback } from 'react';
-import { ProviderComponentProps } from '@/app/components/domain/providers/provider-component-props';
-import { STORAGE_PROVIDER } from '@/providers';
 import { Dropdown } from '@carbon/react';
 import { Stack } from '@/app/components/ui/primitives';
+import { STORAGE_PROVIDER } from '@/providers';
 import { loadProviderConfig } from '@/providers/config-loader';
 import {
   getDefaultsFromConfig,
@@ -12,11 +11,16 @@ import {
 } from '@/providers/config-defaults';
 import { ConfigRenderer } from '@/app/components/domain/providers/config-renderer';
 import { HelpToggletip } from '@/app/components/domain/providers/help-label';
-import { FormLabel } from '@/app/components/ui/primitives';
 import {
   preserveStorageConfigurationOptions,
   STORAGE_FILES_OPTION_KEY,
 } from './storage/storage-files';
+import type { VaultCredential } from '@rapidaai/react';
+import type {
+  ProviderComponentProps,
+  ProviderSelectionChange,
+} from '@/app/components/domain/providers/provider-component-props';
+import type { RapidaProvider } from '@/providers';
 export {
   defaultStorageFiles,
   parseSelectedStorageFiles,
@@ -65,11 +69,14 @@ export const ValidateStorageOptions = (
   return !validateFromConfig(config, 'storage', provider, parameters);
 };
 
-export const ConfigureStorageComponent: React.FC<ProviderComponentProps> = ({
+const getProviderName = (item: RapidaProvider | null): string =>
+  item?.name ?? '';
+
+export function ConfigureStorageComponent({
   provider,
   parameters,
   onChangeParameter,
-}) => {
+}: ProviderComponentProps) {
   const config = loadProviderConfig(provider);
   if (!config?.storage) return null;
 
@@ -82,28 +89,23 @@ export const ConfigureStorageComponent: React.FC<ProviderComponentProps> = ({
       onParameterChange={onChangeParameter}
     />
   );
-};
+}
 
-/**
- *
- * @param param0
- * @returns
- */
-export const CloudStorageProvider: React.FC<ProviderComponentProps> = ({
+export function CloudStorageProvider({
   parameters,
   provider,
   onChangeParameter,
   onChangeProvider,
-}) => {
+}: ProviderComponentProps) {
   const getParamValue = useCallback(
     (key: string) => {
-      return parameters?.find(p => p.getKey() === key)?.getValue() ?? '';
+      return parameters.find(p => p.getKey() === key)?.getValue() ?? '';
     },
-    [JSON.stringify(parameters)],
+    [parameters],
   );
 
   const updateParameter = (key: string, value: string) => {
-    const updatedParams = [...(parameters || [])];
+    const updatedParams = [...parameters];
     const existingIndex = updatedParams.findIndex(p => p.getKey() === key);
     const newParam = new Metadata();
     newParam.setKey(key);
@@ -121,28 +123,28 @@ export const CloudStorageProvider: React.FC<ProviderComponentProps> = ({
 
   return (
     <Stack gap={6}>
-      <div className="inline-flex items-center gap-1">
-        <FormLabel htmlFor="storage-provider">Storage provider</FormLabel>
-        <HelpToggletip
-          label="Storage provider"
-          helpText="Select a storage provider for assistant recordings."
-        />
-      </div>
       <Dropdown
         id="storage-provider"
-        titleText=""
+        titleText={
+          <span className="inline-flex items-center gap-1">
+            Storage provider
+            <HelpToggletip
+              label="Storage provider"
+              helpText="Select a storage provider for assistant recordings."
+            />
+          </span>
+        }
         label="Select storage provider"
         items={STORAGE_PROVIDER}
         selectedItem={selectedProvider}
-        itemToString={(item: any) => item?.name || ''}
-        onChange={({ selectedItem }: any) => {
+        itemToString={getProviderName}
+        onChange={({
+          selectedItem,
+        }: ProviderSelectionChange<RapidaProvider>) => {
           if (!selectedItem) return;
           onChangeProvider(selectedItem.code);
           onChangeParameter(
-            GetDefaultStorageConfigIfInvalid(
-              selectedItem.code,
-              parameters || [],
-            ),
+            GetDefaultStorageConfigIfInvalid(selectedItem.code, parameters),
           );
         }}
       />
@@ -158,7 +160,7 @@ export const CloudStorageProvider: React.FC<ProviderComponentProps> = ({
       {provider && (
         <div className="grid grid-cols-3 gap-x-6 gap-y-3">
           <ConfigureStorageComponent
-            parameters={parameters || []}
+            parameters={parameters}
             provider={provider}
             onChangeParameter={onChangeParameter}
             onChangeProvider={onChangeProvider}
@@ -167,4 +169,4 @@ export const CloudStorageProvider: React.FC<ProviderComponentProps> = ({
       )}
     </Stack>
   );
-};
+}

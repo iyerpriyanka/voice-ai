@@ -1,11 +1,13 @@
-import React from 'react';
 import { Information } from '@carbon/icons-react';
 import { Toggletip, ToggletipButton, ToggletipContent } from '@carbon/react';
+import type { ReactNode } from 'react';
 
-export const HelpToggletip: React.FC<{
+interface HelpToggletipProps {
   label: string;
-  helpText?: React.ReactNode;
-}> = ({ label, helpText }) => {
+  helpText?: ReactNode;
+}
+
+export function HelpToggletip({ label, helpText }: HelpToggletipProps) {
   if (!helpText) return null;
 
   return (
@@ -16,4 +18,4 @@ export const HelpToggletip: React.FC<{
       <ToggletipContent>{helpText}</ToggletipContent>
     </Toggletip>
   );
-};
+}

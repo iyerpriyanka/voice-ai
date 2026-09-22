@@ -1,4 +1,3 @@
-import { FC } from 'react';
 import { preview__ShapeIndicator as ShapeIndicator } from '@carbon/react';
 
 export type CarbonShapeIndicatorKind =
@@ -21,12 +20,12 @@ export interface CarbonShapeIndicatorProps {
   textSize?: 12 | 14;
 }
 
-export const CarbonShapeIndicator: FC<CarbonShapeIndicatorProps> = ({
+export function CarbonShapeIndicator({
   state,
   kind,
   label,
   textSize = 12,
-}) => {
+}: CarbonShapeIndicatorProps) {
   const resolved = state
     ? recordStateToShapeIndicator[state] || defaultRecordShapeIndicator
     : {
@@ -36,12 +35,12 @@ export const CarbonShapeIndicator: FC<CarbonShapeIndicatorProps> = ({
 
   return (
     <ShapeIndicator
-      kind={resolved.kind as any}
+      kind={resolved.kind}
       label={resolved.label}
       textSize={textSize}
     />
   );
-};
+}
 
 export const recordStateToShapeIndicator: Record<
   string,

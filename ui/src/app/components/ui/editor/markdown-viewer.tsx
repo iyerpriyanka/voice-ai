@@ -1,4 +1,4 @@
-import React, { HTMLAttributes } from 'react';
+import type { HTMLAttributes } from 'react';
 import MarkdownPreview from '@uiw/react-markdown-preview';
 import { cn } from '@/utils';
 
@@ -7,11 +7,11 @@ interface MarkdownViewerProps extends HTMLAttributes<HTMLDivElement> {
   editorClassName?: string;
 }
 
-export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
+export function MarkdownViewer({
   text,
   className,
   editorClassName,
-}) => {
+}: MarkdownViewerProps) {
   return (
     <div
       className={cn(
@@ -34,9 +34,6 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
           maxWidth: '100%',
         }}
       />
-      {/* <div className="absolute top-0 right-0 p-2">
-        <CopyButton>{text}</CopyButton>
-      </div> */}
     </div>
   );
-};
+}

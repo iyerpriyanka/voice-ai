@@ -1,52 +1,48 @@
-import { allProvider, RapidaProvider } from '@/providers';
+import { allProvider } from '@/providers';
+import type { RapidaProvider } from '@/providers';
 import { cn } from '@/utils';
-import { FC, HTMLAttributes, useEffect, useState } from 'react';
+import { Tag } from '@carbon/react';
+import type { HTMLAttributes } from 'react';
+import { useMemo } from 'react';
 
-/**
- *
- */
 interface ProviderPillProps extends HTMLAttributes<HTMLSpanElement> {
   provider?: string;
 }
 
-/**
- *
- * @param props
- * @returns
- */
-export const ProviderPill: FC<ProviderPillProps> = props => {
-  //
-  const [currentProvider, setcurrentProvider] = useState<RapidaProvider | null>(
-    null,
+export function ProviderPill({
+  provider,
+  className,
+  onClick,
+}: ProviderPillProps) {
+  const currentProvider = useMemo<RapidaProvider | null>(
+    () =>
+      provider
+        ? allProvider().find(
+            item => item.code.toLowerCase() === provider.toLowerCase(),
+          ) || null
+        : null,
+    [provider],
   );
 
-  useEffect(() => {
-    if (props.provider) {
-      let cModel = allProvider().find(
-        x => x.code.toLowerCase() === props.provider?.toLowerCase(),
-      );
-      if (cModel) setcurrentProvider(cModel);
-    }
-  }, [props.provider]);
+  const label = currentProvider?.name || provider || 'Unknown provider';
 
   return (
-    <span
-      onClick={props.onClick}
-      className={cn(
-        'shrink-0 inline-flex items-center divide-x divide-gray-200 dark:divide-gray-700',
-        'bg-gray-100 dark:bg-gray-800/50 ring-[0.5px] ring-inset ring-gray-200 dark:ring-gray-700',
-        'text-sm text-gray-600 dark:text-gray-400 font-medium',
-        props.className,
-      )}
+    <Tag
+      size="md"
+      type="gray"
+      onClick={onClick}
+      className={cn('!inline-flex !max-w-full !items-center', className)}
     >
-      <span className="px-2.5 py-1 flex items-center">
-        <img
-          alt={currentProvider?.name}
-          src={currentProvider?.image}
-          className="w-4 h-4 shrink-0"
-        />
+      <span className="flex min-w-0 items-center gap-1.5">
+        {currentProvider?.image && (
+          <img
+            alt={currentProvider.name}
+            src={currentProvider.image}
+            className="h-4 w-4 shrink-0"
+          />
+        )}
+        <span className="truncate">{label}</span>
       </span>
-      <span className="px-2.5 py-1 truncate">{currentProvider?.name}</span>
-    </span>
+    </Tag>
   );
-};
+}

@@ -12,8 +12,15 @@ interface SidebarLinkItemProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 export function SidebarSimpleListItem(props: SidebarLinkItemProps) {
-  const { active, redirect, navigate, loading, className, children, ...dProps } =
-    props;
+  const {
+    active,
+    redirect,
+    navigate,
+    loading,
+    className,
+    children,
+    ...dProps
+  } = props;
   const { open } = useSidebar();
 
   const isLoading = loading;

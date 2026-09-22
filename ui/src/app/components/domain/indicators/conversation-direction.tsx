@@ -1,4 +1,3 @@
-import React from 'react';
 import { Tag } from '@carbon/react';
 import { ArrowDown, ArrowUp } from '@carbon/icons-react';
 
@@ -6,9 +5,9 @@ interface ConversationDirectionIndicatorProps {
   direction: string;
 }
 
-export const ConversationDirectionIndicator: React.FC<
-  ConversationDirectionIndicatorProps
-> = ({ direction }) => {
+export function ConversationDirectionIndicator({
+  direction,
+}: ConversationDirectionIndicatorProps) {
   const isInbound = direction?.toLowerCase() !== 'outbound';
 
   return (
@@ -19,4 +18,4 @@ export const ConversationDirectionIndicator: React.FC<
       </span>
     </Tag>
   );
-};
+}

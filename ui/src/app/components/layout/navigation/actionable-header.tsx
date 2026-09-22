@@ -1,10 +1,4 @@
-import {
-  useState,
-  useContext,
-  useMemo,
-  type FC,
-  type HTMLAttributes,
-} from 'react';
+import { useState, useContext, useMemo, type HTMLAttributes } from 'react';
 import { ProjectRole } from '@rapidaai/react';
 import { cn } from '@/utils';
 import { useLocation } from 'react-router-dom';
@@ -74,10 +68,13 @@ export function ActionableHeader({
   );
 }
 
-export const CustomerOptions: FC<{
+export function CustomerOptions({
+  isLoading,
+  showProjectSelector = true,
+}: {
   isLoading?: boolean;
   showProjectSelector?: boolean;
-}> = ({ isLoading, showProjectSelector = true }) => {
+}) {
   const { projectRoles, currentProjectRole, setCurrentProjectRole } =
     useContext(AuthContext);
 
@@ -160,4 +157,4 @@ export const CustomerOptions: FC<{
       </HeaderPanel>
     </HeaderGlobalBar>
   );
-};
+}

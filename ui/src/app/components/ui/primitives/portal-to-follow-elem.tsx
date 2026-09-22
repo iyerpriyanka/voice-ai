@@ -79,6 +79,10 @@ export function usePortalToFollowElem({
 
 type ContextType = ReturnType<typeof usePortalToFollowElem> | null;
 const PortalToFollowElemContext = React.createContext<ContextType>(null);
+type ElementWithRef = React.ReactElement & {
+  ref?: React.Ref<HTMLElement>;
+};
+
 export function usePortalToFollowElemContext() {
   const context = React.useContext(PortalToFollowElemContext);
 
@@ -94,8 +98,6 @@ export function PortalToFollowElem({
   children,
   ...options
 }: { children: React.ReactNode } & PortalToFollowElemOptions) {
-  // This can accept any props as options, e.g. `placement`,
-  // or other positioning options.
   const tooltip = usePortalToFollowElem(options);
   return (
     <PortalToFollowElemContext.Provider value={tooltip}>
@@ -109,7 +111,9 @@ export const PortalToFollowElemTrigger = React.forwardRef<
   React.HTMLProps<HTMLElement> & { asChild?: boolean }
 >(({ children, asChild = false, ...props }, propRef) => {
   const context = usePortalToFollowElemContext();
-  const childrenRef = (children as any).ref;
+  const childrenRef = React.isValidElement(children)
+    ? (children as ElementWithRef).ref
+    : null;
   const ref = useMergeRefs([context.refs.setReference, propRef, childrenRef]);
 
   // `asChild` allows the user to pass any element as the anchor

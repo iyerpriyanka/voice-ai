@@ -21,7 +21,8 @@ const meta = {
     },
     meta: {
       control: 'object',
-      description: 'Additional document meta entries rendered as name/content tags.',
+      description:
+        'Additional document meta entries rendered as name/content tags.',
     },
   },
   args: {

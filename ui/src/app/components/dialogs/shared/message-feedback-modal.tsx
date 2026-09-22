@@ -8,21 +8,19 @@ import {
 import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
 import { Textarea } from '@/app/components/ui/primitives';
 import { Checkmark } from '@carbon/icons-react';
-import type { FC } from 'react';
 import { useState } from 'react';
 
-export const MessageFeedbackDialog: FC<
-  ModalProps & { onSubmitFeedback: (feedback: string) => void }
-> = ({ modalOpen, setModalOpen, onSubmitFeedback }) => {
+export function MessageFeedbackDialog({
+  modalOpen,
+  setModalOpen,
+  onSubmitFeedback,
+}: ModalProps & { onSubmitFeedback: (feedback: string) => void }) {
   const [feedbackText, setFeedbackText] = useState('');
   const closeDialog = () => setModalOpen(false);
 
   return (
     <Modal open={modalOpen} onClose={closeDialog} size="sm">
-      <ModalHeader
-        title="What can be improved?"
-        onClose={closeDialog}
-      />
+      <ModalHeader title="What can be improved?" onClose={closeDialog} />
       <ModalBody hasForm>
         <div className="px-4 py-6">
           <p className="mt-1 text-base font-semibold text-foreground">
@@ -58,4 +56,4 @@ export const MessageFeedbackDialog: FC<
       </ModalFooter>
     </Modal>
   );
-};
+}

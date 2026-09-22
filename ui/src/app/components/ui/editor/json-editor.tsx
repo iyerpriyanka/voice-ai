@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import Editor, { OnChange, OnMount } from '@monaco-editor/react';
 import { useTheme } from '@/theme/theme-provider';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
@@ -20,7 +20,7 @@ export type JsonEditorProps = {
   ) => JsonEditorDisposable | void;
 };
 
-export const JsonEditor: React.FC<JsonEditorProps> = ({
+export function JsonEditor({
   value = '',
   onChange,
   onFocus,
@@ -30,7 +30,7 @@ export const JsonEditor: React.FC<JsonEditorProps> = ({
   placeholder = '',
   height = '200px',
   configureEditor,
-}) => {
+}: JsonEditorProps) {
   const { resolvedMode } = useTheme();
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const disposableRef = useRef<JsonEditorDisposable | null>(null);
@@ -102,7 +102,7 @@ export const JsonEditor: React.FC<JsonEditorProps> = ({
       }}
     />
   );
-};
+}
 
 class PlaceholderContentWidget implements monaco.editor.IContentWidget {
   static ID = 'editor.widget.placeholderHint';

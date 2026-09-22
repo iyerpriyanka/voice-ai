@@ -1,16 +1,16 @@
 import { useSidebar } from '@/context/sidebar-context';
 import { cn } from '@/utils';
-import type { FC, HTMLAttributes, MouseEvent } from 'react';
+import type { HTMLAttributes, MouseEvent } from 'react';
 
 export interface AsideProps extends HTMLAttributes<HTMLElement> {}
 
-export const Aside: FC<AsideProps> = ({
+export function Aside({
   className,
   children,
   onMouseEnter,
   onMouseLeave,
   ...attributes
-}) => {
+}: AsideProps) {
   const { open, setOpen } = useSidebar();
 
   const handleMouseEnter = (event: MouseEvent<HTMLElement>) => {
@@ -42,4 +42,4 @@ export const Aside: FC<AsideProps> = ({
       {children}
     </aside>
   );
-};
+}

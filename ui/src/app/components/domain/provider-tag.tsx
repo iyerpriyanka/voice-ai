@@ -1,4 +1,3 @@
-import type { FC } from 'react';
 import { Tag } from '@carbon/react';
 import { Ai } from '@carbon/icons-react';
 
@@ -17,16 +16,29 @@ const providerLabels: Record<string, string> = {
   'custom-stt': 'Custom STT',
 };
 
-export const ProviderTag: FC<{ provider?: string }> = ({ provider }) => {
-  const key = provider?.toLowerCase() || '';
-  const label = providerLabels[key] || provider || 'Unknown';
+interface ProviderTagProps {
+  provider?: string;
+}
 
+const getProviderLabel = (provider?: string) => {
+  const providerId = provider?.trim();
+
+  if (!providerId) {
+    return 'Unknown';
+  }
+
+  return providerLabels[providerId.toLowerCase()] || providerId;
+};
+
+export function ProviderTag({ provider }: ProviderTagProps) {
   return (
-    <Tag size="md" type="cool-gray" className="!inline-flex !items-center">
-      <span className="flex items-center gap-1.5 leading-none [&>svg]:block">
-        <Ai size={16} />
-        {label}
-      </span>
+    <Tag
+      size="md"
+      type="cool-gray"
+      renderIcon={Ai}
+      className="!whitespace-nowrap"
+    >
+      {getProviderLabel(provider)}
     </Tag>
   );
-};
+}

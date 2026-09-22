@@ -38,3 +38,31 @@ follow the same direct-import rule.
 Avoid importing production page or domain code from a specific shared component file
 unless the module has a default export, owns a browser-only dependency, or a focused
 test mock needs a file-level boundary.
+
+## Stories And Tests
+
+Use native Storybook CSF stories beside the component group they document. Small
+wrappers may share a group story when the story still exposes each public state clearly;
+for example, `primitives/primitives.stories.tsx` documents the primitive wrappers and
+`table/table.stories.tsx` documents table composition and pagination.
+
+Keep UI component tests in the nearest `__tests__` folder:
+
+- `primitives/__tests__` for primitive wrappers.
+- `table/__tests__` for table primitives and pagination.
+- `feedback/__tests__`, `editor/__tests__`, and `composites/__tests__` for their
+  matching groups.
+- Folder modules, such as `composites/query-search`, may keep their own local
+  `__tests__` folder beside private model code.
+
+Run focused UI tests with:
+
+```bash
+just ui-test src/app/components/ui
+```
+
+Build Storybook before publishing UI structure changes:
+
+```bash
+just ui-storybook-build
+```

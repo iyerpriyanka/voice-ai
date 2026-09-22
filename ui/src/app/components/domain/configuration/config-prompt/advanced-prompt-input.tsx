@@ -1,5 +1,4 @@
-import type { FC } from 'react';
-import React, { useRef } from 'react';
+import { memo, useRef } from 'react';
 import { useBoolean } from 'ahooks';
 import MessageTypeSelector from './message-type-selector';
 import type { PromptRole } from '@/models/prompt';
@@ -27,7 +26,7 @@ type PromptEditorProps = {
   enableReservedVariableSuggestions?: boolean;
 };
 
-const AdvancedPromptInput: FC<PromptEditorProps> = ({
+function AdvancedPromptInput({
   type,
   value,
   onChange,
@@ -36,15 +35,12 @@ const AdvancedPromptInput: FC<PromptEditorProps> = ({
   onDelete,
   className,
   enableReservedVariableSuggestions = false,
-}) => {
-  // expand feature
+}: PromptEditorProps) {
   const ref = useRef<HTMLDivElement>(null);
   const { wrapClassName, isExpand, setIsExpand } = useToggleExpend(ref);
 
-  //   focus
   const [isFocus, { setTrue: setFocus, setFalse: setBlur }] = useBoolean(false);
 
-  //   is checked when copy
   const [isChecked, { setTrue: setChecked, setFalse: setUnCheck }] =
     useBoolean(false);
 
@@ -58,7 +54,7 @@ const AdvancedPromptInput: FC<PromptEditorProps> = ({
     navigator.clipboard.writeText(item);
     setTimeout(() => {
       setUnCheck();
-    }, 4000); // Reset back after 2 seconds
+    }, 4000);
   };
 
   return (
@@ -71,7 +67,6 @@ const AdvancedPromptInput: FC<PromptEditorProps> = ({
           'relative',
           'bg-light-background dark:bg-gray-950',
           isFocus && 'border-primary',
-          // ::after overlay — renders above children so focus ring is fully visible
           'after:content-[""] after:absolute after:inset-0 after:pointer-events-none after:z-[1]',
           'after:outline-solid after:outline-[1.5px] after:outline-transparent after:outline-offset-[-1.5px]',
           'focus-within:after:outline-primary',
@@ -138,5 +133,6 @@ const AdvancedPromptInput: FC<PromptEditorProps> = ({
       </div>
     </div>
   );
-};
-export default React.memo(AdvancedPromptInput);
+}
+
+export default memo(AdvancedPromptInput);

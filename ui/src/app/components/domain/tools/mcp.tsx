@@ -1,4 +1,3 @@
-import { FC } from 'react';
 import { Select, SelectItem } from '@carbon/react';
 import { TextInput, TextArea, Stack } from '@/app/components/ui/primitives';
 import { ConfigureToolProps, useParameterManager } from './common';
@@ -11,13 +10,13 @@ import { InputGroup } from '@/app/components/ui/primitives';
 // Main Component
 // ============================================================================
 
-export const ConfigureMCP: FC<ConfigureToolProps> = ({
+export function ConfigureMCP({
   toolDefinition,
   onChangeToolDefinition,
   onParameterChange,
   parameters,
   inputClass,
-}) => {
+}: ConfigureToolProps) {
   const { getParamValue, updateParameter } = useParameterManager(
     parameters,
     onParameterChange,
@@ -109,4 +108,4 @@ export const ConfigureMCP: FC<ConfigureToolProps> = ({
       </InputGroup>
     </>
   );
-};
+}

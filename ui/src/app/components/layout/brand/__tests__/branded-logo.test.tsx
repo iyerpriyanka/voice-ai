@@ -14,12 +14,7 @@ const renderLogo = (
     defaultMode: 'dark',
     allowModeSelection: false,
   },
-) =>
-  render(
-    <ThemeProvider theme={theme}>
-      {logo}
-    </ThemeProvider>,
-  );
+) => render(<ThemeProvider theme={theme}>{logo}</ThemeProvider>);
 
 describe('BrandedLogo', () => {
   beforeEach(() => {

@@ -77,10 +77,7 @@ describe('layout notice blocks', () => {
 
     rerender(
       <ThemeProvider theme={theme}>
-        <DocNoticeBlock
-          docUrl="https://example.com/docs"
-          linkText="Open guide"
-        >
+        <DocNoticeBlock docUrl="https://example.com/docs" linkText="Open guide">
           Explicit docs
         </DocNoticeBlock>
       </ThemeProvider>,

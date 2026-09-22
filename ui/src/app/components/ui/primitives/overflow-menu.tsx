@@ -1,11 +1,9 @@
-import type { ElementType, FC, MouseEventHandler, ReactNode } from 'react';
+import type { ElementType, MouseEventHandler, ReactNode } from 'react';
 import {
   OverflowMenu as CarbonOverflowMenu,
   OverflowMenuItem as CarbonOverflowMenuItem,
 } from '@carbon/react';
 import { cn } from '@/utils';
-
-// Types
 
 type OverflowMenuSize = 'xs' | 'sm' | 'md' | 'lg';
 type MenuDirection = 'top' | 'bottom';
@@ -42,12 +40,10 @@ export interface OverflowMenuItemProps {
   wrapperClassName?: string;
 }
 
-// OverflowMenu
-
 /**
  * Carbon OverflowMenu: a vertical dot menu that reveals a list of actions.
  */
-export const OverflowMenu: FC<OverflowMenuProps> = ({
+export function OverflowMenu({
   children,
   className,
   size,
@@ -63,7 +59,7 @@ export const OverflowMenu: FC<OverflowMenuProps> = ({
   menuOptionsClass,
   selectorPrimaryFocus,
   ...rest
-}) => {
+}: OverflowMenuProps) {
   return (
     <CarbonOverflowMenu
       className={cn(className)}
@@ -84,15 +80,13 @@ export const OverflowMenu: FC<OverflowMenuProps> = ({
       {children}
     </CarbonOverflowMenu>
   );
-};
-
-// OverflowMenuItem
+}
 
 /**
  * Carbon OverflowMenuItem: a single action inside an OverflowMenu.
  * Use `isDelete` for danger/destructive items, `hasDivider` for visual separation.
  */
-export const OverflowMenuItem: FC<OverflowMenuItemProps> = ({
+export function OverflowMenuItem({
   className,
   itemText,
   disabled = false,
@@ -104,7 +98,7 @@ export const OverflowMenuItem: FC<OverflowMenuItemProps> = ({
   requireTitle,
   title,
   wrapperClassName,
-}) => {
+}: OverflowMenuItemProps) {
   return (
     <CarbonOverflowMenuItem
       className={cn(className)}
@@ -120,4 +114,4 @@ export const OverflowMenuItem: FC<OverflowMenuItemProps> = ({
       wrapperClassName={wrapperClassName}
     />
   );
-};
+}

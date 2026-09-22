@@ -22,12 +22,10 @@ describe('DescriptiveHeading', () => {
       />,
     );
 
-    const container = screen
-      .getByRole('heading', {
-        level: 1,
-        name: 'Archive Organization (Danger zone)',
-      })
-      .parentElement;
+    const container = screen.getByRole('heading', {
+      level: 1,
+      name: 'Archive Organization (Danger zone)',
+    }).parentElement;
 
     expect(container).toHaveAttribute(
       'aria-describedby',

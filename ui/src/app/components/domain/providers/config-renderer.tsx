@@ -1,4 +1,5 @@
-import React, { useMemo, useRef, useState } from 'react';
+import type { FocusEvent, ReactNode } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Metadata } from '@rapidaai/react';
 import { SettingsAdjust, Add, TrashCan } from '@carbon/icons-react';
 import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
@@ -31,18 +32,37 @@ import { WebsocketDslEditor } from '@/app/components/domain/providers/websocket-
 import { HelpToggletip } from '@/app/components/domain/providers/help-label';
 import { FormLabel } from '@/app/components/ui/primitives';
 
-const FieldLabelRow: React.FC<{
+type ProviderDataItem = Record<string, unknown> & {
+  name?: string;
+};
+
+const getProviderDataItemName = (item: ProviderDataItem | null): string =>
+  item?.name ?? '';
+
+const getProviderDataItemValue = (
+  item: ProviderDataItem,
+  field: string,
+): string => {
+  const value = item[field];
+  return value === undefined || value === null ? '' : String(value);
+};
+
+interface FieldLabelRowProps {
   param: ParameterConfig;
   htmlFor?: string;
   className?: string;
-}> = ({ param, htmlFor, className }) => (
-  <span className={cn('inline-flex items-center gap-1', className)}>
-    <FormLabel htmlFor={htmlFor}>{param.label}</FormLabel>
-    <HelpToggletip label={param.label} helpText={param.helpText} />
-  </span>
-);
+}
 
-export const ConfigRenderer: React.FC<{
+function FieldLabelRow({ param, htmlFor, className }: FieldLabelRowProps) {
+  return (
+    <span className={cn('inline-flex items-center gap-1', className)}>
+      <FormLabel htmlFor={htmlFor}>{param.label}</FormLabel>
+      <HelpToggletip label={param.label} helpText={param.helpText} />
+    </span>
+  );
+}
+
+interface ConfigRendererProps {
   provider: string;
   category:
     | 'stt'
@@ -57,15 +77,23 @@ export const ConfigRenderer: React.FC<{
   config: CategoryConfig;
   parameters: Metadata[] | null;
   onParameterChange: (parameters: Metadata[]) => void;
-}> = ({ provider, category, config, parameters, onParameterChange }) => {
+}
+
+export function ConfigRenderer({
+  provider,
+  category,
+  config,
+  parameters,
+  onParameterChange,
+}: ConfigRendererProps) {
   const effectiveParameters = useMemo(
     () =>
-      resolveCategoryParameters(provider, category, config, parameters || []),
+      resolveCategoryParameters(provider, category, config, parameters ?? []),
     [provider, category, config, parameters],
   );
 
   const getParamValue = (key: string) =>
-    parameters?.find(p => p.getKey() === key)?.getValue() ?? '';
+    (parameters ?? []).find(p => p.getKey() === key)?.getValue() ?? '';
 
   const isModelSelector = (param: ParameterConfig): boolean =>
     isModelSelectorParameter(param) &&
@@ -75,7 +103,7 @@ export const ConfigRenderer: React.FC<{
     updates: { key: string; value: string }[],
     sourceParam?: ParameterConfig,
   ) => {
-    const updatedParams = [...(parameters || [])];
+    const updatedParams = [...(parameters ?? [])];
     const currentModelValue =
       sourceParam && isModelSelector(sourceParam)
         ? getParamValue(sourceParam.key)
@@ -109,8 +137,8 @@ export const ConfigRenderer: React.FC<{
         ? loadProviderData(provider, sourceParam.data)
         : [];
       const valueField = sourceParam.valueField || 'id';
-      const hasCatalogMatch = data.some((item: any) => {
-        const catalogValue = item?.[valueField];
+      const hasCatalogMatch = data.some((item: ProviderDataItem) => {
+        const catalogValue = item[valueField];
         if (
           catalogValue !== undefined &&
           String(catalogValue) === nextModelValue
@@ -118,7 +146,7 @@ export const ConfigRenderer: React.FC<{
           return true;
         }
         return (
-          typeof item?.name === 'string' &&
+          typeof item.name === 'string' &&
           item.name.toLowerCase() === nextModelValue.toLowerCase()
         );
       });
@@ -197,7 +225,10 @@ export const ConfigRenderer: React.FC<{
                     { key: param.key, value },
                     {
                       key: param.linkedField.key,
-                      value: selectedItem[param.linkedField.sourceField] ?? '',
+                      value: getProviderDataItemValue(
+                        selectedItem,
+                        param.linkedField.sourceField,
+                      ),
                     },
                   ],
                   param,
@@ -377,9 +408,9 @@ export const ConfigRenderer: React.FC<{
   }
 
   return <>{effectiveParameters.map(renderField)}</>;
-};
+}
 
-const TextCategoryLayout: React.FC<{
+interface TextCategoryLayoutProps {
   mainParam?: ParameterConfig;
   provider: string;
   advancedParams: ParameterConfig[];
@@ -393,10 +424,12 @@ const TextCategoryLayout: React.FC<{
     value: string,
     sourceParam?: ParameterConfig,
   ) => void;
-  renderField: (param: ParameterConfig) => React.ReactNode;
+  renderField: (param: ParameterConfig) => ReactNode;
   parameters: Metadata[] | null;
   onParameterChange: (parameters: Metadata[]) => void;
-}> = ({
+}
+
+function TextCategoryLayout({
   mainParam,
   provider,
   advancedParams,
@@ -406,7 +439,7 @@ const TextCategoryLayout: React.FC<{
   renderField,
   parameters,
   onParameterChange,
-}) => {
+}: TextCategoryLayoutProps) {
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const snapshotRef = useRef<Metadata[] | null>(null);
 
@@ -473,27 +506,38 @@ const TextCategoryLayout: React.FC<{
       </div>
     </div>
   );
-};
+}
 
-const DropdownField: React.FC<{
+interface DropdownFieldProps {
   param: ParameterConfig;
   provider: string;
   value: string;
-  onChange: (value: string, selectedItem?: any) => void;
+  onChange: (value: string, selectedItem?: ProviderDataItem) => void;
   colSpanClass: string;
-}> = ({ param, provider, value, onChange, colSpanClass }) => {
-  const data = param.data ? loadProviderData(provider, param.data) : [];
+}
+
+function DropdownField({
+  param,
+  provider,
+  value,
+  onChange,
+  colSpanClass,
+}: DropdownFieldProps) {
+  const data = param.data
+    ? (loadProviderData(provider, param.data) as ProviderDataItem[])
+    : [];
   const valueField = param.valueField || 'id';
   const selectedItem =
-    data.find((item: any) => item[valueField] === value) ||
+    data.find(item => getProviderDataItemValue(item, valueField) === value) ||
     (param.customValue && value ? { [valueField]: value, name: value } : null);
   const commitCustomValue = (rawInput: string) => {
-    const inputValue = rawInput?.trim();
+    const inputValue = rawInput.trim();
     if (!param.customValue || !inputValue) return;
     const hasMatch = data.some(
-      (d: any) =>
-        String(d.name || '').toLowerCase() === inputValue.toLowerCase() ||
-        String(d[valueField] || '') === inputValue,
+      item =>
+        getProviderDataItemName(item).toLowerCase() ===
+          inputValue.toLowerCase() ||
+        getProviderDataItemValue(item, valueField) === inputValue,
     );
     if (!hasMatch) {
       onChange(inputValue);
@@ -506,12 +550,18 @@ const DropdownField: React.FC<{
         <FieldLabelRow param={param} />
         <ComboBox
           id={`combo-${param.key}`}
-          titleText=""
+          aria-label={param.label}
           items={data}
           selectedItem={selectedItem}
-          itemToString={(item: any) => item?.name || ''}
+          itemToString={getProviderDataItemName}
           placeholder={`Select ${param.label.toLowerCase()}`}
-          onChange={({ selectedItem: item, inputValue }: any) => {
+          onChange={({
+            selectedItem: item,
+            inputValue,
+          }: {
+            selectedItem: ProviderDataItem | null | undefined;
+            inputValue?: string | null;
+          }) => {
             if (item) {
               const selectedValue =
                 item[valueField] ?? item.name ?? inputValue ?? '';
@@ -522,7 +572,9 @@ const DropdownField: React.FC<{
             }
             commitCustomValue(inputValue || '');
           }}
-          onBlur={(e: any) => commitCustomValue(e?.target?.value || '')}
+          onBlur={(e: FocusEvent<HTMLInputElement>) =>
+            commitCustomValue(e.target.value)
+          }
           allowCustomValue={param.customValue}
         />
       </div>
@@ -534,27 +586,39 @@ const DropdownField: React.FC<{
       <FieldLabelRow param={param} />
       <CarbonDropdown
         id={`dropdown-${param.key}`}
-        titleText=""
+        titleText={param.label}
+        hideLabel
         label={`Select ${param.label.toLowerCase()}`}
         items={data}
         selectedItem={selectedItem}
-        itemToString={(item: any) => item?.name || ''}
-        onChange={({ selectedItem: item }: any) => {
+        itemToString={getProviderDataItemName}
+        onChange={({
+          selectedItem: item,
+        }: {
+          selectedItem?: ProviderDataItem | null;
+        }) => {
           if (item) {
-            onChange(item[valueField], item);
+            onChange(getProviderDataItemValue(item, valueField), item);
           }
         }}
       />
     </div>
   );
-};
+}
 
-const KeyValueField: React.FC<{
+interface KeyValueFieldProps {
   param: ParameterConfig;
   value: string;
   onChange: (value: string) => void;
   colSpanClass: string;
-}> = ({ param, value, onChange, colSpanClass }) => {
+}
+
+function KeyValueField({
+  param,
+  value,
+  onChange,
+  colSpanClass,
+}: KeyValueFieldProps) {
   const parseEntries = (raw: string): { key: string; value: string }[] => {
     if (!raw) return [];
     try {
@@ -671,7 +735,7 @@ const KeyValueField: React.FC<{
       </TertiaryButton>
     </div>
   );
-};
+}
 
 function renderTextMainDropdown(
   param: ParameterConfig,
@@ -687,28 +751,32 @@ function renderTextMainDropdown(
     sourceParam?: ParameterConfig,
   ) => void,
 ) {
-  const data = param.data ? loadProviderData(provider, param.data) : [];
+  const data = param.data
+    ? (loadProviderData(provider, param.data) as ProviderDataItem[])
+    : [];
   const valueField = param.valueField || 'id';
   const currentValue = getParamValue(param.key);
   const selectedItem =
-    data.find((x: any) => x[valueField] === currentValue) ||
+    data.find(
+      item => getProviderDataItemValue(item, valueField) === currentValue,
+    ) ||
     (param.customValue && currentValue
       ? { [valueField]: currentValue, name: currentValue }
       : null);
   const commitCustom = (rawInput: string) => {
-    const vl = rawInput?.trim();
+    const vl = rawInput.trim();
     if (!vl) return;
     const hasMatch = data.some(
-      (d: any) =>
-        String(d.name || '').toLowerCase() === vl.toLowerCase() ||
-        String(d[valueField] || '') === vl,
+      item =>
+        getProviderDataItemName(item).toLowerCase() === vl.toLowerCase() ||
+        getProviderDataItemValue(item, valueField) === vl,
     );
     if (!hasMatch) {
       handleCustom(vl);
     }
   };
 
-  const handleSelect = (item: any) => {
+  const handleSelect = (item: ProviderDataItem | null) => {
     if (!item) return;
     const selectedValue = item[valueField] ?? item.name;
     if (!selectedValue) return;
@@ -718,13 +786,19 @@ function renderTextMainDropdown(
           { key: param.key, value: String(selectedValue) },
           {
             key: param.linkedField.key,
-            value: item[param.linkedField.sourceField] ?? String(selectedValue),
+            value:
+              getProviderDataItemValue(item, param.linkedField.sourceField) ||
+              String(selectedValue),
           },
         ],
         param,
       );
     } else {
-      updateParameter(param.key, item[valueField], param);
+      updateParameter(
+        param.key,
+        getProviderDataItemValue(item, valueField),
+        param,
+      );
     }
   };
 
@@ -746,17 +820,25 @@ function renderTextMainDropdown(
     return (
       <ComboBox
         id={`text-main-combo-${param.key}`}
-        titleText=""
+        aria-label={param.label}
         items={data}
         size="md"
         selectedItem={selectedItem}
-        itemToString={(item: any) => item?.name || ''}
+        itemToString={getProviderDataItemName}
         placeholder="Select model"
-        onChange={({ selectedItem: item, inputValue }: any) => {
+        onChange={({
+          selectedItem: item,
+          inputValue,
+        }: {
+          selectedItem: ProviderDataItem | null | undefined;
+          inputValue?: string | null;
+        }) => {
           if (item) handleSelect(item);
           else commitCustom(inputValue || '');
         }}
-        onBlur={(e: any) => commitCustom(e?.target?.value || '')}
+        onBlur={(e: FocusEvent<HTMLInputElement>) =>
+          commitCustom(e.target.value)
+        }
         allowCustomValue
       />
     );
@@ -765,14 +847,18 @@ function renderTextMainDropdown(
   return (
     <CarbonDropdown
       id={`text-main-dropdown-${param.key}`}
-      titleText=""
+      titleText={param.label}
       hideLabel
       label="Select model"
       size="md"
       items={data}
       selectedItem={selectedItem}
-      itemToString={(item: any) => item?.name || ''}
-      onChange={({ selectedItem: item }: any) => {
+      itemToString={getProviderDataItemName}
+      onChange={({
+        selectedItem: item,
+      }: {
+        selectedItem?: ProviderDataItem | null;
+      }) => {
         if (item) handleSelect(item);
       }}
     />

@@ -1,6 +1,7 @@
-import type { ElementType, FC, ReactNode } from 'react';
+import type { ElementType, ReactNode } from 'react';
 import { Button } from '@carbon/react';
 import { cn } from '@/utils';
+import { useId } from 'react';
 
 export interface EmptyStateProps {
   icon?: ElementType;
@@ -13,7 +14,7 @@ export interface EmptyStateProps {
   className?: string;
 }
 
-export const EmptyState: FC<EmptyStateProps> = ({
+export function EmptyState({
   icon: Icon,
   title,
   subtitle,
@@ -22,34 +23,36 @@ export const EmptyState: FC<EmptyStateProps> = ({
   onAction,
   actionComponent,
   className,
-}) => {
+}: EmptyStateProps) {
+  const headingId = useId();
+
   return (
     <div
+      aria-labelledby={headingId}
       className={cn(
-        'flex flex-1 flex-col items-center justify-center px-8',
+        'flex flex-1 flex-col items-center justify-center px-8 py-12 text-center text-[var(--cds-text-primary)]',
         className,
       )}
     >
       {Icon && (
-        <div className="w-16 h-16 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 mb-5">
-          <Icon size={32} className="text-gray-400 dark:text-gray-500" />
+        <div className="mb-5 flex h-16 w-16 items-center justify-center bg-[var(--cds-layer-accent-01)]">
+          <Icon size={32} className="text-[var(--cds-icon-secondary)]" />
         </div>
       )}
-      <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-2">
+      <h3 id={headingId} className="mb-2 text-base font-semibold">
         {title}
       </h3>
       {subtitle && (
-        <p className="text-sm text-gray-500 dark:text-gray-400 text-center max-w-md mb-5">
+        <p className="mb-5 max-w-md text-sm leading-5 text-[var(--cds-text-secondary)]">
           {subtitle}
         </p>
       )}
       {actionComponent}
       {action && onAction && (
         <Button
-          size="lg"
+          size="md"
           kind="tertiary"
           renderIcon={actionIcon}
-          className="dark:bg-gray-950! bg-white! dark:hover:text-white! hover:bg-primary! dark:hover:bg-primary! font-medium"
           onClick={onAction}
         >
           {action}
@@ -57,4 +60,4 @@ export const EmptyState: FC<EmptyStateProps> = ({
       )}
     </div>
   );
-};
+}

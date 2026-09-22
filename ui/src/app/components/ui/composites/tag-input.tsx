@@ -1,4 +1,5 @@
-import React, { FC, useState } from 'react';
+import type { KeyboardEvent } from 'react';
+import { useState } from 'react';
 import {
   DismissibleTag,
   Tag,
@@ -21,7 +22,7 @@ interface TagInputProps {
   helperText?: string;
 }
 
-export const TagInput: FC<TagInputProps> = ({
+export function TagInput({
   tags,
   addTag,
   removeTag,
@@ -29,10 +30,10 @@ export const TagInput: FC<TagInputProps> = ({
   id = 'tag-input',
   labelText = 'Tags (Optional)',
   helperText = 'Add tags to organize and locate items more efficiently.',
-}) => {
+}: TagInputProps) {
   const [inputValue, setInputValue] = useState('');
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       const value = inputValue.trim();
@@ -102,4 +103,4 @@ export const TagInput: FC<TagInputProps> = ({
       )}
     </div>
   );
-};
+}

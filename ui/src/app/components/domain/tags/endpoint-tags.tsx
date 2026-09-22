@@ -15,6 +15,4 @@ export const EndpointTag = [
   'sql',
   'summarization',
   'tagging',
-  'classification',
-  'evaluation',
 ];

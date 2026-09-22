@@ -1,6 +1,6 @@
 import { cn } from '@/utils';
 import { RadioTile } from '@carbon/react';
-import React, { FC, InputHTMLAttributes } from 'react';
+import { memo, type ChangeEvent, type InputHTMLAttributes } from 'react';
 
 interface CheckboxCardProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string | JSX.Element;
@@ -8,7 +8,7 @@ interface CheckboxCardProps extends InputHTMLAttributes<HTMLInputElement> {
   selectedClassNames?: string;
 }
 
-const CheckboxCard: FC<CheckboxCardProps> = ({
+function CheckboxCard({
   id,
   label,
   wrapperClassNames,
@@ -22,7 +22,7 @@ const CheckboxCard: FC<CheckboxCardProps> = ({
   required,
   tabIndex,
   value = '',
-}) => {
+}: CheckboxCardProps) {
   return (
     <RadioTile
       id={id}
@@ -34,7 +34,7 @@ const CheckboxCard: FC<CheckboxCardProps> = ({
       tabIndex={tabIndex}
       onChange={(_value, _name, event) => {
         if (event.type === 'change') {
-          onChange?.(event as React.ChangeEvent<HTMLInputElement>);
+          onChange?.(event as ChangeEvent<HTMLInputElement>);
         }
       }}
       className={cn(
@@ -49,5 +49,5 @@ const CheckboxCard: FC<CheckboxCardProps> = ({
       {children}
     </RadioTile>
   );
-};
-export default React.memo(CheckboxCard);
+}
+export default memo(CheckboxCard);

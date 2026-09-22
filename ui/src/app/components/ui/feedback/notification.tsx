@@ -1,12 +1,8 @@
-import type { FC, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { InlineNotification, ActionableNotification } from '@carbon/react';
 import { cn } from '@/utils';
 
-// Types
-
 type NotificationKind = 'info' | 'success' | 'warning' | 'error';
-
-// Inline Notification
 
 export interface CarbonNotificationProps {
   kind: NotificationKind;
@@ -19,7 +15,7 @@ export interface CarbonNotificationProps {
 }
 
 /** Carbon InlineNotification: static notification banner. */
-export const Notification: FC<CarbonNotificationProps> = ({
+export function Notification({
   kind,
   title,
   subtitle,
@@ -27,19 +23,19 @@ export const Notification: FC<CarbonNotificationProps> = ({
   lowContrast = true,
   hideCloseButton = true,
   onClose,
-}) => (
-  <InlineNotification
-    kind={kind}
-    title={title}
-    subtitle={subtitle}
-    lowContrast={lowContrast}
-    hideCloseButton={hideCloseButton}
-    onCloseButtonClick={onClose}
-    className={cn('!max-w-full', className)}
-  />
-);
-
-// Actionable Notification
+}: CarbonNotificationProps) {
+  return (
+    <InlineNotification
+      kind={kind}
+      title={title}
+      subtitle={subtitle}
+      lowContrast={lowContrast}
+      hideCloseButton={hideCloseButton}
+      onCloseButtonClick={onClose}
+      className={cn('!max-w-full', className)}
+    />
+  );
+}
 
 export interface ActionableNotificationProps {
   kind: NotificationKind;
@@ -55,7 +51,7 @@ export interface ActionableNotificationProps {
 }
 
 /** Carbon ActionableNotification: notification with action button. */
-export const ActionNotification: FC<ActionableNotificationProps> = ({
+export function ActionNotification({
   kind,
   title,
   subtitle,
@@ -66,22 +62,22 @@ export const ActionNotification: FC<ActionableNotificationProps> = ({
   hideCloseButton = true,
   inline = false,
   onClose,
-}) => (
-  <ActionableNotification
-    kind={kind}
-    title={title}
-    subtitle={subtitle}
-    actionButtonLabel={actionButtonLabel}
-    onActionButtonClick={onActionButtonClick}
-    lowContrast={lowContrast}
-    hideCloseButton={hideCloseButton}
-    inline={inline}
-    onCloseButtonClick={onClose}
-    className={cn('!max-w-full', className)}
-  />
-);
-
-// Link-style Actionable Notification
+}: ActionableNotificationProps) {
+  return (
+    <ActionableNotification
+      kind={kind}
+      title={title}
+      subtitle={subtitle}
+      actionButtonLabel={actionButtonLabel}
+      onActionButtonClick={onActionButtonClick}
+      lowContrast={lowContrast}
+      hideCloseButton={hideCloseButton}
+      inline={inline}
+      onCloseButtonClick={onClose}
+      className={cn('!max-w-full', className)}
+    />
+  );
+}
 
 export interface LinkNotificationProps {
   kind: NotificationKind;
@@ -95,7 +91,7 @@ export interface LinkNotificationProps {
 }
 
 /** Carbon notification with link-styled action button. */
-export const LinkNotification: FC<LinkNotificationProps> = ({
+export function LinkNotification({
   kind,
   title,
   subtitle,
@@ -104,17 +100,19 @@ export const LinkNotification: FC<LinkNotificationProps> = ({
   className,
   lowContrast = true,
   hideCloseButton = true,
-}) => (
-  <ActionableNotification
-    role="none"
-    kind={kind}
-    title={title}
-    subtitle={subtitle}
-    actionButtonLabel={linkText}
-    onActionButtonClick={onLinkClick}
-    lowContrast={lowContrast}
-    hideCloseButton={hideCloseButton}
-    inline
-    className={cn('!max-w-full notice-link-style', className)}
-  />
-);
+}: LinkNotificationProps) {
+  return (
+    <ActionableNotification
+      role="none"
+      kind={kind}
+      title={title}
+      subtitle={subtitle}
+      actionButtonLabel={linkText}
+      onActionButtonClick={onLinkClick}
+      lowContrast={lowContrast}
+      hideCloseButton={hideCloseButton}
+      inline
+      className={cn('!max-w-full notice-link-style', className)}
+    />
+  );
+}

@@ -1,7 +1,7 @@
 import type {
-  FC,
   ReactNode,
   ChangeEvent,
+  FormEvent,
   KeyboardEventHandler,
   MouseEvent,
 } from 'react';
@@ -19,33 +19,23 @@ import {
 } from '@carbon/react';
 import { cn } from '@/utils';
 
-// Types
-
 type InputSize = 'sm' | 'md' | 'lg' | 'xl';
 type StackOrientation = 'horizontal' | 'vertical';
-
-// Form
 
 export interface CarbonFormProps {
   children: ReactNode;
   className?: string;
-  onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
+  onSubmit?: (e: FormEvent<HTMLFormElement>) => void;
 }
 
 /** Carbon Form: standard form wrapper with Carbon spacing. */
-export const Form: FC<CarbonFormProps> = ({
-  children,
-  className,
-  onSubmit,
-}) => {
+export function Form({ children, className, onSubmit }: CarbonFormProps) {
   return (
     <CarbonForm className={cn(className)} onSubmit={onSubmit}>
       {children}
     </CarbonForm>
   );
-};
-
-// Stack
+}
 
 export interface CarbonStackProps {
   children: ReactNode;
@@ -55,20 +45,18 @@ export interface CarbonStackProps {
 }
 
 /** Carbon Stack: layout utility for consistent spacing between elements. */
-export const Stack: FC<CarbonStackProps> = ({
+export function Stack({
   children,
   className,
   gap,
   orientation = 'vertical',
-}) => {
+}: CarbonStackProps) {
   return (
     <CarbonStack className={cn(className)} gap={gap} orientation={orientation}>
       {children}
     </CarbonStack>
   );
-};
-
-// FormGroup
+}
 
 export interface CarbonFormGroupProps {
   children: ReactNode;
@@ -81,7 +69,7 @@ export interface CarbonFormGroupProps {
 }
 
 /** Carbon FormGroup: fieldset wrapper with a legend label. */
-export const FormGroup: FC<CarbonFormGroupProps> = ({
+export function FormGroup({
   children,
   legendText,
   className,
@@ -89,7 +77,7 @@ export const FormGroup: FC<CarbonFormGroupProps> = ({
   invalid = false,
   message = false,
   messageText,
-}) => {
+}: CarbonFormGroupProps) {
   return (
     <CarbonFormGroup
       className={cn(className)}
@@ -102,9 +90,7 @@ export const FormGroup: FC<CarbonFormGroupProps> = ({
       {children}
     </CarbonFormGroup>
   );
-};
-
-// TextInput
+}
 
 export interface CarbonTextInputProps {
   id: string;
@@ -132,6 +118,7 @@ export interface CarbonTextInputProps {
   enableCounter?: boolean;
   maxCount?: number;
   autoComplete?: string;
+  'data-testid'?: string;
 }
 
 /** Carbon TextInput: single-line text field with label, helper, and validation. */
@@ -151,16 +138,17 @@ export const TextInput = forwardRef<HTMLInputElement, CarbonTextInputProps>(
 );
 
 /** Carbon TextInputSkeleton: loading placeholder for TextInput. */
-export const TextInputSkeleton: FC<{
+export function TextInputSkeleton({
+  className,
+  hideLabel = false,
+}: {
   className?: string;
   hideLabel?: boolean;
-}> = ({ className, hideLabel = false }) => {
+}) {
   return (
     <CarbonTextInputSkeleton className={cn(className)} hideLabel={hideLabel} />
   );
-};
-
-// TextArea
+}
 
 export interface CarbonTextAreaProps {
   labelText: ReactNode;
@@ -187,12 +175,12 @@ export interface CarbonTextAreaProps {
 }
 
 /** Carbon TextArea: multi-line text field with label, helper, and validation. */
-export const TextArea: FC<CarbonTextAreaProps> = ({
+export function TextArea({
   labelText,
   className,
   rows = 4,
   ...rest
-}) => {
+}: CarbonTextAreaProps) {
   return (
     <CarbonTextArea
       labelText={labelText}
@@ -201,19 +189,20 @@ export const TextArea: FC<CarbonTextAreaProps> = ({
       {...rest}
     />
   );
-};
+}
 
 /** Carbon TextAreaSkeleton: loading placeholder for TextArea. */
-export const TextAreaSkeleton: FC<{
+export function TextAreaSkeleton({
+  className,
+  hideLabel = false,
+}: {
   className?: string;
   hideLabel?: boolean;
-}> = ({ className, hideLabel = false }) => {
+}) {
   return (
     <CarbonTextAreaSkeleton className={cn(className)} hideLabel={hideLabel} />
   );
-};
-
-// Checkbox
+}
 
 export interface CarbonCheckboxProps {
   id: string;
@@ -238,12 +227,12 @@ export interface CarbonCheckboxProps {
 }
 
 /** Carbon Checkbox: single checkbox with label and validation support. */
-export const Checkbox: FC<CarbonCheckboxProps> = ({
+export function Checkbox({
   id,
   labelText,
   className,
   ...rest
-}) => {
+}: CarbonCheckboxProps) {
   return (
     <CarbonCheckbox
       id={id}
@@ -252,9 +241,9 @@ export const Checkbox: FC<CarbonCheckboxProps> = ({
       {...rest}
     />
   );
-};
+}
 
 /** Carbon CheckboxSkeleton: loading placeholder for Checkbox. */
-export const CheckboxSkeleton: FC<{ className?: string }> = ({ className }) => {
+export function CheckboxSkeleton({ className }: { className?: string }) {
   return <CarbonCheckboxSkeleton className={cn(className)} />;
-};
+}

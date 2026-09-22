@@ -1,9 +1,8 @@
-import { ProviderComponentProps } from '@/app/components/domain/providers/provider-component-props';
 import { loadProviderConfig } from '@/providers/config-loader';
 import { getDefaultsFromConfig } from '@/providers/config-defaults';
 import { Metadata } from '@rapidaai/react';
-import { FC } from 'react';
 import { ConfigRenderer } from '@/app/components/domain/providers/config-renderer';
+import type { ProviderComponentProps } from '@/app/components/domain/providers/provider-component-props';
 
 const upsertScopedProvider = (
   parameters: Metadata[],
@@ -41,11 +40,11 @@ export const GetDefaultVADConfig = (
   );
 };
 
-export const VADConfigComponent: FC<ProviderComponentProps> = ({
+export function VADConfigComponent({
   provider,
   parameters,
   onChangeParameter,
-}) => {
+}: ProviderComponentProps) {
   const config = loadProviderConfig(provider);
   if (!config?.vad) return null;
 
@@ -58,4 +57,4 @@ export const VADConfigComponent: FC<ProviderComponentProps> = ({
       onParameterChange={onChangeParameter}
     />
   );
-};
+}

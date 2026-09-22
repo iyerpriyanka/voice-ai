@@ -1,12 +1,12 @@
-import { Metadata, VaultCredential } from '@rapidaai/react';
-import { FC } from 'react';
+import { Metadata } from '@rapidaai/react';
 import { loadProviderConfig } from '@/providers/config-loader';
 import {
   getDefaultsFromConfig,
   validateFromConfig,
 } from '@/providers/config-defaults';
 import { ConfigRenderer } from '@/app/components/domain/providers/config-renderer';
-import { ProviderComponentProps } from '@/app/components/domain/providers/provider-component-props';
+import type { VaultCredential } from '@rapidaai/react';
+import type { ProviderComponentProps } from '@/app/components/domain/providers/provider-component-props';
 
 type ProviderCredentialRef = string | VaultCredential;
 
@@ -96,11 +96,11 @@ export const ValidateTextToSpeechIfInvalid = (
   return undefined;
 };
 
-export const TextToSpeechConfigComponent: FC<ProviderComponentProps> = ({
+export function TextToSpeechConfigComponent({
   provider,
   parameters,
   onChangeParameter,
-}) => {
+}: ProviderComponentProps) {
   const config = loadProviderConfig(provider);
   if (!config?.tts) return null;
   return (
@@ -112,4 +112,4 @@ export const TextToSpeechConfigComponent: FC<ProviderComponentProps> = ({
       onParameterChange={onChangeParameter}
     />
   );
-};
+}

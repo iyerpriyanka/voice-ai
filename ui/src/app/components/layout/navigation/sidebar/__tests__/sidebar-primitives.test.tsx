@@ -15,8 +15,18 @@ jest.mock('@carbon/react', () => ({
   SkeletonIcon: ({ className }: { className?: string }) => (
     <span className={className} data-testid="skeleton-icon" />
   ),
-  SkeletonText: ({ className, width }: { className?: string; width: string }) => (
-    <span className={className} data-testid="skeleton-text" data-width={width} />
+  SkeletonText: ({
+    className,
+    width,
+  }: {
+    className?: string;
+    width: string;
+  }) => (
+    <span
+      className={className}
+      data-testid="skeleton-text"
+      data-width={width}
+    />
   ),
 }));
 

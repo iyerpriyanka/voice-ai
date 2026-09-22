@@ -1,8 +1,5 @@
-import type { FC } from 'react';
 import { Pagination as CarbonPagination } from '@carbon/react';
 import { cn } from '@/utils';
-
-// Types
 
 type PaginationSize = 'sm' | 'md' | 'lg';
 
@@ -26,7 +23,7 @@ export interface CarbonPaginationProps {
 }
 
 /** Carbon Pagination: page navigation with items-per-page selector. */
-export const Pagination: FC<CarbonPaginationProps> = ({
+export function Pagination({
   totalItems,
   page,
   pageSize,
@@ -43,7 +40,7 @@ export const Pagination: FC<CarbonPaginationProps> = ({
   pagesUnknown = false,
   isLastPage = false,
   id,
-}) => {
+}: CarbonPaginationProps) {
   return (
     <CarbonPagination
       totalItems={totalItems}
@@ -64,4 +61,4 @@ export const Pagination: FC<CarbonPaginationProps> = ({
       id={id}
     />
   );
-};
+}

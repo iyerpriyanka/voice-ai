@@ -1,82 +1,100 @@
-import React, { useCallback, useContext, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { CreateProject } from '@rapidaai/react';
-import { CreateProjectResponse } from '@rapidaai/react';
+import type { CreateProjectResponse, ServiceError } from '@rapidaai/react';
 import { useForm } from 'react-hook-form';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/hooks';
 import { ErrorMessage } from '@/app/components/ui/feedback';
 import toast from 'react-hot-toast/headless';
-import { ModalProps } from '@/app/components/ui/primitives';
-import { ServiceError } from '@rapidaai/react';
 import { AuthContext } from '@/context/auth-context';
 import {
+  Form,
   Modal,
-  ModalHeader,
   ModalBody,
   ModalFooter,
-} from '@/app/components/ui/primitives';
-import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
-import {
-  Form,
+  ModalHeader,
+  type ModalProps,
+  PrimaryButton,
+  SecondaryButton,
   Stack,
-  TextInput,
   TextArea,
+  TextInput,
 } from '@/app/components/ui/primitives';
 import { connectionConfig } from '@/configs';
+
+const PROJECT_ACTION_ERROR =
+  'Unable to process your request. please try again later.';
 
 interface CreateProjectDialogProps extends ModalProps {
   afterCreateProject: () => void;
 }
 
-export const CreateProjectDialog = (props: CreateProjectDialogProps) => {
-  const { register, handleSubmit } = useForm();
+type ProjectFormValues = {
+  projectName: string;
+  projectDescription: string;
+};
+
+export const CreateProjectDialog = ({
+  afterCreateProject,
+  modalOpen,
+  setModalOpen,
+}: CreateProjectDialogProps) => {
+  const { register, handleSubmit } = useForm<ProjectFormValues>();
   const { loading, showLoader, hideLoader } = useRapidaStore();
   const { authorize } = useContext(AuthContext);
   const { authId, token } = useCurrentCredential();
   const [error, setError] = useState<string>();
 
-  const afterCreateProject = useCallback(
+  const closeDialog = useCallback(() => {
+    setModalOpen(false);
+  }, [setModalOpen]);
+
+  const handleCreateProject = useCallback(
     async (err: ServiceError | null, cpr: CreateProjectResponse | null) => {
       if (err) {
         hideLoader();
-        toast.error('Unable to process your request. please try again later.');
-        setError('Unable to process your request. please try again later.');
+        toast.error(PROJECT_ACTION_ERROR);
+        setError(PROJECT_ACTION_ERROR);
         return;
       }
+
       if (cpr?.getSuccess()) {
-        if (authorize)
+        if (authorize) {
           authorize(
             () => {
-              console.log('success');
               hideLoader();
               toast.success('The project has been created successfully.');
-              props.setModalOpen(false);
-              props.afterCreateProject();
+              closeDialog();
+              afterCreateProject();
             },
-            err => {
-              console.log('failure');
+            () => {
               hideLoader();
+              toast.error(PROJECT_ACTION_ERROR);
+              setError(PROJECT_ACTION_ERROR);
             },
           );
+        } else {
+          hideLoader();
+        }
+        return;
       } else {
         hideLoader();
-        let errorMessage = cpr?.getError();
+        const errorMessage = cpr?.getError();
         if (errorMessage) {
           toast.error(errorMessage.getHumanmessage());
           setError(errorMessage.getHumanmessage());
         } else {
-          toast.error(
-            'Unable to process your request. please try again later.',
-          );
-          setError('Unable to process your request. please try again later.');
+          toast.error(PROJECT_ACTION_ERROR);
+          setError(PROJECT_ACTION_ERROR);
         }
         return;
       }
     },
-    [],
+    [afterCreateProject, authorize, closeDialog, hideLoader],
   );
 
-  const onCreateProject = data => {
+  const onCreateProject = (data: ProjectFormValues) => {
+    setError(undefined);
     showLoader();
     CreateProject(
       connectionConfig,
@@ -86,20 +104,16 @@ export const CreateProjectDialog = (props: CreateProjectDialogProps) => {
         authorization: token,
         'x-auth-id': authId,
       },
-      afterCreateProject,
+      handleCreateProject,
     );
   };
 
   return (
-    <Modal
-      open={props.modalOpen}
-      onClose={() => props.setModalOpen(false)}
-      size="sm"
-    >
+    <Modal open={modalOpen} onClose={closeDialog} size="sm">
       <ModalHeader
         label="Project"
         title="Create a project"
-        onClose={() => props.setModalOpen(false)}
+        onClose={closeDialog}
       />
       <Form onSubmit={handleSubmit(onCreateProject)}>
         <ModalBody hasForm>
@@ -123,7 +137,7 @@ export const CreateProjectDialog = (props: CreateProjectDialogProps) => {
           </Stack>
         </ModalBody>
         <ModalFooter>
-          <SecondaryButton size="lg" onClick={() => props.setModalOpen(false)}>
+          <SecondaryButton size="lg" onClick={closeDialog}>
             Cancel
           </SecondaryButton>
           <PrimaryButton size="lg" type="submit" isLoading={loading}>

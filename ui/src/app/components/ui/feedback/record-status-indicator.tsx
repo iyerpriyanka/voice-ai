@@ -1,9 +1,15 @@
-import { FC } from 'react';
+import type { ComponentType } from 'react';
 import { preview__ShapeIndicator as ShapeIndicatorModule } from '@carbon/react';
 
+type ShapeIndicatorComponent = ComponentType<{
+  kind: RecordStatusIndicatorKind;
+  label: string;
+  textSize?: 12 | 14;
+}>;
+
 const ShapeIndicator =
-  (ShapeIndicatorModule as unknown as { default?: FC<any> })?.default ||
-  (ShapeIndicatorModule as unknown as FC<any>);
+  (ShapeIndicatorModule as unknown as { default?: ShapeIndicatorComponent })
+    ?.default || (ShapeIndicatorModule as unknown as ShapeIndicatorComponent);
 
 export type RecordStatusIndicatorKind =
   | 'failed'
@@ -38,18 +44,18 @@ export const recordStatusToShapeIndicator = (
   return { kind: 'draft', label: 'Draft' };
 };
 
-export const RecordStatusIndicator: FC<RecordStatusIndicatorProps> = ({
+export function RecordStatusIndicator({
   state,
   label,
   textSize = 12,
-}) => {
+}: RecordStatusIndicatorProps) {
   const resolved = recordStatusToShapeIndicator(state);
 
   return (
     <ShapeIndicator
-      kind={resolved.kind as any}
+      kind={resolved.kind}
       label={label || resolved.label}
       textSize={textSize}
     />
   );
-};
+}

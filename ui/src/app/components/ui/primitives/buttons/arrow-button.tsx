@@ -5,20 +5,20 @@ import {
 import { ArrowRight } from '@carbon/icons-react';
 import { useRapidaStore } from '@/hooks';
 import { cn } from '@/utils';
-import type { FC, ButtonHTMLAttributes } from 'react';
+import type { ButtonHTMLAttributes } from 'react';
 
 interface ArrowButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   label: string;
   loading?: boolean;
 }
 
-export const ArrowButton: FC<ArrowButtonProps> = ({
+export function ArrowButton({
   label,
   loading,
   disabled,
   className,
   ...props
-}) => {
+}: ArrowButtonProps) {
   const { isBlocking } = useRapidaStore();
 
   return (
@@ -33,15 +33,15 @@ export const ArrowButton: FC<ArrowButtonProps> = ({
       {label}
     </PrimaryButton>
   );
-};
+}
 
-export const ArrowBorderButton: FC<ArrowButtonProps> = ({
+export function ArrowBorderButton({
   label,
   loading,
   disabled,
   className,
   ...props
-}) => {
+}: ArrowButtonProps) {
   const { isBlocking } = useRapidaStore();
 
   return (
@@ -56,4 +56,4 @@ export const ArrowBorderButton: FC<ArrowButtonProps> = ({
       {label}
     </SecondaryButton>
   );
-};
+}

@@ -1,14 +1,8 @@
 import { TableCell } from './table-cell';
 import { TableRow } from './table-row';
 import { InputCheckbox } from '@/app/components/ui/primitives/input-checkbox';
-import {
-  useState,
-  useCallback,
-  useRef,
-  useEffect,
-  FC,
-  HTMLAttributes,
-} from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
+import type { HTMLAttributes, MouseEvent as ReactMouseEvent } from 'react';
 
 interface ScrollableResizableTableProps
   extends HTMLAttributes<HTMLTableElement> {
@@ -20,7 +14,7 @@ interface ScrollableResizableTableProps
   optionLabel?: string;
 }
 
-export const ScrollableResizableTable: FC<ScrollableResizableTableProps> = ({
+export function ScrollableResizableTable({
   clms,
   isActionable = true,
   isExpandable = false,
@@ -28,7 +22,7 @@ export const ScrollableResizableTable: FC<ScrollableResizableTableProps> = ({
   children,
   isOptionable,
   optionLabel,
-}) => {
+}: ScrollableResizableTableProps) {
   const [columns, setColumns] = useState<
     { key: string; width: number; name: string }[]
   >([]);
@@ -42,7 +36,7 @@ export const ScrollableResizableTable: FC<ScrollableResizableTableProps> = ({
       })),
     );
   }, [clms]);
-  const tableRef = useRef(null);
+  const tableRef = useRef<HTMLDivElement | null>(null);
   const [tableWidth, setTableWidth] = useState(0);
 
   useEffect(() => {
@@ -107,13 +101,13 @@ export const ScrollableResizableTable: FC<ScrollableResizableTableProps> = ({
                   {index !== columns.length - 1 && (
                     <div
                       className="absolute top-1 -right-[2px] bottom-1 w-[2px] cursor-col-resize hover:bg-primary"
-                      onMouseDown={e => {
+                      onMouseDown={(e: ReactMouseEvent<HTMLDivElement>) => {
                         e.preventDefault();
                         const startX = e.pageX;
                         const startWidth = column.width;
 
-                        const onMouseMove = e => {
-                          const newWidth = startWidth + e.pageX - startX;
+                        const onMouseMove = (event: MouseEvent) => {
+                          const newWidth = startWidth + event.pageX - startX;
                           handleResize(index, newWidth);
                         };
 
@@ -145,4 +139,4 @@ export const ScrollableResizableTable: FC<ScrollableResizableTableProps> = ({
       </div>
     </div>
   );
-};
+}

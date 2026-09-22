@@ -1,4 +1,4 @@
-import type { FC, HTMLAttributes, ReactNode } from 'react';
+import type { HTMLAttributes, ReactNode } from 'react';
 import { Information } from '@carbon/icons-react';
 import { Link } from '@carbon/react';
 import { useDocumentationUrl } from '@/theme/documentation-url';
@@ -11,14 +11,14 @@ interface DocNoticeBlockProps extends HTMLAttributes<HTMLDivElement> {
   linkText?: string;
 }
 
-export const DocNoticeBlock: FC<DocNoticeBlockProps> = ({
+export function DocNoticeBlock({
   children,
   className,
   docPath = '',
   docUrl,
   linkText = 'Read documentation',
   ...attributes
-}) => {
+}: DocNoticeBlockProps) {
   const configuredDocUrl = useDocumentationUrl(docPath);
 
   return (
@@ -35,9 +35,7 @@ export const DocNoticeBlock: FC<DocNoticeBlockProps> = ({
         size={20}
         className="shrink-0 text-blue-600 dark:text-blue-400"
       />
-      <span className="flex-1 text-sm text-foreground">
-        {children}
-      </span>
+      <span className="flex-1 text-sm text-foreground">{children}</span>
       <Link
         href={docUrl ?? configuredDocUrl}
         target="_blank"
@@ -48,4 +46,4 @@ export const DocNoticeBlock: FC<DocNoticeBlockProps> = ({
       </Link>
     </div>
   );
-};
+}

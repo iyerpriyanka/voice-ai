@@ -1,9 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import {
-  ScrollableTableSection,
-  TableSection,
-} from '../table-section';
+import { ScrollableTableSection, TableSection } from '../table-section';
 
 describe('table sections', () => {
   it('renders a flexible table section and forwards attributes', () => {

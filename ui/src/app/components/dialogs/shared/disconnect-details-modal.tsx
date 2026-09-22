@@ -1,3 +1,4 @@
+import { Information } from '@carbon/icons-react';
 import {
   Table,
   TableBody,
@@ -8,6 +9,7 @@ import {
 } from '@carbon/react';
 import { ModalProps } from '@/app/components/ui/primitives';
 import { Modal, ModalBody, ModalHeader } from '@/app/components/ui/primitives';
+import { EmptyState } from '@/app/components/ui/feedback';
 
 type DisconnectDetail = {
   label: string;
@@ -56,7 +58,13 @@ export function DisconnectDetailsDialog({
               ))}
             </TableBody>
           </Table>
-        ) : null}
+        ) : (
+          <EmptyState
+            icon={Information}
+            title="No disconnect details"
+            subtitle="This session did not include disconnect metadata."
+          />
+        )}
       </ModalBody>
     </Modal>
   );

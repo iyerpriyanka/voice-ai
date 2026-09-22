@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState, FC, ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import WaveSurfer from 'wavesurfer.js';
 import TimelinePlugin from 'wavesurfer.js/dist/plugins/timeline.esm.js';
 import { GhostButton } from '@/app/components/ui/primitives/button';
@@ -32,7 +33,7 @@ type AudioPlayerProps = {
   onVolumeChange?: (volume: number) => void;
 };
 
-export const AudioPlayer: FC<AudioPlayerProps> = ({
+export function AudioPlayer({
   recording,
   assistantProgressColor = '#3b82f6',
   userProgressColor = '#10b981',
@@ -41,11 +42,14 @@ export const AudioPlayer: FC<AudioPlayerProps> = ({
   barRadius = 2,
   barGap = 1,
   height = 100,
+  buttonsColor,
+  volumeUpIcon,
+  volumeMuteIcon,
   playbackSpeeds = [1, 1.5, 2],
   onPlay,
   onPause,
   onVolumeChange,
-}) => {
+}: AudioPlayerProps) {
   const assistantWaveformRef = useRef<HTMLDivElement | null>(null);
   const userWaveformRef = useRef<HTMLDivElement | null>(null);
   const timelineRef = useRef<HTMLDivElement | null>(null);
@@ -65,6 +69,10 @@ export const AudioPlayer: FC<AudioPlayerProps> = ({
   const assistantSrc = recording.getAssistantrecordingurl();
   const userSrc = recording.getUserrecordingurl();
   const completeRecordingSrc = recording.getConversationrecordingurl();
+  const renderVolumeIcon =
+    muted || volume === 0
+      ? volumeMuteIcon || <VolumeMute className="w-4 h-4" strokeWidth={1.5} />
+      : volumeUpIcon || <VolumeUp className="w-4 h-4" strokeWidth={1.5} />;
 
   useEffect(() => {
     if (!sharedAudioContext.current) {
@@ -137,7 +145,6 @@ export const AudioPlayer: FC<AudioPlayerProps> = ({
         );
       });
 
-      // Sync user waveform cursor when assistant is seeked (click/drag)
       assistantWavesurfer.current.on('seeking', (currentTime: number) => {
         if (userWavesurfer.current) {
           const userDuration = userWavesurfer.current.getDuration();
@@ -207,7 +214,6 @@ export const AudioPlayer: FC<AudioPlayerProps> = ({
       return;
     }
 
-    // Resume the shared AudioContext if it's suspended (browser autoplay policy)
     if (sharedAudioContext.current?.state === 'suspended') {
       await sharedAudioContext.current.resume();
     }
@@ -217,15 +223,12 @@ export const AudioPlayer: FC<AudioPlayerProps> = ({
       userWavesurfer.current.pause();
       onPause?.();
     } else {
-      // Sync user track position to match assistant track before playing
       const currentTime = assistantWavesurfer.current.getCurrentTime();
       const userDuration = userWavesurfer.current.getDuration();
       if (userDuration > 0) {
         userWavesurfer.current.seekTo(currentTime / userDuration);
       }
 
-      // Fire both play calls together using Promise.all on the shared AudioContext
-      // so they start on the same audio clock tick
       await Promise.all([
         assistantWavesurfer.current.play(),
         userWavesurfer.current.play(),
@@ -282,8 +285,7 @@ export const AudioPlayer: FC<AudioPlayerProps> = ({
   };
 
   return (
-    <div className={`flex w-full flex-col items-center rounded-lg`}>
-      {/* Overlapped waveforms */}
+    <div className="flex w-full flex-col items-center rounded-lg">
       <div className="relative w-full" style={{ height }}>
         <div
           ref={userWaveformRef}
@@ -297,12 +299,12 @@ export const AudioPlayer: FC<AudioPlayerProps> = ({
         />
       </div>
 
-      {/* Timeline (rendered outside the overlapped area) */}
       <div ref={timelineRef} className="w-full" />
 
-      {/* Controls */}
-      <div className="flex w-full flex-col justify-between gap-3 md:flex-row md:items-center bg-white dark:bg-gray-900 border-y">
-        {/* Play + volume control */}
+      <div
+        className="flex w-full flex-col justify-between gap-3 md:flex-row md:items-center bg-white dark:bg-gray-900 border-y"
+        style={buttonsColor ? { color: buttonsColor } : undefined}
+      >
         <div className="flex items-center justify-between divide-x border-r">
           <GhostButton
             size="md"
@@ -332,16 +334,11 @@ export const AudioPlayer: FC<AudioPlayerProps> = ({
             }
           >
             <GhostButton size="md" onClick={toggleMute} type="button">
-              {muted || volume === 0 ? (
-                <VolumeMute className="w-4 h-4" strokeWidth={1.5} />
-              ) : (
-                <VolumeUp className="w-4 h-4" strokeWidth={1.5} />
-              )}
+              {renderVolumeIcon}
             </GhostButton>
           </Tooltip>
         </div>
 
-        {/* Speed + download */}
         <div className="flex items-center justify-between divide-x border-l">
           {playbackSpeeds.map(speed => (
             <GhostButton
@@ -383,7 +380,10 @@ export const AudioPlayer: FC<AudioPlayerProps> = ({
             type="button"
             className="rounded-none"
           >
-            <Download className="mr-2 stroke-primary size-" strokeWidth={0.2} />{' '}
+            <Download
+              className="mr-2 stroke-primary size-4"
+              strokeWidth={0.2}
+            />{' '}
             <span>Assistant</span>
           </GhostButton>
           <GhostButton
@@ -394,11 +394,14 @@ export const AudioPlayer: FC<AudioPlayerProps> = ({
             type="button"
             className="rounded-none"
           >
-            <Download className="mr-2 stroke-primary size-" strokeWidth={0.2} />{' '}
+            <Download
+              className="mr-2 stroke-primary size-4"
+              strokeWidth={0.2}
+            />{' '}
             <span>User</span>
           </GhostButton>
         </div>
       </div>
     </div>
   );
-};
+}

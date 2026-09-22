@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { FC, HTMLAttributes, ReactElement, ReactNode } from 'react';
+import type { HTMLAttributes, ReactElement, ReactNode } from 'react';
 import {
   Tabs as CarbonTabs,
   TabList as CarbonTabList,
@@ -36,7 +36,7 @@ export interface CarbonTabsProps {
 }
 
 /** Carbon Tabs renders tab bar and panels, or a skeleton when loading. */
-export const Tabs: FC<CarbonTabsProps> = ({
+export function Tabs({
   tabs = [],
   children,
   selectedIndex = 0,
@@ -48,7 +48,7 @@ export const Tabs: FC<CarbonTabsProps> = ({
   panelClassName,
   panelsClassName,
   isLoading = false,
-}) => {
+}: CarbonTabsProps) {
   if (isLoading) {
     return <TabsSkeleton className={cn(className)} />;
   }
@@ -95,7 +95,7 @@ export const Tabs: FC<CarbonTabsProps> = ({
       </CarbonTabs>
     </div>
   );
-};
+}
 
 export interface TabProps extends HTMLAttributes<HTMLDivElement> {
   active: string;
@@ -113,13 +113,13 @@ const getSelectedIndex = (tabs: TabProps['tabs'], active: string) => {
   return index >= 0 ? index : 0;
 };
 
-export const Tab: FC<TabProps> = ({
+export function Tab({
   active,
   tabs,
   className,
   strict = true,
   linkClass,
-}) => {
+}: TabProps) {
   const [selectedIndex, setSelectedIndex] = useState(() =>
     getSelectedIndex(tabs, active),
   );
@@ -157,7 +157,7 @@ export const Tab: FC<TabProps> = ({
       </CarbonTabs>
     </div>
   );
-};
+}
 
 // Re-export raw Carbon components for direct use when needed.
 export {

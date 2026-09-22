@@ -1,14 +1,17 @@
-import { Argument } from '@rapidaai/react';
-import { Table } from '@/app/components/ui/table';
-import { TableBody } from '@/app/components/ui/table';
-import { TableCell } from '@/app/components/ui/table';
-import { TableHead } from '@/app/components/ui/table';
-import { TableRow } from '@/app/components/ui/table';
-import { FC } from 'react';
+import type { Argument } from '@rapidaai/react';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@carbon/react';
 import { EmptyState } from '@/app/components/ui/feedback';
 import { DataCheck } from '@carbon/icons-react';
 
-export const EndpointArguments: FC<{ args: Array<Argument> }> = ({ args }) => {
+export function EndpointArguments({ args }: { args: Array<Argument> }) {
   if (args.length <= 0)
     return (
       <EmptyState
@@ -19,25 +22,23 @@ export const EndpointArguments: FC<{ args: Array<Argument> }> = ({ args }) => {
       />
     );
   return (
-    <Table className="w-full">
-      <TableHead
-        columns={[
-          { name: 'Name', key: 'Name' },
-          { name: 'Value', key: 'Value' },
-        ]}
-      />
-      <TableBody>
-        {args.map((ar, index) => {
-          return (
+    <TableContainer title="Arguments">
+      <Table size="sm" useZebraStyles={false}>
+        <TableHead>
+          <TableRow>
+            <TableHeader>Name</TableHeader>
+            <TableHeader>Value</TableHeader>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {args.map((argument, index) => (
             <TableRow key={index}>
-              <TableCell>{ar.getName()}</TableCell>
-              <TableCell className="break-words break-all">
-                {ar.getValue()}
-              </TableCell>
+              <TableCell>{argument.getName()}</TableCell>
+              <TableCell>{argument.getValue()}</TableCell>
             </TableRow>
-          );
-        })}
-      </TableBody>
-    </Table>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
-};
+}

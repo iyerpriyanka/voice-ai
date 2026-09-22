@@ -1,10 +1,10 @@
 import { cn } from '@/utils';
-import { FC, HTMLAttributes } from 'react';
+import type { HTMLAttributes } from 'react';
 
-export const Table: FC<HTMLAttributes<HTMLTableElement>> = props => {
+export function Table(props: HTMLAttributes<HTMLTableElement>) {
   return (
     <table {...props} className={cn('text-sm', props.className)}>
       {props.children}
     </table>
   );
-};
+}

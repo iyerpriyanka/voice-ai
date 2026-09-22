@@ -10,6 +10,8 @@ type TextModelOption = {
   name: string;
 };
 
+type ProviderDataItem = Record<string, unknown>;
+
 const getMetadataValue = (parameters: Metadata[], key: string): string => {
   return parameters.find(param => param.getKey() === key)?.getValue() ?? '';
 };
@@ -61,11 +63,14 @@ const listProviderModels = (
   const nameField = modelParam.linkedField?.sourceField || 'name';
 
   return data
-    .map((item: any) => ({
-      id: item?.[valueField],
-      name: item?.[nameField] ?? item?.[valueField],
+    .map((item: ProviderDataItem) => ({
+      id: item[valueField],
+      name: item[nameField] ?? item[valueField],
     }))
-    .filter(model => Boolean(model.id) && Boolean(model.name));
+    .filter(
+      (model): model is TextModelOption =>
+        typeof model.id === 'string' && typeof model.name === 'string',
+    );
 };
 
 const findByToken = (

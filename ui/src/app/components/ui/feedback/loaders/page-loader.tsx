@@ -3,13 +3,15 @@ import { cn } from '@/utils';
 import { Spinner } from './spinner';
 
 export function PageLoader(props: HTMLAttributes<HTMLDivElement>) {
+  const { className, ...rest } = props;
+
   return (
     <div
+      {...rest}
       className={cn(
         'fixed top-0 bottom-0 right-0 left-0 flex justify-center items-center z-999999 backdrop-blur-xs',
-        props.className,
+        className,
       )}
-      {...props}
     >
       <div className="p-2 flex items-center justify-center">
         <div className="relative p-4">

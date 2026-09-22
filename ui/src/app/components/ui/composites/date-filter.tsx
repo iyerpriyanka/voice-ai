@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { useState } from 'react';
 import { Filter } from '@carbon/icons-react';
 import {
   Button,
@@ -15,11 +15,7 @@ export interface DateFilterProps {
   className?: string;
 }
 
-export const DateFilter: FC<DateFilterProps> = ({
-  onApply,
-  onReset,
-  className,
-}) => {
+export function DateFilter({ onApply, onReset, className }: DateFilterProps) {
   const [open, setOpen] = useState(false);
   const [dates, setDates] = useState<Date[]>([]);
 
@@ -106,4 +102,4 @@ export const DateFilter: FC<DateFilterProps> = ({
       )}
     </Popover>
   );
-};
+}

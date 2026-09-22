@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import type { FC } from 'react';
+import type { ReactNode } from 'react';
+import { useState } from 'react';
 import {
   PortalToFollowElem,
   PortalToFollowElemContent,
@@ -10,17 +10,17 @@ import { cn } from '@/utils';
 
 type TooltipProps = {
   className?: string;
-  content: React.ReactNode;
+  content: ReactNode;
   placement?: Placement;
-  children?: any;
+  children?: ReactNode;
 };
 
-export const Tooltip: FC<TooltipProps> = ({
+export function Tooltip({
   className,
   content,
   children,
   placement,
-}) => {
+}: TooltipProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -51,4 +51,4 @@ export const Tooltip: FC<TooltipProps> = ({
       </PortalToFollowElemContent>
     </PortalToFollowElem>
   );
-};
+}

@@ -307,6 +307,18 @@ jest.mock('@carbon/react', () => {
   return {
     ButtonSet: ({ children }: any) =>
       React.createElement('div', null, children),
+    Table: ({ children }: any) => React.createElement('table', null, children),
+    TableBody: ({ children }: any) =>
+      React.createElement('tbody', null, children),
+    TableCell: ({ children, colSpan }: any) =>
+      React.createElement('td', { colSpan }, children),
+    TableContainer: ({ children }: any) =>
+      React.createElement('div', null, children),
+    TableHead: ({ children }: any) =>
+      React.createElement('thead', null, children),
+    TableHeader: ({ children }: any) =>
+      React.createElement('th', null, children),
+    TableRow: ({ children }: any) => React.createElement('tr', null, children),
     Tooltip: ({ children }: any) => React.createElement('span', null, children),
     Select: ({ id, labelText, value, onChange, children, hideLabel }: any) =>
       React.createElement(
