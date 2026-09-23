@@ -1,7 +1,7 @@
 import { ActionableHeader } from '@/app/components/layout/navigation/actionable-header';
 import { SidebarNavigation } from '@/app/components/layout/navigation/sidebar';
 import { Loader } from '@/app/components/ui/feedback';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { Toast } from '@/app/components/ui/feedback';
 import { ProviderContextProvider } from '@/context/provider-context';
 import { SidebarProvider } from '@/context/sidebar-context';

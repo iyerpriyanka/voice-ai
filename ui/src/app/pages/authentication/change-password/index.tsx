@@ -6,7 +6,7 @@ import { CreatePasswordResponse } from '@rapidaai/react';
 import { useForm } from 'react-hook-form';
 import { ServiceError } from '@rapidaai/react';
 import { connectionConfig } from '@/configs';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { Stack } from '@/app/components/ui/primitives';
 import { PrimaryButton } from '@/app/components/ui/primitives';
 import { Notification } from '@/app/components/ui/feedback';

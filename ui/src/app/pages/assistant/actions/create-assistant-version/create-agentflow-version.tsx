@@ -5,7 +5,7 @@ import {
 } from '@/app/pages/assistant/actions/create-assistant-version/agentflow-version-builder';
 import { ErrorContainer } from '@/app/components/ui/feedback';
 import { connectionConfig } from '@/configs';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import {

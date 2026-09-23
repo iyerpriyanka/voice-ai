@@ -1,5 +1,5 @@
 import type { Endpoint } from '@rapidaai/react';
-import { useEndpointPageStore } from '@/hooks';
+import { useEndpointPageStore } from '@/stores/endpoint';
 import { useCredential } from '@/hooks/use-credential';
 import { Launch, Renew } from '@carbon/icons-react';
 import { useCallback, useEffect, useState } from 'react';

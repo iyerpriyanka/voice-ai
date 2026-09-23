@@ -1,7 +1,7 @@
 import { Assistant } from '@rapidaai/react';
 import { SectionLoader } from '@/app/components/ui/feedback';
 import { AssistantAnalytics } from '@/app/pages/assistant/view/overview/assistant-analytics';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { FC } from 'react';
 import { LinkNotification } from '@/app/components/ui/feedback';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';

@@ -53,7 +53,7 @@ jest.mock('@/theme/theme-provider', () => ({
   }),
 }));
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/stores/app', () => ({
   useRapidaStore: () => ({
     loading: mockRapidaLoading,
     loadingType: mockRapidaLoadingType,

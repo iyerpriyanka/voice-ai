@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Endpoint } from '@rapidaai/react';
-import { useEndpointPageStore } from '@/hooks';
+import { useEndpointPageStore } from '@/stores/endpoint';
 import { nanoToMilli, toHumanReadableRelativeTime } from '@/utils/date';
 import { useNavigate } from 'react-router-dom';
 import { TableRow, TableCell, Tag, Link } from '@carbon/react';

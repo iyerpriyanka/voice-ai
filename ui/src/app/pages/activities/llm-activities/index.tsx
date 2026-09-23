@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Helmet } from '@/app/components/app-shell/helmet';
 import { useCredential } from '@/hooks/use-credential';
 import toast from 'react-hot-toast/headless';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { Metadata } from '@rapidaai/react';
-import { useActivityLogPage } from '@/hooks/use-activity-log-page-store';
+import { useActivityLogPage } from '@/stores/activity/activity-log.store';
 import {
   formatNanoToReadableMilli,
   toHumanReadableDateTime,

@@ -6,7 +6,7 @@ import { ButtonSet } from '@carbon/react';
 import { TabForm } from '@/app/components/ui/composites';
 import { ConfirmDialog } from '@/app/components/dialogs/shared';
 import { useCurrentCredential } from '@/hooks/use-credential';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { useAllProviderCredentials } from '@/hooks/use-model';
 import {
   GetDefaultTextProviderConfigIfInvalid,

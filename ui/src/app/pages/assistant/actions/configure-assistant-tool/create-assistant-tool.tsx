@@ -14,7 +14,7 @@ import {
 import { ToolDefinitionForm } from '@/app/components/domain/tools/common';
 import { CreateAssistantTool } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { connectionConfig } from '@/configs';
 import { TabForm } from '@/app/components/ui/composites';
 import { ButtonSet } from '@carbon/react';

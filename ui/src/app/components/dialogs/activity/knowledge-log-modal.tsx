@@ -8,7 +8,7 @@ import {
   GetKnowledgeLogRequest,
   KnowledgeLog,
 } from '@rapidaai/react';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { StatusIndicator } from '@/app/components/domain/indicators/status';
 import type { ModalProps } from '@/app/components/ui/primitives';
 import { RightSideModal } from '@/app/components/dialogs/shared';

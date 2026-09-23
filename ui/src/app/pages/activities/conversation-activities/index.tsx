@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import { useCredential } from '@/hooks/use-credential';
-import { useRapidaStore } from '@/hooks/use-rapida-store';
+import { useRapidaStore } from '@/stores/app';
 import toast from 'react-hot-toast/headless';
 import { AssistantConversationMessage } from '@rapidaai/react';
 import {
@@ -13,7 +13,7 @@ import {
   getMetadataValueOrDefault,
   getTimeTakenMetric,
 } from '@/utils/metadata';
-import { useConversationLogPageStore } from '@/hooks/use-conversation-log-page-store';
+import { useConversationLogPageStore } from '@/stores/activity/conversation-log.store';
 import { Helmet } from '@/app/components/app-shell/helmet';
 import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
 import { PageTitleWithCount } from '@/app/components/layout/blocks/page-title-with-count';

@@ -73,7 +73,7 @@ jest.mock('@/app/pages/assistant/actions/hooks/use-confirmation', () => ({
 }));
 
 jest.mock(
-  '@/app/pages/assistant/actions/store/use-knowledge-page-store',
+  '@/stores/assistant/actions',
   () => ({
     useAssistantKnowledgePageStore: () => ({
       deleteAssistantKnowledge: jest.fn(),
@@ -89,7 +89,7 @@ jest.mock(
   }),
 );
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/stores/app', () => ({
   useRapidaStore: () => ({
     hideLoader: mockHideLoader,
     loading: false,

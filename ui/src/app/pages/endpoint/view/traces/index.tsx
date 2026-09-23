@@ -2,7 +2,7 @@ import { useState, useEffect, FC } from 'react';
 import { Helmet } from '@/app/components/app-shell/helmet';
 import { useCredential } from '@/hooks/use-credential';
 import toast from 'react-hot-toast/headless';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { Endpoint, EndpointLog } from '@rapidaai/react';
 import { SourceIndicator } from '@/app/components/domain/indicators/source';
 import {
@@ -12,7 +12,7 @@ import {
 } from '@/utils/date';
 import { getTimeTakenMetric, getTotalTokenMetric } from '@/utils/metadata';
 import { EndpointTraceModal } from '@/app/components/dialogs/endpoint';
-import { useEndpointLogPage } from '@/hooks/use-endpoint-log-page-store';
+import { useEndpointLogPage } from '@/stores/endpoint/endpoint-log.store';
 import { CarbonStatusIndicator } from '@/app/components/ui/feedback';
 import { Pagination } from '@/app/components/ui/primitives';
 import { IconOnlyButton } from '@/app/components/ui/primitives';

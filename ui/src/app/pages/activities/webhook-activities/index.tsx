@@ -2,14 +2,14 @@ import { useState, useEffect } from 'react';
 import { Helmet } from '@/app/components/app-shell/helmet';
 import { useCredential } from '@/hooks/use-credential';
 import toast from 'react-hot-toast/headless';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import {
   formatNanoToReadableMilli,
   toHumanReadableDateTime,
 } from '@/utils/date';
 import { HttpStatusSpanIndicator } from '@/app/components/domain/indicators/http-status';
 import { PageTitleWithCount } from '@/app/components/layout/blocks/page-title-with-count';
-import { useWebhookLogPage } from '@/hooks/use-webhook-log-page-store';
+import { useWebhookLogPage } from '@/stores/activity/webhook-log.store';
 import { RequestLogDialog } from '@/app/components/dialogs/activity';
 import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';

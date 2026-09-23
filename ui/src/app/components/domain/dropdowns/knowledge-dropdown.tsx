@@ -1,6 +1,6 @@
 import type { Knowledge } from '@rapidaai/react';
 import { useCredential } from '@/hooks/use-credential';
-import { useKnowledgePageStore } from '@/hooks/use-knowledge-page-store';
+import { useKnowledgePageStore } from '@/stores/knowledge/knowledge.store';
 import { Launch, Renew } from '@carbon/icons-react';
 import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast/headless';

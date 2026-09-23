@@ -95,7 +95,7 @@ jest.mock(
   }),
 );
 
-jest.mock('@/hooks/use-create-knowledge-document-page-store', () => ({
+jest.mock('@/stores/knowledge/create-knowledge-document.store', () => ({
   useCreateKnowledgeDocumentPageStore: () => ({
     clear: mockClear,
     documentType: mockDocumentType,
@@ -115,7 +115,7 @@ jest.mock('@/hooks/use-global-navigator', () => ({
   }),
 }));
 
-jest.mock('@/hooks/use-rapida-store', () => ({
+jest.mock('@/stores/app', () => ({
   useRapidaStore: () => ({
     hideLoader: mockHideLoader,
     loading: false,

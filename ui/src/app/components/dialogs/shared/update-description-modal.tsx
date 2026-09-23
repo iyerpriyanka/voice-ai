@@ -11,7 +11,7 @@ import {
   TextArea,
 } from '@/app/components/ui/primitives';
 import { Notification } from '@/app/components/ui/feedback';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { useEffect, useState } from 'react';
 
 interface UpdateDescriptionDialogProps extends ModalProps {

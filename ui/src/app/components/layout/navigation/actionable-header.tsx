@@ -14,7 +14,7 @@ import {
 } from '@carbon/react';
 import { Breadcrumb } from '@/app/components/ui/primitives';
 import { Dropdown } from '@/app/components/ui/primitives';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { useTheme } from '@/theme/theme-provider';
 
 export function ActionableHeader({

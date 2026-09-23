@@ -9,7 +9,7 @@ import { CreateProjectDialog } from '@/app/components/dialogs/workspace';
 import { GetAllProject, DeleteProject } from '@rapidaai/react';
 import { useCredential } from '@/hooks/use-credential';
 import toast from 'react-hot-toast/headless';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { ServiceError } from '@rapidaai/react';
 import { PrimaryButton } from '@/app/components/ui/primitives';
 import { Pagination } from '@/app/components/ui/primitives';

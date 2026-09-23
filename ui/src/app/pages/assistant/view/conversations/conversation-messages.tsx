@@ -4,7 +4,7 @@ import {
   AssistantConversationMessage,
 } from '@rapidaai/react';
 import { FC, useCallback, useContext, useEffect, useRef } from 'react';
-import { AssistantChatContext } from '@/hooks/use-assistant-chat';
+import { AssistantChatContext } from '@/stores/assistant/assistant-chat.store';
 import { useBoolean } from 'ahooks';
 import { SectionLoader } from '@/app/components/ui/feedback';
 import { Renew, Download, Chat } from '@carbon/icons-react';

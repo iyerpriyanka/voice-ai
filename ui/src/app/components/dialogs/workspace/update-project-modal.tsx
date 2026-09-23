@@ -8,7 +8,7 @@ import type {
 import toast from 'react-hot-toast/headless';
 import { useForm } from 'react-hook-form';
 import { useCredential } from '@/hooks/use-credential';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { ErrorMessage } from '@/app/components/ui/feedback';
 import { AuthContext } from '@/context/auth-context';
 import {

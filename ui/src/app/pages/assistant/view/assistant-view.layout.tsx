@@ -1,5 +1,5 @@
 import { Helmet } from '@/app/components/app-shell/helmet';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { useCredential } from '@/hooks/use-credential';
 import { FC, HTMLAttributes, useEffect, useState } from 'react';
 import toast from 'react-hot-toast/headless';
@@ -11,7 +11,7 @@ import {
   GetAssistant,
   GetAssistantRequest,
 } from '@rapidaai/react';
-import { useAssistantPageStore } from '@/hooks/use-assistant-page-store';
+import { useAssistantPageStore } from '@/stores/assistant/assistant.store';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { ErrorContainer } from '@/app/components/ui/feedback';
 import { connectionConfig } from '@/configs';

@@ -82,7 +82,7 @@ jest.mock('@/providers', () => ({
   allProvider: () => mockAllProvider(),
 }));
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/stores/endpoint', () => ({
   useEndpointPageStore: () => ({
     endpoints: mockEndpoints,
     page: mockEndpointPage,
@@ -93,7 +93,7 @@ jest.mock('@/hooks', () => ({
   }),
 }));
 
-jest.mock('@/hooks/use-knowledge-page-store', () => ({
+jest.mock('@/stores/knowledge/knowledge.store', () => ({
   useKnowledgePageStore: () => ({
     knowledgeBases: mockKnowledgeBases,
     page: mockKnowledgePage,

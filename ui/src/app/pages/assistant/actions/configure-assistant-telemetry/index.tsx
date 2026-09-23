@@ -9,7 +9,7 @@ import toast from 'react-hot-toast/headless';
 import { EmptyState } from '@/app/components/ui/feedback';
 import { CreateAssistantTelemetry } from './create-assistant-telemetry';
 import { UpdateAssistantTelemetry } from './update-assistant-telemetry';
-import { useAssistantTelemetryPageStore } from '@/app/pages/assistant/actions/store/use-telemetry-page-store';
+import { useAssistantTelemetryPageStore } from '@/stores/assistant/actions';
 import { TELEMETRY_PROVIDER } from '@/providers';
 import { IconOnlyButton, PrimaryButton } from '@/app/components/ui/primitives';
 import { CarbonShapeIndicator } from '@/app/components/ui/feedback';

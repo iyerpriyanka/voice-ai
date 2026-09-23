@@ -102,7 +102,7 @@ jest.mock('react-router-dom', () => ({
 
 jest.mock('@/configs', () => ({ connectionConfig: {} }));
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/stores/app', () => ({
   useRapidaStore: () => ({
     loading: false,
     showLoader: mockShowLoader,

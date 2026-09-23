@@ -2,18 +2,16 @@ import { create } from 'zustand';
 import {} from '@/types/types.activity-log';
 import { initialPaginated } from '@/types/types.paginated';
 import { ServiceError } from '@rapidaai/react';
+import { getEndpointLogById, listEndpointLogs } from '@/clients';
 import {
   EndpointLogType,
   EndpointLogTypeProperty,
 } from '@/types/types.endpoint-log';
 import {
   EndpointLog,
-  GetAllEndpointLog,
   GetAllEndpointLogResponse,
-  GetEndpointLog,
   GetEndpointLogResponse,
 } from '@rapidaai/react';
-import { connectionConfig } from '@/configs';
 
 const intialActivityLog: EndpointLogTypeProperty = {
   endpointLogs: [],
@@ -137,19 +135,14 @@ export const useEndpointLogPage = create<EndpointLogType>((set, get) => ({
       }
     };
 
-    GetAllEndpointLog(
-      connectionConfig,
+    listEndpointLogs({
       endpointId,
-      get().page,
-      get().pageSize,
-      get().criteria,
-      afterGetAllActivityLog,
-      {
-        authorization: token,
-        'x-project-id': projectId,
-        'x-auth-id': userId,
-      },
-    );
+      page: get().page,
+      pageSize: get().pageSize,
+      criteria: get().criteria,
+      auth: { projectId, token, userId },
+      callback: afterGetAllActivityLog,
+    });
   },
 
   getLog: (
@@ -186,10 +179,11 @@ export const useEndpointLogPage = create<EndpointLogType>((set, get) => ({
       onError('Unable to get endpoint log, please try again later.');
     };
 
-    GetEndpointLog(connectionConfig, endpointId, logId, afterGetEndpointLog, {
-      authorization: token,
-      'x-project-id': projectId,
-      'x-auth-id': userId,
+    getEndpointLogById({
+      endpointId,
+      logId,
+      auth: { projectId, token, userId },
+      callback: afterGetEndpointLog,
     });
   },
 

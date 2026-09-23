@@ -90,7 +90,7 @@ jest.mock('@/configs', () => ({
   connectionConfig: {},
 }));
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/stores/app', () => ({
   useRapidaStore: () => ({
     hideLoader: mockHideLoader,
     showLoader: mockShowLoader,
@@ -101,7 +101,7 @@ jest.mock('@/hooks/use-credential', () => ({
   useCredential: () => ['user-1', 'token-1', 'project-1'],
 }));
 
-jest.mock('@/hooks/use-knowledge-page-store', () => ({
+jest.mock('@/stores/knowledge/knowledge.store', () => ({
   useKnowledgePageStore: () => ({
     currentKnowledge: mockCurrentKnowledge,
     editTagVisible: false,

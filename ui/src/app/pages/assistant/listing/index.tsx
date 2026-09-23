@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Helmet } from '@/app/components/app-shell/helmet';
 import { useCredential } from '@/hooks/use-credential';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import toast from 'react-hot-toast/headless';
 import SingleAssistant from './single-assistant';
-import { useAssistantPageStore } from '@/hooks/use-assistant-page-store';
+import { useAssistantPageStore } from '@/stores/assistant/assistant.store';
 import { Assistant } from '@rapidaai/react';
 import { EmptyState } from '@/app/components/ui/feedback';
 import { Pagination } from '@/app/components/ui/primitives';

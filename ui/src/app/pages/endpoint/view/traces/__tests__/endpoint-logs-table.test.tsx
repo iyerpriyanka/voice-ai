@@ -57,7 +57,7 @@ jest.mock('@/hooks/use-credential', () => ({
   useCredential: () => ['user-1', 'token-1', 'project-1'],
 }));
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/stores/app', () => ({
   useRapidaStore: () => ({
     loading: false,
     showLoader: mockShowLoader,
@@ -65,7 +65,7 @@ jest.mock('@/hooks', () => ({
   }),
 }));
 
-jest.mock('@/hooks/use-endpoint-log-page-store', () => ({
+jest.mock('@/stores/endpoint/endpoint-log.store', () => ({
   useEndpointLogPage: () => ({
     getLogs: mockGetLogs,
     getLog: mockGetLog,

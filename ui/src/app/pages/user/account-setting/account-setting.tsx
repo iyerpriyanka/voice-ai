@@ -8,7 +8,7 @@ import { InputHelper } from '@/app/components/ui/primitives';
 import { PageActionButtonBlock } from '@/app/components/layout/blocks/page-action-button-block';
 import { SectionDivider } from '@/app/components/layout/blocks/section-divider';
 import { connectionConfig } from '@/configs';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import {
   ChangePassword,
   ChangePasswordRequest,

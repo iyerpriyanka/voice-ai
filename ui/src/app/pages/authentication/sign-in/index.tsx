@@ -10,7 +10,7 @@ import {
   Github,
   AuthenticateUser,
 } from '@rapidaai/react';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { ServiceError } from '@rapidaai/react';
 import { AuthContext } from '@/context/auth-context';
 import { useWorkspace } from '@/workspace';

@@ -1,5 +1,5 @@
 import React, { createContext } from 'react';
-import { useAuthenticationStore } from '@/hooks';
+import { useAuthenticationStore } from '@/stores/auth';
 import { AuthenticationType } from '@/types';
 export const AuthContext = createContext<Partial<AuthenticationType>>({});
 interface AuthProviderProps {

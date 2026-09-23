@@ -54,6 +54,9 @@ const meta = {
   title: 'UI/Primitives',
   component: PrimaryButton,
   tags: ['autodocs'],
+  args: {
+    size: 'md',
+  },
   parameters: {
     docs: {
       description: {

@@ -16,7 +16,7 @@ const mockRapidaStore = {
   hideLoader: jest.fn(),
 };
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/stores/app', () => ({
   useRapidaStore: () => mockRapidaStore,
 }));
 

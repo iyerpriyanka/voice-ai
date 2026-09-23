@@ -14,9 +14,13 @@ import {
 } from '@rapidaai/react';
 import {
   CreateEndpointCacheConfigurationResponse,
+  GetAllEndpointLogResponse,
+  GetAllEndpointProviderModelResponse,
   CreateEndpointRetryConfigurationResponse,
   GetAllEndpointResponse,
+  GetEndpointLogResponse,
   GetEndpointResponse,
+  UpdateEndpointVersionResponse,
 } from '@rapidaai/react';
 
 import { connectionConfig } from '@/configs';
@@ -81,6 +85,38 @@ export type UpdateEndpointDetailParams = {
   description: string;
   auth: ApiAuth;
   callback: EndpointClientCallback<GetEndpointResponse>;
+};
+
+export type ListEndpointProviderModelsParams = {
+  endpointId: string;
+  page: number;
+  pageSize: number;
+  criteria: Array<{ key: string; value: string }>;
+  auth: ApiAuth;
+  callback: EndpointClientCallback<GetAllEndpointProviderModelResponse>;
+};
+
+export type ReleaseEndpointVersionParams = {
+  endpointId: string;
+  endpointProviderModelId: string;
+  auth: ApiAuth;
+  callback: EndpointClientCallback<UpdateEndpointVersionResponse>;
+};
+
+export type ListEndpointLogsParams = {
+  endpointId: string;
+  page: number;
+  pageSize: number;
+  criteria: Criteria[];
+  auth: ApiAuth;
+  callback: EndpointClientCallback<GetAllEndpointLogResponse>;
+};
+
+export type GetEndpointLogParams = {
+  endpointId: string;
+  logId: string;
+  auth: ApiAuth;
+  callback: EndpointClientCallback<GetEndpointLogResponse>;
 };
 
 export const listEndpoints = ({
@@ -199,3 +235,71 @@ export const updateEndpointVersion = withConnection(UpdateEndpointVersion);
 
 export const getAllEndpointLog = withConnection(GetAllEndpointLog);
 export const getEndpointLog = withConnection(GetEndpointLog);
+
+export const listEndpointProviderModels = ({
+  endpointId,
+  page,
+  pageSize,
+  criteria,
+  auth,
+  callback,
+}: ListEndpointProviderModelsParams): void => {
+  GetAllEndpointProviderModel(
+    connectionConfig,
+    endpointId,
+    page,
+    pageSize,
+    criteria,
+    callback,
+    createApiMetadata(auth),
+  );
+};
+
+export const releaseEndpointVersion = ({
+  endpointId,
+  endpointProviderModelId,
+  auth,
+  callback,
+}: ReleaseEndpointVersionParams): void => {
+  UpdateEndpointVersion(
+    connectionConfig,
+    endpointId,
+    endpointProviderModelId,
+    createApiMetadata(auth),
+    callback,
+  );
+};
+
+export const listEndpointLogs = ({
+  endpointId,
+  page,
+  pageSize,
+  criteria,
+  auth,
+  callback,
+}: ListEndpointLogsParams): void => {
+  GetAllEndpointLog(
+    connectionConfig,
+    endpointId,
+    page,
+    pageSize,
+    criteria,
+    callback,
+    createApiMetadata(auth),
+  );
+};
+
+export const getEndpointLogById = ({
+  endpointId,
+  logId,
+  auth,
+  callback,
+}: GetEndpointLogParams): void => {
+  GetEndpointLog(
+    connectionConfig,
+    endpointId,
+    logId,
+    callback,
+    createApiMetadata(auth),
+  );
+};

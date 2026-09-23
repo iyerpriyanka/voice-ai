@@ -16,7 +16,7 @@ import { ToolDefinitionForm } from '@/app/components/domain/tools/common';
 import { GetAssistantTool, UpdateAssistantTool } from '@rapidaai/react';
 import { useParams } from 'react-router-dom';
 import toast from 'react-hot-toast/headless';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { connectionConfig } from '@/configs';
 import { TabForm } from '@/app/components/ui/composites';
 

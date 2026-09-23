@@ -1,4 +1,4 @@
-import { useAssistantProviderPageStore } from '@/hooks';
+import { useAssistantProviderPageStore } from '@/stores/assistant';
 import { useCredential } from '@/hooks/use-credential';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast/headless';

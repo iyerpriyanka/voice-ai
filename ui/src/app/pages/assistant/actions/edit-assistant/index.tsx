@@ -9,7 +9,7 @@ import { GetAssistantResponse } from '@rapidaai/react';
 import { ServiceError } from '@rapidaai/react';
 import { ErrorContainer } from '@/app/components/ui/feedback';
 import { useDeleteConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-delete-confirmation';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { FC, ReactNode, useEffect, useState } from 'react';

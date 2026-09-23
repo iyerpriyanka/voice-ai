@@ -5,7 +5,7 @@ import '@testing-library/jest-dom';
 import { EndpointSideNav } from '@/app/pages/endpoint/view/endpoint-side-nav';
 import { ViewEndpointPage } from '@/app/pages/endpoint/view';
 import { EndpointViewLayout } from '@/app/pages/endpoint/view/endpoint-view.layout';
-import { useEndpointPageStore } from '@/hooks';
+import { useEndpointPageStore } from '@/stores/endpoint';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 const mockNavigate = jest.fn();
@@ -48,16 +48,12 @@ jest.mock('@/hooks/use-credential', () => ({
   useCredential: () => ['user-1', 'token-1', 'project-1'],
 }));
 
-jest.mock('@/hooks', () => {
-  const actual = jest.requireActual('@/hooks');
-  return {
-    ...actual,
-    useRapidaStore: () => ({
-      showLoader: mockShowLoader,
-      hideLoader: mockHideLoader,
-    }),
-  };
-});
+jest.mock('@/stores/app', () => ({
+  useRapidaStore: () => ({
+    showLoader: mockShowLoader,
+    hideLoader: mockHideLoader,
+  }),
+}));
 
 jest.mock('@carbon/react', () => ({
   Breadcrumb: ({ children }: any) => <nav>{children}</nav>,

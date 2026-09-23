@@ -11,7 +11,7 @@ import {
 import { ConnectionConfig } from '@rapidaai/react';
 import { connectionConfig } from '@/configs';
 import { KnowledgeActivityLogTypeProperty } from '@/types/types.knowledge-activity-log';
-import { KnowledgeActivityLogType } from '../types/types.knowledge-activity-log';
+import { KnowledgeActivityLogType } from '@/types/types.knowledge-activity-log';
 
 const intialActivityLog: KnowledgeActivityLogTypeProperty = {
   activities: [],

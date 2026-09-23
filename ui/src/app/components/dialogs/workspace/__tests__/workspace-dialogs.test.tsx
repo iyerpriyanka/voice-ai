@@ -116,8 +116,11 @@ jest.mock('@/hooks/use-credential', () => ({
   }),
 }));
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/stores/app', () => ({
   useRapidaStore: () => mockRapidaStore,
+}));
+
+jest.mock('@/stores/user', () => ({
   useUserPageStore: () => ({
     users: mockUsers,
     getAllUser: mockGetAllUser,

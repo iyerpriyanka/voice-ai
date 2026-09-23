@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Helmet } from '@/app/components/app-shell/helmet';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { TabForm } from '@/app/components/ui/composites';
 import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
 import { ButtonSet, Slider } from '@carbon/react';

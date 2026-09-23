@@ -8,6 +8,7 @@ import {
   GetAssistant,
   GetAssistantRequest,
   Paginate,
+  ServiceError,
   UpdateAssistantDetail,
 } from '@rapidaai/react';
 import { Assistant, GetAssistantResponse } from '@rapidaai/react';

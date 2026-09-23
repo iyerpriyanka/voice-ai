@@ -45,7 +45,7 @@ jest.mock('@/hooks/use-credential', () => ({
   }),
 }));
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/stores/app', () => ({
   useRapidaStore: () => ({
     showLoader: mockShowLoader,
     hideLoader: mockHideLoader,

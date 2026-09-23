@@ -1,5 +1,5 @@
 import { EndpointDetailTabContent } from '@/app/pages/endpoint/view/pages';
-import { useEndpointPageStore } from '@/hooks';
+import { useEndpointPageStore } from '@/stores/endpoint';
 import { useOutletContext, useParams } from 'react-router-dom';
 
 type EndpointViewOutletContext = {

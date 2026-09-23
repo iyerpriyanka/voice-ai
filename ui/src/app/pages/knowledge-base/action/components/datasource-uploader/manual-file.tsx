@@ -1,6 +1,6 @@
 import { GhostButton } from '@/app/components/ui/primitives';
 import SingleRowWrapper from '@/app/components/layout/wrapper/single-row-wrapper';
-import { useCreateKnowledgeDocumentPageStore } from '@/hooks/use-create-knowledge-document-page-store';
+import { useCreateKnowledgeDocumentPageStore } from '@/stores/knowledge/create-knowledge-document.store';
 import { formatFileSize } from '@/utils/format';
 import { Close, Document, DotMark, Upload } from '@carbon/icons-react';
 import { FC, useCallback } from 'react';

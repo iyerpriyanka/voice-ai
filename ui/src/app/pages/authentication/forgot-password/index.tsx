@@ -3,7 +3,7 @@ import { Helmet } from '@/app/components/app-shell/helmet';
 import { ForgotPassword } from '@rapidaai/react';
 import { ForgotPasswordResponse } from '@rapidaai/react';
 import { useForm } from 'react-hook-form';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { ServiceError } from '@rapidaai/react';
 import { connectionConfig } from '@/configs';
 import { Stack, TextInput } from '@/app/components/ui/primitives';

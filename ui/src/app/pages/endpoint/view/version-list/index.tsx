@@ -1,13 +1,10 @@
 import { Endpoint, EndpointProviderModel } from '@rapidaai/react';
-import { useEndpointProviderModelPageStore } from '@/hooks';
-import { useRapidaStore } from '@/hooks';
+import { useEndpointProviderModelPageStore } from '@/stores/endpoint';
+import { useRapidaStore } from '@/stores/app';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast/headless';
-import {
-  toHumanReadableDateTime,
-  toHumanReadableRelativeTime,
-} from '@/utils/date';
+import { toHumanReadableDateTime } from '@/utils/date';
 import { TableSection } from '@/app/components/layout/sections/table-section';
 import { Pagination } from '@/app/components/ui/primitives';
 import IconIndicator from '@carbon/react/es/components/IconIndicator';

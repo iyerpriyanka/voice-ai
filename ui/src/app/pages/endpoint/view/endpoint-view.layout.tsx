@@ -5,7 +5,8 @@ import { CreateTagDialog } from '@/app/components/dialogs/shared/create-tag-moda
 import { UpdateDescriptionDialog } from '@/app/components/dialogs/shared';
 import { EndpointTag } from '@/app/components/domain/tags/endpoint-tags';
 import { EndpointSideNav } from '@/app/pages/endpoint/view/endpoint-side-nav';
-import { useEndpointPageStore, useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
+import { useEndpointPageStore } from '@/stores/endpoint';
 import { useCredential } from '@/hooks/use-credential';
 import {
   Checkmark,

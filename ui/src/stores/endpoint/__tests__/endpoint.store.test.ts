@@ -10,7 +10,9 @@ import {
 import {
   initialEndpointType,
   useEndpointPageStore,
-} from '@/hooks/use-endpoint-page-store';
+} from '@/stores/endpoint/endpoint.store';
+import endpointsFixture from '@/testing/fixtures/endpoint/endpoints.json';
+import { buildEndpoint } from '@/testing/builders/endpoint';
 
 jest.mock('@/clients', () => ({
   createEndpointCacheConfiguration: jest.fn(),
@@ -34,7 +36,17 @@ const resetStore = () => {
   });
 };
 
-const makeEndpoint = (id: string) => ({ getId: () => id }) as any;
+const [endpointFixture1, endpointFixture2] = endpointsFixture.items;
+
+const makeEndpoint = (id: string) => {
+  const fixture = endpointsFixture.items.find(endpoint => endpoint.id === id);
+
+  return buildEndpoint({
+    id,
+    name: fixture?.name,
+    endpointProviderModelId: fixture?.version,
+  });
+};
 
 describe('useEndpointPageStore', () => {
   beforeEach(() => {
@@ -96,7 +108,7 @@ describe('useEndpointPageStore', () => {
   });
 
   it('handles successful onGetAllEndpoint response', () => {
-    const endpoint = makeEndpoint('endpoint-1');
+    const endpoint = buildEndpoint(endpointFixture1);
     const onError = jest.fn();
     const onSuccess = jest.fn();
 
@@ -104,7 +116,9 @@ describe('useEndpointPageStore', () => {
       callback(null, {
         getSuccess: () => true,
         getDataList: () => [endpoint],
-        getPaginated: () => ({ getTotalitem: () => 11 }),
+        getPaginated: () => ({
+          getTotalitem: () => endpointsFixture.totalCount,
+        }),
       });
     });
 
@@ -115,7 +129,9 @@ describe('useEndpointPageStore', () => {
     expect(onSuccess).toHaveBeenCalledWith([endpoint]);
     expect(onError).not.toHaveBeenCalled();
     expect(useEndpointPageStore.getState().endpoints).toEqual([endpoint]);
-    expect(useEndpointPageStore.getState().totalCount).toBe(11);
+    expect(useEndpointPageStore.getState().totalCount).toBe(
+      endpointsFixture.totalCount,
+    );
     expect(listEndpoints).toHaveBeenCalledWith(
       expect.objectContaining({
         page: 1,
@@ -169,7 +185,7 @@ describe('useEndpointPageStore', () => {
   });
 
   it('handles successful onGetEndpoint response', () => {
-    const endpoint = makeEndpoint('endpoint-2');
+    const endpoint = buildEndpoint(endpointFixture2);
     const onError = jest.fn();
     const onSuccess = jest.fn();
 

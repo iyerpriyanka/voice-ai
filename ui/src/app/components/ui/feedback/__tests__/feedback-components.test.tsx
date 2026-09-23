@@ -40,7 +40,7 @@ const mockStartPause = jest.fn();
 const mockToastRemove = jest.fn();
 const mockUpdateHeight = jest.fn();
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/stores/app', () => ({
   useRapidaStore: () => ({
     loading: mockLoading,
     loadingType: mockLoadingType,

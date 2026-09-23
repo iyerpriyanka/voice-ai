@@ -1,9 +1,9 @@
 import { useParams } from 'react-router-dom';
 import { useCallback, useEffect, useState } from 'react';
 import { useCredential } from '@/hooks/use-credential';
-import { useRapidaStore } from '@/hooks/use-rapida-store';
+import { useRapidaStore } from '@/stores/app';
 import { KnowledgeDocument } from '@rapidaai/react';
-import { useCreateKnowledgeDocumentPageStore } from '@/hooks/use-create-knowledge-document-page-store';
+import { useCreateKnowledgeDocumentPageStore } from '@/stores/knowledge/create-knowledge-document.store';
 import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
 import { ButtonSet } from '@carbon/react';
 import { ManualFile } from '@/app/pages/knowledge-base/action/components/datasource-uploader/manual-file';

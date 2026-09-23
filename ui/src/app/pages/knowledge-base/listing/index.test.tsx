@@ -111,7 +111,7 @@ jest.mock('@/app/components/ui/table/table-pagination', () => ({
   TablePagination: () => <nav data-testid="table-pagination" />,
 }));
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/stores/app', () => ({
   useRapidaStore: () => ({
     hideLoader: mockHideLoader,
     loading: false,
@@ -129,7 +129,7 @@ jest.mock('@/hooks/use-global-navigator', () => ({
   }),
 }));
 
-jest.mock('@/hooks/use-knowledge-page-store', () => ({
+jest.mock('@/stores/knowledge/knowledge.store', () => ({
   useKnowledgePageStore: () => mockKnowledgeActions,
 }));
 

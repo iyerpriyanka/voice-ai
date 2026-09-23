@@ -6,7 +6,7 @@ import {
   VaultCredential,
 } from '@rapidaai/react';
 import { useCurrentCredential } from '@/hooks/use-credential';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import toast from 'react-hot-toast/headless';
 import type { ModalProps } from '@/app/components/ui/primitives';
 import { useAllProviderCredentials } from '@/hooks/use-model';

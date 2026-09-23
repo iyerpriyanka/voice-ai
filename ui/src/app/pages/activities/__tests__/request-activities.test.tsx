@@ -59,7 +59,7 @@ jest.mock('@/hooks/use-credential', () => ({
   useCredential: () => ['u1', 't1', 'p1'],
 }));
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/stores/app', () => ({
   useRapidaStore: () => ({
     loading: false,
     showLoader: mockShowLoader,
@@ -67,7 +67,7 @@ jest.mock('@/hooks', () => ({
   }),
 }));
 
-jest.mock('@/hooks/use-webhook-log-page-store', () => ({
+jest.mock('@/stores/activity/webhook-log.store', () => ({
   useWebhookLogPage: () => ({
     getActivities: mockGetActivities,
     addCriterias: mockAddCriterias,

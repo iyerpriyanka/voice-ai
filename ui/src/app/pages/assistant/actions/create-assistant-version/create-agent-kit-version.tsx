@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { useCredential } from '@/hooks/use-credential';
 import { useParams } from 'react-router-dom';
 import { Helmet } from '@/app/components/app-shell/helmet';

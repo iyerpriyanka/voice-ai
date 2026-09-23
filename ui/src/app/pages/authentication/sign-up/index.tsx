@@ -6,7 +6,7 @@ import { RegisterUser } from '@rapidaai/react';
 import { AuthenticateResponse } from '@rapidaai/react';
 import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { ServiceError } from '@rapidaai/react';
 import { AuthContext } from '@/context/auth-context';
 import { useWorkspace } from '@/workspace';

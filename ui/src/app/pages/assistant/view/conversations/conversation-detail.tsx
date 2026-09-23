@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import {
   AssistantChatContext,
   useAssistantChat,
-} from '@/hooks/use-assistant-chat';
+} from '@/stores/assistant/assistant-chat.store';
 import { ConversationMessages } from '@/app/pages/assistant/view/conversations/conversation-messages';
 import {
   ConnectionConfig,
@@ -13,7 +13,7 @@ import {
 import { useParams } from 'react-router-dom';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { AssistantConversation } from '@rapidaai/react';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { PageLoader } from '@/app/components/ui/feedback';
 import {
   ArrowLeft,

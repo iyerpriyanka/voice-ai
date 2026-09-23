@@ -5,10 +5,10 @@ import {
   AssistantConversationTelephonyEvent,
 } from '@rapidaai/react';
 import { useCredential } from '@/hooks/use-credential';
-import { useRapidaStore } from '@/hooks/use-rapida-store';
+import { useRapidaStore } from '@/stores/app';
 import toast from 'react-hot-toast/headless';
 import { toDate, toHumanReadableDateTime } from '@/utils/date';
-import { useAssistantConversationListPageStore } from '@/hooks/use-assistant-conversation-list-page-store';
+import { useAssistantConversationListPageStore } from '@/stores/assistant/assistant-conversation-list.store';
 import { CarbonStatusIndicator } from '@/app/components/ui/feedback';
 import SourceIndicator from '@/app/components/domain/indicators/source';
 import { getStatusMetric, getConversationDuration } from '@/utils/metadata';

@@ -1,5 +1,5 @@
 import { Helmet } from '@/app/components/app-shell/helmet';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { useCredential } from '@/hooks/use-credential';
 import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast/headless';
@@ -10,7 +10,7 @@ import { ConnectionConfig, GetKnowledgeBase } from '@rapidaai/react';
 import { GetKnowledgeResponse } from '@rapidaai/react';
 import { cn } from '@/utils';
 import { toHumanReadableRelativeTime } from '@/utils/date';
-import { useKnowledgePageStore } from '@/hooks/use-knowledge-page-store';
+import { useKnowledgePageStore } from '@/stores/knowledge/knowledge.store';
 import { CreateTagDialog } from '@/app/components/dialogs/shared/create-tag-modal';
 import { UpdateDescriptionDialog } from '@/app/components/dialogs/shared';
 import { Tag } from '@rapidaai/react';

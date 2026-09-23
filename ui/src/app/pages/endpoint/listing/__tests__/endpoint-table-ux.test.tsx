@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import { SingleEndpoint } from '@/app/pages/endpoint/listing/single-endpoint';
-import { useEndpointPageStore } from '@/hooks/use-endpoint-page-store';
+import { useEndpointPageStore } from '@/stores/endpoint/endpoint.store';
 
 const mockNavigate = jest.fn();
 const mockWriteText = jest.fn();

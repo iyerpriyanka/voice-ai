@@ -1,6 +1,6 @@
 import { LineLoader } from './loaders/line-loader';
 import { PageLoader } from './loaders/page-loader';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 
 /**
  * General global loader

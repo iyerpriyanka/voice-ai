@@ -10,9 +10,9 @@ import {
 } from '@/app/components/ui/primitives';
 import type { ModalProps } from '@/app/components/ui/primitives';
 import { ManualFile } from '@/app/pages/knowledge-base/action/components/datasource-uploader/manual-file';
-import { useCreateKnowledgeDocumentPageStore } from '@/hooks/use-create-knowledge-document-page-store';
+import { useCreateKnowledgeDocumentPageStore } from '@/stores/knowledge/create-knowledge-document.store';
 import { useCredential } from '@/hooks/use-credential';
-import { useRapidaStore } from '@/hooks/use-rapida-store';
+import { useRapidaStore } from '@/stores/app';
 import { Notification } from '@/app/components/ui/feedback';
 
 interface CreateKnowledgeDocumentDialogProps extends ModalProps {

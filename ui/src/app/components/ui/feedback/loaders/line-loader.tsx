@@ -1,4 +1,4 @@
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import type { HTMLAttributes } from 'react';
 
 import { cn } from '@/utils';

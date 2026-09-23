@@ -5,7 +5,7 @@ import {
   UpdateAssistantDetail,
 } from '@rapidaai/react';
 
-import { useAssistantPageStore } from '@/hooks/use-assistant-page-store';
+import { useAssistantPageStore } from '@/stores/assistant/assistant.store';
 
 jest.mock('@rapidaai/react', () => {
   class ConnectionConfig {

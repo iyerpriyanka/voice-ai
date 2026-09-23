@@ -1,11 +1,11 @@
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { useCredential } from '@/hooks/use-credential';
 import React, { useCallback, useEffect } from 'react';
 import toast from 'react-hot-toast/headless';
 import { BluredWrapper } from '@/app/components/layout/wrapper/blured-wrapper';
 import { SearchIconInput } from '@/app/components/ui/composites';
 import { KnowledgeDocument } from '@rapidaai/react';
-import { useKnowledgeDocumentPageStore } from '@/hooks/use-knowledge-document-page-store';
+import { useKnowledgeDocumentPageStore } from '@/stores/knowledge/knowledge-document.store';
 import { TablePagination } from '@/app/components/ui/table';
 import { SingleDocument } from '@/app/pages/knowledge-base/view/documents/single-document';
 import { Knowledge } from '@rapidaai/react';

@@ -12,7 +12,7 @@ import { Notification } from '@/app/components/ui/feedback/notification';
 import { TagInput } from '@/app/components/ui/composites/tag-input';
 import { KnowledgeTags } from '@/app/components/domain/tags/knowledge-tags';
 import { ModalProps } from '@/app/components/ui/primitives/modal';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 
 interface CreateTagDialogProps extends ModalProps {
   title: string;

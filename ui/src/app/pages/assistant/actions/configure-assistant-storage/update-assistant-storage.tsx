@@ -9,7 +9,7 @@ import {
 } from '@rapidaai/react';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { useCurrentCredential } from '@/hooks/use-credential';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { connectionConfig } from '@/configs';
 import toast from 'react-hot-toast/headless';
 import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';

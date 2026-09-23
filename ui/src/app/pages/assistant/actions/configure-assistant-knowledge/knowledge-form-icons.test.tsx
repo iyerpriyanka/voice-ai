@@ -124,7 +124,7 @@ jest.mock('@/configs', () => ({
   connectionConfig: {},
 }));
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/stores/app', () => ({
   useRapidaStore: () => ({
     hideLoader: mockHideLoader,
     showLoader: mockShowLoader,

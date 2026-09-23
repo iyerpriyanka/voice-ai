@@ -7,7 +7,7 @@ import { Overview } from '@/app/pages/assistant/view/overview';
 const mockGoToCreateAssistantVersion = jest.fn();
 let mockLoading = false;
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/stores/app', () => ({
   useRapidaStore: () => ({
     loading: mockLoading,
   }),

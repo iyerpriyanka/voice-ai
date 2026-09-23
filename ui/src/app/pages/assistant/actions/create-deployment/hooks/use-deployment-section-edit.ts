@@ -22,7 +22,7 @@ import toast from 'react-hot-toast/headless';
 import { connectionConfig } from '@/configs';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useAllProviderCredentials } from '@/hooks/use-model';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import {
   DEFAULT_IDEAL_TIMEOUT,
   ExperienceConfig,

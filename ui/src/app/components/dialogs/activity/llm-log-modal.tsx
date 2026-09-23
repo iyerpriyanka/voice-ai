@@ -11,7 +11,7 @@ import {
   Metadata,
   ServiceError,
 } from '@rapidaai/react';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { CarbonStatusIndicator } from '@/app/components/ui/feedback';
 import type { ModalProps } from '@/app/components/ui/primitives';
 import { RightSideModal } from '@/app/components/dialogs/shared';

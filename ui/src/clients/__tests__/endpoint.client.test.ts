@@ -3,7 +3,11 @@ import {
   CreateEndpointRetryConfiguration,
   CreateEndpointTag,
   GetAllEndpoint,
+  GetAllEndpointLog,
+  GetAllEndpointProviderModel,
   GetEndpoint,
+  GetEndpointLog,
+  UpdateEndpointVersion,
   UpdateEndpointDetail,
 } from '@rapidaai/react';
 
@@ -12,7 +16,11 @@ import {
   createEndpointRetryConfiguration,
   createEndpointTag,
   getEndpoint,
+  getEndpointLogById,
+  listEndpointLogs,
+  listEndpointProviderModels,
   listEndpoints,
+  releaseEndpointVersion,
   updateEndpointDetail,
 } from '@/clients';
 
@@ -25,7 +33,11 @@ jest.mock('@rapidaai/react', () => ({
   CreateEndpointRetryConfiguration: jest.fn(),
   CreateEndpointTag: jest.fn(),
   GetAllEndpoint: jest.fn(),
+  GetAllEndpointLog: jest.fn(),
+  GetAllEndpointProviderModel: jest.fn(),
   GetEndpoint: jest.fn(),
+  GetEndpointLog: jest.fn(),
+  UpdateEndpointVersion: jest.fn(),
   UpdateEndpointDetail: jest.fn(),
 }));
 
@@ -174,6 +186,92 @@ describe('endpoint client', () => {
       'Handles production traffic',
       metadata,
       callback,
+    );
+  });
+
+  it('lists endpoint provider models with metadata', () => {
+    const callback = jest.fn();
+    const criteria = [{ key: 'status', value: 'active' }];
+
+    listEndpointProviderModels({
+      endpointId: 'endpoint-1',
+      page: 1,
+      pageSize: 20,
+      criteria,
+      auth,
+      callback,
+    });
+
+    expect(GetAllEndpointProviderModel).toHaveBeenCalledWith(
+      { endpoint: 'test-endpoint' },
+      'endpoint-1',
+      1,
+      20,
+      criteria,
+      callback,
+      metadata,
+    );
+  });
+
+  it('releases an endpoint version with metadata', () => {
+    const callback = jest.fn();
+
+    releaseEndpointVersion({
+      endpointId: 'endpoint-1',
+      endpointProviderModelId: 'model-1',
+      auth,
+      callback,
+    });
+
+    expect(UpdateEndpointVersion).toHaveBeenCalledWith(
+      { endpoint: 'test-endpoint' },
+      'endpoint-1',
+      'model-1',
+      metadata,
+      callback,
+    );
+  });
+
+  it('lists endpoint logs with metadata', () => {
+    const callback = jest.fn();
+    const criteria = [{ key: 'status', value: 'success', logic: 'match' }];
+
+    listEndpointLogs({
+      endpointId: 'endpoint-1',
+      page: 1,
+      pageSize: 10,
+      criteria,
+      auth,
+      callback,
+    });
+
+    expect(GetAllEndpointLog).toHaveBeenCalledWith(
+      { endpoint: 'test-endpoint' },
+      'endpoint-1',
+      1,
+      10,
+      criteria,
+      callback,
+      metadata,
+    );
+  });
+
+  it('gets one endpoint log with metadata', () => {
+    const callback = jest.fn();
+
+    getEndpointLogById({
+      endpointId: 'endpoint-1',
+      logId: 'log-1',
+      auth,
+      callback,
+    });
+
+    expect(GetEndpointLog).toHaveBeenCalledWith(
+      { endpoint: 'test-endpoint' },
+      'endpoint-1',
+      'log-1',
+      callback,
+      metadata,
     );
   });
 });

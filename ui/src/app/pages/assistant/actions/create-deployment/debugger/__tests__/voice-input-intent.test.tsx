@@ -131,7 +131,7 @@ jest.mock('react-router-dom', () => ({
   useSearchParams: () => [mockSearchParams, jest.fn()],
 }));
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/stores/app', () => ({
   useRapidaStore: () => ({
     loading: false,
     showLoader: jest.fn(),

@@ -8,7 +8,7 @@ import type { ProjectCredential } from '@rapidaai/react';
 import { EmptyState } from '@/app/components/ui/feedback';
 import { CopyButton } from '@/app/components/ui/primitives';
 import { ReloadButton } from '@/app/components/ui/primitives';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { toHumanReadableRelativeDay } from '@/utils/date';
 import { useCallback, useEffect, useState } from 'react';

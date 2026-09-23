@@ -3,7 +3,7 @@ import { Helmet } from '@/app/components/app-shell/helmet';
 import { DateFilter } from '@/app/components/ui/composites';
 import { useCredential } from '@/hooks/use-credential';
 import toast from 'react-hot-toast/headless';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import {
   formatNanoToReadableMilli,
   toDateString,
@@ -11,7 +11,7 @@ import {
 } from '@/utils/date';
 import { PageTitleWithCount } from '@/app/components/layout/blocks/page-title-with-count';
 import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
-import { useKnowledgeActivityLogPage } from '@/hooks/use-knowledge-activity-log-page-store';
+import { useKnowledgeActivityLogPage } from '@/stores/knowledge/knowledge-activity-log.store';
 import { KnowledgeLogDialog } from '@/app/components/dialogs/activity';
 import { CarbonStatusIndicator } from '@/app/components/ui/feedback';
 import { Pagination } from '@/app/components/ui/primitives';

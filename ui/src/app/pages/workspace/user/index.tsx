@@ -11,8 +11,8 @@ import {
 } from '@rapidaai/react';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import toast from 'react-hot-toast/headless';
-import { useRapidaStore } from '@/hooks';
-import { useUserPageStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
+import { useUserPageStore } from '@/stores/user';
 import { SingleUser } from '@/app/pages/workspace/user/single-user';
 import { PrimaryButton } from '@/app/components/ui/primitives';
 import { Pagination } from '@/app/components/ui/primitives';

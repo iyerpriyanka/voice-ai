@@ -3,7 +3,7 @@ import {
   SecondaryButton,
 } from '@/app/components/ui/primitives/button';
 import { ArrowRight } from '@carbon/icons-react';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { cn } from '@/utils';
 import type { ButtonHTMLAttributes } from 'react';
 

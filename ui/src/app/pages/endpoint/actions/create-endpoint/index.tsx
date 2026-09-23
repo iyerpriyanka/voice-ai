@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useAllProviderCredentials } from '@/hooks/use-model';
 import { useNavigate } from 'react-router-dom';

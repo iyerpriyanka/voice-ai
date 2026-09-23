@@ -25,7 +25,7 @@ jest.mock('@/configs', () => ({
   connectionConfig: { endpoint: 'test-endpoint' },
 }));
 
-jest.mock('@/hooks/use-create-knowledge-document-page-store', () => ({
+jest.mock('@/stores/knowledge/create-knowledge-document.store', () => ({
   useCreateKnowledgeDocumentPageStore: () => mockCreateStore,
 }));
 
@@ -38,7 +38,7 @@ jest.mock('@/hooks/use-credential', () => ({
   }),
 }));
 
-jest.mock('@/hooks/use-rapida-store', () => ({
+jest.mock('@/stores/app', () => ({
   useRapidaStore: () => mockRapidaStore,
 }));
 

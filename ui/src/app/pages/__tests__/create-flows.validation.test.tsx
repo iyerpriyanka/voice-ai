@@ -134,7 +134,7 @@ jest.mock('@carbon/react', () => {
   };
 });
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/stores/app', () => ({
   useRapidaStore: () => ({
     loading: false,
     showLoader: mockShowLoader,

@@ -1,0 +1,19 @@
+{
+  "items": [
+    {
+      "id": "endpoint-1",
+      "name": "Customer support endpoint",
+      "status": "active",
+      "version": "v1",
+      "provider": "openai"
+    },
+    {
+      "id": "endpoint-2",
+      "name": "Sales qualification endpoint",
+      "status": "draft",
+      "version": "v2",
+      "provider": "groq"
+    }
+  ],
+  "totalCount": 2
+}

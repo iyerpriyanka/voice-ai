@@ -1,4 +1,4 @@
-import { useAssistantWebhookPageStore } from '@/app/pages/assistant/actions/store/use-webhook-page-store';
+import { useAssistantWebhookPageStore } from '@/stores/assistant/actions';
 
 jest.mock('@rapidaai/react', () => {
   class ConnectionConfig {

@@ -3,7 +3,7 @@ import { CreateProject } from '@rapidaai/react';
 import type { CreateProjectResponse, ServiceError } from '@rapidaai/react';
 import { useForm } from 'react-hook-form';
 import { useCurrentCredential } from '@/hooks/use-credential';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { ErrorMessage } from '@/app/components/ui/feedback';
 import toast from 'react-hot-toast/headless';
 import { AuthContext } from '@/context/auth-context';

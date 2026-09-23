@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { CenterBox } from '../center-box';
 import { FlexBox } from '../flex-box';
 import { MissionBox } from '../mission-box';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 
 jest.mock('@/app/components/layout/navigation/header', () => ({
   Header: ({ className }: { className?: string }) => (
@@ -42,7 +42,7 @@ jest.mock('@/context/sidebar-context', () => ({
   ),
 }));
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/stores/app', () => ({
   useRapidaStore: jest.fn(),
 }));
 

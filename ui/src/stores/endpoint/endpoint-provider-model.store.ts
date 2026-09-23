@@ -1,9 +1,4 @@
 import {
-  GetAllEndpointProviderModel,
-  GetEndpoint,
-  UpdateEndpointVersion,
-} from '@rapidaai/react';
-import {
   Endpoint,
   EndpointProviderModel,
   GetAllEndpointProviderModelResponse,
@@ -16,9 +11,13 @@ import {
   EndpointProviderModelType,
   EndpointProviderModelTypeProperty,
 } from '@/types';
+import {
+  getEndpoint,
+  listEndpointProviderModels,
+  releaseEndpointVersion,
+} from '@/clients';
 import { initialPaginated } from '@/types/types.paginated';
 import { create } from 'zustand';
-import { connectionConfig } from '@/configs';
 
 const initialState: EndpointProviderModelTypeProperty = {
   /**
@@ -166,19 +165,14 @@ export const useEndpointProviderModelPageStore =
         }
       };
 
-      GetAllEndpointProviderModel(
-        connectionConfig,
+      listEndpointProviderModels({
         endpointId,
-        get().page,
-        get().pageSize,
-        get().criteria,
-        afterGetAllEndpointProviderModel,
-        {
-          authorization: token,
-          'x-auth-id': userId,
-          'x-project-id': projectId,
-        },
-      );
+        page: get().page,
+        pageSize: get().pageSize,
+        criteria: get().criteria,
+        auth: { projectId, token, userId },
+        callback: afterGetAllEndpointProviderModel,
+      });
     },
 
     /**
@@ -216,17 +210,12 @@ export const useEndpointProviderModelPageStore =
         }
       };
 
-      GetEndpoint(
-        connectionConfig,
+      getEndpoint({
         endpointId,
-        null,
-        {
-          authorization: token,
-          'x-auth-id': userId,
-          'x-project-id': projectId,
-        },
-        afterGetEndpoint,
-      );
+        endpointProviderModelId: null,
+        auth: { projectId, token, userId },
+        callback: afterGetEndpoint,
+      });
     },
 
     onReleaseVersion: (
@@ -265,17 +254,12 @@ export const useEndpointProviderModelPageStore =
         }
       };
 
-      UpdateEndpointVersion(
-        connectionConfig,
-        endpoint?.getId(),
+      releaseEndpointVersion({
+        endpointId: endpoint.getId(),
         endpointProviderModelId,
-        {
-          authorization: token,
-          'x-auth-id': userId,
-          'x-project-id': projectId,
-        },
-        afterUpdateEndpointVersion,
-      );
+        auth: { projectId, token, userId },
+        callback: afterUpdateEndpointVersion,
+      });
     },
 
     /**

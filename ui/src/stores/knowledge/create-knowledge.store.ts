@@ -6,7 +6,7 @@ import {
   Metadata,
 } from '@rapidaai/react';
 import { CreateKnowledgeType } from '@/types/types.create-knowledge';
-import { CreateKnowledgeTypeProperty } from '../types/types.create-knowledge';
+import { CreateKnowledgeTypeProperty } from '@/types/types.create-knowledge';
 import { CreateKnowledge } from '@rapidaai/react';
 import { CreateKnowledgeResponse } from '@rapidaai/react';
 import {

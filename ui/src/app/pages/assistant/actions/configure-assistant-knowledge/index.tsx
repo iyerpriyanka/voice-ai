@@ -1,5 +1,5 @@
 import { GhostButton } from '@/app/components/ui/primitives';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { FC, useEffect } from 'react';
 import toast from 'react-hot-toast/headless';
 import { useParams } from 'react-router-dom';
@@ -10,7 +10,7 @@ import { Add, Information, Launch } from '@carbon/icons-react';
 import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
 import { PageTitleBlock } from '@/app/components/layout/blocks/page-title-block';
 import { useCurrentCredential } from '@/hooks/use-credential';
-import { useAssistantKnowledgePageStore } from '@/app/pages/assistant/actions/store/use-knowledge-page-store';
+import { useAssistantKnowledgePageStore } from '@/stores/assistant/actions';
 import { SectionLoader } from '@/app/components/ui/feedback';
 import { TablePagination } from '@/app/components/ui/table';
 import { UpdateKnowledge } from '@/app/pages/assistant/actions/configure-assistant-knowledge/update-assistant-knowledge';

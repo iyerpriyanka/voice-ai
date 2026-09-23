@@ -1,4 +1,4 @@
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { FC, useEffect, useState } from 'react';
 import toast from 'react-hot-toast/headless';
 import { useParams } from 'react-router-dom';
@@ -7,7 +7,7 @@ import { EmptyState } from '@/app/components/ui/feedback';
 import { Add, Renew, Edit, TrashCan, ToolKit } from '@carbon/icons-react';
 import { CreateTool } from '@/app/pages/assistant/actions/configure-assistant-tool/create-assistant-tool';
 import { SectionLoader } from '@/app/components/ui/feedback';
-import { useAssistantToolPageStore } from '@/app/pages/assistant/actions/store/use-tool-page-store';
+import { useAssistantToolPageStore } from '@/stores/assistant/actions';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { UpdateTool } from '@/app/pages/assistant/actions/configure-assistant-tool/update-assistant-tool';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';

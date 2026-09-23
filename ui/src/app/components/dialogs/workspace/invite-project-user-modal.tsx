@@ -21,7 +21,8 @@ import {
 import { ErrorMessage } from '@/app/components/ui/feedback';
 import { AuthContext } from '@/context/auth-context';
 import { useCurrentCredential } from '@/hooks/use-credential';
-import { useRapidaStore, useUserPageStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
+import { useUserPageStore } from '@/stores/user';
 import { connectionConfig } from '@/configs';
 import {
   ProjectRoleRow,

@@ -14,7 +14,7 @@ import {
 } from '@rapidaai/react';
 import { Organization } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { useCredential } from '@/hooks/use-credential';
 import { useForm } from 'react-hook-form';
 import { connectionConfig } from '@/configs';

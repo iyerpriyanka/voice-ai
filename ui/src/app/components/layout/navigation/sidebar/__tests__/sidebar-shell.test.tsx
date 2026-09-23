@@ -41,7 +41,7 @@ jest.mock('@/workspace', () => ({
   useWorkspace: () => ({ features: mockWorkspaceFeatures }),
 }));
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/stores/app', () => ({
   useRapidaStore: () => ({
     loading: mockRapidaLoading,
     loadingType: mockRapidaLoadingType,

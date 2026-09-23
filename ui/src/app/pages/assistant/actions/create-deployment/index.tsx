@@ -36,7 +36,7 @@ import {
 } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
 import { connectionConfig } from '@/configs';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { toHumanReadableDateTime } from '@/utils/date';
 import { AssistantPhoneCallDeploymentDialog } from '@/app/components/dialogs/assistant';
 import { AssistantDebugDeploymentDialog } from '@/app/components/dialogs/assistant';

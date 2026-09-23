@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Helmet } from '@/app/components/app-shell/helmet';
 import { useCredential } from '@/hooks/use-credential';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { TablePagination } from '@/app/components/ui/table';
 import { SearchIconInput } from '@/app/components/ui/composites';
 import { BluredWrapper } from '@/app/components/layout/wrapper/blured-wrapper';
 import toast from 'react-hot-toast/headless';
-import { useKnowledgePageStore } from '@/hooks/use-knowledge-page-store';
+import { useKnowledgePageStore } from '@/stores/knowledge/knowledge.store';
 import { Knowledge } from '@rapidaai/react';
 import { PageLoading } from '@/app/components/ui/feedback';
 import { ClickableKnowledgeCard } from '@/app/components/domain/cards/knowledge-card';
