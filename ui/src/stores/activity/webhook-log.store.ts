@@ -5,14 +5,8 @@ import {
   WebhookLogType,
   WebhookLogTypeProperty,
 } from '@/types/types.webhook-log';
-import {
-  AssistantHTTPLog,
-  Criteria,
-  GetAllAssistantHTTPLogRequest,
-  Paginate,
-} from '@rapidaai/react';
-import { GetAllHTTPLog } from '@rapidaai/react';
-import { connectionConfig } from '@/configs';
+import { AssistantHTTPLog } from '@rapidaai/react';
+import { listWebhookLogs } from '@/clients/activity.client';
 
 const intialActivityLog: WebhookLogTypeProperty = {
   webhookLogs: [],
@@ -154,27 +148,13 @@ export const useWebhookLogPage = create<WebhookLogType>((set, get) => ({
     onError: (err: string) => void,
     onSuccess: (e: AssistantHTTPLog[]) => void,
   ) => {
-    const req = new GetAllAssistantHTTPLogRequest();
-    req.setProjectid(projectId);
-
-    const paginate = new Paginate();
-    paginate.setPage(get().page);
-    paginate.setPagesize(get().pageSize);
-    req.setPaginate(paginate);
-
-    get().criteria.forEach(({ key, value, logic }) => {
-      const ctr = new Criteria();
-      ctr.setKey(key);
-      ctr.setValue(value);
-      ctr.setLogic(logic);
-      req.addCriterias(ctr);
-    });
-
     try {
-      const gur = await GetAllHTTPLog(connectionConfig, req, {
-        authorization: token,
-        'x-project-id': projectId,
-        'x-auth-id': userId,
+      const gur = await listWebhookLogs({
+        projectId,
+        page: get().page,
+        pageSize: get().pageSize,
+        criteria: get().criteria,
+        auth: { projectId, token, userId },
       });
 
       if (gur?.getSuccess()) {

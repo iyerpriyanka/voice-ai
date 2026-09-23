@@ -1,15 +1,14 @@
-import {
-  CreateKnowledgeTag,
-  GetAllKnowledgeBases,
-  UpdateKnowledgeDetail,
-} from '@rapidaai/react';
 import { GetAllKnowledgeResponse, GetKnowledgeResponse } from '@rapidaai/react';
 import { KnowledgeType, KnowledgeTypeProperty } from '@/types/types.knowledge';
 import { initialPaginated } from '@/types/types.paginated';
 import { create } from 'zustand';
 import { Knowledge } from '@rapidaai/react';
 import { ServiceError } from '@rapidaai/react';
-import { connectionConfig } from '@/configs';
+import {
+  createKnowledgeBaseTag,
+  listKnowledgeBases,
+  updateKnowledgeBaseDetail,
+} from '@/clients/knowledge.client';
 /**
  *
  */
@@ -181,18 +180,13 @@ export const useKnowledgePageStore = create<KnowledgeType>((set, get) => ({
       }
     };
 
-    GetAllKnowledgeBases(
-      connectionConfig,
-      get().page,
-      get().pageSize,
-      get().criteria,
-      afterGetAllKnowledge,
-      {
-        authorization: token,
-        'x-project-id': projectId,
-        'x-auth-id': userId,
-      },
-    );
+    listKnowledgeBases({
+      page: get().page,
+      pageSize: get().pageSize,
+      criteria: get().criteria,
+      auth: { projectId, token, userId },
+      callback: afterGetAllKnowledge,
+    });
   },
 
   /**
@@ -275,19 +269,13 @@ export const useKnowledgePageStore = create<KnowledgeType>((set, get) => ({
       }
     };
 
-    // when you have api then you can uncomment it
-    UpdateKnowledgeDetail(
-      connectionConfig,
+    updateKnowledgeBaseDetail({
       knowledgeId,
       name,
       description,
-      afterUpdateKnowledge,
-      {
-        authorization: token,
-        'x-project-id': projectId,
-        'x-auth-id': userId,
-      },
-    );
+      auth: { projectId, token, userId },
+      callback: afterUpdateKnowledge,
+    });
   },
 
   /**
@@ -348,17 +336,12 @@ export const useKnowledgePageStore = create<KnowledgeType>((set, get) => ({
         onError('Unable to update endpoint tag, please try again later.');
       }
     };
-    CreateKnowledgeTag(
-      connectionConfig,
+    createKnowledgeBaseTag({
       knowledgeId,
       tags,
-      afterCreateKnowledgeTag,
-      {
-        authorization: token,
-        'x-project-id': projectId,
-        'x-auth-id': userId,
-      },
-    );
+      auth: { projectId, token, userId },
+      callback: afterCreateKnowledgeTag,
+    });
   },
 
   /**

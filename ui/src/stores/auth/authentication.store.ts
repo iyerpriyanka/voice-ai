@@ -9,9 +9,8 @@ import {
   AuthenticateResponse,
 } from '@rapidaai/react';
 import { User } from '@rapidaai/react';
-import { AuthorizeUser } from '@rapidaai/react';
 import { ServiceError } from '@rapidaai/react';
-import { connectionConfig } from '@/configs';
+import { authorizeUser } from '@/clients/authentication.client';
 
 export const useAuthenticationStore = create<AuthenticationType>()(
   persist(
@@ -66,8 +65,7 @@ export const useAuthenticationStore = create<AuthenticationType>()(
           onFailure('Missing token');
           return;
         }
-        AuthorizeUser(
-          connectionConfig,
+        authorizeUser(
           (err: ServiceError | null, auth: AuthenticateResponse | null) => {
             if (err) {
               onFailure(err.message);

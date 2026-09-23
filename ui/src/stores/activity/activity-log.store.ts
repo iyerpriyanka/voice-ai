@@ -7,8 +7,7 @@ import { initialPaginated } from '@/types/types.paginated';
 import { GetAllAuditLogResponse } from '@rapidaai/react';
 import { AuditLog } from '@rapidaai/react';
 import { ServiceError } from '@rapidaai/react';
-import { ConnectionConfig, GetActivities } from '@rapidaai/react';
-import { connectionConfig } from '@/configs';
+import { listActivities } from '@/clients/activity.client';
 
 const intialActivityLog: ActivityLogTypeProperty = {
   activities: [],
@@ -171,19 +170,14 @@ export const useActivityLogPage = create<ActivityLogType>((set, get) => ({
       }
     };
 
-    GetActivities(
-      connectionConfig,
+    listActivities({
       projectId,
-      get().page,
-      get().pageSize,
-      get().criteria,
-      afterGetAllActivityLog,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        projectId: projectId,
-        userId: userId,
-      }),
-    );
+      page: get().page,
+      pageSize: get().pageSize,
+      criteria: get().criteria,
+      auth: { projectId, token, userId },
+      callback: afterGetAllActivityLog,
+    });
   },
 
   /**

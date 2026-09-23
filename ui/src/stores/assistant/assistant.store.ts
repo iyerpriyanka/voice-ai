@@ -1,16 +1,4 @@
-import {
-  AssistantDefinition,
-  ConnectionConfig,
-  CreateAssistantTag,
-  Criteria,
-  GetAllAssistant,
-  GetAllAssistantRequest,
-  GetAssistant,
-  GetAssistantRequest,
-  Paginate,
-  ServiceError,
-  UpdateAssistantDetail,
-} from '@rapidaai/react';
+import { ServiceError } from '@rapidaai/react';
 import { Assistant, GetAssistantResponse } from '@rapidaai/react';
 
 import { create } from 'zustand';
@@ -19,7 +7,12 @@ import {
   initialPaginated,
   initialPaginatedState,
 } from '@/types/types.paginated';
-import { connectionConfig } from '@/configs';
+import {
+  createAssistantTags,
+  getAssistantById,
+  listAssistants,
+  updateAssistantDescription,
+} from '@/clients/assistant.client';
 
 const intialAssistant: AssistantTypeProperty = {
   /**
@@ -214,29 +207,12 @@ export const useAssistantPageStore = create<AssistantType>((set, get) => ({
     onError: (err: string) => void,
     onSuccess: (e: Assistant[]) => void,
   ) => {
-    const request = new GetAllAssistantRequest();
-    const paginate = new Paginate();
-    paginate.setPage(get().page);
-    paginate.setPagesize(get().pageSize);
-    request.setPaginate(paginate);
-
-    get().criteria.forEach(criterion => {
-      const criteria = new Criteria();
-      criteria.setKey(criterion.key);
-      criteria.setLogic(criterion.logic);
-      criteria.setValue(criterion.value);
-      request.addCriterias(criteria);
-    });
-
-    GetAllAssistant(
-      connectionConfig,
-      request,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        projectId: projectId,
-        userId: userId,
-      }),
-    )
+    listAssistants({
+      page: get().page,
+      pageSize: get().pageSize,
+      criteria: get().criteria,
+      auth: { projectId, token, userId },
+    })
       .then(gur => {
         if (gur?.getSuccess()) {
           get().onChangeAssistants(gur.getDataList());
@@ -283,21 +259,11 @@ export const useAssistantPageStore = create<AssistantType>((set, get) => ({
     onSuccess: (assistant: Assistant) => void,
     onError: (err: string) => void,
   ) => {
-    const request = new GetAssistantRequest();
-    const assistantDef = new AssistantDefinition();
-    assistantDef.setAssistantid(assistantId);
-    if (assistantProviderModelId)
-      assistantDef.setVersion(assistantProviderModelId);
-    request.setAssistantdefinition(assistantDef);
-    GetAssistant(
-      connectionConfig,
-      request,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: userId,
-        projectId: projectId,
-      }),
-    )
+    getAssistantById({
+      assistantId,
+      assistantProviderModelId,
+      auth: { projectId, token, userId },
+    })
       .then(epmr => {
         if (epmr?.getSuccess()) {
           let assistant = epmr.getData();
@@ -427,19 +393,13 @@ export const useAssistantPageStore = create<AssistantType>((set, get) => ({
       }
     };
 
-    // when you have api then you can uncomment it
-    UpdateAssistantDetail(
-      connectionConfig,
+    updateAssistantDescription({
       assistantId,
       name,
       description,
-      afterUpdateAssistant,
-      {
-        authorization: token,
-        'x-project-id': projectId,
-        'x-auth-id': userId,
-      },
-    );
+      auth: { projectId, token, userId },
+      callback: afterUpdateAssistant,
+    });
   },
 
   /**
@@ -500,17 +460,12 @@ export const useAssistantPageStore = create<AssistantType>((set, get) => ({
       }
     };
 
-    CreateAssistantTag(
-      connectionConfig,
+    createAssistantTags({
       assistantId,
       tags,
-      afterCreateAssistantTag,
-      {
-        authorization: token,
-        'x-project-id': projectId,
-        'x-auth-id': userId,
-      },
-    );
+      auth: { projectId, token, userId },
+      callback: afterCreateAssistantTag,
+    });
   },
 
   /**

@@ -4,15 +4,8 @@ import {
   ToolActivityLogTypeProperty,
 } from '@/types/types.tool-activity-log';
 import { initialPaginated } from '@/types/types.paginated';
-import {
-  AssistantToolLog,
-  Criteria,
-  GetAllAssistantToolLog,
-  GetAllAssistantToolLogRequest,
-  Paginate,
-} from '@rapidaai/react';
-import { ConnectionConfig } from '@rapidaai/react';
-import { connectionConfig } from '@/configs';
+import { AssistantToolLog } from '@rapidaai/react';
+import { listToolActivityLogs } from '@/clients/activity.client';
 
 const intialToolActivityLog: ToolActivityLogTypeProperty = {
   activities: [],
@@ -155,30 +148,13 @@ export const useToolActivityLogPage = create<ToolActivityLogType>(
       onError: (err: string) => void,
       onSuccess: (e: AssistantToolLog[]) => void,
     ) => {
-      const req = new GetAllAssistantToolLogRequest();
-      req.setProjectid(projectId);
-
-      const paginate = new Paginate();
-      get().criteria.forEach(({ key, value, logic }) => {
-        const ctr = new Criteria();
-        ctr.setKey(key);
-        ctr.setValue(value);
-        ctr.setLogic(logic);
-        req.addCriterias(ctr);
-      });
-
-      paginate.setPage(get().page);
-      paginate.setPagesize(get().pageSize);
-      req.setPaginate(paginate);
-      GetAllAssistantToolLog(
-        connectionConfig,
-        req,
-        ConnectionConfig.WithDebugger({
-          authorization: token,
-          projectId: projectId,
-          userId: userId,
-        }),
-      )
+      listToolActivityLogs({
+        projectId,
+        page: get().page,
+        pageSize: get().pageSize,
+        criteria: get().criteria,
+        auth: { projectId, token, userId },
+      })
         .then(gur => {
           if (gur?.getSuccess()) {
             get().onChangeActivities(gur.getDataList());

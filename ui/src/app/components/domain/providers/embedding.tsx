@@ -1,24 +1,8 @@
 import { Metadata } from '@rapidaai/react';
 import { ConfigureCohereEmbeddingModel } from '@/app/components/domain/providers/embedding/cohere';
-import {
-  GetCohereEmbeddingDefaultOptions,
-  ValidateCohereEmbeddingDefaultOptions,
-} from '@/app/components/domain/providers/embedding/cohere/constants';
 import { ConfigureGeminiEmbeddingModel } from '@/app/components/domain/providers/embedding/gemini';
-import {
-  GetGeminiEmbeddingDefaultOptions,
-  ValidateGeminiEmbeddingDefaultOptions,
-} from '@/app/components/domain/providers/embedding/gemini/constants';
 import { ConfigureOpenaiEmbeddingModel } from '@/app/components/domain/providers/embedding/openai';
-import {
-  GetOpenaiEmbeddingDefaultOptions,
-  ValidateOpenaiEmbeddingDefaultOptions,
-} from '@/app/components/domain/providers/embedding/openai/constants';
 import { ConfigureVoyageEmbeddingModel } from '@/app/components/domain/providers/embedding/voyageai';
-import {
-  GetVoyageEmbeddingDefaultOptions,
-  ValidateVoyageEmbeddingDefaultOptions,
-} from '@/app/components/domain/providers/embedding/voyageai/constants';
 import { useCallback } from 'react';
 import { CredentialDropdown } from '@/app/components/domain/dropdowns/credential-dropdown';
 import { Dropdown } from '@carbon/react';
@@ -31,54 +15,10 @@ import type {
   ProviderSelectionChange,
 } from '@/app/components/domain/providers/provider-component-props';
 import type { RapidaProvider } from '@/providers';
-
-/**
- *
- * @param provider
- * @param parameters
- * @returns
- */
-export const GetDefaultEmbeddingConfigIfInvalid = (
-  provider: string,
-  parameters: Metadata[],
-): Metadata[] => {
-  switch (provider) {
-    case 'cohere':
-      return GetCohereEmbeddingDefaultOptions(parameters);
-    case 'openai':
-      return GetOpenaiEmbeddingDefaultOptions(parameters);
-    case 'gemini':
-      return GetGeminiEmbeddingDefaultOptions(parameters);
-    case 'voyageai':
-      return GetVoyageEmbeddingDefaultOptions(parameters);
-    default:
-      return parameters;
-  }
-};
-
-/**
- *
- * @param provider
- * @param parameters
- * @returns
- */
-export const ValidateEmbeddingDefaultOptions = (
-  provider: string,
-  parameters: Metadata[],
-): string | undefined => {
-  switch (provider) {
-    case 'cohere':
-      return ValidateCohereEmbeddingDefaultOptions(parameters);
-    case 'openai':
-      return ValidateOpenaiEmbeddingDefaultOptions(parameters);
-    case 'gemini':
-      return ValidateGeminiEmbeddingDefaultOptions(parameters);
-    case 'voyageai':
-      return ValidateVoyageEmbeddingDefaultOptions(parameters);
-    default:
-      return 'Please select a valid provider and model for embedding';
-  }
-};
+export {
+  GetDefaultEmbeddingConfigIfInvalid,
+  ValidateEmbeddingDefaultOptions,
+} from '@/providers/embedding-defaults';
 
 /**
  *

@@ -9,9 +9,8 @@ import {
   KnowledgeDocument,
   KnowledgeDocumentSegment,
 } from '@rapidaai/react';
-import { GetAllKnowledgeDocumentSegment } from '@rapidaai/react';
 import { ServiceError } from '@rapidaai/react';
-import { connectionConfig } from '@/configs';
+import { listKnowledgeDocumentSegments } from '@/clients/knowledge.client';
 
 const initialKnowledgeDocumentSegmentType: KnowledgeDocumentSegmentTypeProperty =
   {
@@ -128,19 +127,14 @@ export const useKnowledgeDocumentSegmentPageStore =
         }
       };
 
-      GetAllKnowledgeDocumentSegment(
-        connectionConfig,
+      listKnowledgeDocumentSegments({
         knowledgeId,
-        get().page,
-        get().pageSize,
-        get().criteria,
-        afterGetAllKnowledgeDocumentSegment,
-        {
-          authorization: token,
-          'x-project-id': projectId,
-          'x-auth-id': userId,
-        },
-      );
+        page: get().page,
+        pageSize: get().pageSize,
+        criteria: get().criteria,
+        auth: { projectId, token, userId },
+        callback: afterGetAllKnowledgeDocumentSegment,
+      });
     },
 
     /**

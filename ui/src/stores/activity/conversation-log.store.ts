@@ -9,8 +9,7 @@ import {
 import { create } from 'zustand';
 import { ServiceError } from '@rapidaai/react';
 import { GetAllMessageResponse } from '@rapidaai/react';
-import { GetMessages } from '@rapidaai/react';
-import { connectionConfig } from '@/configs';
+import { listConversationMessages } from '@/clients/activity.client';
 const initialState: ConversationLogProperty = {
   /**
    *
@@ -109,19 +108,14 @@ export const useConversationLogPageStore = create<ConversationLog>(
         }
       };
 
-      GetMessages(
-        connectionConfig,
-        get().page,
-        get().pageSize,
-        get().criteria,
-        get().fields,
-        afterGetAssistantMessages,
-        {
-          authorization: token,
-          'x-auth-id': userId,
-          'x-project-id': projectId,
-        },
-      );
+      listConversationMessages({
+        page: get().page,
+        pageSize: get().pageSize,
+        criteria: get().criteria,
+        fields: get().fields,
+        auth: { projectId, token, userId },
+        callback: afterGetAssistantMessages,
+      });
     },
     /**
      * columns

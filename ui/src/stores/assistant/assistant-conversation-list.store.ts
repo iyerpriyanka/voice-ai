@@ -9,9 +9,8 @@ import {
 import { create } from 'zustand';
 import { ServiceError } from '@rapidaai/react';
 import { AssistantConversation } from '@rapidaai/react';
-import { GetAllAssistantConversation } from '@rapidaai/react';
 import { GetAllAssistantConversationResponse } from '@rapidaai/react';
-import { connectionConfig } from '@/configs';
+import { listAssistantConversations } from '@/clients/assistant.client';
 
 const initialState: AssistantConversationProperty = {
   assistantConversations: [],
@@ -122,19 +121,14 @@ export const useAssistantConversationListPageStore =
           );
         }
       };
-      GetAllAssistantConversation(
-        connectionConfig,
+      listAssistantConversations({
         assistantId,
-        get().page,
-        get().pageSize,
-        get().criteria,
-        afterGetAllAssistantConversation,
-        {
-          authorization: token,
-          'x-auth-id': userId,
-          'x-project-id': projectId,
-        },
-      );
+        page: get().page,
+        pageSize: get().pageSize,
+        criteria: get().criteria,
+        auth: { projectId, token, userId },
+        callback: afterGetAllAssistantConversation,
+      });
     },
     /**
      * columns

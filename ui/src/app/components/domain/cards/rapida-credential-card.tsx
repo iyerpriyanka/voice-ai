@@ -1,7 +1,5 @@
 import {
-  CreateProjectCredential,
   CreateProjectCredentialResponse,
-  GetAllProjectCredential,
   GetAllProjectCredentialResponse,
 } from '@rapidaai/react';
 import type { ProjectCredential } from '@rapidaai/react';
@@ -13,7 +11,10 @@ import { useCurrentCredential } from '@/hooks/use-credential';
 import { toHumanReadableRelativeDay } from '@/utils/date';
 import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast/headless';
-import { connectionConfig } from '@/configs';
+import {
+  createProjectCredential,
+  getAllProjectCredential as listProjectCredentials,
+} from '@/clients';
 
 export const RapidaCredentialCard = () => {
   const [ourKeys, setOurKeys] = useState<ProjectCredential[]>([]);
@@ -22,8 +23,7 @@ export const RapidaCredentialCard = () => {
 
   const onCreateProjectCredential = () => {
     if (!projectId) return;
-    CreateProjectCredential(
-      connectionConfig,
+    createProjectCredential(
       projectId,
       'publishable key',
       afterCreateProjectCredential,
@@ -77,15 +77,10 @@ export const RapidaCredentialCard = () => {
 
   const getAllProjectCredential = () => {
     showLoader();
-    GetAllProjectCredential(
-      connectionConfig,
-      projectId,
-      afterGetAllProjectCredential,
-      {
-        authorization: token,
-        'x-auth-id': authId,
-      },
-    );
+    listProjectCredentials(projectId, afterGetAllProjectCredential, {
+      authorization: token,
+      'x-auth-id': authId,
+    });
   };
 
   return (

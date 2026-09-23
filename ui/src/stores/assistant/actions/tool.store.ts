@@ -10,8 +10,10 @@ import {
   AssistantToolProperty,
   AssistantToolType,
 } from './types/types.assistant-tool';
-import { DeleteAssistantTool, GetAllAssistantTool } from '@rapidaai/react';
-import { connectionConfig } from '@/configs';
+import {
+  deleteAssistantToolById,
+  listAssistantTools,
+} from '@/clients/assistant.client';
 
 const initialAssistantTool: AssistantToolProperty = {
   tools: [],
@@ -136,19 +138,14 @@ export const useAssistantToolPageStore = create<AssistantToolType>(
         }
       };
 
-      GetAllAssistantTool(
-        connectionConfig,
+      listAssistantTools({
         assistantId,
-        get().page,
-        get().pageSize,
-        get().criteria,
-        afterGetAllAssistantTool,
-        {
-          authorization: token,
-          'x-project-id': projectId,
-          'x-auth-id': userId,
-        },
-      );
+        page: get().page,
+        pageSize: get().pageSize,
+        criteria: get().criteria,
+        auth: { projectId, token, userId },
+        callback: afterGetAllAssistantTool,
+      });
     },
 
     /**
@@ -186,17 +183,12 @@ export const useAssistantToolPageStore = create<AssistantToolType>(
         }
       };
 
-      DeleteAssistantTool(
-        connectionConfig,
+      deleteAssistantToolById({
         assistantId,
         toolId,
-        afterDeleteAssistantTool,
-        {
-          authorization: token,
-          'x-project-id': projectId,
-          'x-auth-id': userId,
-        },
-      );
+        auth: { projectId, token, userId },
+        callback: afterDeleteAssistantTool,
+      });
     },
     /**
      * columns

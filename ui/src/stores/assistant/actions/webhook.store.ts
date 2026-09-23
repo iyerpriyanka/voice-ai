@@ -2,21 +2,17 @@ import { create } from 'zustand';
 import { initialPaginated } from '@/types/types.paginated';
 import {
   AssistantConfiguration,
-  Criteria,
-  DeleteAssistantConfiguration,
-  DeleteAssistantConfigurationRequest,
-  GetAllAssistantConfiguration,
-  GetAllAssistantConfigurationRequest,
   GetAssistantConfigurationResponse,
-  Paginate,
-  UpdateAssistantConfiguration,
-  UpdateAssistantConfigurationRequest,
 } from '@rapidaai/react';
 import {
   AssistantWebhookProperty,
   AssistantWebhookType,
 } from './types/types.assistant-webhook';
-import { connectionConfig } from '@/configs';
+import {
+  deleteAssistantConfigurationById,
+  listAssistantConfigurations,
+  updateAssistantConfigurationEnabled,
+} from '@/clients/assistant.client';
 
 const webhookConfigurationType = 'webhook';
 
@@ -122,28 +118,14 @@ export const useAssistantWebhookPageStore = create<AssistantWebhookType>(
       onError: (err: string) => void,
       onSuccess: (e: AssistantConfiguration[]) => void,
     ) => {
-      const req = new GetAllAssistantConfigurationRequest();
-      req.setAssistantid(assistantId);
-      req.setConfigurationtype(webhookConfigurationType);
-
-      const paginate = new Paginate();
-      paginate.setPage(get().page);
-      paginate.setPagesize(get().pageSize);
-      req.setPaginate(paginate);
-
-      get().criteria.forEach(({ key, value, logic }) => {
-        const ctr = new Criteria();
-        ctr.setKey(key);
-        ctr.setValue(value);
-        ctr.setLogic(logic);
-        req.addCriterias(ctr);
-      });
-
       try {
-        const gur = await GetAllAssistantConfiguration(connectionConfig, req, {
-          authorization: token,
-          'x-project-id': projectId,
-          'x-auth-id': userId,
+        const gur = await listAssistantConfigurations({
+          assistantId,
+          configurationType: webhookConfigurationType,
+          page: get().page,
+          pageSize: get().pageSize,
+          criteria: get().criteria,
+          auth: { projectId, token, userId },
         });
 
         if (gur?.getSuccess()) {
@@ -185,16 +167,12 @@ export const useAssistantWebhookPageStore = create<AssistantWebhookType>(
       onError: (err: string) => void,
       onSuccess: (e: AssistantConfiguration) => void,
     ) => {
-      const req = new DeleteAssistantConfigurationRequest();
-      req.setAssistantid(assistantId);
-      req.setId(webhookId);
-
       try {
         const gur: GetAssistantConfigurationResponse =
-          await DeleteAssistantConfiguration(connectionConfig, req, {
-            authorization: token,
-            'x-project-id': projectId,
-            'x-auth-id': userId,
+          await deleteAssistantConfigurationById({
+            assistantId,
+            configurationId: webhookId,
+            auth: { projectId, token, userId },
           });
 
         if (gur?.getSuccess() && gur.getData()) {
@@ -224,20 +202,14 @@ export const useAssistantWebhookPageStore = create<AssistantWebhookType>(
       onError: (err: string) => void,
       onSuccess: (e: AssistantConfiguration) => void,
     ) => {
-      const req = new UpdateAssistantConfigurationRequest();
-      req.setId(webhook.getId());
-      req.setAssistantid(assistantId);
-      req.setConfigurationtype(webhookConfigurationType);
-      req.setProvider(webhook.getProvider());
-      req.setEnabled(enabled);
-      req.setOptionsList(webhook.getOptionsList());
-
       try {
         const gur: GetAssistantConfigurationResponse =
-          await UpdateAssistantConfiguration(connectionConfig, req, {
-            authorization: token,
-            'x-project-id': projectId,
-            'x-auth-id': userId,
+          await updateAssistantConfigurationEnabled({
+            assistantId,
+            configurationType: webhookConfigurationType,
+            configuration: webhook,
+            enabled,
+            auth: { projectId, token, userId },
           });
 
         if (gur?.getSuccess() && gur.getData()) {

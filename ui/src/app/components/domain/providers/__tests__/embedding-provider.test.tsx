@@ -2,12 +2,11 @@ import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { Metadata } from '@rapidaai/react';
+import { EmbeddingConfigComponent, EmbeddingProvider } from '../embedding';
 import {
-  EmbeddingConfigComponent,
-  EmbeddingProvider,
   GetDefaultEmbeddingConfigIfInvalid,
   ValidateEmbeddingDefaultOptions,
-} from '../embedding';
+} from '@/providers/embedding-defaults';
 import { COHERE_EMBEDDING_MODEL } from '../embedding/cohere/constants';
 import { OPENAI_EMBEDDING_MODEL } from '../embedding/openai/constants';
 import { VOYAGE_EMBEDDING_MODEL } from '../embedding/voyageai/constants';

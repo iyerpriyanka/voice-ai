@@ -1,4 +1,3 @@
-import { ConnectionConfig, GetAllUser } from '@rapidaai/react';
 import { User } from '@rapidaai/react';
 import { ServiceError } from '@rapidaai/react';
 import { GetAllUserResponse } from '@rapidaai/react';
@@ -6,7 +5,7 @@ import { GetAllUserResponse } from '@rapidaai/react';
 import { UserType } from '@/types';
 import { initialPaginated } from '@/types/types.paginated';
 import { create } from 'zustand';
-import { connectionConfig } from '@/configs';
+import { listUsers } from '@/clients/user.client';
 
 /**
  *
@@ -123,18 +122,13 @@ export const useUserPageStore = create<UserType>((set, get) => ({
       );
     };
 
-    GetAllUser(
-      connectionConfig,
-      get().page,
-      get().pageSize,
-      get().criteria,
-      afterGetAllUser,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: userId,
-        projectId: projectId,
-      }),
-    );
+    listUsers({
+      page: get().page,
+      pageSize: get().pageSize,
+      criteria: get().criteria,
+      auth: { projectId, token, userId },
+      callback: afterGetAllUser,
+    });
   },
 
   /**

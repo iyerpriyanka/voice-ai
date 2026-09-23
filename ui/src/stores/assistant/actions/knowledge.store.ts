@@ -11,10 +11,9 @@ import {
   AssistantKnowledgeType,
 } from './types/types.assistant-knowledge';
 import {
-  DeleteAssistantKnowledge,
-  GetAllAssistantKnowledge,
-} from '@rapidaai/react';
-import { connectionConfig } from '@/configs';
+  deleteAssistantKnowledgeLink,
+  listAssistantKnowledgeLinks,
+} from '@/clients/assistant.client';
 
 const initialAssistantKnowledge: AssistantKnowledgeProperty = {
   knowledges: [],
@@ -139,19 +138,14 @@ export const useAssistantKnowledgePageStore = create<AssistantKnowledgeType>(
         }
       };
 
-      GetAllAssistantKnowledge(
-        connectionConfig,
+      listAssistantKnowledgeLinks({
         assistantId,
-        get().page,
-        get().pageSize,
-        get().criteria,
-        afterGetAllAssistantKnowledge,
-        {
-          authorization: token,
-          'x-project-id': projectId,
-          'x-auth-id': userId,
-        },
-      );
+        page: get().page,
+        pageSize: get().pageSize,
+        criteria: get().criteria,
+        auth: { projectId, token, userId },
+        callback: afterGetAllAssistantKnowledge,
+      });
     },
 
     /**
@@ -191,17 +185,12 @@ export const useAssistantKnowledgePageStore = create<AssistantKnowledgeType>(
         }
       };
 
-      DeleteAssistantKnowledge(
-        connectionConfig,
+      deleteAssistantKnowledgeLink({
         assistantId,
         knowledgeId,
-        afterDeleteAssistantKnowledge,
-        {
-          authorization: token,
-          'x-project-id': projectId,
-          'x-auth-id': userId,
-        },
-      );
+        auth: { projectId, token, userId },
+        callback: afterDeleteAssistantKnowledge,
+      });
     },
     /**
      * columns

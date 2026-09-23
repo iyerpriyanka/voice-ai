@@ -1,4 +1,3 @@
-import { ConnectionConfig, CreateKnowledgeDocument } from '@rapidaai/react';
 import {
   CreateKnowledgeDocumentResponse,
   KnowledgeDocument,
@@ -15,7 +14,7 @@ import {
   RapidaDocumentSource,
   RapidaDocumentType,
 } from '@/utils/rapida_document';
-import { connectionConfig } from '@/configs';
+import { createKnowledgeDocuments } from '@/clients/knowledge.client';
 
 const initialState: CreateKnowledgeDocumentProperty = {
   /**
@@ -215,24 +214,19 @@ export const useCreateKnowledgeDocumentPageStore =
         return;
       };
 
-      CreateKnowledgeDocument(
-        connectionConfig,
+      createKnowledgeDocuments({
         knowledgeId,
         documentSource,
         datasource,
-        get().documentType,
-        RapidaDocumentPreProcessing.AUTOMATIC,
+        documentType: get().documentType,
+        preProcessing: RapidaDocumentPreProcessing.AUTOMATIC,
         contents,
-        get().separator,
-        get().maxChunkSize,
-        get().chunkOverlap,
-        afterCreateKnowledgeDocument,
-        ConnectionConfig.WithDebugger({
-          authorization: token,
-          userId: userId,
-          projectId: projectId,
-        }),
-      );
+        separator: get().separator,
+        maxChunkSize: get().maxChunkSize,
+        chunkOverlap: get().chunkOverlap,
+        auth: { projectId, token, userId },
+        callback: afterCreateKnowledgeDocument,
+      });
     },
 
     /**
@@ -327,24 +321,19 @@ export const useCreateKnowledgeDocumentPageStore =
         return;
       };
 
-      CreateKnowledgeDocument(
-        connectionConfig,
+      createKnowledgeDocuments({
         knowledgeId,
-        get().documentSource,
-        get().datasource,
-        get().documentType,
+        documentSource: get().documentSource,
+        datasource: get().datasource,
+        documentType: get().documentType,
         preProcessing,
         contents,
-        get().separator,
-        get().maxChunkSize,
-        get().chunkOverlap,
-        afterCreateKnowledgeDocument,
-        ConnectionConfig.WithDebugger({
-          authorization: token,
-          userId: userId,
-          projectId: projectId,
-        }),
-      );
+        separator: get().separator,
+        maxChunkSize: get().maxChunkSize,
+        chunkOverlap: get().chunkOverlap,
+        auth: { projectId, token, userId },
+        callback: afterCreateKnowledgeDocument,
+      });
     },
     clear: () => {
       set({ ...initialState }, false);

@@ -1,8 +1,4 @@
 import {
-  ConnectionConfig,
-  GetAllAssistantConversationMessage,
-} from '@rapidaai/react';
-import {
   AssistantConversationMessage,
   GetAllConversationMessageResponse,
 } from '@rapidaai/react';
@@ -19,7 +15,7 @@ import React from 'react';
 import { create } from 'zustand';
 import { ServiceError } from '@rapidaai/react';
 import { Assistant } from '@rapidaai/react';
-import { connectionConfig } from '@/configs';
+import { listAssistantConversationMessages } from '@/clients/assistant.client';
 
 const initialState: AssistantChatProperty = {
   /**
@@ -174,20 +170,15 @@ export const useAssistantChat = create<AssistantChatType>((set, get) => ({
       }
     };
 
-    GetAllAssistantConversationMessage(
-      connectionConfig,
+    listAssistantConversationMessages({
       assistantId,
       conversationId,
-      get().page,
-      get().pageSize,
-      get().criteria,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        projectId: projectId,
-        userId: userId,
-      }),
-      afterGetAllAssistantConversationMessage,
-    );
+      page: get().page,
+      pageSize: get().pageSize,
+      criteria: get().criteria,
+      auth: { projectId, token, userId },
+      callback: afterGetAllAssistantConversationMessage,
+    });
   },
 
   /**

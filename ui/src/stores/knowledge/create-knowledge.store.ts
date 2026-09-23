@@ -1,20 +1,14 @@
 import { create } from 'zustand';
-import {
-  ConnectionConfig,
-  CreateKnowledgeRequest,
-  Knowledge,
-  Metadata,
-} from '@rapidaai/react';
+import { Knowledge, Metadata } from '@rapidaai/react';
 import { CreateKnowledgeType } from '@/types/types.create-knowledge';
 import { CreateKnowledgeTypeProperty } from '@/types/types.create-knowledge';
-import { CreateKnowledge } from '@rapidaai/react';
 import { CreateKnowledgeResponse } from '@rapidaai/react';
 import {
   GetDefaultEmbeddingConfigIfInvalid,
   ValidateEmbeddingDefaultOptions,
-} from '@/app/components/domain/providers/embedding';
+} from '@/providers/embedding-defaults';
 import { randomMeaningfullName } from '@/utils';
-import { connectionConfig } from '@/configs';
+import { createKnowledgeBase } from '@/clients/knowledge.client';
 
 /**
  *
@@ -151,21 +145,14 @@ export const useCreateKnowledgePageStore = create<CreateKnowledgeType>(
 
       let _tags = get().tags;
 
-      const req = new CreateKnowledgeRequest();
-      req.setEmbeddingmodelprovidername(_providerModel);
-      req.setKnowledgeembeddingmodeloptionsList(get().providerParamters);
-      req.setName(_name);
-      req.setDescription(_description);
-      req.setTagsList(_tags);
-      CreateKnowledge(
-        connectionConfig,
-        req,
-        ConnectionConfig.WithDebugger({
-          authorization: token,
-          userId: userId,
-          projectId: projectId,
-        }),
-      )
+      createKnowledgeBase({
+        embeddingModelProviderName: _providerModel,
+        embeddingModelOptions: get().providerParamters,
+        name: _name,
+        description: _description,
+        tags: _tags,
+        auth: { projectId, token, userId },
+      })
         .then((car: CreateKnowledgeResponse | null) => {
           if (car?.getSuccess()) {
             let assistant = car.getData();

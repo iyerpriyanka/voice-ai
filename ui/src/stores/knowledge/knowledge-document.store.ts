@@ -5,15 +5,15 @@ import {
   KnowledgeDocumentType,
 } from '@/types/types.knowledge-document';
 import {
-  ConnectionConfig,
   GetAllKnowledgeDocumentResponse,
   KnowledgeDocument,
 } from '@rapidaai/react';
-import { GetAllKnowledgeDocument } from '@rapidaai/react';
 import { ServiceError } from '@rapidaai/react';
-import { IndexKnowledgeDocument } from '@rapidaai/react';
 import { IndexKnowledgeDocumentResponse } from '@rapidaai/react';
-import { connectionConfig } from '@/configs';
+import {
+  indexKnowledgeDocuments,
+  listKnowledgeDocuments,
+} from '@/clients/knowledge.client';
 
 const intialKnowledgeDocumentProperty: KnowledgeDocumentProperty = {
   /**
@@ -130,19 +130,14 @@ export const useKnowledgeDocumentPageStore = create<KnowledgeDocumentType>(
         }
       };
 
-      GetAllKnowledgeDocument(
-        connectionConfig,
+      listKnowledgeDocuments({
         knowledgeId,
-        get().page,
-        get().pageSize,
-        get().criteria,
-        afterGetAllKnowledgeDocument,
-        ConnectionConfig.WithDebugger({
-          authorization: token,
-          projectId: projectId,
-          userId: userId,
-        }),
-      );
+        page: get().page,
+        pageSize: get().pageSize,
+        criteria: get().criteria,
+        auth: { projectId, token, userId },
+        callback: afterGetAllKnowledgeDocument,
+      });
     },
 
     indexKnowledgeDocument: (
@@ -168,18 +163,13 @@ export const useKnowledgeDocumentPageStore = create<KnowledgeDocumentType>(
         }
       };
 
-      IndexKnowledgeDocument(
-        connectionConfig,
+      indexKnowledgeDocuments({
         knowledgeId,
-        knowledgeDocumentId,
+        knowledgeDocumentIds: knowledgeDocumentId,
         indexType,
-        ConnectionConfig.WithDebugger({
-          authorization: token,
-          projectId: projectId,
-          userId: userId,
-        }),
-        afterIndexKnowledgeDocument,
-      );
+        auth: { projectId, token, userId },
+        callback: afterIndexKnowledgeDocument,
+      });
     },
 
     /**

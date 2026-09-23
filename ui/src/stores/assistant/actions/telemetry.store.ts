@@ -2,20 +2,17 @@ import { create } from 'zustand';
 import { initialPaginated } from '@/types/types.paginated';
 import {
   AssistantConfiguration,
-  DeleteAssistantConfiguration,
-  DeleteAssistantConfigurationRequest,
-  GetAllAssistantConfiguration,
-  GetAllAssistantConfigurationRequest,
   GetAssistantConfigurationResponse,
-  Paginate,
-  UpdateAssistantConfiguration,
-  UpdateAssistantConfigurationRequest,
 } from '@rapidaai/react';
 import {
   AssistantTelemetryProperty,
   AssistantTelemetryType,
 } from './types/types.assistant-telemetry';
-import { connectionConfig } from '@/configs';
+import {
+  deleteAssistantConfigurationById,
+  listAssistantConfigurations,
+  updateAssistantConfigurationEnabled,
+} from '@/clients/assistant.client';
 
 const telemetryConfigurationType = 'telemetry';
 
@@ -73,19 +70,13 @@ export const useAssistantTelemetryPageStore = create<AssistantTelemetryType>(
       onError: (err: string) => void,
       onSuccess: (telemetries: AssistantConfiguration[]) => void,
     ) => {
-      const request = new GetAllAssistantConfigurationRequest();
-      request.setAssistantid(assistantId);
-      request.setConfigurationtype(telemetryConfigurationType);
-
-      const paginate = new Paginate();
-      paginate.setPage(get().page);
-      paginate.setPagesize(get().pageSize);
-      request.setPaginate(paginate);
-
-      GetAllAssistantConfiguration(connectionConfig, request, {
-        authorization: token,
-        'x-project-id': projectId,
-        'x-auth-id': userId,
+      listAssistantConfigurations({
+        assistantId,
+        configurationType: telemetryConfigurationType,
+        page: get().page,
+        pageSize: get().pageSize,
+        criteria: get().criteria,
+        auth: { projectId, token, userId },
       })
         .then(response => {
           if (response?.getSuccess()) {
@@ -119,14 +110,10 @@ export const useAssistantTelemetryPageStore = create<AssistantTelemetryType>(
       onError: (err: string) => void,
       onSuccess: (telemetry: AssistantConfiguration) => void,
     ) => {
-      const request = new DeleteAssistantConfigurationRequest();
-      request.setAssistantid(assistantId);
-      request.setId(telemetryId);
-
-      DeleteAssistantConfiguration(connectionConfig, request, {
-        authorization: token,
-        'x-project-id': projectId,
-        'x-auth-id': userId,
+      deleteAssistantConfigurationById({
+        assistantId,
+        configurationId: telemetryId,
+        auth: { projectId, token, userId },
       })
         .then((response: GetAssistantConfigurationResponse) => {
           if (response?.getSuccess() && response.getData()) {
@@ -155,18 +142,12 @@ export const useAssistantTelemetryPageStore = create<AssistantTelemetryType>(
       onError: (err: string) => void,
       onSuccess: (telemetry: AssistantConfiguration) => void,
     ) => {
-      const request = new UpdateAssistantConfigurationRequest();
-      request.setId(telemetry.getId());
-      request.setAssistantid(assistantId);
-      request.setConfigurationtype(telemetryConfigurationType);
-      request.setProvider(telemetry.getProvider());
-      request.setEnabled(enabled);
-      request.setOptionsList(telemetry.getOptionsList());
-
-      UpdateAssistantConfiguration(connectionConfig, request, {
-        authorization: token,
-        'x-project-id': projectId,
-        'x-auth-id': userId,
+      updateAssistantConfigurationEnabled({
+        assistantId,
+        configurationType: telemetryConfigurationType,
+        configuration: telemetry,
+        enabled,
+        auth: { projectId, token, userId },
       })
         .then((response: GetAssistantConfigurationResponse) => {
           if (response?.getSuccess() && response.getData()) {

@@ -2,20 +2,17 @@ import { create } from 'zustand';
 import { initialPaginated } from '@/types/types.paginated';
 import {
   AssistantConfiguration,
-  DeleteAssistantConfiguration,
-  DeleteAssistantConfigurationRequest,
-  GetAllAssistantConfiguration,
-  GetAllAssistantConfigurationRequest,
   GetAssistantConfigurationResponse,
-  Paginate,
-  UpdateAssistantConfiguration,
-  UpdateAssistantConfigurationRequest,
 } from '@rapidaai/react';
 import {
   AssistantStorageProperty,
   AssistantStorageType,
 } from './types/types.assistant-storage';
-import { connectionConfig } from '@/configs';
+import {
+  deleteAssistantConfigurationById,
+  listAssistantConfigurations,
+  updateAssistantConfigurationEnabled,
+} from '@/clients/assistant.client';
 
 const storageConfigurationType = 'storage';
 
@@ -78,19 +75,13 @@ export const useAssistantStoragePageStore = create<AssistantStorageType>(
       onError: (err: string) => void,
       onSuccess: (storages: AssistantConfiguration[]) => void,
     ) => {
-      const request = new GetAllAssistantConfigurationRequest();
-      request.setAssistantid(assistantId);
-      request.setConfigurationtype(storageConfigurationType);
-
-      const paginate = new Paginate();
-      paginate.setPage(get().page);
-      paginate.setPagesize(get().pageSize);
-      request.setPaginate(paginate);
-
-      GetAllAssistantConfiguration(connectionConfig, request, {
-        authorization: token,
-        'x-project-id': projectId,
-        'x-auth-id': userId,
+      listAssistantConfigurations({
+        assistantId,
+        configurationType: storageConfigurationType,
+        page: get().page,
+        pageSize: get().pageSize,
+        criteria: get().criteria,
+        auth: { projectId, token, userId },
       })
         .then(response => {
           if (response?.getSuccess()) {
@@ -124,14 +115,10 @@ export const useAssistantStoragePageStore = create<AssistantStorageType>(
       onError: (err: string) => void,
       onSuccess: (storage: AssistantConfiguration) => void,
     ) => {
-      const request = new DeleteAssistantConfigurationRequest();
-      request.setAssistantid(assistantId);
-      request.setId(storageId);
-
-      DeleteAssistantConfiguration(connectionConfig, request, {
-        authorization: token,
-        'x-project-id': projectId,
-        'x-auth-id': userId,
+      deleteAssistantConfigurationById({
+        assistantId,
+        configurationId: storageId,
+        auth: { projectId, token, userId },
       })
         .then((response: GetAssistantConfigurationResponse) => {
           if (response?.getSuccess() && response.getData()) {
@@ -160,18 +147,12 @@ export const useAssistantStoragePageStore = create<AssistantStorageType>(
       onError: (err: string) => void,
       onSuccess: (storage: AssistantConfiguration) => void,
     ) => {
-      const request = new UpdateAssistantConfigurationRequest();
-      request.setId(storage.getId());
-      request.setAssistantid(assistantId);
-      request.setConfigurationtype(storageConfigurationType);
-      request.setProvider(storage.getProvider());
-      request.setEnabled(enabled);
-      request.setOptionsList(storage.getOptionsList());
-
-      UpdateAssistantConfiguration(connectionConfig, request, {
-        authorization: token,
-        'x-project-id': projectId,
-        'x-auth-id': userId,
+      updateAssistantConfigurationEnabled({
+        assistantId,
+        configurationType: storageConfigurationType,
+        configuration: storage,
+        enabled,
+        auth: { projectId, token, userId },
       })
         .then((response: GetAssistantConfigurationResponse) => {
           if (response?.getSuccess() && response.getData()) {

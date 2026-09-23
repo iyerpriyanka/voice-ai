@@ -1,17 +1,10 @@
 import { create } from 'zustand';
 import {} from '@/types/types.activity-log';
 import { initialPaginated } from '@/types/types.paginated';
-import {
-  Criteria,
-  GetAllKnowledgeLog,
-  GetAllKnowledgeLogRequest,
-  KnowledgeLog,
-  Paginate,
-} from '@rapidaai/react';
-import { ConnectionConfig } from '@rapidaai/react';
-import { connectionConfig } from '@/configs';
+import { KnowledgeLog } from '@rapidaai/react';
 import { KnowledgeActivityLogTypeProperty } from '@/types/types.knowledge-activity-log';
 import { KnowledgeActivityLogType } from '@/types/types.knowledge-activity-log';
+import { listKnowledgeLogs } from '@/clients/knowledge.client';
 
 const intialActivityLog: KnowledgeActivityLogTypeProperty = {
   activities: [],
@@ -114,31 +107,13 @@ export const useKnowledgeActivityLogPage = create<KnowledgeActivityLogType>(
       onError: (err: string) => void,
       onSuccess: (e: KnowledgeLog[]) => void,
     ) => {
-      const req = new GetAllKnowledgeLogRequest();
-      req.setProjectid(projectId);
-
-      const paginate = new Paginate();
-      get().criteria.forEach(({ key, value, logic }) => {
-        const ctr = new Criteria();
-        ctr.setKey(key);
-        ctr.setValue(value);
-        ctr.setLogic(logic);
-        req.addCriterias(ctr);
-      });
-
-      paginate.setPage(get().page);
-      paginate.setPagesize(get().pageSize);
-      req.setPaginate(paginate);
-
-      GetAllKnowledgeLog(
-        connectionConfig,
-        req,
-        ConnectionConfig.WithDebugger({
-          authorization: token,
-          projectId: projectId,
-          userId: userId,
-        }),
-      )
+      listKnowledgeLogs({
+        projectId,
+        page: get().page,
+        pageSize: get().pageSize,
+        criteria: get().criteria,
+        auth: { projectId, token, userId },
+      })
         .then(gur => {
           if (gur?.getSuccess()) {
             get().onChangeActivities(gur.getDataList());

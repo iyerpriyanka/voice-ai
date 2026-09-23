@@ -1,13 +1,4 @@
 import {
-  AssistantDefinition,
-  ConnectionConfig,
-  GetAllAssistantProvider,
-  GetAssistant,
-  GetAssistantRequest,
-  UpdateAssistantVersion,
-  UpdateAssistantVersionRequest,
-} from '@rapidaai/react';
-import {
   Assistant,
   GetAllAssistantProviderResponse,
   GetAssistantResponse,
@@ -20,7 +11,11 @@ import {
   initialPaginatedState,
 } from '@/types/types.paginated';
 import { create } from 'zustand';
-import { connectionConfig } from '@/configs';
+import {
+  getAssistantById,
+  listAssistantProviders,
+  releaseAssistantVersion,
+} from '@/clients/assistant.client';
 
 const initialState: AssistantProviderTypeProperty = {
   /**
@@ -147,19 +142,14 @@ export const useAssistantProviderPageStore = create<AssistantProviderType>(
         }
       };
 
-      GetAllAssistantProvider(
-        connectionConfig,
+      listAssistantProviders({
         assistantId,
-        get().page,
-        get().pageSize,
-        get().criteria,
-        afterGetAllAssistantProviderModel,
-        ConnectionConfig.WithDebugger({
-          authorization: token,
-          userId: userId,
-          projectId: projectId,
-        }),
-      );
+        page: get().page,
+        pageSize: get().pageSize,
+        criteria: get().criteria,
+        auth: { projectId, token, userId },
+        callback: afterGetAllAssistantProviderModel,
+      });
     },
 
     /**
@@ -176,19 +166,10 @@ export const useAssistantProviderPageStore = create<AssistantProviderType>(
       onError: (err: string) => void,
       onSuccess: (e: Assistant) => void,
     ) => {
-      const request = new GetAssistantRequest();
-      const assistantDef = new AssistantDefinition();
-      assistantDef.setAssistantid(assistantId);
-      request.setAssistantdefinition(assistantDef);
-      GetAssistant(
-        connectionConfig,
-        request,
-        ConnectionConfig.WithDebugger({
-          authorization: token,
-          userId: userId,
-          projectId: projectId,
-        }),
-      )
+      getAssistantById({
+        assistantId,
+        auth: { projectId, token, userId },
+      })
         .then(gur => {
           if (gur?.getSuccess()) {
             let ast = gur.getData();
@@ -230,19 +211,12 @@ export const useAssistantProviderPageStore = create<AssistantProviderType>(
         return;
       }
 
-      const rqs = new UpdateAssistantVersionRequest();
-      rqs.setAssistantid(assistant?.getId());
-      rqs.setAssistantprovider(assistantProvider);
-      rqs.setAssistantproviderid(assistantProviderId);
-      UpdateAssistantVersion(
-        connectionConfig,
-        rqs,
-        ConnectionConfig.WithDebugger({
-          authorization: token,
-          userId: userId,
-          projectId: projectId,
-        }),
-      )
+      releaseAssistantVersion({
+        assistant,
+        assistantProvider,
+        assistantProviderId,
+        auth: { projectId, token, userId },
+      })
         .then((aur: GetAssistantResponse) => {
           if (aur?.getSuccess()) {
             const ed = aur.getData();
