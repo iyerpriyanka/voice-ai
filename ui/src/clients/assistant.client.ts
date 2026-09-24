@@ -1,10 +1,16 @@
 import {
   AssistantConfiguration,
   AssistantDefinition,
+  AssistantApiDeployment,
+  AssistantDebuggerDeployment,
+  AssistantPhoneDeployment,
+  AssistantWebpluginDeployment,
   ConnectionConfig,
   CreateAssistant,
   CreateAssistantApiDeployment,
+  CreateAssistantDeploymentRequest,
   CreateAssistantConfiguration,
+  CreateAssistantConfigurationRequest,
   CreateAssistantDebuggerDeployment,
   CreateAssistantKnowledge,
   CreateAssistantPhoneDeployment,
@@ -37,9 +43,11 @@ import {
   GetAllAssistantWebpluginDeployment,
   GetAllAssistantWhatsappDeployment,
   GetAllAssistantDeploymentRequest,
+  GetAssistantDeploymentRequest,
   GetAssistant,
   GetAssistantApiDeployment,
   GetAssistantConfiguration,
+  GetAssistantConfigurationRequest,
   GetAssistantConversation,
   GetAssistantConversationRequest,
   GetAssistantDashboard,
@@ -67,8 +75,6 @@ import {
 } from '@rapidaai/react';
 import type {
   Assistant,
-  CreateAssistantDeploymentRequest,
-  CreateAssistantConfigurationRequest,
   CreateAssistantProviderRequest,
   CreateAssistantRequest,
   GetAllAssistantApiDeploymentResponse,
@@ -80,8 +86,6 @@ import type {
   GetAllConversationMessageResponse,
   GetAllAssistantKnowledgeResponse,
   GetAllAssistantToolResponse,
-  GetAssistantConfigurationRequest,
-  GetAssistantDeploymentRequest,
   GetAssistantKnowledgeResponse,
   GetAssistantResponse,
   GetAssistantToolResponse,
@@ -103,11 +107,6 @@ type AssistantClientCallback<TResponse> = (
   response: TResponse | null,
 ) => void;
 
-type AssistantApiRequestParams<TRequest> = {
-  request: TRequest;
-  auth: ApiAuth;
-};
-
 export type ListAssistantsParams = {
   page: number;
   pageSize: number;
@@ -121,14 +120,20 @@ export type GetAssistantByIdParams = {
   auth: ApiAuth;
 };
 
-export type CreateAssistantFromRequestParams =
-  AssistantApiRequestParams<CreateAssistantRequest>;
+export type CreateAssistantFromRequestParams = {
+  request: CreateAssistantRequest;
+  auth: ApiAuth;
+};
 
-export type CreateAssistantProviderFromRequestParams =
-  AssistantApiRequestParams<CreateAssistantProviderRequest>;
+export type CreateAssistantProviderFromRequestParams = {
+  request: CreateAssistantProviderRequest;
+  auth: ApiAuth;
+};
 
-export type UpdateAssistantVersionFromRequestParams =
-  AssistantApiRequestParams<UpdateAssistantVersionRequest>;
+export type UpdateAssistantVersionFromRequestParams = {
+  request: UpdateAssistantVersionRequest;
+  auth: ApiAuth;
+};
 
 export type UpdateAssistantDescriptionParams = {
   assistantId: string;
@@ -202,6 +207,13 @@ export type GetAssistantDashboardRangeParams = {
 
 export type AssistantDeploymentType = 'debugger' | 'api' | 'web' | 'phone';
 
+type AssistantDeploymentPayloadByType = {
+  api: AssistantApiDeployment;
+  debugger: AssistantDebuggerDeployment;
+  phone: AssistantPhoneDeployment;
+  web: AssistantWebpluginDeployment;
+};
+
 export type ListAssistantDeploymentVersionsParams = {
   assistantId: string;
   deploymentType: AssistantDeploymentType;
@@ -210,15 +222,22 @@ export type ListAssistantDeploymentVersionsParams = {
   auth: ApiAuth;
 };
 
-export type AssistantDeploymentRequestParams<TRequest> = {
-  request: TRequest;
+export type GetAssistantDeploymentByTypeParams = {
+  assistantId: string;
+  deploymentType: AssistantDeploymentType;
   auth: ApiAuth;
 };
 
-export type AssistantDeploymentByTypeRequestParams<TRequest> =
-  AssistantDeploymentRequestParams<TRequest> & {
-    deploymentType: AssistantDeploymentType;
-  };
+export type CreateAssistantDeploymentByTypeParams<
+  TDeploymentType extends AssistantDeploymentType = AssistantDeploymentType,
+> = {
+  deploymentType: TDeploymentType;
+  deployment: AssistantDeploymentPayloadByType[TDeploymentType];
+  auth: ApiAuth;
+};
+
+export type DisableAssistantDeploymentByTypeParams =
+  GetAssistantDeploymentByTypeParams;
 
 export type ListAssistantConfigurationsParams = {
   assistantId: string;
@@ -229,14 +248,25 @@ export type ListAssistantConfigurationsParams = {
   auth: ApiAuth;
 };
 
-export type CreateAssistantConfigurationFromRequestParams =
-  AssistantApiRequestParams<CreateAssistantConfigurationRequest>;
+export type AssistantConfigurationPayload = {
+  assistantId: string;
+  configurationType: string;
+  provider: string;
+  enabled: boolean;
+  options: Metadata[];
+  auth: ApiAuth;
+};
 
-export type GetAssistantConfigurationByRequestParams =
-  AssistantApiRequestParams<GetAssistantConfigurationRequest>;
+export type GetAssistantConfigurationByIdParams = {
+  assistantId: string;
+  configurationId: string;
+  auth: ApiAuth;
+};
 
-export type UpdateAssistantConfigurationFromRequestParams =
-  AssistantApiRequestParams<UpdateAssistantConfigurationRequest>;
+export type UpdateAssistantConfigurationByIdParams =
+  AssistantConfigurationPayload & {
+    configurationId: string;
+  };
 
 export type DeleteAssistantConfigurationParams = {
   assistantId: string;
@@ -634,10 +664,13 @@ export const listAssistantDeploymentVersions = ({
 };
 
 export const getAssistantDeploymentByType = ({
-  request,
+  assistantId,
   deploymentType,
   auth,
-}: AssistantDeploymentByTypeRequestParams<GetAssistantDeploymentRequest>) => {
+}: GetAssistantDeploymentByTypeParams) => {
+  const request = new GetAssistantDeploymentRequest();
+  request.setAssistantid(assistantId);
+
   const fetchByType = {
     api: GetAssistantApiDeployment,
     debugger: GetAssistantDebuggerDeployment,
@@ -653,10 +686,21 @@ export const getAssistantDeploymentByType = ({
 };
 
 export const createAssistantDeploymentByType = ({
-  request,
+  deployment,
   deploymentType,
   auth,
-}: AssistantDeploymentByTypeRequestParams<CreateAssistantDeploymentRequest>) => {
+}: CreateAssistantDeploymentByTypeParams) => {
+  const request = new CreateAssistantDeploymentRequest();
+  if (deploymentType === 'api') {
+    request.setApi(deployment as AssistantApiDeployment);
+  } else if (deploymentType === 'debugger') {
+    request.setDebugger(deployment as AssistantDebuggerDeployment);
+  } else if (deploymentType === 'phone') {
+    request.setPhone(deployment as AssistantPhoneDeployment);
+  } else {
+    request.setPlugin(deployment as AssistantWebpluginDeployment);
+  }
+
   const createByType = {
     api: CreateAssistantApiDeployment,
     debugger: CreateAssistantDebuggerDeployment,
@@ -675,10 +719,13 @@ export const createAssistantDeploymentByType = ({
 };
 
 export const disableAssistantDeploymentByType = ({
-  request,
+  assistantId,
   deploymentType,
   auth,
-}: AssistantDeploymentByTypeRequestParams<GetAssistantDeploymentRequest>) => {
+}: DisableAssistantDeploymentByTypeParams) => {
+  const request = new GetAssistantDeploymentRequest();
+  request.setAssistantid(assistantId);
+
   const disableByType = {
     api: DisableAssistantApiDeployment,
     debugger: DisableAssistantDebuggerDeployment,
@@ -719,31 +766,67 @@ export const listAssistantConfigurations = ({
   );
 };
 
-export const createAssistantConfigurationFromRequest = ({
-  request,
+export const createAssistantConfigurationForAssistant = ({
+  assistantId,
+  configurationType,
+  provider,
+  enabled,
+  options,
   auth,
-}: CreateAssistantConfigurationFromRequestParams) =>
-  CreateAssistantConfiguration(
+}: AssistantConfigurationPayload) => {
+  const request = new CreateAssistantConfigurationRequest();
+  request.setAssistantid(assistantId);
+  request.setConfigurationtype(configurationType);
+  request.setProvider(provider);
+  request.setEnabled(enabled);
+  request.setOptionsList(options);
+
+  return CreateAssistantConfiguration(
     connectionConfig,
     request,
     createApiMetadata(auth),
   );
+};
 
-export const getAssistantConfigurationByRequest = ({
-  request,
+export const getAssistantConfigurationById = ({
+  assistantId,
+  configurationId,
   auth,
-}: GetAssistantConfigurationByRequestParams) =>
-  GetAssistantConfiguration(connectionConfig, request, createApiMetadata(auth));
+}: GetAssistantConfigurationByIdParams) => {
+  const request = new GetAssistantConfigurationRequest();
+  request.setAssistantid(assistantId);
+  request.setId(configurationId);
 
-export const updateAssistantConfigurationFromRequest = ({
-  request,
-  auth,
-}: UpdateAssistantConfigurationFromRequestParams) =>
-  UpdateAssistantConfiguration(
+  return GetAssistantConfiguration(
     connectionConfig,
     request,
     createApiMetadata(auth),
   );
+};
+
+export const updateAssistantConfigurationById = ({
+  assistantId,
+  configurationId,
+  configurationType,
+  provider,
+  enabled,
+  options,
+  auth,
+}: UpdateAssistantConfigurationByIdParams) => {
+  const request = new UpdateAssistantConfigurationRequest();
+  request.setId(configurationId);
+  request.setAssistantid(assistantId);
+  request.setConfigurationtype(configurationType);
+  request.setProvider(provider);
+  request.setEnabled(enabled);
+  request.setOptionsList(options);
+
+  return UpdateAssistantConfiguration(
+    connectionConfig,
+    request,
+    createApiMetadata(auth),
+  );
+};
 
 export const deleteAssistantConfigurationById = ({
   assistantId,
@@ -767,21 +850,16 @@ export const updateAssistantConfigurationEnabled = ({
   configuration,
   enabled,
   auth,
-}: UpdateAssistantConfigurationEnabledParams) => {
-  const request = new UpdateAssistantConfigurationRequest();
-  request.setId(configuration.getId());
-  request.setAssistantid(assistantId);
-  request.setConfigurationtype(configurationType);
-  request.setProvider(configuration.getProvider());
-  request.setEnabled(enabled);
-  request.setOptionsList(configuration.getOptionsList());
-
-  return UpdateAssistantConfiguration(
-    connectionConfig,
-    request,
-    createApiMetadata(auth),
-  );
-};
+}: UpdateAssistantConfigurationEnabledParams) =>
+  updateAssistantConfigurationById({
+    assistantId,
+    configurationId: configuration.getId(),
+    configurationType,
+    provider: configuration.getProvider(),
+    enabled,
+    options: configuration.getOptionsList(),
+    auth,
+  });
 
 export const listAssistantKnowledgeLinks = ({
   assistantId,
@@ -965,22 +1043,6 @@ export const updateAssistantVersion = withConnection(UpdateAssistantVersion);
 
 export const createAssistantProvider = withConnection(CreateAssistantProvider);
 export const getAllAssistantProvider = withConnection(GetAllAssistantProvider);
-
-export const createAssistantConfiguration = withConnection(
-  CreateAssistantConfiguration,
-);
-export const getAssistantConfiguration = withConnection(
-  GetAssistantConfiguration,
-);
-export const getAllAssistantConfiguration = withConnection(
-  GetAllAssistantConfiguration,
-);
-export const updateAssistantConfiguration = withConnection(
-  UpdateAssistantConfiguration,
-);
-export const deleteAssistantConfiguration = withConnection(
-  DeleteAssistantConfiguration,
-);
 
 export const createAssistantKnowledge = withConnection(
   CreateAssistantKnowledge,

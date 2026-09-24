@@ -7,11 +7,7 @@ import { ButtonSet, NumberInput } from '@carbon/react';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { randomMeaningfullName } from '@/utils';
 import { EndpointDropdown } from '@/app/components/domain/dropdowns/endpoint-dropdown';
-import {
-  CreateAssistantConfigurationRequest,
-  Endpoint,
-  Metadata,
-} from '@rapidaai/react';
+import { Endpoint, Metadata } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
 import { TabForm } from '@/app/components/ui/composites';
 import {
@@ -23,7 +19,7 @@ import {
 } from '@/app/components/domain/tools/common';
 import { SourceConditionRule } from '@/app/components/domain/conditions/source-condition-rule';
 import { InputGroup } from '@/app/components/ui/primitives';
-import { createAssistantConfigurationFromRequest } from '@/clients/assistant.client';
+import { createAssistantConfigurationForAssistant } from '@/clients/assistant.client';
 
 // ── Parameter types ──────────────────────────────────────────────────────────
 
@@ -138,12 +134,6 @@ export const CreateAssistantAnalysis: FC<{ assistantId: string }> = ({
       parameters.map(p => [`${p.type}.${p.key}`, p.value]),
     );
 
-    const request = new CreateAssistantConfigurationRequest();
-    request.setAssistantid(assistantId);
-    request.setConfigurationtype(analysisConfigurationType);
-    request.setProvider('endpoint');
-    request.setEnabled(true);
-
     const options: Metadata[] = [];
     [
       { key: 'name', value: name },
@@ -165,11 +155,13 @@ export const CreateAssistantAnalysis: FC<{ assistantId: string }> = ({
       item.setValue(value);
       options.push(item);
     });
-    request.setOptionsList(options);
-
     try {
-      const response = await createAssistantConfigurationFromRequest({
-        request,
+      const response = await createAssistantConfigurationForAssistant({
+        assistantId,
+        configurationType: analysisConfigurationType,
+        provider: 'endpoint',
+        enabled: true,
+        options,
         auth: { projectId, token, userId: authId },
       });
 

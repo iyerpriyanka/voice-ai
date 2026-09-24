@@ -1,8 +1,6 @@
 import {
   ConnectionConfig,
   Criteria,
-  CreateConversationMetric,
-  CreateMessageMetric,
   GetActivities,
   GetActivity,
   GetAllAssistantToolLog,
@@ -10,12 +8,14 @@ import {
   GetAllHTTPLog,
   GetAllAssistantHTTPLogRequest,
   GetAllTelemetry,
+  GetAllTelemetryRequest,
   GetAssistantHTTPLogRequest,
   GetAssistantToolLog,
   GetAssistantToolLogRequest,
   GetAuditLogResponse,
   GetHTTPLog,
   GetMessages,
+  Ordering,
   Paginate,
   RetryAssistantHTTPLogRequest,
   RetryHTTPLog,
@@ -24,15 +24,27 @@ import {
 import type {
   GetAllAuditLogResponse,
   GetAllMessageResponse,
+  GetAllTelemetryResponse,
 } from '@rapidaai/react';
 
 import { connectionConfig } from '@/configs';
-import { ApiAuth, createApiMetadata, withConnection } from './connection';
+import { ApiAuth, createApiMetadata } from './connection';
 
 type ClientCriteria = {
   key: string;
   value: string;
   logic: string;
+};
+
+export type TelemetryCriteriaInput = {
+  key: string;
+  value: string;
+  logic?: string;
+};
+
+export type TelemetryOrderInput = {
+  column: string;
+  order: string;
 };
 
 type ConversationMessageField =
@@ -106,6 +118,14 @@ export type RetryWebhookActivityLogParams = {
   auth: ApiAuth;
 };
 
+export type ListTelemetryParams = {
+  page: number;
+  pageSize: number;
+  criteria: TelemetryCriteriaInput[];
+  order?: TelemetryOrderInput;
+  auth: ApiAuth;
+};
+
 const createDebuggerMetadata = ({ projectId, token, userId }: ApiAuth) =>
   ConnectionConfig.WithDebugger({
     authorization: token,
@@ -120,7 +140,11 @@ const createPaginate = (page: number, pageSize: number): Paginate => {
   return paginate;
 };
 
-const createCriteria = ({ key, value, logic }: ClientCriteria): Criteria => {
+const createCriteria = ({
+  key,
+  value,
+  logic = 'match',
+}: TelemetryCriteriaInput): Criteria => {
   const criteria = new Criteria();
   criteria.setKey(key);
   criteria.setValue(value);
@@ -255,19 +279,27 @@ export const retryWebhookActivityLog = ({
   return RetryHTTPLog(connectionConfig, request, createApiMetadata(auth));
 };
 
-export const getActivities = withConnection(GetActivities);
-export const getActivity = withConnection(GetActivity);
+export const listTelemetry = ({
+  page,
+  pageSize,
+  criteria,
+  order,
+  auth,
+}: ListTelemetryParams): Promise<GetAllTelemetryResponse> => {
+  const request = new GetAllTelemetryRequest();
+  request.setPaginate(createPaginate(page, pageSize));
+  request.setCriteriasList(criteria.map(createCriteria));
 
-export const getAllHTTPLog = withConnection(GetAllHTTPLog);
-export const getHTTPLog = withConnection(GetHTTPLog);
-export const retryHTTPLog = withConnection(RetryHTTPLog);
+  if (order) {
+    const ordering = new Ordering();
+    ordering.setColumn(order.column);
+    ordering.setOrder(order.order);
+    request.setOrder(ordering);
+  }
 
-export const getAllAssistantToolLog = withConnection(GetAllAssistantToolLog);
-export const getAssistantToolLog = withConnection(GetAssistantToolLog);
-
-export const getMessages = withConnection(GetMessages);
-export const getAllTelemetry = withConnection(GetAllTelemetry);
-export const createMessageMetric = withConnection(CreateMessageMetric);
-export const createConversationMetric = withConnection(
-  CreateConversationMetric,
-);
+  return GetAllTelemetry(
+    connectionConfig,
+    request,
+    createDebuggerMetadata(auth),
+  );
+};

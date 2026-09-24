@@ -1,14 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  ConnectionConfig,
-  Criteria,
-  GetAllTelemetry,
-  GetAllTelemetryResponse,
-  GetAllTelemetryRequest,
-  Paginate,
-} from '@rapidaai/react';
 import { ModalProps } from '@/app/components/ui/primitives';
-import { connectionConfig } from '@/configs';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { Modal, ModalHeader, ModalBody } from '@/app/components/ui/primitives';
 import { Pagination } from '@/app/components/ui/primitives';
@@ -53,6 +44,7 @@ import type {
   TelemetryRow,
 } from './conversation-telemetry-utils';
 import { LatencyStackChart } from './conversation-telemetry-latency-stack-chart';
+import { listTelemetry } from '@/clients';
 
 export {
   buildLatencySeries,
@@ -63,7 +55,10 @@ export {
 
 interface ConversationTelemetryDialogProps extends ModalProps {
   assistantId: string;
-  criterias?: Criteria[];
+  criterias?: Array<{
+    getKey: () => string;
+    getValue: () => string;
+  }>;
 }
 
 interface Chip {
@@ -165,31 +160,15 @@ export function ConversationTelemetryDialog(
       chips.map(chip => ({ key: chip.field, value: String(chip.value) })),
       appliedConversationId,
       appliedMessageId,
-    ).map(c => {
-      const criteria = new Criteria();
-      criteria.setKey(c.key);
-      criteria.setValue(c.value);
-      criteria.setLogic('match');
-      return criteria;
-    });
+    ).map(c => ({ key: c.key, value: c.value, logic: 'match' }));
 
-    const buildRequest = (nextPage: number, nextPageSize: number) => {
-      const request = new GetAllTelemetryRequest();
-      const paginate = new Paginate();
-      paginate.setPage(nextPage);
-      paginate.setPagesize(nextPageSize);
-      request.setPaginate(paginate);
-
-      const assistantCriteria = new Criteria();
-      assistantCriteria.setKey('assistant_id');
-      assistantCriteria.setValue(assistantId);
-      assistantCriteria.setLogic('match');
-      request.setCriteriasList([assistantCriteria, ...criteriaList]);
-      return request;
-    };
+    const getCriteria = () => [
+      { key: 'assistant_id', value: assistantId, logic: 'match' },
+      ...criteriaList,
+    ];
 
     const toTelemetryRows = (
-      response: GetAllTelemetryResponse,
+      response: Awaited<ReturnType<typeof listTelemetry>>,
       pageOffset: number,
     ): TelemetryRow[] => {
       const merged: TelemetryRow[] = [];
@@ -217,15 +196,12 @@ export function ConversationTelemetryDialog(
 
     const fetchTelemetry = async () => {
       try {
-        const firstResponse = await GetAllTelemetry(
-          connectionConfig,
-          buildRequest(requestPage, requestPageSize),
-          ConnectionConfig.WithDebugger({
-            authorization: token,
-            userId: authId,
-            projectId: projectId,
-          }),
-        );
+        const firstResponse = await listTelemetry({
+          page: requestPage,
+          pageSize: requestPageSize,
+          criteria: getCriteria(),
+          auth: { token, userId: authId, projectId },
+        });
         if (!active) return;
 
         const total = firstResponse.getPaginated()?.getTotalitem() ?? 0;
@@ -234,15 +210,12 @@ export function ConversationTelemetryDialog(
         if (shouldFetchAllRows && total > requestPageSize) {
           const totalPages = Math.ceil(total / requestPageSize);
           for (let nextPage = 2; nextPage <= totalPages; nextPage += 1) {
-            const response = await GetAllTelemetry(
-              connectionConfig,
-              buildRequest(nextPage, requestPageSize),
-              ConnectionConfig.WithDebugger({
-                authorization: token,
-                userId: authId,
-                projectId: projectId,
-              }),
-            );
+            const response = await listTelemetry({
+              page: nextPage,
+              pageSize: requestPageSize,
+              criteria: getCriteria(),
+              auth: { token, userId: authId, projectId },
+            });
             if (!active) return;
             mergedRows.push(
               ...toTelemetryRows(response, (nextPage - 1) * requestPageSize),

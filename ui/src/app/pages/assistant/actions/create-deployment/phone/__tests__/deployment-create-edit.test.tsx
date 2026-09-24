@@ -339,9 +339,8 @@ describe('Phone deployment create and edit flows', () => {
       expect(createAssistantDeploymentByType).toHaveBeenCalledTimes(1),
     );
 
-    const req = (createAssistantDeploymentByType as jest.Mock).mock.calls[0][0]
-      .request;
-    const deployment = req.getPhone();
+    const deployment = (createAssistantDeploymentByType as jest.Mock).mock
+      .calls[0][0].deployment;
     expect(deployment.getPhoneprovidername()).toBe('twilio');
     expect(deployment.getInputaudio()).toBeDefined();
     expect(deployment.getOutputaudio()).toBeDefined();
@@ -364,9 +363,8 @@ describe('Phone deployment create and edit flows', () => {
       expect(createAssistantDeploymentByType).toHaveBeenCalledTimes(1),
     );
 
-    const req = (createAssistantDeploymentByType as jest.Mock).mock.calls[0][0]
-      .request;
-    const deployment = req.getPhone();
+    const deployment = (createAssistantDeploymentByType as jest.Mock).mock
+      .calls[0][0].deployment;
     expect(deployment.getPhoneprovidername()).toBe('twilio');
     expect(deployment.getInputaudio()).toBeDefined();
     expect(deployment.getOutputaudio()).toBeDefined();

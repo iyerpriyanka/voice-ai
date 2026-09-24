@@ -13,9 +13,7 @@ import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   AssistantDebuggerDeployment,
-  CreateAssistantDeploymentRequest,
   DeploymentAudioProvider,
-  GetAssistantDeploymentRequest,
   Metadata,
 } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
@@ -129,10 +127,8 @@ const EditAssistantDebuggerDeployment: FC<{ assistantId: string }> = ({
     hasFetched.current = true;
 
     showLoader('block');
-    const request = new GetAssistantDeploymentRequest();
-    request.setAssistantid(assistantId);
     getAssistantDeploymentByType({
-      request,
+      assistantId,
       deploymentType: 'debugger',
       auth: { projectId, token, userId: authId },
     })
@@ -290,12 +286,8 @@ const EditAssistantDebuggerDeployment: FC<{ assistantId: string }> = ({
       outputAudio.setAudiooptionsList(audioOutputConfig.parameters);
       deployment.setOutputaudio(outputAudio);
     }
-
-    const req = new CreateAssistantDeploymentRequest();
-    req.setDebugger(deployment);
-
     createAssistantDeploymentByType({
-      request: req,
+      deployment,
       deploymentType: 'debugger',
       auth: { projectId, token, userId: authId },
     })

@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react';
-import { CreateAssistantConfigurationRequest, Metadata } from '@rapidaai/react';
+import { Metadata } from '@rapidaai/react';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/stores/app';
@@ -16,7 +16,7 @@ import {
 } from '@/app/components/domain/providers/telemetry/provider';
 import { TELEMETRY_PROVIDER } from '@/providers';
 import { InputGroup } from '@/app/components/ui/primitives';
-import { createAssistantConfigurationFromRequest } from '@/clients/assistant.client';
+import { createAssistantConfigurationForAssistant } from '@/clients/assistant.client';
 
 const telemetryConfigurationType = 'telemetry';
 
@@ -51,16 +51,13 @@ export const CreateAssistantTelemetry: FC<{ assistantId: string }> = ({
       return;
     }
 
-    const request = new CreateAssistantConfigurationRequest();
-    request.setAssistantid(assistantId);
-    request.setConfigurationtype(telemetryConfigurationType);
-    request.setProvider(provider);
-    request.setEnabled(true);
-    request.setOptionsList(parameters);
-
     showLoader();
-    createAssistantConfigurationFromRequest({
-      request,
+    createAssistantConfigurationForAssistant({
+      assistantId,
+      configurationType: telemetryConfigurationType,
+      provider,
+      enabled: true,
+      options: parameters,
       auth: { projectId, token, userId: authId },
     })
       .then(response => {

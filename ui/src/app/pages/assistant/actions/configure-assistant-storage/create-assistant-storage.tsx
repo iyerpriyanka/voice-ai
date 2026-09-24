@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react';
-import { CreateAssistantConfigurationRequest, Metadata } from '@rapidaai/react';
+import { Metadata } from '@rapidaai/react';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/stores/app';
@@ -20,7 +20,7 @@ import {
 import { STORAGE_PROVIDER } from '@/providers';
 import { InputGroup } from '@/app/components/ui/primitives';
 import { Notification } from '@/app/components/ui/feedback';
-import { createAssistantConfigurationFromRequest } from '@/clients/assistant.client';
+import { createAssistantConfigurationForAssistant } from '@/clients/assistant.client';
 
 const storageConfigurationType = 'storage';
 
@@ -68,16 +68,13 @@ export const CreateAssistantStorage: FC<{ assistantId: string }> = ({
       return;
     }
 
-    const request = new CreateAssistantConfigurationRequest();
-    request.setAssistantid(assistantId);
-    request.setConfigurationtype(storageConfigurationType);
-    request.setProvider(provider);
-    request.setEnabled(true);
-    request.setOptionsList(upsertStorageFilesOption(parameters, selectedFiles));
-
     showLoader();
-    createAssistantConfigurationFromRequest({
-      request,
+    createAssistantConfigurationForAssistant({
+      assistantId,
+      configurationType: storageConfigurationType,
+      provider,
+      enabled: true,
+      options: upsertStorageFilesOption(parameters, selectedFiles),
       auth: { projectId, token, userId: authId },
     })
       .then(response => {

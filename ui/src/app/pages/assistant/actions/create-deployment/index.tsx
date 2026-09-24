@@ -22,7 +22,7 @@ import {
   useState,
 } from 'react';
 import { useParams } from 'react-router-dom';
-import { Assistant, GetAssistantDeploymentRequest } from '@rapidaai/react';
+import { Assistant } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
 import { useRapidaStore } from '@/stores/app';
 import { toHumanReadableDateTime } from '@/utils/date';
@@ -144,8 +144,6 @@ export const ConfigureAssistantDeploymentPage = () => {
   const disableDeployment = useCallback(
     async (type: DeploymentType) => {
       if (!assistantId) return;
-      const request = new GetAssistantDeploymentRequest();
-      request.setAssistantid(assistantId);
 
       const labelByType = {
         api: 'API',
@@ -156,7 +154,7 @@ export const ConfigureAssistantDeploymentPage = () => {
 
       try {
         const response = await disableAssistantDeploymentByType({
-          request,
+          assistantId,
           deploymentType: type,
           auth: { projectId, token, userId: authId },
         });

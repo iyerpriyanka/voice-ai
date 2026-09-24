@@ -7,12 +7,7 @@ import { ButtonSet, NumberInput } from '@carbon/react';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { randomMeaningfullName } from '@/utils';
 import { EndpointDropdown } from '@/app/components/domain/dropdowns/endpoint-dropdown';
-import {
-  Endpoint,
-  GetAssistantConfigurationRequest,
-  Metadata,
-  UpdateAssistantConfigurationRequest,
-} from '@rapidaai/react';
+import { Endpoint, Metadata } from '@rapidaai/react';
 import { useParams } from 'react-router-dom';
 import toast from 'react-hot-toast/headless';
 import { TabForm } from '@/app/components/ui/composites';
@@ -28,8 +23,8 @@ import {
 import { SourceConditionRule } from '@/app/components/domain/conditions/source-condition-rule';
 import { InputGroup } from '@/app/components/ui/primitives';
 import {
-  getAssistantConfigurationByRequest,
-  updateAssistantConfigurationFromRequest,
+  getAssistantConfigurationById,
+  updateAssistantConfigurationById,
 } from '@/clients/assistant.client';
 
 type ParamType =
@@ -132,13 +127,10 @@ export const UpdateAssistantAnalysis: FC<{ assistantId: string }> = ({
 
   useEffect(() => {
     const load = async () => {
-      const request = new GetAssistantConfigurationRequest();
-      request.setAssistantid(assistantId);
-      request.setId(analysisId!);
-
       try {
-        const res = await getAssistantConfigurationByRequest({
-          request,
+        const res = await getAssistantConfigurationById({
+          assistantId,
+          configurationId: analysisId!,
           auth: { projectId, token, userId: authId },
         });
         const analysis = res?.getData();
@@ -239,13 +231,6 @@ export const UpdateAssistantAnalysis: FC<{ assistantId: string }> = ({
       parameters.map(p => [`${p.type}.${p.key}`, p.value]),
     );
 
-    const request = new UpdateAssistantConfigurationRequest();
-    request.setAssistantid(assistantId);
-    request.setId(analysisId!);
-    request.setConfigurationtype(analysisConfigurationType);
-    request.setProvider('endpoint');
-    request.setEnabled(true);
-
     const options: Metadata[] = [];
     [
       { key: 'name', value: name },
@@ -267,11 +252,14 @@ export const UpdateAssistantAnalysis: FC<{ assistantId: string }> = ({
       item.setValue(value);
       options.push(item);
     });
-    request.setOptionsList(options);
-
     try {
-      const response = await updateAssistantConfigurationFromRequest({
-        request,
+      const response = await updateAssistantConfigurationById({
+        assistantId,
+        configurationId: analysisId!,
+        configurationType: analysisConfigurationType,
+        provider: 'endpoint',
+        enabled: true,
+        options,
         auth: { projectId, token, userId: authId },
       });
 

@@ -4,9 +4,7 @@ import {
   AssistantDebuggerDeployment,
   AssistantPhoneDeployment,
   AssistantWebpluginDeployment,
-  CreateAssistantDeploymentRequest,
   DeploymentAudioProvider,
-  GetAssistantDeploymentRequest,
   Metadata,
 } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
@@ -126,10 +124,8 @@ export function useDeploymentSectionEdit(
   const loadConfig = useCallback(
     (type: DeploymentType) => {
       if (!assistantId) return Promise.resolve();
-      const request = new GetAssistantDeploymentRequest();
-      request.setAssistantid(assistantId);
       return getAssistantDeploymentByType({
-        request,
+        assistantId,
         deploymentType: type,
         auth: { projectId, token, userId: authId },
       }).then((response: any) => {
@@ -367,16 +363,20 @@ export function useDeploymentSectionEdit(
       if (outputAudio) deployment.setOutputaudio(outputAudio);
     };
 
-    const req = new CreateAssistantDeploymentRequest();
+    let deployment:
+      | AssistantDebuggerDeployment
+      | AssistantApiDeployment
+      | AssistantWebpluginDeployment
+      | AssistantPhoneDeployment;
 
     if (type === 'debugger') {
       const d = new AssistantDebuggerDeployment();
       applyCommonFields(d);
-      req.setDebugger(d);
+      deployment = d;
     } else if (type === 'api') {
       const d = new AssistantApiDeployment();
       applyCommonFields(d);
-      req.setApi(d);
+      deployment = d;
     } else if (type === 'web') {
       const d = new AssistantWebpluginDeployment();
       applyCommonFields(d);
@@ -385,8 +385,8 @@ export function useDeploymentSectionEdit(
       d.setProductcatalogenabled(false);
       d.setArticlecatalogenabled(false);
       d.setUploadfileenabled(false);
-      req.setPlugin(d);
-    } else if (type === 'phone') {
+      deployment = d;
+    } else {
       const d = new AssistantPhoneDeployment();
       applyCommonFields(d);
       const resolvedTelephony =
@@ -400,11 +400,11 @@ export function useDeploymentSectionEdit(
           ),
         );
       }
-      req.setPhone(d);
+      deployment = d;
     }
 
     createAssistantDeploymentByType({
-      request: req,
+      deployment,
       deploymentType: type,
       auth: { projectId, token, userId: authId },
     })

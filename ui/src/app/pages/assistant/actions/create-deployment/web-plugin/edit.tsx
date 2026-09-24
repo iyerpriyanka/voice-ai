@@ -13,9 +13,7 @@ import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   AssistantWebpluginDeployment,
-  CreateAssistantDeploymentRequest,
   DeploymentAudioProvider,
-  GetAssistantDeploymentRequest,
   Metadata,
 } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
@@ -116,10 +114,8 @@ const EditAssistantWebDeployment: FC<{ assistantId: string }> = ({
     hasFetched.current = true;
 
     showLoader('block');
-    const req = new GetAssistantDeploymentRequest();
-    req.setAssistantid(assistantId);
     getAssistantDeploymentByType({
-      request: req,
+      assistantId,
       deploymentType: 'web',
       auth: { projectId, token, userId: authId },
     })
@@ -240,8 +236,6 @@ const EditAssistantWebDeployment: FC<{ assistantId: string }> = ({
         return;
       }
     }
-
-    const req = new CreateAssistantDeploymentRequest();
     const webDeployment = new AssistantWebpluginDeployment();
     webDeployment.setAssistantid(assistantId);
     webDeployment.setGreetinginterruptible(
@@ -290,9 +284,8 @@ const EditAssistantWebDeployment: FC<{ assistantId: string }> = ({
       webDeployment.setOutputaudio(outputAudio);
     }
 
-    req.setPlugin(webDeployment);
     createAssistantDeploymentByType({
-      request: req,
+      deployment: webDeployment,
       deploymentType: 'web',
       auth: { projectId, token, userId: authId },
     })

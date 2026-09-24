@@ -1,18 +1,30 @@
 import {
+  ConnectionConfig,
+  CreateEndpoint,
   CreateEndpointCacheConfiguration,
   CreateEndpointProviderModel,
   CreateEndpointRetryConfiguration,
   CreateEndpointTag,
+  EndpointAttribute,
+  EndpointCacheConfiguration,
+  EndpointDefinition,
+  EndpointProviderModelAttribute,
+  EndpointRetryConfiguration,
   GetAllEndpoint,
   GetAllEndpointLog,
   GetAllEndpointProviderModel,
   GetEndpoint,
   GetEndpointLog,
+  Invoke,
+  InvokeRequest,
   ServiceError,
+  StringToAny,
   UpdateEndpointDetail,
   UpdateEndpointVersion,
 } from '@rapidaai/react';
 import {
+  CreateEndpointProviderModelResponse,
+  CreateEndpointResponse,
   CreateEndpointCacheConfigurationResponse,
   GetAllEndpointLogResponse,
   GetAllEndpointProviderModelResponse,
@@ -20,11 +32,12 @@ import {
   GetAllEndpointResponse,
   GetEndpointLogResponse,
   GetEndpointResponse,
+  InvokeResponse,
   UpdateEndpointVersionResponse,
 } from '@rapidaai/react';
 
 import { connectionConfig } from '@/configs';
-import { ApiAuth, createApiMetadata, withConnection } from './connection';
+import { ApiAuth, createApiMetadata } from './connection';
 
 type Criteria = {
   key: string;
@@ -36,6 +49,8 @@ type EndpointClientCallback<TResponse> = (
   error: ServiceError | null,
   response: TResponse | null,
 ) => void;
+
+type EndpointInvokeArgumentMap = Map<string, ReturnType<typeof StringToAny>>;
 
 export type ListEndpointsParams = {
   page: number;
@@ -50,6 +65,23 @@ export type GetEndpointParams = {
   endpointProviderModelId: string | null;
   auth: ApiAuth;
   callback: EndpointClientCallback<GetEndpointResponse>;
+};
+
+export type CreateEndpointParams = {
+  endpointProviderModel: EndpointProviderModelAttribute;
+  endpoint: EndpointAttribute;
+  tags: string[];
+  auth: ApiAuth;
+  callback: EndpointClientCallback<CreateEndpointResponse>;
+  retryConfig?: EndpointRetryConfiguration;
+  cacheConfig?: EndpointCacheConfiguration;
+};
+
+export type CreateEndpointProviderModelParams = {
+  endpointId: string;
+  endpointProviderModel: EndpointProviderModelAttribute;
+  auth: ApiAuth;
+  callback: EndpointClientCallback<CreateEndpointProviderModelResponse>;
 };
 
 export type CreateEndpointTagParams = {
@@ -119,6 +151,20 @@ export type GetEndpointLogParams = {
   callback: EndpointClientCallback<GetEndpointLogResponse>;
 };
 
+export type InvokeEndpointParams = {
+  endpointId: string;
+  endpointProviderModelId: string;
+  args: EndpointInvokeArgumentMap;
+  auth: ApiAuth;
+};
+
+const createDebuggerMetadata = ({ projectId, token, userId }: ApiAuth) =>
+  ConnectionConfig.WithDebugger({
+    authorization: token,
+    projectId,
+    userId,
+  });
+
 export const listEndpoints = ({
   page,
   pageSize,
@@ -147,6 +193,42 @@ export const getEndpoint = ({
     endpointId,
     endpointProviderModelId,
     createApiMetadata(auth),
+    callback,
+  );
+};
+
+export const createEndpoint = ({
+  endpointProviderModel,
+  endpoint,
+  tags,
+  auth,
+  callback,
+  retryConfig,
+  cacheConfig,
+}: CreateEndpointParams): void => {
+  CreateEndpoint(
+    connectionConfig,
+    endpointProviderModel,
+    endpoint,
+    tags,
+    createDebuggerMetadata(auth),
+    callback,
+    retryConfig,
+    cacheConfig,
+  );
+};
+
+export const createEndpointProviderModel = ({
+  endpointId,
+  endpointProviderModel,
+  auth,
+  callback,
+}: CreateEndpointProviderModelParams): void => {
+  CreateEndpointProviderModel(
+    connectionConfig,
+    endpointId,
+    endpointProviderModel,
+    createDebuggerMetadata(auth),
     callback,
   );
 };
@@ -225,17 +307,6 @@ export const updateEndpointDetail = ({
   );
 };
 
-export const createEndpointProviderModel = withConnection(
-  CreateEndpointProviderModel,
-);
-export const getAllEndpointProviderModel = withConnection(
-  GetAllEndpointProviderModel,
-);
-export const updateEndpointVersion = withConnection(UpdateEndpointVersion);
-
-export const getAllEndpointLog = withConnection(GetAllEndpointLog);
-export const getEndpointLog = withConnection(GetEndpointLog);
-
 export const listEndpointProviderModels = ({
   endpointId,
   page,
@@ -253,6 +324,27 @@ export const listEndpointProviderModels = ({
     callback,
     createApiMetadata(auth),
   );
+};
+
+export const invokeEndpoint = ({
+  endpointId,
+  endpointProviderModelId,
+  args,
+  auth,
+}: InvokeEndpointParams): Promise<InvokeResponse> => {
+  const request = new InvokeRequest();
+  const endpoint = new EndpointDefinition();
+
+  endpoint.setEndpointid(endpointId);
+  endpoint.setVersion(endpointProviderModelId);
+  request.setEndpoint(endpoint);
+  request.getMetadataMap().set('source', StringToAny('web-app'));
+  request.getMetadataMap().set('experiemental', StringToAny('true'));
+  args.forEach((value, key) => {
+    request.getArgsMap().set(key, value);
+  });
+
+  return Invoke(connectionConfig, request, createDebuggerMetadata(auth));
 };
 
 export const releaseEndpointVersion = ({

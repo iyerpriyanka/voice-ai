@@ -15,12 +15,7 @@ import {
   ValidateTextProviderDefaultOptions,
 } from '@/app/components/domain/providers/text';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  ConnectionConfig,
-  CreateEndpointProviderModel,
-  GetEndpoint,
-  Metadata,
-} from '@rapidaai/react';
+import { Metadata } from '@rapidaai/react';
 import { ConfigPrompt } from '@/app/components/domain/configuration/config-prompt';
 import {
   EndpointProviderModelAttribute,
@@ -33,9 +28,12 @@ import { randomString } from '@/utils';
 import { FieldSet } from '@/app/components/ui/primitives';
 import { FormLabel } from '@/app/components/ui/primitives';
 import { Textarea } from '@/app/components/ui/primitives';
-import { connectionConfig } from '@/configs';
 import { DocNoticeBlock } from '@/app/components/layout/container/message/notice-block/doc-notice-block';
 import { InputHelper } from '@/app/components/ui/primitives';
+import {
+  createEndpointProviderModel as createEndpointProviderModelRequest,
+  getEndpoint,
+} from '@/clients';
 
 export const CreateNewVersionEndpointPage: FC = () => {
   /**
@@ -189,32 +187,33 @@ export const CreateNewVersionEndpointPage: FC = () => {
     endpointProviderModelAttr.setChatcompleteprompt(
       ChatCompletePrompt(promptConfig),
     );
-    CreateEndpointProviderModel(
-      connectionConfig,
-      endpointId!,
-      endpointProviderModelAttr,
-      ConnectionConfig.WithDebugger({
+    createEndpointProviderModelRequest({
+      endpointId: endpointId!,
+      endpointProviderModel: endpointProviderModelAttr,
+      auth: {
         userId: authId,
-        authorization: token,
-        projectId: projectId,
-      }),
-      afterCreateEndpointProviderModel,
-    );
+        token,
+        projectId,
+      },
+      callback: afterCreateEndpointProviderModel,
+    });
   };
 
   useEffect(() => {
     showLoader('block');
     if (endpointId) {
-      GetEndpoint(
-        connectionConfig,
+      getEndpoint({
         endpointId,
-        null,
-        {
-          'x-auth-id': authId,
-          authorization: token,
-          'x-project-id': projectId,
+        endpointProviderModelId: null,
+        auth: {
+          userId: authId,
+          token,
+          projectId,
         },
-        (err: ServiceError | null, response: GetEndpointResponse | null) => {
+        callback: (
+          err: ServiceError | null,
+          response: GetEndpointResponse | null,
+        ) => {
           hideLoader();
           if (err) {
             setErrorMessage(
@@ -253,7 +252,7 @@ export const CreateNewVersionEndpointPage: FC = () => {
             );
           }
         },
-      );
+      });
     }
   }, [endpointId]);
 

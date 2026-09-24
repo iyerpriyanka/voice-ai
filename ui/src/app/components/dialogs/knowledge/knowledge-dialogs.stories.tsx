@@ -21,7 +21,7 @@ const mockSegment = {
     getDocumentName: () => 'Support guide',
   }),
   getEntities: () => ({
-    getOrganizationsList: () => ['Rapida'],
+    getOrganizationsList: () => ['Acme'],
     getDatesList: () => ['2026-09-20'],
     getProductsList: () => ['Voice AI'],
     getEventsList: () => ['Launch'],

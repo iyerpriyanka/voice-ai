@@ -49,7 +49,7 @@ export const WithMetaTags: Story = {
     title: 'Assistant analytics',
     meta: [
       { name: 'description', content: 'Assistant analytics dashboard' },
-      { name: 'og:title', content: 'Assistant analytics - Rapida AI' },
+      { name: 'og:title', content: 'Assistant analytics' },
     ],
   },
 };

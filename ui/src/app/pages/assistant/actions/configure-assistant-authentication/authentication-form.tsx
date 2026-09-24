@@ -1,9 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import {
-  CreateAssistantConfigurationRequest,
-  Metadata,
-  UpdateAssistantConfigurationRequest,
-} from '@rapidaai/react';
+import { Metadata } from '@rapidaai/react';
 import {
   ButtonSet,
   Select as CarbonSelect,
@@ -52,9 +48,9 @@ import {
   toOptionMap,
 } from './shared';
 import {
-  createAssistantConfigurationFromRequest,
+  createAssistantConfigurationForAssistant,
   listAssistantConfigurations,
-  updateAssistantConfigurationFromRequest,
+  updateAssistantConfigurationById,
 } from '@/clients/assistant.client';
 
 const authenticationConfigurationType = 'authentication';
@@ -299,27 +295,22 @@ const AuthenticationFormBase: FC<SharedAuthenticationFormProps> = ({
   };
 
   const saveAuthentication = async () => {
-    const request = authenticationId
-      ? new UpdateAssistantConfigurationRequest()
-      : new CreateAssistantConfigurationRequest();
-
-    if (authenticationId) {
-      (request as UpdateAssistantConfigurationRequest).setId(authenticationId);
-    }
-
-    request.setAssistantid(assistantId);
-    request.setConfigurationtype(authenticationConfigurationType);
-    request.setProvider('http');
-    request.setEnabled(true);
-    request.setOptionsList(buildOptions());
-
     const response = authenticationId
-      ? await updateAssistantConfigurationFromRequest({
-          request: request as UpdateAssistantConfigurationRequest,
+      ? await updateAssistantConfigurationById({
+          assistantId,
+          configurationId: authenticationId,
+          configurationType: authenticationConfigurationType,
+          provider: 'http',
+          enabled: true,
+          options: buildOptions(),
           auth: { projectId, token, userId: authId },
         })
-      : await createAssistantConfigurationFromRequest({
-          request: request as CreateAssistantConfigurationRequest,
+      : await createAssistantConfigurationForAssistant({
+          assistantId,
+          configurationType: authenticationConfigurationType,
+          provider: 'http',
+          enabled: true,
+          options: buildOptions(),
           auth: { projectId, token, userId: authId },
         });
 

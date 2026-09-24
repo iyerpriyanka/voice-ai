@@ -17,7 +17,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Composed UI controls built from Carbon primitives and shared Rapida UI wrappers.',
+          'Composed UI controls built from Carbon primitives and shared application wrappers.',
       },
     },
   },

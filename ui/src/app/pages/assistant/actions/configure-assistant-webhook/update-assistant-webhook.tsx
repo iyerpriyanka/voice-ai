@@ -16,11 +16,7 @@ import {
 import { Information } from '@carbon/icons-react';
 import { Slider } from '@/app/components/ui/primitives';
 import { APiHeader } from '@/app/components/domain/external-api/api-header';
-import {
-  GetAssistantConfigurationRequest,
-  Metadata,
-  UpdateAssistantConfigurationRequest,
-} from '@rapidaai/react';
+import { Metadata } from '@rapidaai/react';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import toast from 'react-hot-toast/headless';
 import { useRapidaStore } from '@/stores/app';
@@ -28,8 +24,8 @@ import { TabForm } from '@/app/components/ui/composites';
 import { WebhookEventSelector } from './webhook-event-selector';
 import { WebhookEventGroup, webhookEvents } from './webhook-events';
 import {
-  getAssistantConfigurationByRequest,
-  updateAssistantConfigurationFromRequest,
+  getAssistantConfigurationById,
+  updateAssistantConfigurationById,
 } from '@/clients/assistant.client';
 
 const renderLabelWithTooltip = (label: string, tooltip: string) => (
@@ -201,13 +197,11 @@ export const UpdateAssistantWebhook: FC<{ assistantId: string }> = ({
   useEffect(() => {
     const load = async () => {
       showLoader();
-      const request = new GetAssistantConfigurationRequest();
-      request.setAssistantid(assistantId);
-      request.setId(webhookId!);
 
       try {
-        const res = await getAssistantConfigurationByRequest({
-          request,
+        const res = await getAssistantConfigurationById({
+          assistantId,
+          configurationId: webhookId!,
           auth: { projectId, token, userId: authId },
         });
 
@@ -291,29 +285,26 @@ export const UpdateAssistantWebhook: FC<{ assistantId: string }> = ({
       return;
     }
     showLoader();
-    const request = new UpdateAssistantConfigurationRequest();
-    request.setAssistantid(assistantId);
-    request.setId(webhookId!);
-    request.setConfigurationtype(webhookConfigurationType);
-    request.setProvider('http');
-    request.setEnabled(true);
-    request.setOptionsList(
-      buildWebhookOptions({
-        method,
-        endpoint,
-        headers,
-        retryOnStatus,
-        maxRetries,
-        requestTimeout,
-        priority,
-        events,
-        description,
-      }),
-    );
+    const options = buildWebhookOptions({
+      method,
+      endpoint,
+      headers,
+      retryOnStatus,
+      maxRetries,
+      requestTimeout,
+      priority,
+      events,
+      description,
+    });
 
     try {
-      const response = await updateAssistantConfigurationFromRequest({
-        request,
+      const response = await updateAssistantConfigurationById({
+        assistantId,
+        configurationId: webhookId!,
+        configurationType: webhookConfigurationType,
+        provider: 'http',
+        enabled: true,
+        options,
         auth: { projectId, token, userId: authId },
       });
 

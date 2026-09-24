@@ -1,10 +1,3 @@
-import {
-  ConnectionConfig,
-  EndpointDefinition,
-  Invoke,
-  InvokeRequest,
-  StringToAny,
-} from '@rapidaai/react';
 import { Endpoint, EndpointProviderModel } from '@rapidaai/react';
 import { InvokeResponse } from '@rapidaai/react';
 import { useRapidaStore } from '@/stores/app';
@@ -21,7 +14,7 @@ import {
 
 import { OutputMessage } from '@/app/pages/endpoint/view/try-playground/experiment-prompt/components/output-message';
 import { PlaygroundHeader } from '@/app/pages/endpoint/view/try-playground/experiment-prompt/components/playground-header';
-import { connectionConfig } from '@/configs';
+import { invokeEndpoint } from '@/clients';
 
 export function TryChatComplete(props: {
   currentEndpoint: Endpoint;
@@ -93,25 +86,16 @@ export function TryChatComplete(props: {
     setCallerResponse(null);
 
     const formDataMap = await InputFormData(data);
-    const request = new InvokeRequest();
-    const endpoint = new EndpointDefinition();
-    endpoint.setEndpointid(props.endpointProviderModel.getEndpointid());
-    endpoint.setVersion(props.endpointProviderModel.getId());
-    request.setEndpoint(endpoint);
-    request.getMetadataMap().set('source', StringToAny('web-app'));
-    request.getMetadataMap().set('experiemental', StringToAny('true'));
-    formDataMap.forEach((value, key) => {
-      request.getArgsMap().set(key, value);
-    });
-    Invoke(
-      connectionConfig,
-      request,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: userId,
-        projectId: projectId,
-      }),
-    )
+    invokeEndpoint({
+      endpointId: props.endpointProviderModel.getEndpointid(),
+      endpointProviderModelId: props.endpointProviderModel.getId(),
+      args: formDataMap,
+      auth: {
+        userId,
+        token,
+        projectId,
+      },
+    })
       .then(at => {
         hideLoader();
         if (at?.getSuccess()) {
