@@ -1,4 +1,3 @@
-import { CreateAssistantKnowledge } from '@rapidaai/react';
 import { Card } from '@/app/components/ui/primitives';
 import { PageActionButtonBlock } from '@/app/components/layout/blocks/page-action-button-block';
 import { KnowledgeDropdown } from '@/app/components/domain/dropdowns/knowledge-dropdown';
@@ -23,7 +22,7 @@ import { cn } from '@/utils';
 import { DataBase, Information, ModelAlt, Search } from '@carbon/icons-react';
 import { FC, useState } from 'react';
 import toast from 'react-hot-toast/headless';
-import { connectionConfig } from '@/configs';
+import { createAssistantKnowledgeLink } from '@/clients/assistant.client';
 
 export const CreateKnowledge: FC<{ assistantId: string }> = ({
   assistantId,
@@ -69,17 +68,17 @@ export const CreateKnowledge: FC<{ assistantId: string }> = ({
     if (!validateForm()) return;
 
     try {
-      CreateAssistantKnowledge(
-        connectionConfig,
+      createAssistantKnowledgeLink({
         assistantId,
         knowledgeId,
-        {
+        retrievalOptions: {
           searchMethod: searchType,
           topK: topK,
           scoreThreshold: scoreThreshold,
           rerankingEnable: false,
         },
-        (err, response) => {
+        auth: { projectId, token, userId: authId },
+        callback: (err, response) => {
           if (err) {
             setErrorMessage(
               'Unable to create assistant knowledge, please check and try again.',
@@ -106,12 +105,7 @@ export const CreateKnowledge: FC<{ assistantId: string }> = ({
             );
           }
         },
-        {
-          'x-auth-id': authId,
-          authorization: token,
-          'x-project-id': projectId,
-        },
-      );
+      });
     } catch (error) {
       setErrorMessage('Failed to configure webhook. Please try again.');
       console.error('Error configuring webhook:', error);

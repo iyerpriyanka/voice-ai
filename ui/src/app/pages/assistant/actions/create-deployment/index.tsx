@@ -22,20 +22,8 @@ import {
   useState,
 } from 'react';
 import { useParams } from 'react-router-dom';
-import {
-  Assistant,
-  AssistantDefinition,
-  ConnectionConfig,
-  DisableAssistantApiDeployment,
-  DisableAssistantDebuggerDeployment,
-  DisableAssistantPhoneDeployment,
-  DisableAssistantWebpluginDeployment,
-  GetAssistant,
-  GetAssistantDeploymentRequest,
-  GetAssistantRequest,
-} from '@rapidaai/react';
+import { Assistant, GetAssistantDeploymentRequest } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
-import { connectionConfig } from '@/configs';
 import { useRapidaStore } from '@/stores/app';
 import { toHumanReadableDateTime } from '@/utils/date';
 import { AssistantPhoneCallDeploymentDialog } from '@/app/components/dialogs/assistant';
@@ -70,6 +58,10 @@ import {
   RadioButton,
   Tag,
 } from '@carbon/react';
+import {
+  disableAssistantDeploymentByType,
+  getAssistantById,
+} from '@/clients/assistant.client';
 
 type DeploymentType = 'debugger' | 'api' | 'web' | 'phone';
 
@@ -98,19 +90,10 @@ export const ConfigureAssistantDeploymentPage = () => {
     (id: typeof assistantId) => {
       if (id) {
         showLoader('block');
-        const request = new GetAssistantRequest();
-        const assistantDef = new AssistantDefinition();
-        assistantDef.setAssistantid(id);
-        request.setAssistantdefinition(assistantDef);
-        GetAssistant(
-          connectionConfig,
-          request,
-          ConnectionConfig.WithDebugger({
-            authorization: token,
-            userId: authId,
-            projectId: projectId,
-          }),
-        )
+        getAssistantById({
+          assistantId: id,
+          auth: { projectId, token, userId: authId },
+        })
           .then(epmr => {
             hideLoader();
             if (epmr?.getSuccess()) {
@@ -127,7 +110,7 @@ export const ConfigureAssistantDeploymentPage = () => {
           .catch(() => hideLoader());
       }
     },
-    [token, authId, projectId],
+    [authId, hideLoader, projectId, showLoader, token],
   );
 
   useEffect(() => {
@@ -164,19 +147,6 @@ export const ConfigureAssistantDeploymentPage = () => {
       const request = new GetAssistantDeploymentRequest();
       request.setAssistantid(assistantId);
 
-      const auth = ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: authId,
-        projectId,
-      });
-
-      const disableByType = {
-        api: DisableAssistantApiDeployment,
-        debugger: DisableAssistantDebuggerDeployment,
-        phone: DisableAssistantPhoneDeployment,
-        web: DisableAssistantWebpluginDeployment,
-      } as const;
-
       const labelByType = {
         api: 'API',
         debugger: 'Debugger',
@@ -185,11 +155,11 @@ export const ConfigureAssistantDeploymentPage = () => {
       } as const;
 
       try {
-        const response = await disableByType[type](
-          connectionConfig,
+        const response = await disableAssistantDeploymentByType({
           request,
-          auth,
-        );
+          deploymentType: type,
+          auth: { projectId, token, userId: authId },
+        });
         if (response?.getSuccess()) {
           toast.success(`${labelByType[type]} deployment disabled.`);
           setSelectedDeploymentType(null);

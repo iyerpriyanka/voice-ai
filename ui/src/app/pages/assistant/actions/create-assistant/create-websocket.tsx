@@ -6,11 +6,10 @@ import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
 import { ButtonSet } from '@carbon/react';
 import {
   Assistant,
-  CreateAssistant,
   CreateAssistantProviderRequest,
   CreateAssistantRequest,
-  GetAssistantResponse,
 } from '@rapidaai/react';
+import type { GetAssistantResponse } from '@rapidaai/react';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { useCurrentCredential } from '@/hooks/use-credential';
@@ -32,10 +31,10 @@ import {
 } from '@carbon/icons-react';
 import { YellowNoticeBlock } from '@/app/components/layout/container/message/notice-block';
 import { APiParameter } from '@/app/components/domain/external-api/api-parameter';
-import { connectionConfig } from '@/configs';
 import toast from 'react-hot-toast';
 import { useDocumentationUrl } from '@/theme/documentation-url';
 import { useTheme } from '@/theme/theme-provider';
+import { createAssistantFromRequest } from '@/clients/assistant.client';
 
 export function CreateWebsocket() {
   const { theme } = useTheme();
@@ -140,10 +139,9 @@ export function CreateWebsocket() {
     request.setName(name);
     request.setTagsList(tags);
     request.setDescription(description);
-    CreateAssistant(connectionConfig, request, {
-      authorization: token,
-      'x-auth-id': authId,
-      'x-project-id': projectId,
+    createAssistantFromRequest({
+      request,
+      auth: { projectId, token, userId: authId },
     })
       .then((car: GetAssistantResponse) => {
         hideLoader();

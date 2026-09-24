@@ -13,14 +13,11 @@ import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   AssistantDebuggerDeployment,
-  ConnectionConfig,
-  CreateAssistantDebuggerDeployment,
   CreateAssistantDeploymentRequest,
   DeploymentAudioProvider,
   GetAssistantDeploymentRequest,
   Metadata,
 } from '@rapidaai/react';
-import { GetAssistantDebuggerDeployment } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
 import { Helmet } from '@/app/components/app-shell/helmet';
 import {
@@ -33,13 +30,16 @@ import {
   GetDefaultTextToSpeechIfInvalid,
   ValidateTextToSpeechIfInvalid,
 } from '@/app/components/domain/providers/text-to-speech/provider';
-import { connectionConfig } from '@/configs';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { Tabs } from '@/app/components/ui/primitives';
 import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
 import { ButtonSet, CheckboxGroup } from '@carbon/react';
 import { InputCheckbox } from '@/app/components/ui/primitives';
 import { Notification } from '@/app/components/ui/feedback';
+import {
+  createAssistantDeploymentByType,
+  getAssistantDeploymentByType,
+} from '@/clients/assistant.client';
 
 const EDIT_TABS = [
   {
@@ -131,15 +131,11 @@ const EditAssistantDebuggerDeployment: FC<{ assistantId: string }> = ({
     showLoader('block');
     const request = new GetAssistantDeploymentRequest();
     request.setAssistantid(assistantId);
-    GetAssistantDebuggerDeployment(
-      connectionConfig,
+    getAssistantDeploymentByType({
       request,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        projectId,
-        userId: authId,
-      }),
-    )
+      deploymentType: 'debugger',
+      auth: { projectId, token, userId: authId },
+    })
       .then(response => {
         hideLoader();
         const deployment = response?.getData();
@@ -298,15 +294,11 @@ const EditAssistantDebuggerDeployment: FC<{ assistantId: string }> = ({
     const req = new CreateAssistantDeploymentRequest();
     req.setDebugger(deployment);
 
-    CreateAssistantDebuggerDeployment(
-      connectionConfig,
-      req,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: authId,
-        projectId,
-      }),
-    )
+    createAssistantDeploymentByType({
+      request: req,
+      deploymentType: 'debugger',
+      auth: { projectId, token, userId: authId },
+    })
       .then(response => {
         if (response?.getData() && response.getSuccess()) {
           toast.success('Debugger deployment updated successfully.');

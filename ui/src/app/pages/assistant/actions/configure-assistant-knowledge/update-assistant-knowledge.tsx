@@ -1,7 +1,3 @@
-import {
-  GetAssistantKnowledge,
-  UpdateAssistantKnowledge,
-} from '@rapidaai/react';
 import { Card } from '@/app/components/ui/primitives';
 import { PageActionButtonBlock } from '@/app/components/layout/blocks/page-action-button-block';
 import { KnowledgeDropdown } from '@/app/components/domain/dropdowns/knowledge-dropdown';
@@ -29,7 +25,10 @@ import { DataBase, Information, ModelAlt, Search } from '@carbon/icons-react';
 import { FC, useEffect, useState } from 'react';
 import toast from 'react-hot-toast/headless';
 import { useParams } from 'react-router-dom';
-import { connectionConfig } from '@/configs';
+import {
+  getAssistantKnowledgeLinkById,
+  updateAssistantKnowledgeLink,
+} from '@/clients/assistant.client';
 
 export const UpdateKnowledge: FC<{ assistantId: string }> = ({
   assistantId,
@@ -75,11 +74,11 @@ export const UpdateKnowledge: FC<{ assistantId: string }> = ({
 
   useEffect(() => {
     showLoader();
-    GetAssistantKnowledge(
-      connectionConfig,
+    getAssistantKnowledgeLinkById({
       assistantId,
-      assistantKnowledgeId!,
-      (err, res) => {
+      assistantKnowledgeId: assistantKnowledgeId!,
+      auth: { projectId, token, userId: authId },
+      callback: (err, res) => {
         hideLoader();
         if (err) {
           toast.error('Unable to assistant knowledge, please try again later.');
@@ -101,12 +100,7 @@ export const UpdateKnowledge: FC<{ assistantId: string }> = ({
           }
         }
       },
-      {
-        'x-auth-id': authId,
-        authorization: token,
-        'x-project-id': projectId,
-      },
-    );
+    });
   }, [assistantId, assistantKnowledgeId, authId, token, projectId]);
 
   const onSubmit = async (e: React.FormEvent) => {
@@ -114,18 +108,18 @@ export const UpdateKnowledge: FC<{ assistantId: string }> = ({
     if (!validateForm()) return;
 
     try {
-      UpdateAssistantKnowledge(
-        connectionConfig,
-        assistantKnowledgeId!,
+      updateAssistantKnowledgeLink({
+        assistantKnowledgeId: assistantKnowledgeId!,
         assistantId,
         knowledgeId,
-        {
+        retrievalOptions: {
           searchMethod: searchType,
           topK: topK,
           scoreThreshold: scoreThreshold,
           rerankingEnable: false,
         },
-        (err, response) => {
+        auth: { projectId, token, userId: authId },
+        callback: (err, response) => {
           if (err) {
             setErrorMessage(
               'Unable to update assistant knowledge, please check and try again.',
@@ -152,12 +146,7 @@ export const UpdateKnowledge: FC<{ assistantId: string }> = ({
             );
           }
         },
-        {
-          'x-auth-id': authId,
-          authorization: token,
-          'x-project-id': projectId,
-        },
-      );
+      });
     } catch (error) {
       setErrorMessage('Failed to configure webhook. Please try again.');
       console.error('Error configuring webhook:', error);

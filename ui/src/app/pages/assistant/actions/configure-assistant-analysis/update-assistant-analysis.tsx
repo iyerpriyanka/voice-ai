@@ -9,15 +9,12 @@ import { randomMeaningfullName } from '@/utils';
 import { EndpointDropdown } from '@/app/components/domain/dropdowns/endpoint-dropdown';
 import {
   Endpoint,
-  GetAssistantConfiguration,
   GetAssistantConfigurationRequest,
   Metadata,
-  UpdateAssistantConfiguration,
   UpdateAssistantConfigurationRequest,
 } from '@rapidaai/react';
 import { useParams } from 'react-router-dom';
 import toast from 'react-hot-toast/headless';
-import { connectionConfig } from '@/configs';
 import { TabForm } from '@/app/components/ui/composites';
 import {
   ASSISTANT_CONDITION_KEY_OPTIONS,
@@ -30,6 +27,10 @@ import {
 } from '@/app/components/domain/tools/common';
 import { SourceConditionRule } from '@/app/components/domain/conditions/source-condition-rule';
 import { InputGroup } from '@/app/components/ui/primitives';
+import {
+  getAssistantConfigurationByRequest,
+  updateAssistantConfigurationFromRequest,
+} from '@/clients/assistant.client';
 
 type ParamType =
   | 'client'
@@ -136,10 +137,9 @@ export const UpdateAssistantAnalysis: FC<{ assistantId: string }> = ({
       request.setId(analysisId!);
 
       try {
-        const res = await GetAssistantConfiguration(connectionConfig, request, {
-          'x-auth-id': authId,
-          authorization: token,
-          'x-project-id': projectId,
+        const res = await getAssistantConfigurationByRequest({
+          request,
+          auth: { projectId, token, userId: authId },
         });
         const analysis = res?.getData();
         if (!analysis) return;
@@ -270,15 +270,10 @@ export const UpdateAssistantAnalysis: FC<{ assistantId: string }> = ({
     request.setOptionsList(options);
 
     try {
-      const response = await UpdateAssistantConfiguration(
-        connectionConfig,
+      const response = await updateAssistantConfigurationFromRequest({
         request,
-        {
-          'x-auth-id': authId,
-          authorization: token,
-          'x-project-id': projectId,
-        },
-      );
+        auth: { projectId, token, userId: authId },
+      });
 
       if (response?.getSuccess()) {
         toast.success(`Assistant's analysis updated successfully`);

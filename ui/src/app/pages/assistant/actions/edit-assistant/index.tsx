@@ -1,12 +1,4 @@
-import {
-  AssistantDefinition,
-  ConnectionConfig,
-  DeleteAssistant,
-  GetAssistant,
-  GetAssistantRequest,
-} from '@rapidaai/react';
-import { GetAssistantResponse } from '@rapidaai/react';
-import { ServiceError } from '@rapidaai/react';
+import type { GetAssistantResponse, ServiceError } from '@rapidaai/react';
 import { ErrorContainer } from '@/app/components/ui/feedback';
 import { useDeleteConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-delete-confirmation';
 import { useRapidaStore } from '@/stores/app';
@@ -15,8 +7,6 @@ import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { FC, ReactNode, useEffect, useState } from 'react';
 import toast from 'react-hot-toast/headless';
 import { useParams } from 'react-router-dom';
-import { UpdateAssistantDetail } from '@rapidaai/react';
-import { connectionConfig } from '@/configs';
 import { Notification } from '@/app/components/ui/feedback';
 import {
   Form,
@@ -35,6 +25,11 @@ import {
 } from '@carbon/react';
 import { Information, WarningAlt } from '@carbon/icons-react';
 import { InputGroup } from '@/app/components/ui/primitives';
+import {
+  deleteAssistantById,
+  getAssistantById,
+  updateAssistantDescription,
+} from '@/clients/assistant.client';
 
 const Toggletip = (CarbonToggletip as any).default || CarbonToggletip;
 
@@ -86,19 +81,10 @@ export const EditAssistant: FC<{ assistantId: string }> = ({ assistantId }) => {
 
   useEffect(() => {
     showLoader('block');
-    const request = new GetAssistantRequest();
-    const assistantDef = new AssistantDefinition();
-    assistantDef.setAssistantid(assistantId);
-    request.setAssistantdefinition(assistantDef);
-    GetAssistant(
-      connectionConfig,
-      request,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: authId,
-        projectId: projectId,
-      }),
-    )
+    getAssistantById({
+      assistantId,
+      auth: { projectId, token, userId: authId },
+    })
       .then(car => {
         hideLoader();
         if (car?.getSuccess()) {
@@ -119,7 +105,7 @@ export const EditAssistant: FC<{ assistantId: string }> = ({ assistantId }) => {
       .catch(() => {
         hideLoader();
       });
-  }, [assistantId]);
+  }, [assistantId, authId, hideLoader, projectId, showLoader, token]);
 
   const onUpdateAssistantDetail = () => {
     setErrorMessage('');
@@ -145,18 +131,13 @@ export const EditAssistant: FC<{ assistantId: string }> = ({ assistantId }) => {
         setErrorMessage('Unable to update assistant. Please try again later.');
       }
     };
-    UpdateAssistantDetail(
-      connectionConfig,
+    updateAssistantDescription({
       assistantId,
       name,
       description,
-      afterUpdateAssistant,
-      {
-        authorization: token,
-        'x-auth-id': authId,
-        'x-project-id': projectId,
-      },
-    );
+      callback: afterUpdateAssistant,
+      auth: { projectId, token, userId: authId },
+    });
   };
 
   const Deletion = useDeleteConfirmDialog({
@@ -179,10 +160,10 @@ export const EditAssistant: FC<{ assistantId: string }> = ({ assistantId }) => {
           toast.error('Unable to delete assistant. Please try again later.');
         }
       };
-      DeleteAssistant(connectionConfig, assistantId, afterDeleteAssistant, {
-        authorization: token,
-        'x-auth-id': authId,
-        'x-project-id': projectId,
+      deleteAssistantById({
+        assistantId,
+        callback: afterDeleteAssistant,
+        auth: { projectId, token, userId: authId },
       });
     },
     name: name,

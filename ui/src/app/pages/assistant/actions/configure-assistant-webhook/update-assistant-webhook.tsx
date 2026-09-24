@@ -17,19 +17,20 @@ import { Information } from '@carbon/icons-react';
 import { Slider } from '@/app/components/ui/primitives';
 import { APiHeader } from '@/app/components/domain/external-api/api-header';
 import {
-  GetAssistantConfiguration,
   GetAssistantConfigurationRequest,
   Metadata,
-  UpdateAssistantConfiguration,
   UpdateAssistantConfigurationRequest,
 } from '@rapidaai/react';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import toast from 'react-hot-toast/headless';
 import { useRapidaStore } from '@/stores/app';
-import { connectionConfig } from '@/configs';
 import { TabForm } from '@/app/components/ui/composites';
 import { WebhookEventSelector } from './webhook-event-selector';
 import { WebhookEventGroup, webhookEvents } from './webhook-events';
+import {
+  getAssistantConfigurationByRequest,
+  updateAssistantConfigurationFromRequest,
+} from '@/clients/assistant.client';
 
 const renderLabelWithTooltip = (label: string, tooltip: string) => (
   <span className="inline-flex items-center gap-1">
@@ -205,10 +206,9 @@ export const UpdateAssistantWebhook: FC<{ assistantId: string }> = ({
       request.setId(webhookId!);
 
       try {
-        const res = await GetAssistantConfiguration(connectionConfig, request, {
-          'x-auth-id': authId,
-          authorization: token,
-          'x-project-id': projectId,
+        const res = await getAssistantConfigurationByRequest({
+          request,
+          auth: { projectId, token, userId: authId },
         });
 
         hideLoader();
@@ -312,15 +312,10 @@ export const UpdateAssistantWebhook: FC<{ assistantId: string }> = ({
     );
 
     try {
-      const response = await UpdateAssistantConfiguration(
-        connectionConfig,
+      const response = await updateAssistantConfigurationFromRequest({
         request,
-        {
-          'x-auth-id': authId,
-          authorization: token,
-          'x-project-id': projectId,
-        },
-      );
+        auth: { projectId, token, userId: authId },
+      });
 
       hideLoader();
       if (response?.getSuccess()) {

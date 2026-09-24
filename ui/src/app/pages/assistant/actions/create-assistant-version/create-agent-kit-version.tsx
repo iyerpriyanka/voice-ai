@@ -16,19 +16,11 @@ import { TabForm } from '@/app/components/ui/composites';
 import { FieldSet } from '@/app/components/ui/primitives';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import {
-  AssistantDefinition,
-  ConnectionConfig,
-  CreateAssistantProvider,
-  CreateAssistantProviderRequest,
-  GetAssistantProviderResponse,
-  GetAssistantRequest,
-} from '@rapidaai/react';
+import { CreateAssistantProviderRequest } from '@rapidaai/react';
+import type { GetAssistantProviderResponse } from '@rapidaai/react';
 import { FormLabel } from '@/app/components/ui/primitives';
 import { Textarea } from '@/app/components/ui/primitives';
 import { ErrorContainer } from '@/app/components/ui/feedback';
-import { GetAssistant } from '@rapidaai/react';
-import { connectionConfig } from '@/configs';
 import { DocNoticeBlock } from '@/app/components/layout/container/message/notice-block/doc-notice-block';
 import { Input } from '@/app/components/ui/primitives';
 import { Select } from '@/app/components/ui/primitives';
@@ -36,6 +28,10 @@ import { APiParameter } from '@/app/components/domain/external-api/api-parameter
 import { CodeEditor } from '@/app/components/ui/editor/code-editor';
 import toast from 'react-hot-toast/headless';
 import { useTheme } from '@/theme/theme-provider';
+import {
+  createAssistantProviderFromRequest,
+  getAssistantById,
+} from '@/clients/assistant.client';
 
 const TRANSPORT_SECURITY_OPTIONS = [
   { name: 'Default', value: '' },
@@ -275,10 +271,9 @@ const CreateNewVersion: FC<{ assistantId: string }> = ({ assistantId }) => {
     request.setAgentkit(agentKit);
     request.setAssistantid(assistantId);
     request.setDescription(versionMessage);
-    CreateAssistantProvider(connectionConfig, request, {
-      authorization: token,
-      'x-auth-id': userId,
-      'x-project-id': projectId,
+    createAssistantProviderFromRequest({
+      request,
+      auth: { projectId, token, userId },
     })
       .then((car: GetAssistantProviderResponse) => {
         hideLoader();
@@ -308,19 +303,10 @@ const CreateNewVersion: FC<{ assistantId: string }> = ({ assistantId }) => {
 
   useEffect(() => {
     showLoader();
-    const request = new GetAssistantRequest();
-    const assistantDef = new AssistantDefinition();
-    assistantDef.setAssistantid(assistantId);
-    request.setAssistantdefinition(assistantDef);
-    GetAssistant(
-      connectionConfig,
-      request,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: userId,
-        projectId: projectId,
-      }),
-    )
+    getAssistantById({
+      assistantId,
+      auth: { projectId, token, userId },
+    })
       .then(response => {
         hideLoader();
         if (response?.getSuccess()) {

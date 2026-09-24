@@ -13,14 +13,11 @@ import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   AssistantApiDeployment,
-  ConnectionConfig,
-  CreateAssistantApiDeployment,
   CreateAssistantDeploymentRequest,
   DeploymentAudioProvider,
   GetAssistantDeploymentRequest,
   Metadata,
 } from '@rapidaai/react';
-import { GetAssistantApiDeployment } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
 import { Helmet } from '@/app/components/app-shell/helmet';
 import {
@@ -33,13 +30,16 @@ import {
   GetDefaultTextToSpeechIfInvalid,
   ValidateTextToSpeechIfInvalid,
 } from '@/app/components/domain/providers/text-to-speech/provider';
-import { connectionConfig } from '@/configs';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { Tabs } from '@/app/components/ui/primitives';
 import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
 import { InputCheckbox } from '@/app/components/ui/primitives';
 import { ButtonSet, CheckboxGroup } from '@carbon/react';
 import { Notification } from '@/app/components/ui/feedback';
+import {
+  createAssistantDeploymentByType,
+  getAssistantDeploymentByType,
+} from '@/clients/assistant.client';
 
 const EDIT_TABS = [
   { code: 'experience', name: 'General Experience' },
@@ -116,15 +116,11 @@ const EditAssistantApiDeployment: FC<{ assistantId: string }> = ({
     showLoader('block');
     const request = new GetAssistantDeploymentRequest();
     request.setAssistantid(assistantId);
-    GetAssistantApiDeployment(
-      connectionConfig,
+    getAssistantDeploymentByType({
       request,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: authId,
-        projectId,
-      }),
-    )
+      deploymentType: 'api',
+      auth: { projectId, token, userId: authId },
+    })
       .then(response => {
         hideLoader();
         const deployment = response?.getData();
@@ -280,15 +276,11 @@ const EditAssistantApiDeployment: FC<{ assistantId: string }> = ({
     }
 
     req.setApi(deployment);
-    CreateAssistantApiDeployment(
-      connectionConfig,
-      req,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: authId,
-        projectId,
-      }),
-    )
+    createAssistantDeploymentByType({
+      request: req,
+      deploymentType: 'api',
+      auth: { projectId, token, userId: authId },
+    })
       .then(response => {
         if (response?.getData() && response.getSuccess()) {
           toast.success('SDK / API deployment updated successfully.');

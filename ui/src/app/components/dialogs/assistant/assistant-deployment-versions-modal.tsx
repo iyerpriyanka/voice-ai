@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Button,
   Loading,
@@ -15,23 +15,16 @@ import {
   type AssistantDebuggerDeployment,
   type AssistantPhoneDeployment,
   type AssistantWebpluginDeployment,
-  ConnectionConfig,
-  GetAllAssistantApiDeployment,
   type GetAllAssistantApiDeploymentResponse,
-  GetAllAssistantDebuggerDeployment,
   type GetAllAssistantDebuggerDeploymentResponse,
-  GetAllAssistantDeploymentRequest,
-  GetAllAssistantPhoneDeployment,
   type GetAllAssistantPhoneDeploymentResponse,
-  GetAllAssistantWebpluginDeployment,
   type GetAllAssistantWebpluginDeploymentResponse,
-  Paginate,
 } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
 import { ModalProps } from '@/app/components/ui/primitives';
 import { RightSideModal } from '@/app/components/dialogs/shared';
 import { toHumanReadableDateTime } from '@/utils/date';
-import { connectionConfig } from '@/configs';
+import { listAssistantDeploymentVersions } from '@/clients/assistant.client';
 
 export type AssistantDeploymentType = 'debugger' | 'api' | 'web' | 'phone';
 
@@ -85,16 +78,6 @@ export function AssistantDeploymentVersionsModal({
     ? `${labelByType[deploymentType]} versions`
     : 'Deployment versions';
 
-  const auth = useMemo(
-    () =>
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: authId,
-        projectId,
-      }),
-    [token, authId, projectId],
-  );
-
   useEffect(() => {
     if (!modalOpen || !deploymentType) return;
 
@@ -103,21 +86,13 @@ export function AssistantDeploymentVersionsModal({
     setErrorMessage('');
     setRows([]);
 
-    const request = new GetAllAssistantDeploymentRequest();
-    request.setAssistantid(assistantId);
-    const paginate = new Paginate();
-    paginate.setPage(1);
-    paginate.setPagesize(100);
-    request.setPaginate(paginate);
-
-    const fetchByType = {
-      api: GetAllAssistantApiDeployment,
-      debugger: GetAllAssistantDebuggerDeployment,
-      phone: GetAllAssistantPhoneDeployment,
-      web: GetAllAssistantWebpluginDeployment,
-    } as const;
-
-    fetchByType[deploymentType](connectionConfig, request, auth)
+    listAssistantDeploymentVersions({
+      assistantId,
+      deploymentType,
+      page: 1,
+      pageSize: 100,
+      auth: { projectId, token, userId: authId },
+    })
       .then(response => {
         if (!isActive) return;
         if (!response?.getSuccess()) {
@@ -150,7 +125,7 @@ export function AssistantDeploymentVersionsModal({
     return () => {
       isActive = false;
     };
-  }, [modalOpen, deploymentType, assistantId, auth]);
+  }, [modalOpen, deploymentType, assistantId, authId, projectId, token]);
 
   const copyVersion = (id: string) => {
     const version = `vrsn_${id}`;

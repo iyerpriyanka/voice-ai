@@ -1,13 +1,8 @@
 import React, { FC, useState } from 'react';
-import {
-  CreateAssistantConfiguration,
-  CreateAssistantConfigurationRequest,
-  Metadata,
-} from '@rapidaai/react';
+import { CreateAssistantConfigurationRequest, Metadata } from '@rapidaai/react';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/stores/app';
-import { connectionConfig } from '@/configs';
 import toast from 'react-hot-toast/headless';
 import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
 import { Stack } from '@/app/components/ui/primitives';
@@ -25,6 +20,7 @@ import {
 import { STORAGE_PROVIDER } from '@/providers';
 import { InputGroup } from '@/app/components/ui/primitives';
 import { Notification } from '@/app/components/ui/feedback';
+import { createAssistantConfigurationFromRequest } from '@/clients/assistant.client';
 
 const storageConfigurationType = 'storage';
 
@@ -80,10 +76,9 @@ export const CreateAssistantStorage: FC<{ assistantId: string }> = ({
     request.setOptionsList(upsertStorageFilesOption(parameters, selectedFiles));
 
     showLoader();
-    CreateAssistantConfiguration(connectionConfig, request, {
-      'x-auth-id': authId,
-      authorization: token,
-      'x-project-id': projectId,
+    createAssistantConfigurationFromRequest({
+      request,
+      auth: { projectId, token, userId: authId },
     })
       .then(response => {
         hideLoader();

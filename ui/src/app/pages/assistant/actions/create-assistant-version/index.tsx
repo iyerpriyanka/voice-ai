@@ -15,16 +15,8 @@ import { TabForm } from '@/app/components/ui/composites';
 import { FieldSet } from '@/app/components/ui/primitives';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import {
-  CreateAssistantProvider,
-  GetAssistantProviderResponse,
-  GetAssistantRequest,
-  GetAssistant,
-  CreateAssistantProviderRequest,
-  AssistantDefinition,
-  Metadata,
-  ConnectionConfig,
-} from '@rapidaai/react';
+import { CreateAssistantProviderRequest, Metadata } from '@rapidaai/react';
+import type { GetAssistantProviderResponse } from '@rapidaai/react';
 import { FormLabel } from '@/app/components/ui/primitives';
 import { Textarea } from '@/app/components/ui/primitives';
 import { ConfigPrompt } from '@/app/components/domain/configuration/config-prompt';
@@ -38,9 +30,12 @@ import {
 import { randomString } from '@/utils';
 import { ValidateTextProviderDefaultOptions } from '@/app/components/domain/providers/text';
 import { useAllProviderCredentials } from '@/hooks/use-model';
-import { connectionConfig } from '@/configs';
 import { DocNoticeBlock } from '@/app/components/layout/container/message/notice-block/doc-notice-block';
 import toast from 'react-hot-toast/headless';
+import {
+  createAssistantProviderWithDebuggerFromRequest,
+  getAssistantById,
+} from '@/clients/assistant.client';
 
 /**
  *
@@ -185,15 +180,10 @@ const CreateNewVersion: FC<{ assistantId: string }> = ({ assistantId }) => {
     request.setAssistantid(assistantId);
     request.setDescription(versionMessage);
     //
-    CreateAssistantProvider(
-      connectionConfig,
+    createAssistantProviderWithDebuggerFromRequest({
       request,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: authId,
-        projectId: projectId,
-      }),
-    )
+      auth: { projectId, token, userId: authId },
+    })
       .then((car: GetAssistantProviderResponse) => {
         hideLoader();
         if (car?.getSuccess()) {
@@ -223,19 +213,10 @@ const CreateNewVersion: FC<{ assistantId: string }> = ({ assistantId }) => {
   //
   useEffect(() => {
     showLoader();
-    const request = new GetAssistantRequest();
-    const assistantDef = new AssistantDefinition();
-    assistantDef.setAssistantid(assistantId);
-    request.setAssistantdefinition(assistantDef);
-    GetAssistant(
-      connectionConfig,
-      request,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: authId,
-        projectId: projectId,
-      }),
-    )
+    getAssistantById({
+      assistantId,
+      auth: { projectId, token, userId: authId },
+    })
       .then(response => {
         hideLoader();
         if (response?.getSuccess()) {

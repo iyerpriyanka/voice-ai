@@ -10,9 +10,9 @@ import '@testing-library/jest-dom';
 import { ConfigureAssistantCallDeploymentPage } from '@/app/pages/assistant/actions/create-deployment/phone';
 import { EditAssistantCallDeploymentPage } from '@/app/pages/assistant/actions/create-deployment/phone/edit';
 import {
-  CreateAssistantPhoneDeployment,
-  GetAssistantPhoneDeployment,
-} from '@rapidaai/react';
+  createAssistantDeploymentByType,
+  getAssistantDeploymentByType,
+} from '@/clients/assistant.client';
 
 let mockParams: Record<string, string | undefined> = {
   assistantId: 'assistant-1',
@@ -173,6 +173,11 @@ jest.mock('@/hooks/use-global-navigator', () => ({
   }),
 }));
 
+jest.mock('@/clients/assistant.client', () => ({
+  createAssistantDeploymentByType: jest.fn(),
+  getAssistantDeploymentByType: jest.fn(),
+}));
+
 jest.mock('@/app/components/app-shell/helmet', () => ({ Helmet: () => null }));
 
 jest.mock('@/app/components/ui/composites/tab-form', () => ({
@@ -203,7 +208,7 @@ jest.mock('@/app/components/ui/composites/tab-form', () => ({
   },
 }));
 
-jest.mock('@/app/components/ui/primitives/tabs', () => ({
+jest.mock('@/app/components/ui/primitives', () => ({
   Tabs: ({ tabs = [], children, selectedIndex = 0, onChange }: any) => {
     const panels = Array.isArray(children) ? children : [children];
     return (
@@ -219,6 +224,30 @@ jest.mock('@/app/components/ui/primitives/tabs', () => ({
       </div>
     );
   },
+  PrimaryButton: ({ children, isLoading, ...props }: any) => (
+    <button {...props}>{children}</button>
+  ),
+  SecondaryButton: ({ children, isLoading, ...props }: any) => (
+    <button {...props}>{children}</button>
+  ),
+  GhostButton: ({ children, isLoading, ...props }: any) => (
+    <button {...props}>{children}</button>
+  ),
+  ConfirmButton: ({ children, isLoading, ...props }: any) => (
+    <button {...props}>{children}</button>
+  ),
+  DangerButton: ({ children, isLoading, ...props }: any) => (
+    <button {...props}>{children}</button>
+  ),
+  Modal: ({ children, open }: any) => (open ? <div>{children}</div> : null),
+  ModalBody: ({ children }: any) => <div>{children}</div>,
+  ModalFooter: ({ children }: any) => <div>{children}</div>,
+  ModalHeader: ({ label, title }: any) => (
+    <div>
+      <div>{label}</div>
+      <div>{title}</div>
+    </div>
+  ),
 }));
 
 jest.mock(
@@ -261,18 +290,6 @@ jest.mock('@/app/components/domain/providers/text-to-speech/provider', () => ({
     mockValidateTextToSpeechIfInvalid(...args),
 }));
 
-jest.mock('@/app/components/ui/primitives/button', () => ({
-  PrimaryButton: ({ children, isLoading, ...props }: any) => (
-    <button {...props}>{children}</button>
-  ),
-  SecondaryButton: ({ children, isLoading, ...props }: any) => (
-    <button {...props}>{children}</button>
-  ),
-  GhostButton: ({ children, isLoading, ...props }: any) => (
-    <button {...props}>{children}</button>
-  ),
-}));
-
 describe('Phone deployment create and edit flows', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -281,14 +298,14 @@ describe('Phone deployment create and edit flows', () => {
     mockValidateSpeechToTextIfInvalid.mockReturnValue(undefined);
     mockValidateTextToSpeechIfInvalid.mockReturnValue(undefined);
 
-    (CreateAssistantPhoneDeployment as jest.Mock).mockResolvedValue({
+    (createAssistantDeploymentByType as jest.Mock).mockResolvedValue({
       getData: () => ({ id: 'dep-1' }),
       getSuccess: () => true,
     });
   });
 
   it('edit mode preserves telephony + audio payload when deploying', async () => {
-    (GetAssistantPhoneDeployment as jest.Mock).mockResolvedValue({
+    (getAssistantDeploymentByType as jest.Mock).mockResolvedValue({
       getData: () => ({
         getGreeting: () => 'hello',
         hasGreetinginterruptible: () => true,
@@ -319,10 +336,11 @@ describe('Phone deployment create and edit flows', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Deploy Phone' }));
 
     await waitFor(() =>
-      expect(CreateAssistantPhoneDeployment).toHaveBeenCalledTimes(1),
+      expect(createAssistantDeploymentByType).toHaveBeenCalledTimes(1),
     );
 
-    const req = (CreateAssistantPhoneDeployment as jest.Mock).mock.calls[0][1];
+    const req = (createAssistantDeploymentByType as jest.Mock).mock.calls[0][0]
+      .request;
     const deployment = req.getPhone();
     expect(deployment.getPhoneprovidername()).toBe('twilio');
     expect(deployment.getInputaudio()).toBeDefined();
@@ -331,7 +349,7 @@ describe('Phone deployment create and edit flows', () => {
   });
 
   it('create mode deploys with default telephony + audio payload', async () => {
-    (GetAssistantPhoneDeployment as jest.Mock).mockResolvedValue({
+    (getAssistantDeploymentByType as jest.Mock).mockResolvedValue({
       getData: () => null,
     });
 
@@ -343,10 +361,11 @@ describe('Phone deployment create and edit flows', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Deploy Phone' }));
 
     await waitFor(() =>
-      expect(CreateAssistantPhoneDeployment).toHaveBeenCalledTimes(1),
+      expect(createAssistantDeploymentByType).toHaveBeenCalledTimes(1),
     );
 
-    const req = (CreateAssistantPhoneDeployment as jest.Mock).mock.calls[0][1];
+    const req = (createAssistantDeploymentByType as jest.Mock).mock.calls[0][0]
+      .request;
     const deployment = req.getPhone();
     expect(deployment.getPhoneprovidername()).toBe('twilio');
     expect(deployment.getInputaudio()).toBeDefined();
@@ -356,7 +375,7 @@ describe('Phone deployment create and edit flows', () => {
 
   it('blocks moving forward when telephony configuration is invalid', async () => {
     mockValidateTelephonyOptions.mockReturnValue(false);
-    (GetAssistantPhoneDeployment as jest.Mock).mockResolvedValue({
+    (getAssistantDeploymentByType as jest.Mock).mockResolvedValue({
       getData: () => null,
     });
 
@@ -374,7 +393,7 @@ describe('Phone deployment create and edit flows', () => {
     mockValidateSpeechToTextIfInvalid.mockReturnValue(
       'Please configure STT provider credentials.',
     );
-    (GetAssistantPhoneDeployment as jest.Mock).mockResolvedValue({
+    (getAssistantDeploymentByType as jest.Mock).mockResolvedValue({
       getData: () => null,
     });
 
@@ -394,7 +413,7 @@ describe('Phone deployment create and edit flows', () => {
     mockValidateTextToSpeechIfInvalid.mockReturnValue(
       'Please configure TTS provider credentials.',
     );
-    (GetAssistantPhoneDeployment as jest.Mock).mockResolvedValue({
+    (getAssistantDeploymentByType as jest.Mock).mockResolvedValue({
       getData: () => null,
     });
 
@@ -408,12 +427,12 @@ describe('Phone deployment create and edit flows', () => {
     expect(
       screen.getByText('Please configure TTS provider credentials.'),
     ).toBeInTheDocument();
-    expect(CreateAssistantPhoneDeployment).not.toHaveBeenCalled();
+    expect(createAssistantDeploymentByType).not.toHaveBeenCalled();
     expect(mockValidateTextToSpeechIfInvalid).toHaveBeenCalled();
   });
 
   it('allows switching tabs without step-by-step progression', async () => {
-    (GetAssistantPhoneDeployment as jest.Mock).mockResolvedValue({
+    (getAssistantDeploymentByType as jest.Mock).mockResolvedValue({
       getData: () => null,
     });
 
@@ -425,7 +444,7 @@ describe('Phone deployment create and edit flows', () => {
   });
 
   it('opens edit page with telephony tab selected by default', async () => {
-    (GetAssistantPhoneDeployment as jest.Mock).mockResolvedValue({
+    (getAssistantDeploymentByType as jest.Mock).mockResolvedValue({
       getData: () => null,
     });
 

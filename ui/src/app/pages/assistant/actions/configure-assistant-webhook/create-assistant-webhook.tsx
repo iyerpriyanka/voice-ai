@@ -15,18 +15,14 @@ import {
 import { Information } from '@carbon/icons-react';
 import { Slider } from '@/app/components/ui/primitives';
 import { APiHeader } from '@/app/components/domain/external-api/api-header';
-import {
-  CreateAssistantConfiguration,
-  CreateAssistantConfigurationRequest,
-  Metadata,
-} from '@rapidaai/react';
+import { CreateAssistantConfigurationRequest, Metadata } from '@rapidaai/react';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import toast from 'react-hot-toast/headless';
 import { useRapidaStore } from '@/stores/app';
-import { connectionConfig } from '@/configs';
 import { TabForm } from '@/app/components/ui/composites';
 import { WebhookEventSelector } from './webhook-event-selector';
 import { WebhookEventGroup, webhookEvents } from './webhook-events';
+import { createAssistantConfigurationFromRequest } from '@/clients/assistant.client';
 
 const renderLabelWithTooltip = (label: string, tooltip: string) => (
   <span className="inline-flex items-center gap-1">
@@ -205,15 +201,10 @@ export const CreateAssistantWebhook: FC<{ assistantId: string }> = ({
     );
 
     try {
-      const response = await CreateAssistantConfiguration(
-        connectionConfig,
+      const response = await createAssistantConfigurationFromRequest({
         request,
-        {
-          'x-auth-id': authId,
-          authorization: token,
-          'x-project-id': projectId,
-        },
-      );
+        auth: { projectId, token, userId: authId },
+      });
 
       hideLoader();
       if (response?.getSuccess()) {

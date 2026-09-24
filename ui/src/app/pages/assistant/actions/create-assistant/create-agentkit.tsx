@@ -16,8 +16,8 @@ import {
   Assistant,
   CreateAssistantProviderRequest,
   CreateAssistantRequest,
-  GetAssistantResponse,
 } from '@rapidaai/react';
+import type { GetAssistantResponse } from '@rapidaai/react';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { useCurrentCredential } from '@/hooks/use-credential';
@@ -30,14 +30,13 @@ import { Textarea } from '@/app/components/ui/primitives';
 import { TagInput } from '@/app/components/ui/composites';
 import { AssistantTag } from '@/app/components/domain/tags/assistant-tags';
 import { DocNoticeBlock } from '@/app/components/layout/container/message/notice-block/doc-notice-block';
-import { CreateAssistant } from '@rapidaai/react';
-import { connectionConfig } from '@/configs';
 import { APiParameter } from '@/app/components/domain/external-api/api-parameter';
 import { InputHelper } from '@/app/components/ui/primitives';
 import { CodeEditor } from '@/app/components/ui/editor/code-editor';
 import toast from 'react-hot-toast/headless';
 import { SectionDivider } from '@/app/components/layout/blocks/section-divider';
 import { useTheme } from '@/theme/theme-provider';
+import { createAssistantFromRequest } from '@/clients/assistant.client';
 
 const TRANSPORT_SECURITY_OPTIONS = [
   { name: 'Default', value: '' },
@@ -176,10 +175,9 @@ export function CreateAgentKit() {
     request.setName(name);
     request.setTagsList(tags);
     request.setDescription(description);
-    CreateAssistant(connectionConfig, request, {
-      authorization: token,
-      'x-auth-id': authId,
-      'x-project-id': projectId,
+    createAssistantFromRequest({
+      request,
+      auth: { projectId, token, userId: authId },
     })
       .then((car: GetAssistantResponse) => {
         hideLoader();

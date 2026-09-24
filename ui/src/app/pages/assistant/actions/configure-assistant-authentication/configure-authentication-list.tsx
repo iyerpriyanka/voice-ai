@@ -1,14 +1,5 @@
 import { FC, useEffect, useMemo, useState } from 'react';
-import {
-  AssistantConfiguration,
-  DeleteAssistantConfiguration,
-  DeleteAssistantConfigurationRequest,
-  GetAllAssistantConfiguration,
-  GetAllAssistantConfigurationRequest,
-  Paginate,
-  UpdateAssistantConfiguration,
-  UpdateAssistantConfigurationRequest,
-} from '@rapidaai/react';
+import { AssistantConfiguration } from '@rapidaai/react';
 import {
   Breadcrumb,
   Button as CarbonButton,
@@ -33,7 +24,6 @@ import toast from 'react-hot-toast/headless';
 
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { connectionConfig } from '@/configs';
 import { PrimaryButton, IconOnlyButton } from '@/app/components/ui/primitives';
 import { UrlTableCell } from '@/app/components/ui/table';
 import { SectionLoader } from '@/app/components/ui/feedback';
@@ -47,6 +37,11 @@ import {
   AUTH_OPTION_ENDPOINT,
   AUTH_OPTION_METHOD,
 } from './shared';
+import {
+  deleteAssistantConfigurationById,
+  listAssistantConfigurations,
+  updateAssistantConfigurationEnabled,
+} from '@/clients/assistant.client';
 
 const authenticationConfigurationType = 'authentication';
 
@@ -75,19 +70,13 @@ export const ConfigureAuthenticationList: FC<
 
   const load = () => {
     setLoading(true);
-    const request = new GetAllAssistantConfigurationRequest();
-    request.setAssistantid(assistantId);
-    request.setConfigurationtype(authenticationConfigurationType);
-
-    const paginate = new Paginate();
-    paginate.setPage(1);
-    paginate.setPagesize(1);
-    request.setPaginate(paginate);
-
-    GetAllAssistantConfiguration(connectionConfig, request, {
-      'x-auth-id': authId,
-      authorization: token,
-      'x-project-id': projectId,
+    listAssistantConfigurations({
+      assistantId,
+      configurationType: authenticationConfigurationType,
+      page: 1,
+      pageSize: 1,
+      criteria: [],
+      auth: { projectId, token, userId: authId },
     })
       .then(response => {
         if (!response?.getSuccess()) {
@@ -122,15 +111,12 @@ export const ConfigureAuthenticationList: FC<
 
   const onDelete = () => {
     if (!authentication) return;
-    const request = new DeleteAssistantConfigurationRequest();
-    request.setAssistantid(assistantId);
-    request.setId(authentication.getId());
 
     setSubmittingAction(true);
-    DeleteAssistantConfiguration(connectionConfig, request, {
-      'x-auth-id': authId,
-      authorization: token,
-      'x-project-id': projectId,
+    deleteAssistantConfigurationById({
+      assistantId,
+      configurationId: authentication.getId(),
+      auth: { projectId, token, userId: authId },
     })
       .then(response => {
         if (response?.getSuccess()) {
@@ -155,19 +141,13 @@ export const ConfigureAuthenticationList: FC<
   const setAuthenticationEnabled = (enabled: boolean) => {
     if (!authentication) return;
 
-    const request = new UpdateAssistantConfigurationRequest();
-    request.setId(authentication.getId());
-    request.setAssistantid(assistantId);
-    request.setConfigurationtype(authenticationConfigurationType);
-    request.setProvider(authentication.getProvider() || 'http');
-    request.setEnabled(enabled);
-    request.setOptionsList(authentication.getOptionsList?.() || []);
-
     setSubmittingAction(true);
-    UpdateAssistantConfiguration(connectionConfig, request, {
-      'x-auth-id': authId,
-      authorization: token,
-      'x-project-id': projectId,
+    updateAssistantConfigurationEnabled({
+      assistantId,
+      configurationType: authenticationConfigurationType,
+      configuration: authentication,
+      enabled,
+      auth: { projectId, token, userId: authId },
     })
       .then(response => {
         if (response?.getSuccess()) {

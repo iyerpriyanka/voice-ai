@@ -22,12 +22,11 @@ import {
 } from '@carbon/react';
 import {
   Assistant,
-  ConnectionConfig,
   CreateAssistantProviderRequest,
   CreateAssistantRequest,
-  GetAssistantResponse,
   Metadata,
 } from '@rapidaai/react';
+import type { GetAssistantResponse } from '@rapidaai/react';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { useCurrentCredential } from '@/hooks/use-credential';
@@ -52,10 +51,8 @@ import { BUILDIN_TOOLS } from '@/llm-tools';
 import { EmptyState } from '@/app/components/ui/feedback';
 import { ConfigureAssistantToolDialog } from '@/app/components/dialogs/assistant';
 import { DocNoticeBlock } from '@/app/components/layout/container/message/notice-block/doc-notice-block';
-import { CreateAssistant } from '@rapidaai/react';
 import { CreateAssistantToolRequest } from '@rapidaai/react';
 import { Struct } from 'google-protobuf/google/protobuf/struct_pb';
-import { connectionConfig } from '@/configs';
 import { ChatCompletePrompt } from '@/utils/prompt';
 import toast from 'react-hot-toast/headless';
 import { ConfigureAssistantNextDialog } from '@/app/components/dialogs/assistant';
@@ -73,6 +70,7 @@ import {
   ConfigureAssistantTemplateDialog,
 } from '@/app/components/dialogs/assistant';
 import { useTheme } from '@/theme/theme-provider';
+import { createAssistantWithDebuggerFromRequest } from '@/clients/assistant.client';
 
 /**
  *
@@ -266,15 +264,10 @@ export function CreateAssistantPage() {
     request.setName(name);
     request.setTagsList(tags);
     request.setDescription(description);
-    CreateAssistant(
-      connectionConfig,
+    createAssistantWithDebuggerFromRequest({
       request,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: authId,
-        projectId: projectId,
-      }),
-    )
+      auth: { projectId, token, userId: authId },
+    })
       .then((car: GetAssistantResponse) => {
         hideLoader();
         if (car?.getSuccess()) {

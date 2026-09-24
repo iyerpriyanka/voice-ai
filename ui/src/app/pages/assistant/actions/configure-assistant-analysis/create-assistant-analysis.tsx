@@ -8,13 +8,11 @@ import { useCurrentCredential } from '@/hooks/use-credential';
 import { randomMeaningfullName } from '@/utils';
 import { EndpointDropdown } from '@/app/components/domain/dropdowns/endpoint-dropdown';
 import {
-  CreateAssistantConfiguration,
   CreateAssistantConfigurationRequest,
   Endpoint,
   Metadata,
 } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
-import { connectionConfig } from '@/configs';
 import { TabForm } from '@/app/components/ui/composites';
 import {
   ASSISTANT_CONDITION_KEY_OPTIONS,
@@ -25,6 +23,7 @@ import {
 } from '@/app/components/domain/tools/common';
 import { SourceConditionRule } from '@/app/components/domain/conditions/source-condition-rule';
 import { InputGroup } from '@/app/components/ui/primitives';
+import { createAssistantConfigurationFromRequest } from '@/clients/assistant.client';
 
 // ── Parameter types ──────────────────────────────────────────────────────────
 
@@ -169,15 +168,10 @@ export const CreateAssistantAnalysis: FC<{ assistantId: string }> = ({
     request.setOptionsList(options);
 
     try {
-      const response = await CreateAssistantConfiguration(
-        connectionConfig,
+      const response = await createAssistantConfigurationFromRequest({
         request,
-        {
-          'x-auth-id': authId,
-          authorization: token,
-          'x-project-id': projectId,
-        },
-      );
+        auth: { projectId, token, userId: authId },
+      });
 
       if (response?.getSuccess()) {
         toast.success('Analysis added to assistant successfully');

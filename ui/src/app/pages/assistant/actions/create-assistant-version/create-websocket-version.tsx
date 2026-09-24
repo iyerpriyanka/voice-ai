@@ -9,20 +9,18 @@ import { TabForm } from '@/app/components/ui/composites';
 import { FieldSet } from '@/app/components/ui/primitives';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import {
-  AssistantDefinition,
-  CreateAssistantProviderRequest,
-  GetAssistantProviderResponse,
-  GetAssistantRequest,
-} from '@rapidaai/react';
+import { CreateAssistantProviderRequest } from '@rapidaai/react';
+import type { GetAssistantProviderResponse } from '@rapidaai/react';
 import { FormLabel } from '@/app/components/ui/primitives';
 import { Textarea } from '@/app/components/ui/primitives';
 import { ErrorContainer } from '@/app/components/ui/feedback';
-import { CreateAssistantProvider, GetAssistant } from '@rapidaai/react';
-import { connectionConfig } from '@/configs';
 import { DocNoticeBlock } from '@/app/components/layout/container/message/notice-block/doc-notice-block';
 import { Input } from '@/app/components/ui/primitives';
 import { APiParameter } from '@/app/components/domain/external-api/api-parameter';
+import {
+  createAssistantProviderFromRequest,
+  getAssistantByIdWithApi,
+} from '@/clients/assistant.client';
 
 export function CreateWebsocketVersion() {
   const { assistantId } = useParams();
@@ -133,10 +131,9 @@ const CreateNewVersion: FC<{ assistantId: string }> = ({ assistantId }) => {
     request.setWebsocket(websocket);
     request.setAssistantid(assistantId);
     request.setDescription(versionMessage);
-    CreateAssistantProvider(connectionConfig, request, {
-      authorization: token,
-      'x-auth-id': userId,
-      'x-project-id': projectId,
+    createAssistantProviderFromRequest({
+      request,
+      auth: { projectId, token, userId },
     })
       .then((car: GetAssistantProviderResponse) => {
         hideLoader();
@@ -163,14 +160,9 @@ const CreateNewVersion: FC<{ assistantId: string }> = ({ assistantId }) => {
 
   useEffect(() => {
     showLoader();
-    const request = new GetAssistantRequest();
-    const assistantDef = new AssistantDefinition();
-    assistantDef.setAssistantid(assistantId);
-    request.setAssistantdefinition(assistantDef);
-    GetAssistant(connectionConfig, request, {
-      authorization: token,
-      'x-auth-id': userId,
-      'x-project-id': projectId,
+    getAssistantByIdWithApi({
+      assistantId,
+      auth: { projectId, token, userId },
     })
       .then(response => {
         hideLoader();

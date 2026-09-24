@@ -1,16 +1,13 @@
 import React, { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
-  GetAssistantConfiguration,
   GetAssistantConfigurationRequest,
   Metadata,
-  UpdateAssistantConfiguration,
   UpdateAssistantConfigurationRequest,
 } from '@rapidaai/react';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/stores/app';
-import { connectionConfig } from '@/configs';
 import toast from 'react-hot-toast/headless';
 import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
 import { ButtonSet } from '@carbon/react';
@@ -28,6 +25,10 @@ import {
 } from '@/app/components/domain/providers/storage';
 import { InputGroup } from '@/app/components/ui/primitives';
 import { Notification } from '@/app/components/ui/feedback';
+import {
+  getAssistantConfigurationByRequest,
+  updateAssistantConfigurationFromRequest,
+} from '@/clients/assistant.client';
 
 const storageConfigurationType = 'storage';
 
@@ -54,10 +55,9 @@ export const UpdateAssistantStorage: FC<{ assistantId: string }> = ({
     request.setId(storageId);
 
     showLoader();
-    GetAssistantConfiguration(connectionConfig, request, {
-      'x-auth-id': authId,
-      authorization: token,
-      'x-project-id': projectId,
+    getAssistantConfigurationByRequest({
+      request,
+      auth: { projectId, token, userId: authId },
     })
       .then(response => {
         hideLoader();
@@ -125,10 +125,9 @@ export const UpdateAssistantStorage: FC<{ assistantId: string }> = ({
     request.setOptionsList(upsertStorageFilesOption(parameters, selectedFiles));
 
     showLoader();
-    UpdateAssistantConfiguration(connectionConfig, request, {
-      'x-auth-id': authId,
-      authorization: token,
-      'x-project-id': projectId,
+    updateAssistantConfigurationFromRequest({
+      request,
+      auth: { projectId, token, userId: authId },
     })
       .then(response => {
         hideLoader();

@@ -12,14 +12,11 @@ import { useParams } from 'react-router-dom';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import {
   AssistantPhoneDeployment,
-  ConnectionConfig,
   CreateAssistantDeploymentRequest,
-  CreateAssistantPhoneDeployment,
   DeploymentAudioProvider,
   GetAssistantDeploymentRequest,
   Metadata,
 } from '@rapidaai/react';
-import { GetAssistantPhoneDeployment } from '@rapidaai/react';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import toast from 'react-hot-toast/headless';
 import { Helmet } from '@/app/components/app-shell/helmet';
@@ -33,7 +30,6 @@ import {
   GetDefaultTextToSpeechIfInvalid,
   ValidateTextToSpeechIfInvalid,
 } from '@/app/components/domain/providers/text-to-speech/provider';
-import { connectionConfig } from '@/configs';
 import {
   TelephonyProvider,
   GetDefaultTelephonyConfigIfInvalid,
@@ -44,6 +40,10 @@ import { Tabs } from '@/app/components/ui/primitives';
 import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
 import { Notification } from '@/app/components/ui/feedback';
 import { ButtonSet } from '@carbon/react';
+import {
+  createAssistantDeploymentByType,
+  getAssistantDeploymentByType,
+} from '@/clients/assistant.client';
 
 const EDIT_TABS = [
   {
@@ -145,15 +145,11 @@ const EditAssistantCallDeployment: FC<{ assistantId: string }> = ({
     showLoader('block');
     const request = new GetAssistantDeploymentRequest();
     request.setAssistantid(assistantId);
-    GetAssistantPhoneDeployment(
-      connectionConfig,
+    getAssistantDeploymentByType({
       request,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: authId,
-        projectId,
-      }),
-    )
+      deploymentType: 'phone',
+      auth: { projectId, token, userId: authId },
+    })
       .then(response => {
         hideLoader();
         const deployment = response?.getData();
@@ -325,15 +321,11 @@ const EditAssistantCallDeployment: FC<{ assistantId: string }> = ({
 
     req.setPhone(deployment);
 
-    CreateAssistantPhoneDeployment(
-      connectionConfig,
-      req,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: authId,
-        projectId,
-      }),
-    )
+    createAssistantDeploymentByType({
+      request: req,
+      deploymentType: 'phone',
+      auth: { projectId, token, userId: authId },
+    })
       .then(response => {
         if (response?.getData() && response.getSuccess()) {
           toast.success('Phone call deployment updated successfully.');

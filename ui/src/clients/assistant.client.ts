@@ -22,6 +22,7 @@ import {
   DisableAssistantPhoneDeployment,
   DisableAssistantWebpluginDeployment,
   DisableAssistantWhatsappDeployment,
+  FieldSelector,
   GetAllAssistant,
   GetAllAssistantApiDeployment,
   GetAllAssistantConfiguration,
@@ -35,11 +36,14 @@ import {
   GetAllAssistantTool,
   GetAllAssistantWebpluginDeployment,
   GetAllAssistantWhatsappDeployment,
+  GetAllAssistantDeploymentRequest,
   GetAssistant,
   GetAssistantApiDeployment,
   GetAssistantConfiguration,
   GetAssistantConversation,
+  GetAssistantConversationRequest,
   GetAssistantDashboard,
+  GetAssistantDashboardRequest,
   GetAssistantDebuggerDeployment,
   GetAssistantKnowledge,
   GetAssistantMessages,
@@ -63,15 +67,27 @@ import {
 } from '@rapidaai/react';
 import type {
   Assistant,
+  CreateAssistantDeploymentRequest,
+  CreateAssistantConfigurationRequest,
+  CreateAssistantProviderRequest,
+  CreateAssistantRequest,
+  GetAllAssistantApiDeploymentResponse,
   GetAllAssistantConversationResponse,
+  GetAllAssistantDebuggerDeploymentResponse,
+  GetAllAssistantPhoneDeploymentResponse,
   GetAllAssistantProviderResponse,
+  GetAllAssistantWebpluginDeploymentResponse,
   GetAllConversationMessageResponse,
   GetAllAssistantKnowledgeResponse,
   GetAllAssistantToolResponse,
+  GetAssistantConfigurationRequest,
+  GetAssistantDeploymentRequest,
   GetAssistantKnowledgeResponse,
   GetAssistantResponse,
   GetAssistantToolResponse,
+  Metadata,
 } from '@rapidaai/react';
+import type { Timestamp } from 'google-protobuf/google/protobuf/timestamp_pb';
 
 import { connectionConfig } from '@/configs';
 import { ApiAuth, createApiMetadata, withConnection } from './connection';
@@ -87,6 +103,11 @@ type AssistantClientCallback<TResponse> = (
   response: TResponse | null,
 ) => void;
 
+type AssistantApiRequestParams<TRequest> = {
+  request: TRequest;
+  auth: ApiAuth;
+};
+
 export type ListAssistantsParams = {
   page: number;
   pageSize: number;
@@ -100,10 +121,25 @@ export type GetAssistantByIdParams = {
   auth: ApiAuth;
 };
 
+export type CreateAssistantFromRequestParams =
+  AssistantApiRequestParams<CreateAssistantRequest>;
+
+export type CreateAssistantProviderFromRequestParams =
+  AssistantApiRequestParams<CreateAssistantProviderRequest>;
+
+export type UpdateAssistantVersionFromRequestParams =
+  AssistantApiRequestParams<UpdateAssistantVersionRequest>;
+
 export type UpdateAssistantDescriptionParams = {
   assistantId: string;
   name: string;
   description: string;
+  auth: ApiAuth;
+  callback: AssistantClientCallback<GetAssistantResponse>;
+};
+
+export type DeleteAssistantByIdParams = {
+  assistantId: string;
   auth: ApiAuth;
   callback: AssistantClientCallback<GetAssistantResponse>;
 };
@@ -150,6 +186,40 @@ export type ListAssistantConversationMessagesParams = {
   callback: AssistantClientCallback<GetAllConversationMessageResponse>;
 };
 
+export type GetAssistantConversationDetailParams = {
+  assistantId: string;
+  conversationId: string;
+  fields: string[];
+  auth: ApiAuth;
+};
+
+export type GetAssistantDashboardRangeParams = {
+  assistantId: string;
+  fromDate: Timestamp;
+  toDate: Timestamp;
+  auth: ApiAuth;
+};
+
+export type AssistantDeploymentType = 'debugger' | 'api' | 'web' | 'phone';
+
+export type ListAssistantDeploymentVersionsParams = {
+  assistantId: string;
+  deploymentType: AssistantDeploymentType;
+  page: number;
+  pageSize: number;
+  auth: ApiAuth;
+};
+
+export type AssistantDeploymentRequestParams<TRequest> = {
+  request: TRequest;
+  auth: ApiAuth;
+};
+
+export type AssistantDeploymentByTypeRequestParams<TRequest> =
+  AssistantDeploymentRequestParams<TRequest> & {
+    deploymentType: AssistantDeploymentType;
+  };
+
 export type ListAssistantConfigurationsParams = {
   assistantId: string;
   configurationType: string;
@@ -158,6 +228,15 @@ export type ListAssistantConfigurationsParams = {
   criteria: ClientCriteria[];
   auth: ApiAuth;
 };
+
+export type CreateAssistantConfigurationFromRequestParams =
+  AssistantApiRequestParams<CreateAssistantConfigurationRequest>;
+
+export type GetAssistantConfigurationByRequestParams =
+  AssistantApiRequestParams<GetAssistantConfigurationRequest>;
+
+export type UpdateAssistantConfigurationFromRequestParams =
+  AssistantApiRequestParams<UpdateAssistantConfigurationRequest>;
 
 export type DeleteAssistantConfigurationParams = {
   assistantId: string;
@@ -189,6 +268,33 @@ export type DeleteAssistantKnowledgeParams = {
   callback: AssistantClientCallback<GetAssistantKnowledgeResponse>;
 };
 
+export type AssistantKnowledgeRetrievalOptions = {
+  searchMethod: 'semantic' | 'fullText' | 'hybrid' | 'invertedIndex';
+  topK: number;
+  scoreThreshold: number;
+  rerankingEnable: boolean;
+};
+
+export type GetAssistantKnowledgeByIdParams = {
+  assistantId: string;
+  assistantKnowledgeId: string;
+  auth: ApiAuth;
+  callback: AssistantClientCallback<GetAssistantKnowledgeResponse>;
+};
+
+export type CreateAssistantKnowledgeLinkParams = {
+  assistantId: string;
+  knowledgeId: string;
+  retrievalOptions: AssistantKnowledgeRetrievalOptions;
+  auth: ApiAuth;
+  callback: AssistantClientCallback<GetAssistantKnowledgeResponse>;
+};
+
+export type UpdateAssistantKnowledgeLinkParams =
+  CreateAssistantKnowledgeLinkParams & {
+    assistantKnowledgeId: string;
+  };
+
 export type ListAssistantToolsParams = {
   assistantId: string;
   page: number;
@@ -196,6 +302,28 @@ export type ListAssistantToolsParams = {
   criteria: ClientCriteria[];
   auth: ApiAuth;
   callback: AssistantClientCallback<GetAllAssistantToolResponse>;
+};
+
+export type GetAssistantToolByIdParams = {
+  assistantId: string;
+  toolId: string;
+  auth: ApiAuth;
+  callback: AssistantClientCallback<GetAssistantToolResponse>;
+};
+
+export type CreateAssistantToolParams = {
+  assistantId: string;
+  name: string;
+  description: string;
+  fields: Record<string, unknown>;
+  executionMethod: string;
+  executionOptions: Metadata[];
+  auth: ApiAuth;
+  callback: AssistantClientCallback<GetAssistantToolResponse>;
+};
+
+export type UpdateAssistantToolByIdParams = CreateAssistantToolParams & {
+  toolId: string;
 };
 
 export type DeleteAssistantToolParams = {
@@ -262,6 +390,100 @@ export const getAssistantById = ({
   return GetAssistant(connectionConfig, request, createDebuggerMetadata(auth));
 };
 
+export const getAssistantByIdWithApi = ({
+  assistantId,
+  assistantProviderModelId,
+  auth,
+}: GetAssistantByIdParams) => {
+  const request = new GetAssistantRequest();
+  const assistantDefinition = new AssistantDefinition();
+  assistantDefinition.setAssistantid(assistantId);
+  if (assistantProviderModelId) {
+    assistantDefinition.setVersion(assistantProviderModelId);
+  }
+  request.setAssistantdefinition(assistantDefinition);
+
+  return GetAssistant(connectionConfig, request, createApiMetadata(auth));
+};
+
+export const createAssistantFromRequest = ({
+  request,
+  auth,
+}: CreateAssistantFromRequestParams) =>
+  CreateAssistant(connectionConfig, request, createApiMetadata(auth));
+
+export const createAssistantWithDebuggerFromRequest = ({
+  request,
+  auth,
+}: CreateAssistantFromRequestParams) =>
+  CreateAssistant(connectionConfig, request, createDebuggerMetadata(auth));
+
+export const createAssistantProviderFromRequest = ({
+  request,
+  auth,
+}: CreateAssistantProviderFromRequestParams) =>
+  CreateAssistantProvider(connectionConfig, request, createApiMetadata(auth));
+
+export const createAssistantProviderWithDebuggerFromRequest = ({
+  request,
+  auth,
+}: CreateAssistantProviderFromRequestParams) =>
+  CreateAssistantProvider(
+    connectionConfig,
+    request,
+    createDebuggerMetadata(auth),
+  );
+
+export const updateAssistantVersionFromRequest = ({
+  request,
+  auth,
+}: UpdateAssistantVersionFromRequestParams) =>
+  UpdateAssistantVersion(
+    connectionConfig,
+    request,
+    createDebuggerMetadata(auth),
+  );
+
+export const getAssistantDashboardRange = ({
+  assistantId,
+  fromDate,
+  toDate,
+  auth,
+}: GetAssistantDashboardRangeParams) => {
+  const request = new GetAssistantDashboardRequest();
+  request.setAssistantid(assistantId);
+  request.setFromdate(fromDate);
+  request.setTodate(toDate);
+
+  return GetAssistantDashboard(
+    connectionConfig,
+    request,
+    createApiMetadata(auth),
+  );
+};
+
+export const getAssistantConversationDetail = ({
+  assistantId,
+  conversationId,
+  fields,
+  auth,
+}: GetAssistantConversationDetailParams) => {
+  const request = new GetAssistantConversationRequest();
+  request.setAssistantid(assistantId);
+  request.setId(conversationId);
+  fields.forEach(field => {
+    const selector = new FieldSelector();
+    selector.setField(field);
+    request.addSelectors(selector);
+  });
+
+  return GetAssistantConversation(
+    connectionConfig,
+    request,
+    createDebuggerMetadata(auth),
+  );
+};
+
 export const updateAssistantDescription = ({
   assistantId,
   name,
@@ -274,6 +496,18 @@ export const updateAssistantDescription = ({
     assistantId,
     name,
     description,
+    callback,
+    createApiMetadata(auth),
+  );
+
+export const deleteAssistantById = ({
+  assistantId,
+  auth,
+  callback,
+}: DeleteAssistantByIdParams) =>
+  DeleteAssistant(
+    connectionConfig,
+    assistantId,
     callback,
     createApiMetadata(auth),
   );
@@ -366,6 +600,102 @@ export const listAssistantConversationMessages = ({
     callback,
   );
 
+export const listAssistantDeploymentVersions = ({
+  assistantId,
+  deploymentType,
+  page,
+  pageSize,
+  auth,
+}: ListAssistantDeploymentVersionsParams) => {
+  const request = new GetAllAssistantDeploymentRequest();
+  request.setAssistantid(assistantId);
+  request.setPaginate(createPaginate(page, pageSize));
+
+  const fetchByType = {
+    api: GetAllAssistantApiDeployment,
+    debugger: GetAllAssistantDebuggerDeployment,
+    phone: GetAllAssistantPhoneDeployment,
+    web: GetAllAssistantWebpluginDeployment,
+  } satisfies Record<
+    AssistantDeploymentType,
+    typeof GetAllAssistantApiDeployment
+  >;
+
+  return fetchByType[deploymentType](
+    connectionConfig,
+    request,
+    createDebuggerMetadata(auth),
+  ) as Promise<
+    | GetAllAssistantApiDeploymentResponse
+    | GetAllAssistantDebuggerDeploymentResponse
+    | GetAllAssistantPhoneDeploymentResponse
+    | GetAllAssistantWebpluginDeploymentResponse
+  >;
+};
+
+export const getAssistantDeploymentByType = ({
+  request,
+  deploymentType,
+  auth,
+}: AssistantDeploymentByTypeRequestParams<GetAssistantDeploymentRequest>) => {
+  const fetchByType = {
+    api: GetAssistantApiDeployment,
+    debugger: GetAssistantDebuggerDeployment,
+    phone: GetAssistantPhoneDeployment,
+    web: GetAssistantWebpluginDeployment,
+  } satisfies Record<AssistantDeploymentType, typeof GetAssistantApiDeployment>;
+
+  return fetchByType[deploymentType](
+    connectionConfig,
+    request,
+    createDebuggerMetadata(auth),
+  ) as Promise<any>;
+};
+
+export const createAssistantDeploymentByType = ({
+  request,
+  deploymentType,
+  auth,
+}: AssistantDeploymentByTypeRequestParams<CreateAssistantDeploymentRequest>) => {
+  const createByType = {
+    api: CreateAssistantApiDeployment,
+    debugger: CreateAssistantDebuggerDeployment,
+    phone: CreateAssistantPhoneDeployment,
+    web: CreateAssistantWebpluginDeployment,
+  } satisfies Record<
+    AssistantDeploymentType,
+    typeof CreateAssistantApiDeployment
+  >;
+
+  return createByType[deploymentType](
+    connectionConfig,
+    request,
+    createDebuggerMetadata(auth),
+  ) as Promise<any>;
+};
+
+export const disableAssistantDeploymentByType = ({
+  request,
+  deploymentType,
+  auth,
+}: AssistantDeploymentByTypeRequestParams<GetAssistantDeploymentRequest>) => {
+  const disableByType = {
+    api: DisableAssistantApiDeployment,
+    debugger: DisableAssistantDebuggerDeployment,
+    phone: DisableAssistantPhoneDeployment,
+    web: DisableAssistantWebpluginDeployment,
+  } satisfies Record<
+    AssistantDeploymentType,
+    typeof DisableAssistantApiDeployment
+  >;
+
+  return disableByType[deploymentType](
+    connectionConfig,
+    request,
+    createDebuggerMetadata(auth),
+  ) as Promise<any>;
+};
+
 export const listAssistantConfigurations = ({
   assistantId,
   configurationType,
@@ -388,6 +718,32 @@ export const listAssistantConfigurations = ({
     createApiMetadata(auth),
   );
 };
+
+export const createAssistantConfigurationFromRequest = ({
+  request,
+  auth,
+}: CreateAssistantConfigurationFromRequestParams) =>
+  CreateAssistantConfiguration(
+    connectionConfig,
+    request,
+    createApiMetadata(auth),
+  );
+
+export const getAssistantConfigurationByRequest = ({
+  request,
+  auth,
+}: GetAssistantConfigurationByRequestParams) =>
+  GetAssistantConfiguration(connectionConfig, request, createApiMetadata(auth));
+
+export const updateAssistantConfigurationFromRequest = ({
+  request,
+  auth,
+}: UpdateAssistantConfigurationFromRequestParams) =>
+  UpdateAssistantConfiguration(
+    connectionConfig,
+    request,
+    createApiMetadata(auth),
+  );
 
 export const deleteAssistantConfigurationById = ({
   assistantId,
@@ -445,6 +801,54 @@ export const listAssistantKnowledgeLinks = ({
     createApiMetadata(auth),
   );
 
+export const getAssistantKnowledgeLinkById = ({
+  assistantId,
+  assistantKnowledgeId,
+  auth,
+  callback,
+}: GetAssistantKnowledgeByIdParams) =>
+  GetAssistantKnowledge(
+    connectionConfig,
+    assistantId,
+    assistantKnowledgeId,
+    callback,
+    createApiMetadata(auth),
+  );
+
+export const createAssistantKnowledgeLink = ({
+  assistantId,
+  knowledgeId,
+  retrievalOptions,
+  auth,
+  callback,
+}: CreateAssistantKnowledgeLinkParams) =>
+  CreateAssistantKnowledge(
+    connectionConfig,
+    assistantId,
+    knowledgeId,
+    retrievalOptions,
+    callback,
+    createApiMetadata(auth),
+  );
+
+export const updateAssistantKnowledgeLink = ({
+  assistantKnowledgeId,
+  assistantId,
+  knowledgeId,
+  retrievalOptions,
+  auth,
+  callback,
+}: UpdateAssistantKnowledgeLinkParams) =>
+  UpdateAssistantKnowledge(
+    connectionConfig,
+    assistantKnowledgeId,
+    assistantId,
+    knowledgeId,
+    retrievalOptions,
+    callback,
+    createApiMetadata(auth),
+  );
+
 export const deleteAssistantKnowledgeLink = ({
   assistantId,
   knowledgeId,
@@ -473,6 +877,66 @@ export const listAssistantTools = ({
     page,
     pageSize,
     criteria,
+    callback,
+    createApiMetadata(auth),
+  );
+
+export const getAssistantToolById = ({
+  assistantId,
+  toolId,
+  auth,
+  callback,
+}: GetAssistantToolByIdParams) =>
+  GetAssistantTool(
+    connectionConfig,
+    assistantId,
+    toolId,
+    callback,
+    createApiMetadata(auth),
+  );
+
+export const createAssistantToolForAssistant = ({
+  assistantId,
+  name,
+  description,
+  fields,
+  executionMethod,
+  executionOptions,
+  auth,
+  callback,
+}: CreateAssistantToolParams) =>
+  CreateAssistantTool(
+    connectionConfig,
+    assistantId,
+    name,
+    description,
+    fields,
+    executionMethod,
+    executionOptions,
+    callback,
+    createApiMetadata(auth),
+  );
+
+export const updateAssistantToolById = ({
+  assistantId,
+  toolId,
+  name,
+  description,
+  fields,
+  executionMethod,
+  executionOptions,
+  auth,
+  callback,
+}: UpdateAssistantToolByIdParams) =>
+  UpdateAssistantTool(
+    connectionConfig,
+    assistantId,
+    toolId,
+    name,
+    description,
+    fields,
+    executionMethod,
+    executionOptions,
     callback,
     createApiMetadata(auth),
   );

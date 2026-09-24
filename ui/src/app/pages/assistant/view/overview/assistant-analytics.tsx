@@ -1,10 +1,4 @@
-import {
-  Assistant,
-  AssistantDashboard,
-  GetAssistantDashboard,
-  GetAssistantDashboardRequest,
-} from '@rapidaai/react';
-import { connectionConfig } from '@/configs';
+import type { Assistant, AssistantDashboard } from '@rapidaai/react';
 import { toDate, toDateString } from '@/utils/date';
 import { Timestamp } from 'google-protobuf/google/protobuf/timestamp_pb';
 import {
@@ -49,6 +43,7 @@ import {
   ToggletipContent,
 } from '@carbon/react';
 import { Information } from '@carbon/icons-react';
+import { getAssistantDashboardRange } from '@/clients/assistant.client';
 
 const CHART_COLORS = [
   'var(--cds-interactive, #1e40af)',
@@ -186,15 +181,11 @@ export const AssistantAnalytics: FC<{ assistant: Assistant }> = props => {
     setLoading(true);
     const fromDate = getStartDate(selectedRange);
     const toDate = new Date();
-    const request = new GetAssistantDashboardRequest();
-    request.setAssistantid(assistantId);
-    request.setFromdate(toTimestamp(fromDate));
-    request.setTodate(toTimestamp(toDate));
-
-    GetAssistantDashboard(connectionConfig, request, {
-      authorization: token,
-      'x-auth-id': authId,
-      'x-project-id': projectId,
+    getAssistantDashboardRange({
+      assistantId,
+      fromDate: toTimestamp(fromDate),
+      toDate: toTimestamp(toDate),
+      auth: { projectId, token, userId: authId },
     })
       .then(response => {
         if (requestId !== dashboardRequestId.current) return;
