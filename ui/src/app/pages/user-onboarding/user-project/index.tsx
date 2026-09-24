@@ -2,17 +2,16 @@ import React, { useCallback, useContext, useState } from 'react';
 import { Helmet } from '@/app/components/app-shell/helmet';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { CreateProject } from '@rapidaai/react';
 import { CreateProjectResponse } from '@rapidaai/react';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/stores/app';
 import { ServiceError } from '@rapidaai/react';
 import { AuthContext } from '@/context/auth-context';
-import { connectionConfig } from '@/configs';
 import { Stack, TextInput, TextArea } from '@/app/components/ui/primitives';
 import { PrimaryButton } from '@/app/components/ui/primitives';
 import { Notification } from '@/app/components/ui/feedback';
 import { ArrowRight } from '@carbon/icons-react';
+import { createWorkspaceProject } from '@/clients';
 
 export function CreateProjectPage() {
   const navigate = useNavigate();
@@ -45,13 +44,12 @@ export function CreateProjectPage() {
 
   const onCreateProject = data => {
     showLoader('overlay');
-    CreateProject(
-      connectionConfig,
-      data.projectName,
-      data.projectDescription,
-      { authorization: token, 'x-auth-id': authId },
-      afterCreateProject,
-    );
+    createWorkspaceProject({
+      name: data.projectName,
+      description: data.projectDescription,
+      auth: { token, userId: authId },
+      callback: afterCreateProject,
+    });
   };
 
   return (

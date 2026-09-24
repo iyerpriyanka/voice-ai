@@ -2,13 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { Helmet } from '@/app/components/app-shell/helmet';
 import { InviteOrganizationUserDialog } from '@/app/components/dialogs/workspace';
 import { InviteProjectUserDialog } from '@/app/components/dialogs/workspace';
-import {
-  DeleteUserFromOrganization,
-  DeleteUserFromOrganizationRequest,
-  UpdateUserOrganizationRole,
-  UpdateUserOrganizationRoleRequest,
-  User,
-} from '@rapidaai/react';
+import { User } from '@rapidaai/react';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import toast from 'react-hot-toast/headless';
 import { useRapidaStore } from '@/stores/app';
@@ -34,7 +28,7 @@ import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-bloc
 import { PageTitleWithCount } from '@/app/components/layout/blocks/page-title-with-count';
 import { TableSection } from '@/app/components/layout/sections/table-section';
 import { ConfirmDeleteDialog } from '@/app/components/dialogs/shared';
-import { connectionConfig } from '@/configs';
+import { deleteOrganizationUser, updateOrganizationUserRole } from '@/clients';
 
 const headers = [
   { key: 'id', header: 'ID' },
@@ -88,13 +82,11 @@ export function UserPage() {
 
   const onDeleteOrganizationUser = async (user: User) => {
     showLoader('overlay');
-    const req = new DeleteUserFromOrganizationRequest();
-    req.setUserid(user.getId());
 
     try {
-      const response = await DeleteUserFromOrganization(connectionConfig, req, {
-        authorization: token,
-        'x-auth-id': authId,
+      const response = await deleteOrganizationUser({
+        userId: user.getId(),
+        auth: { token, userId: authId },
       });
       hideLoader();
 
@@ -121,14 +113,12 @@ export function UserPage() {
     organizationRole: string,
   ) => {
     showLoader('overlay');
-    const req = new UpdateUserOrganizationRoleRequest();
-    req.setUserid(user.getId());
-    req.setOrganizationrole(organizationRole);
 
     try {
-      const response = await UpdateUserOrganizationRole(connectionConfig, req, {
-        authorization: token,
-        'x-auth-id': authId,
+      const response = await updateOrganizationUserRole({
+        userId: user.getId(),
+        organizationRole,
+        auth: { token, userId: authId },
       });
       hideLoader();
 

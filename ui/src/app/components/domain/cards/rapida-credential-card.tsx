@@ -12,8 +12,8 @@ import { toHumanReadableRelativeDay } from '@/utils/date';
 import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast/headless';
 import {
-  createProjectCredential,
-  getAllProjectCredential as listProjectCredentials,
+  createProjectPublishableCredential,
+  listProjectCredentials,
 } from '@/clients';
 
 export const RapidaCredentialCard = () => {
@@ -23,15 +23,12 @@ export const RapidaCredentialCard = () => {
 
   const onCreateProjectCredential = () => {
     if (!projectId) return;
-    createProjectCredential(
+    createProjectPublishableCredential({
       projectId,
-      'publishable key',
-      afterCreateProjectCredential,
-      {
-        authorization: token,
-        'x-auth-id': authId,
-      },
-    );
+      name: 'publishable key',
+      auth: { token, userId: authId },
+      callback: afterCreateProjectCredential,
+    });
   };
 
   const afterCreateProjectCredential = useCallback(
@@ -77,9 +74,10 @@ export const RapidaCredentialCard = () => {
 
   const getAllProjectCredential = () => {
     showLoader();
-    listProjectCredentials(projectId, afterGetAllProjectCredential, {
-      authorization: token,
-      'x-auth-id': authId,
+    listProjectCredentials({
+      projectId,
+      auth: { token, userId: authId },
+      callback: afterGetAllProjectCredential,
     });
   };
 

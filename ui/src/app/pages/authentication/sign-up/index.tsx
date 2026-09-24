@@ -2,7 +2,6 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 import { Helmet } from '@/app/components/app-shell/helmet';
 import { SocialButtonGroup } from '@/app/components/ui/primitives/buttons/social-button-group';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { RegisterUser } from '@rapidaai/react';
 import { AuthenticateResponse } from '@rapidaai/react';
 import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
@@ -10,7 +9,6 @@ import { useRapidaStore } from '@/stores/app';
 import { ServiceError } from '@rapidaai/react';
 import { AuthContext } from '@/context/auth-context';
 import { useWorkspace } from '@/workspace';
-import { connectionConfig } from '@/configs';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { Stack, TextInput } from '@/app/components/ui/primitives';
 import { PrimaryButton } from '@/app/components/ui/primitives';
@@ -18,6 +16,7 @@ import { Notification } from '@/app/components/ui/feedback';
 import { ArrowRight } from '@carbon/icons-react';
 import { Link, PasswordInput } from '@carbon/react';
 import { useTheme } from '@/theme/theme-provider';
+import { registerUser } from '@/clients';
 
 interface CustomizedState {
   email: string;
@@ -64,13 +63,7 @@ export function SignUpPage() {
 
   const onRegisterUser = data => {
     showLoader('overlay');
-    RegisterUser(
-      connectionConfig,
-      data.email,
-      data.password,
-      data.name,
-      afterRegisterUser,
-    );
+    registerUser(data.email, data.password, data.name, afterRegisterUser);
   };
 
   if (!workspace.authentication.signUp.enable) {

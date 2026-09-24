@@ -2,19 +2,14 @@ import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast/headless';
 import { useCredential } from '@/hooks/use-credential';
 import { OverviewRow } from '@/app/components/dialogs/shared';
-import {
-  ConnectionConfig,
-  GetKnowledgeLog,
-  GetKnowledgeLogRequest,
-  KnowledgeLog,
-} from '@rapidaai/react';
+import { KnowledgeLog } from '@rapidaai/react';
 import { useRapidaStore } from '@/stores/app';
 import { StatusIndicator } from '@/app/components/domain/indicators/status';
 import type { ModalProps } from '@/app/components/ui/primitives';
 import { RightSideModal } from '@/app/components/dialogs/shared';
-import { connectionConfig } from '@/configs';
 import { toHumanReadableDateTime } from '@/utils/date';
 import { LogCodePanel, LogTabs } from './log-modal-primitives';
+import { getKnowledgeActivityLog } from '@/clients';
 
 interface KnowledgeLogModalProps extends ModalProps {
   currentActivityId: string;
@@ -33,19 +28,11 @@ export function KnowledgeLogDialog({
   useEffect(() => {
     showLoader('overlay');
 
-    const request = new GetKnowledgeLogRequest();
-    request.setId(currentActivityId);
-    request.setProjectid(projectId);
-
-    GetKnowledgeLog(
-      connectionConfig,
-      request,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        projectId: projectId,
-        userId: userId,
-      }),
-    )
+    getKnowledgeActivityLog({
+      projectId,
+      activityId: currentActivityId,
+      auth: { projectId, token, userId },
+    })
       .then(at => {
         hideLoader();
         if (at?.getSuccess()) {

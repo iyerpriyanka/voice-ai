@@ -4,7 +4,6 @@ import type {
   KnowledgeDocumentSegment,
   ServiceError,
 } from '@rapidaai/react';
-import { DeleteKnowledgeDocumentSegment } from '@rapidaai/react';
 import {
   DangerButton,
   GhostButton,
@@ -16,7 +15,7 @@ import {
 } from '@/app/components/ui/primitives';
 import { Notification } from '@/app/components/ui/feedback';
 import { useCurrentCredential } from '@/hooks/use-credential';
-import { connectionConfig } from '@/configs';
+import { deleteKnowledgeDocumentSegmentByReason } from '@/clients';
 
 interface DeleteKnowledgeDocumentSegmentDialogProps {
   segment: KnowledgeDocumentSegment;
@@ -39,12 +38,12 @@ export function DeleteKnowledgeDocumentSegmentDialog({
       return;
     }
     setError(null);
-    DeleteKnowledgeDocumentSegment(
-      connectionConfig,
-      segment.getDocumentId(),
-      segment.getIndex().toString(),
-      reason.trim(),
-      (err: ServiceError | null, response: BaseResponse | null) => {
+    deleteKnowledgeDocumentSegmentByReason({
+      documentId: segment.getDocumentId(),
+      segmentIndex: segment.getIndex().toString(),
+      reason: reason.trim(),
+      auth: { projectId, token, userId: authId },
+      callback: (err: ServiceError | null, response: BaseResponse | null) => {
         if (err) {
           setError('Failed to delete the segment. Please try again.');
         } else {
@@ -52,12 +51,7 @@ export function DeleteKnowledgeDocumentSegmentDialog({
           onClose();
         }
       },
-      {
-        authorization: token,
-        'x-project-id': projectId,
-        'x-auth-id': authId,
-      },
-    );
+    });
   };
 
   return (

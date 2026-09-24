@@ -1,9 +1,4 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import {
-  AddUserToProjects,
-  AddUserToProjectsRequest,
-  ProjectRoleAssignment,
-} from '@rapidaai/react';
 import type { User } from '@rapidaai/react';
 import { ComboBox } from '@carbon/react';
 import toast from 'react-hot-toast/headless';
@@ -23,11 +18,11 @@ import { AuthContext } from '@/context/auth-context';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/stores/app';
 import { useUserPageStore } from '@/stores/user';
-import { connectionConfig } from '@/configs';
 import {
   ProjectRoleRow,
   ProjectRoleTable,
 } from '@/app/components/domain/project-role-table';
+import { addUserToProjectsByRole } from '@/clients';
 
 const PROJECT_ACTION_ERROR =
   'Unable to process your request. please try again later.';
@@ -115,21 +110,11 @@ export function InviteProjectUserDialog({
     setError('');
     showLoader('overlay');
 
-    const req = new AddUserToProjectsRequest();
-    req.setUserid(selectedUser.getId());
-    req.setProjectrolesList(
-      projectRoleRows.map(row => {
-        const assignment = new ProjectRoleAssignment();
-        assignment.setProjectid(row.projectId);
-        assignment.setProjectrole(row.projectRole);
-        return assignment;
-      }),
-    );
-
     try {
-      const response = await AddUserToProjects(connectionConfig, req, {
-        authorization: token,
-        'x-auth-id': authId,
+      const response = await addUserToProjectsByRole({
+        userId: selectedUser.getId(),
+        projectRoles: projectRoleRows,
+        auth: { token, userId: authId },
       });
       hideLoader();
 

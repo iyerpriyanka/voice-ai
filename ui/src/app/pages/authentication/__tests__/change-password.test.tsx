@@ -12,9 +12,7 @@ const mockHideLoader = jest.fn();
 let mockParams: Record<string, string | undefined> = {};
 
 jest.mock('@rapidaai/react', () => ({
-  ConnectionConfig: class ConnectionConfig {
-    constructor(_: unknown) {}
-  },
+  ConnectionConfig: class ConnectionConfig {},
   CreatePassword: jest.fn(),
 }));
 

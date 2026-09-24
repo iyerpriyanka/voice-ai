@@ -1,9 +1,4 @@
 import { useEffect, useId, useState } from 'react';
-import {
-  ConnectionConfig,
-  CreateProviderKey,
-  CreateProviderCredentialRequest,
-} from '@rapidaai/react';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { ErrorMessage } from '@/app/components/ui/feedback';
 import { useRapidaStore } from '@/stores/app';
@@ -28,12 +23,11 @@ import {
   SelectItem,
 } from '@carbon/react';
 import { Add, TrashCan } from '@carbon/icons-react';
-import { connectionConfig } from '@/configs';
 import { useProviderContext } from '@/context/provider-context';
-import { Struct } from 'google-protobuf/google/protobuf/struct_pb';
 import { INTEGRATION_PROVIDER } from '@/providers';
 import type { RapidaProvider } from '@/providers';
 import { createPortal } from 'react-dom';
+import { createProviderCredential } from '@/clients';
 
 interface CreateProviderCredentialDialogProps extends ModalProps {
   currentProvider?: string | null;
@@ -102,20 +96,12 @@ export function CreateProviderCredentialDialog({
     }
 
     showLoader();
-    const requestObject = new CreateProviderCredentialRequest();
-    requestObject.setProvider(provider.code);
-    requestObject.setCredential(Struct.fromJavaScript(config));
-    requestObject.setName(keyName);
-
-    CreateProviderKey(
-      connectionConfig,
-      requestObject,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: authId,
-        projectId: projectId,
-      }),
-    )
+    createProviderCredential({
+      provider: provider.code,
+      name: keyName,
+      config,
+      auth: { projectId, token, userId: authId },
+    })
       .then(cpkr => {
         hideLoader();
         if (cpkr?.getSuccess()) {

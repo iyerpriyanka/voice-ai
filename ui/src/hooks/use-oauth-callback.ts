@@ -25,7 +25,7 @@ export function useOAuthCallback(
   const onComplete = useCallback(
     (err: unknown, res: ConnectResponse | null) => {
       if (res?.getSuccess()) {
-        providerCtx.reloadToolCredentials();
+        providerCtx.reloadProviderCredentials();
         navigate(res.getRedirectto());
         return;
       }

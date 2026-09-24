@@ -5,48 +5,29 @@ import { Input } from '@/app/components/ui/primitives';
 import { Label } from '@/app/components/ui/primitives';
 import { ArrowButton } from '@/app/components/ui/primitives/buttons/arrow-button';
 import { DangerTertiaryButton } from '@/app/components/ui/primitives';
-import { ServiceError } from '@rapidaai/react';
-import { UpdateOrganization, GetOrganization } from '@rapidaai/react';
-
 import {
   GetOrganizationResponse,
+  Organization,
+  ServiceError,
   UpdateOrganizationResponse,
 } from '@rapidaai/react';
-import { Organization } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
 import { useRapidaStore } from '@/stores/app';
 import { useCredential } from '@/hooks/use-credential';
 import { useForm } from 'react-hook-form';
-import { connectionConfig } from '@/configs';
+import {
+  getWorkspaceOrganization,
+  updateWorkspaceOrganization,
+} from '@/clients';
 
-/**
- *
- * @returns
- */
 export function OverviewPage() {
-  /**
-   * getting the updated information
-   */
   const [organization, setOrganization] = useState<
     Partial<Organization.AsObject>
   >({});
-  /**
-   * setLoading context
-   */
   const { showLoader, hideLoader } = useRapidaStore();
-  /**
-   * credentials
-   */
   const [userId, token] = useCredential();
-
-  /**
-   * handle the form
-   */
   const { register, handleSubmit } = useForm();
 
-  /**
-   * callback after update organization
-   */
   const afterUpdateOrganization = useCallback(
     (err: ServiceError | null, uor: UpdateOrganizationResponse | null) => {
       hideLoader();
@@ -66,31 +47,23 @@ export function OverviewPage() {
         return;
       }
     },
-    [],
+    [hideLoader],
   );
-  /**
-   *
-   * @param e
-   */
+
   const onUpdateOrganization = data => {
-    let orgId = organization?.id;
+    const orgId = organization?.id;
     if (!orgId) return;
     showLoader();
-    UpdateOrganization(
-      connectionConfig,
-      orgId,
-      {
-        authorization: token,
-        'x-auth-id': userId,
-      },
-      afterUpdateOrganization,
-      data.organizationName,
-      data.organizationIndustry,
-      data.organizationContact,
-    );
+    updateWorkspaceOrganization({
+      organizationId: orgId,
+      name: data.organizationName,
+      industry: data.organizationIndustry,
+      contact: data.organizationContact,
+      auth: { token, userId },
+      callback: afterUpdateOrganization,
+    });
   };
 
-  //   set the state of show the organization details
   const afterGetOrganization = useCallback(
     (err: ServiceError | null, gor: GetOrganizationResponse | null) => {
       if (err) {
@@ -100,10 +73,10 @@ export function OverviewPage() {
       }
       if (gor?.getSuccess()) {
         hideLoader();
-        let org = gor.getData()?.toObject();
+        const org = gor.getData()?.toObject();
         if (org) setOrganization(org);
       } else {
-        let errorMessage = gor?.getError();
+        const errorMessage = gor?.getError();
         if (errorMessage) toast.error(errorMessage.getHumanmessage());
         else
           toast.error(
@@ -112,24 +85,16 @@ export function OverviewPage() {
         return;
       }
     },
-    [],
+    [hideLoader],
   );
 
-  /**
-   * when you come to the page then call the organization
-   */
   useEffect(() => {
-    GetOrganization(
-      connectionConfig,
-      {
-        authorization: token,
-        'x-auth-id': userId,
-      },
-      afterGetOrganization,
-    );
-  }, []);
+    getWorkspaceOrganization({
+      auth: { token, userId },
+      callback: afterGetOrganization,
+    });
+  }, [afterGetOrganization, token, userId]);
 
-  //
   return (
     <>
       <Helmet title="Organization Overview" />

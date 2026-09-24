@@ -3,14 +3,22 @@ import {
   GetActivities,
   GetAllAssistantToolLog,
   GetAllHTTPLog,
+  GetActivity,
+  GetAssistantToolLog,
+  GetHTTPLog,
   GetMessages,
+  RetryHTTPLog,
 } from '@rapidaai/react';
 
 import {
+  getActivityLog,
+  getToolActivityLog,
+  getWebhookActivityLog,
   listActivities,
   listConversationMessages,
   listToolActivityLogs,
   listWebhookLogs,
+  retryWebhookActivityLog,
 } from '@/clients';
 
 jest.mock('@/configs', () => ({
@@ -99,6 +107,27 @@ jest.mock('@rapidaai/react', () => {
     }
   }
 
+  class RequestWithProjectAndId {
+    private id = '';
+    private projectId = '';
+
+    setId(id: string) {
+      this.id = id;
+    }
+
+    getId() {
+      return this.id;
+    }
+
+    setProjectid(projectId: string) {
+      this.projectId = projectId;
+    }
+
+    getProjectid() {
+      return this.projectId;
+    }
+  }
+
   return {
     ConnectionConfig: {
       WithDebugger: jest.fn(metadata => ({ debugger: metadata })),
@@ -113,10 +142,13 @@ jest.mock('@rapidaai/react', () => {
     GetAllAssistantToolLogRequest: RequestWithProject,
     GetAllHTTPLog: jest.fn(),
     GetAllTelemetry: jest.fn(),
+    GetAssistantHTTPLogRequest: RequestWithProjectAndId,
     GetAssistantToolLog: jest.fn(),
+    GetAssistantToolLogRequest: RequestWithProjectAndId,
     GetHTTPLog: jest.fn(),
     GetMessages: jest.fn(),
     Paginate,
+    RetryAssistantHTTPLogRequest: RequestWithProjectAndId,
     RetryHTTPLog: jest.fn(),
   };
 });
@@ -237,6 +269,82 @@ describe('activity client', () => {
         'x-project-id': 'project-1',
         'x-auth-id': 'user-1',
       },
+    );
+  });
+
+  it('gets one activity log with debugger metadata', () => {
+    const callback = jest.fn();
+
+    getActivityLog({
+      projectId: 'project-1',
+      activityId: 'activity-1',
+      auth,
+      callback,
+    });
+
+    const debuggerMetadata = (ConnectionConfig.WithDebugger as jest.Mock).mock
+      .results[0].value;
+    expect(GetActivity).toHaveBeenCalledWith(
+      { endpoint: 'test-endpoint' },
+      'project-1',
+      'activity-1',
+      callback,
+      debuggerMetadata,
+    );
+  });
+
+  it('gets tool activity details with request id and debugger metadata', () => {
+    getToolActivityLog({
+      projectId: 'project-1',
+      activityId: 'tool-log-1',
+      auth,
+    });
+
+    const request = (GetAssistantToolLog as jest.Mock).mock.calls[0][1];
+    const debuggerMetadata = (ConnectionConfig.WithDebugger as jest.Mock).mock
+      .results[0].value;
+    expect(request.getProjectid()).toBe('project-1');
+    expect(request.getId()).toBe('tool-log-1');
+    expect(GetAssistantToolLog).toHaveBeenCalledWith(
+      { endpoint: 'test-endpoint' },
+      request,
+      debuggerMetadata,
+    );
+  });
+
+  it('gets and retries webhook activity details with request id and metadata', () => {
+    getWebhookActivityLog({
+      projectId: 'project-1',
+      requestLogId: 'request-log-1',
+      auth,
+    });
+    retryWebhookActivityLog({
+      projectId: 'project-1',
+      requestLogId: 'request-log-2',
+      auth,
+    });
+
+    const getRequest = (GetHTTPLog as jest.Mock).mock.calls[0][1];
+    const retryRequest = (RetryHTTPLog as jest.Mock).mock.calls[0][1];
+    const metadata = {
+      authorization: 'token-1',
+      'x-project-id': 'project-1',
+      'x-auth-id': 'user-1',
+    };
+
+    expect(getRequest.getProjectid()).toBe('project-1');
+    expect(getRequest.getId()).toBe('request-log-1');
+    expect(GetHTTPLog).toHaveBeenCalledWith(
+      { endpoint: 'test-endpoint' },
+      getRequest,
+      metadata,
+    );
+    expect(retryRequest.getProjectid()).toBe('project-1');
+    expect(retryRequest.getId()).toBe('request-log-2');
+    expect(RetryHTTPLog).toHaveBeenCalledWith(
+      { endpoint: 'test-endpoint' },
+      retryRequest,
+      metadata,
     );
   });
 });

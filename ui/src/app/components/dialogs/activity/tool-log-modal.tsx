@@ -2,17 +2,12 @@ import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast/headless';
 import { useCredential } from '@/hooks/use-credential';
 
-import {
-  ConnectionConfig,
-  GetAssistantToolLog,
-  GetAssistantToolLogRequest,
-  AssistantToolLog,
-} from '@rapidaai/react';
+import { AssistantToolLog } from '@rapidaai/react';
 import { useRapidaStore } from '@/stores/app';
 import type { ModalProps } from '@/app/components/ui/primitives';
 import { RightSideModal } from '@/app/components/dialogs/shared';
-import { connectionConfig } from '@/configs';
 import { LogCodePanel, LogTabs } from './log-modal-primitives';
+import { getToolActivityLog } from '@/clients';
 
 interface ToolLogModalProps extends ModalProps {
   currentActivityId: string;
@@ -31,19 +26,11 @@ export function ToolLogDialog({
   useEffect(() => {
     showLoader('overlay');
 
-    const request = new GetAssistantToolLogRequest();
-    request.setProjectid(projectId);
-    request.setId(currentActivityId);
-
-    GetAssistantToolLog(
-      connectionConfig,
-      request,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        projectId: projectId,
-        userId: userId,
-      }),
-    )
+    getToolActivityLog({
+      projectId,
+      activityId: currentActivityId,
+      auth: { projectId, token, userId },
+    })
       .then(at => {
         hideLoader();
         if (at?.getSuccess()) {

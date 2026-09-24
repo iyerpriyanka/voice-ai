@@ -47,8 +47,6 @@ let mockWorkspace = {
 
 jest.mock('@rapidaai/react', () => {
   class ConnectionConfig {
-    constructor(_: unknown) {}
-
     static WithDebugger(config: unknown) {
       return config;
     }

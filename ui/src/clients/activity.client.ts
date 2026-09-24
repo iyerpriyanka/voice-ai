@@ -10,10 +10,14 @@ import {
   GetAllHTTPLog,
   GetAllAssistantHTTPLogRequest,
   GetAllTelemetry,
+  GetAssistantHTTPLogRequest,
   GetAssistantToolLog,
+  GetAssistantToolLogRequest,
+  GetAuditLogResponse,
   GetHTTPLog,
   GetMessages,
   Paginate,
+  RetryAssistantHTTPLogRequest,
   RetryHTTPLog,
   ServiceError,
 } from '@rapidaai/react';
@@ -77,6 +81,38 @@ export type ListConversationMessagesParams = {
   callback: ActivityClientCallback<GetAllMessageResponse>;
 };
 
+export type GetActivityLogParams = {
+  projectId: string;
+  activityId: string;
+  auth: ApiAuth;
+  callback: ActivityClientCallback<GetAuditLogResponse>;
+};
+
+export type GetToolActivityLogParams = {
+  projectId: string;
+  activityId: string;
+  auth: ApiAuth;
+};
+
+export type GetWebhookActivityLogParams = {
+  projectId: string;
+  requestLogId: string;
+  auth: ApiAuth;
+};
+
+export type RetryWebhookActivityLogParams = {
+  projectId: string;
+  requestLogId: string;
+  auth: ApiAuth;
+};
+
+const createDebuggerMetadata = ({ projectId, token, userId }: ApiAuth) =>
+  ConnectionConfig.WithDebugger({
+    authorization: token,
+    projectId,
+    userId,
+  });
+
 const createPaginate = (page: number, pageSize: number): Paginate => {
   const paginate = new Paginate();
   paginate.setPage(page);
@@ -107,11 +143,7 @@ export const listActivities = ({
     pageSize,
     criteria,
     callback,
-    ConnectionConfig.WithDebugger({
-      authorization: auth.token,
-      projectId: auth.projectId,
-      userId: auth.userId,
-    }),
+    createDebuggerMetadata(auth),
   );
 };
 
@@ -145,11 +177,7 @@ export const listToolActivityLogs = ({
   return GetAllAssistantToolLog(
     connectionConfig,
     request,
-    ConnectionConfig.WithDebugger({
-      authorization: auth.token,
-      projectId: auth.projectId,
-      userId: auth.userId,
-    }),
+    createDebuggerMetadata(auth),
   );
 };
 
@@ -170,6 +198,61 @@ export const listConversationMessages = ({
     callback,
     createApiMetadata(auth),
   );
+};
+
+export const getActivityLog = ({
+  projectId,
+  activityId,
+  auth,
+  callback,
+}: GetActivityLogParams): void => {
+  GetActivity(
+    connectionConfig,
+    projectId,
+    activityId,
+    callback,
+    createDebuggerMetadata(auth),
+  );
+};
+
+export const getToolActivityLog = ({
+  projectId,
+  activityId,
+  auth,
+}: GetToolActivityLogParams) => {
+  const request = new GetAssistantToolLogRequest();
+  request.setProjectid(projectId);
+  request.setId(activityId);
+
+  return GetAssistantToolLog(
+    connectionConfig,
+    request,
+    createDebuggerMetadata(auth),
+  );
+};
+
+export const getWebhookActivityLog = ({
+  projectId,
+  requestLogId,
+  auth,
+}: GetWebhookActivityLogParams) => {
+  const request = new GetAssistantHTTPLogRequest();
+  request.setProjectid(projectId);
+  request.setId(requestLogId);
+
+  return GetHTTPLog(connectionConfig, request, createApiMetadata(auth));
+};
+
+export const retryWebhookActivityLog = ({
+  projectId,
+  requestLogId,
+  auth,
+}: RetryWebhookActivityLogParams) => {
+  const request = new RetryAssistantHTTPLogRequest();
+  request.setProjectid(projectId);
+  request.setId(requestLogId);
+
+  return RetryHTTPLog(connectionConfig, request, createApiMetadata(auth));
 };
 
 export const getActivities = withConnection(GetActivities);

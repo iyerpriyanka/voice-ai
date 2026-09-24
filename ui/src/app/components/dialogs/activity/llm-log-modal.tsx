@@ -6,8 +6,6 @@ import { OverviewRow } from '@/app/components/dialogs/shared';
 import {
   AuditLog,
   GetAuditLogResponse,
-  GetActivity,
-  ConnectionConfig,
   Metadata,
   ServiceError,
 } from '@rapidaai/react';
@@ -16,9 +14,9 @@ import { CarbonStatusIndicator } from '@/app/components/ui/feedback';
 import type { ModalProps } from '@/app/components/ui/primitives';
 import { RightSideModal } from '@/app/components/dialogs/shared';
 import { HttpStatusSpanIndicator } from '@/app/components/domain/indicators/http-status';
-import { connectionConfig } from '@/configs';
 import { toHumanReadableDateTime } from '@/utils/date';
 import { LogCodePanel, LogTabs } from './log-modal-primitives';
+import { getActivityLog } from '@/clients';
 
 interface LLMLogModalProps extends ModalProps {
   currentActivityId: string;
@@ -47,11 +45,11 @@ export function LLMLogDialog({
   useEffect(() => {
     showLoader('overlay');
 
-    GetActivity(
-      connectionConfig,
+    getActivityLog({
       projectId,
-      currentActivityId,
-      (err: ServiceError | null, at: GetAuditLogResponse | null) => {
+      activityId: currentActivityId,
+      auth: { projectId, token, userId },
+      callback: (err: ServiceError | null, at: GetAuditLogResponse | null) => {
         hideLoader();
 
         if (at?.getSuccess()) {
@@ -68,12 +66,7 @@ export function LLMLogDialog({
         if (message) toast.error(message);
         toast.error('Unable to resolve the request, please try again later.');
       },
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        projectId: projectId,
-        userId: userId,
-      }),
-    );
+    });
   }, [currentActivityId, hideLoader, projectId, showLoader, token, userId]);
 
   return (

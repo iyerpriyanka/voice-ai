@@ -4,7 +4,6 @@ import type {
   KnowledgeDocumentSegment,
   ServiceError,
 } from '@rapidaai/react';
-import { UpdateKnowledgeDocumentSegment } from '@rapidaai/react';
 import { Checkmark } from '@carbon/icons-react';
 import {
   Modal,
@@ -18,7 +17,7 @@ import {
 } from '@/app/components/ui/primitives';
 import { Notification } from '@/app/components/ui/feedback';
 import { useCurrentCredential } from '@/hooks/use-credential';
-import { connectionConfig } from '@/configs';
+import { updateKnowledgeDocumentSegmentEntities } from '@/clients';
 
 type SegmentEntityKey =
   | 'documentName'
@@ -124,21 +123,21 @@ export function EditKnowledgeDocumentSegmentDialog({
 
   const handleUpdate = () => {
     setError('');
-    UpdateKnowledgeDocumentSegment(
-      connectionConfig,
-      segment.getDocumentId(),
-      segment.getIndex().toString(),
-      parseSegmentEntityList(entities.organizations),
-      parseSegmentEntityList(entities.dates),
-      parseSegmentEntityList(entities.products),
-      parseSegmentEntityList(entities.events),
-      parseSegmentEntityList(entities.people),
-      parseSegmentEntityList(entities.times),
-      parseSegmentEntityList(entities.quantities),
-      parseSegmentEntityList(entities.locations),
-      parseSegmentEntityList(entities.industries),
-      entities.documentName,
-      (err: ServiceError | null, response: BaseResponse | null) => {
+    updateKnowledgeDocumentSegmentEntities({
+      documentId: segment.getDocumentId(),
+      segmentIndex: segment.getIndex().toString(),
+      organizations: parseSegmentEntityList(entities.organizations),
+      dates: parseSegmentEntityList(entities.dates),
+      products: parseSegmentEntityList(entities.products),
+      events: parseSegmentEntityList(entities.events),
+      people: parseSegmentEntityList(entities.people),
+      times: parseSegmentEntityList(entities.times),
+      quantities: parseSegmentEntityList(entities.quantities),
+      locations: parseSegmentEntityList(entities.locations),
+      industries: parseSegmentEntityList(entities.industries),
+      documentName: entities.documentName,
+      auth: { projectId, token, userId: authId },
+      callback: (err: ServiceError | null, response: BaseResponse | null) => {
         if (err) {
           setError('Failed to update the segment. Please try again.');
         } else {
@@ -146,12 +145,7 @@ export function EditKnowledgeDocumentSegmentDialog({
           onClose();
         }
       },
-      {
-        authorization: token,
-        'x-project-id': projectId,
-        'x-auth-id': authId,
-      },
-    );
+    });
   };
 
   const handleEntityChange = (key: SegmentEntityKey, value: string) => {

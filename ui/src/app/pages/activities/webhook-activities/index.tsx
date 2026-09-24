@@ -13,8 +13,7 @@ import { useWebhookLogPage } from '@/stores/activity/webhook-log.store';
 import { RequestLogDialog } from '@/app/components/dialogs/activity';
 import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
-import { RetryAssistantHTTPLogRequest, RetryHTTPLog } from '@rapidaai/react';
-import { connectionConfig } from '@/configs';
+import { retryWebhookActivityLog } from '@/clients';
 
 import {
   Table,
@@ -87,15 +86,12 @@ export function ListingPage() {
 
   const retryRequestLog = async (requestLogId: string) => {
     showLoader();
-    const request = new RetryAssistantHTTPLogRequest();
-    request.setProjectid(projectId);
-    request.setId(requestLogId);
 
     try {
-      const response = await RetryHTTPLog(connectionConfig, request, {
-        authorization: token,
-        'x-project-id': projectId,
-        'x-auth-id': userId,
+      const response = await retryWebhookActivityLog({
+        projectId,
+        requestLogId,
+        auth: { projectId, token, userId },
       });
 
       if (response?.getSuccess()) {

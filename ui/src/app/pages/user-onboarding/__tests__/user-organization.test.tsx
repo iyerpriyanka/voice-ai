@@ -17,9 +17,7 @@ let mockCredential = {
 };
 
 jest.mock('@rapidaai/react', () => ({
-  ConnectionConfig: class ConnectionConfig {
-    constructor(_: unknown) {}
-  },
+  ConnectionConfig: class ConnectionConfig {},
   CreateOrganization: jest.fn(),
 }));
 

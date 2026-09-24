@@ -1,5 +1,4 @@
 import { useCallback, useContext, useState } from 'react';
-import { UpdateProject } from '@rapidaai/react';
 import type {
   Project,
   ServiceError,
@@ -24,7 +23,7 @@ import {
   TextArea,
   TextInput,
 } from '@/app/components/ui/primitives';
-import { connectionConfig } from '@/configs';
+import { updateWorkspaceProject } from '@/clients';
 
 const PROJECT_ACTION_ERROR =
   'Unable to process your request. please try again later.';
@@ -109,17 +108,13 @@ export const UpdateProjectDialog = ({
   const onUpdateProject = (data: ProjectFormValues) => {
     setError(undefined);
     showLoader();
-    UpdateProject(
-      connectionConfig,
-      existingProject.id,
-      handleUpdateProject,
-      {
-        authorization: token,
-        'x-auth-id': userId,
-      },
-      data.projectName,
-      data.projectDescription,
-    );
+    updateWorkspaceProject({
+      projectId: existingProject.id,
+      name: data.projectName,
+      description: data.projectDescription,
+      auth: { token, userId },
+      callback: handleUpdateProject,
+    });
   };
 
   return (

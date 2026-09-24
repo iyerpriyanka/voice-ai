@@ -1,5 +1,4 @@
 import { useCallback, useContext, useState } from 'react';
-import { CreateProject } from '@rapidaai/react';
 import type { CreateProjectResponse, ServiceError } from '@rapidaai/react';
 import { useForm } from 'react-hook-form';
 import { useCurrentCredential } from '@/hooks/use-credential';
@@ -20,7 +19,7 @@ import {
   TextArea,
   TextInput,
 } from '@/app/components/ui/primitives';
-import { connectionConfig } from '@/configs';
+import { createWorkspaceProject } from '@/clients';
 
 const PROJECT_ACTION_ERROR =
   'Unable to process your request. please try again later.';
@@ -96,16 +95,12 @@ export const CreateProjectDialog = ({
   const onCreateProject = (data: ProjectFormValues) => {
     setError(undefined);
     showLoader();
-    CreateProject(
-      connectionConfig,
-      data.projectName,
-      data.projectDescription,
-      {
-        authorization: token,
-        'x-auth-id': authId,
-      },
-      handleCreateProject,
-    );
+    createWorkspaceProject({
+      name: data.projectName,
+      description: data.projectDescription,
+      auth: { token, userId: authId },
+      callback: handleCreateProject,
+    });
   };
 
   return (

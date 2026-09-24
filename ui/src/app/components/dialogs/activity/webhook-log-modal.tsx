@@ -4,13 +4,9 @@ import { useCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/stores/app';
 import type { ModalProps } from '@/app/components/ui/primitives';
 import { RightSideModal } from '@/app/components/dialogs/shared';
-import {
-  AssistantHTTPLog,
-  GetAssistantHTTPLogRequest,
-  GetHTTPLog,
-} from '@rapidaai/react';
-import { connectionConfig } from '@/configs';
+import { AssistantHTTPLog } from '@rapidaai/react';
 import { LogCodePanel, LogTabs } from './log-modal-primitives';
+import { getWebhookActivityLog } from '@/clients';
 
 interface RequestLogModalProps extends ModalProps {
   currentRequestLogId: string;
@@ -29,14 +25,10 @@ export function RequestLogDialog({
   useEffect(() => {
     showLoader('overlay');
 
-    const req = new GetAssistantHTTPLogRequest();
-    req.setProjectid(projectId);
-    req.setId(currentRequestLogId);
-
-    GetHTTPLog(connectionConfig, req, {
-      authorization: token,
-      'x-auth-id': userId,
-      'x-project-id': projectId,
+    getWebhookActivityLog({
+      projectId,
+      requestLogId: currentRequestLogId,
+      auth: { projectId, token, userId },
     })
       .then(at => {
         hideLoader();

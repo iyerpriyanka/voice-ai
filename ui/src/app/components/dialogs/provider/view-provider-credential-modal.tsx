@@ -1,10 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import {
-  ConnectionConfig,
-  DeleteProviderKey,
-  GetCredentialResponse,
-  VaultCredential,
-} from '@rapidaai/react';
+import { GetCredentialResponse, VaultCredential } from '@rapidaai/react';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/stores/app';
 import toast from 'react-hot-toast/headless';
@@ -13,7 +8,6 @@ import { useAllProviderCredentials } from '@/hooks/use-model';
 import { useProviderContext } from '@/context/provider-context';
 import { toHumanReadableRelativeTime } from '@/utils/date';
 import type { ServiceError } from '@rapidaai/react';
-import { connectionConfig } from '@/configs';
 import type { RapidaProvider } from '@/providers';
 import {
   Modal,
@@ -26,6 +20,7 @@ import { Stack } from '@/app/components/ui/primitives';
 import { Key, TrashCan } from '@carbon/icons-react';
 import { CopyButton } from '@/app/components/ui/primitives';
 import { EmptyState } from '@/app/components/ui/feedback';
+import { deleteProviderCredential } from '@/clients';
 
 interface ViewProviderCredentialDialogProps extends ModalProps {
   currentProvider: RapidaProvider;
@@ -74,16 +69,11 @@ export function ViewProviderCredentialDialog({
 
   const onDelete = (credId: string) => {
     showLoader();
-    DeleteProviderKey(
-      connectionConfig,
-      credId,
-      afterCredentialDelete,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: authId,
-        projectId: projectId,
-      }),
-    );
+    deleteProviderCredential({
+      credentialId: credId,
+      auth: { projectId, token, userId: authId },
+      callback: afterCredentialDelete,
+    });
   };
 
   return (

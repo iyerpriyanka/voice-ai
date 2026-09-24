@@ -4,13 +4,12 @@ import {
   ArchiveProjectResponse,
   GetAllProjectResponse,
   Project,
+  ServiceError,
 } from '@rapidaai/react';
 import { CreateProjectDialog } from '@/app/components/dialogs/workspace';
-import { GetAllProject, DeleteProject } from '@rapidaai/react';
 import { useCredential } from '@/hooks/use-credential';
 import toast from 'react-hot-toast/headless';
 import { useRapidaStore } from '@/stores/app';
-import { ServiceError } from '@rapidaai/react';
 import { PrimaryButton } from '@/app/components/ui/primitives';
 import { Pagination } from '@/app/components/ui/primitives';
 import { Add, Edit, Renew, TrashCan } from '@carbon/icons-react';
@@ -35,11 +34,11 @@ import { RoleIndicator } from '@/app/components/domain/indicators/role';
 import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
 import { PageTitleWithCount } from '@/app/components/layout/blocks/page-title-with-count';
 import { TableSection } from '@/app/components/layout/sections/table-section';
-import { connectionConfig } from '@/configs';
 import { ConfirmDeleteDialog } from '@/app/components/dialogs/shared';
 import { AuthContext } from '@/context/auth-context';
 import { UpdateProjectDialog } from '@/app/components/dialogs/workspace';
 import { CarbonIconIndicator } from '@/app/components/ui/feedback';
+import { deleteWorkspaceProject, listWorkspaceProjects } from '@/clients';
 
 const headers = [
   { key: 'name', header: 'Name' },
@@ -93,17 +92,13 @@ export function ProjectPage() {
     criteria: { key: string; value: string }[],
   ) => {
     showLoader();
-    return GetAllProject(
-      connectionConfig,
+    return listWorkspaceProjects({
       page,
       pageSize,
       criteria,
-      afterGettingProject,
-      {
-        authorization: token,
-        'x-auth-id': userId,
-      },
-    );
+      auth: { token, userId },
+      callback: afterGettingProject,
+    });
   };
 
   useEffect(() => {
@@ -111,10 +106,13 @@ export function ProjectPage() {
   }, [page, pageSize, criteria]);
 
   const onDeleteProject = (projectId: string) => {
-    DeleteProject(
-      connectionConfig,
+    deleteWorkspaceProject({
       projectId,
-      (err: ServiceError | null, apr: ArchiveProjectResponse | null) => {
+      auth: { token, userId },
+      callback: (
+        err: ServiceError | null,
+        apr: ArchiveProjectResponse | null,
+      ) => {
         if (err) {
           setProjectPendingDelete(null);
           return;
@@ -126,11 +124,7 @@ export function ProjectPage() {
           setSelectedProjectId(null);
         }
       },
-      {
-        authorization: token,
-        'x-auth-id': userId,
-      },
-    );
+    });
   };
 
   return (

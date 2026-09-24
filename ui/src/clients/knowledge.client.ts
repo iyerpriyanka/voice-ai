@@ -14,6 +14,7 @@ import {
   GetAllKnowledgeLogRequest,
   GetKnowledgeBase,
   GetKnowledgeLog,
+  GetKnowledgeLogRequest,
   IndexKnowledgeDocument,
   Paginate,
   ServiceError,
@@ -21,12 +22,14 @@ import {
   UpdateKnowledgeDocumentSegment,
 } from '@rapidaai/react';
 import type {
+  BaseResponse,
   CreateKnowledgeResponse,
   DocumentContent,
   GetAllKnowledgeDocumentResponse,
   GetAllKnowledgeDocumentSegmentResponse,
   GetAllKnowledgeLogResponse,
   GetAllKnowledgeResponse,
+  GetKnowledgeLogResponse,
   GetKnowledgeResponse,
   IndexKnowledgeDocumentResponse,
 } from '@rapidaai/react';
@@ -53,6 +56,12 @@ export type ListKnowledgeBasesParams = {
   criteria: ClientCriteria[];
   auth: ApiAuth;
   callback: KnowledgeClientCallback<GetAllKnowledgeResponse>;
+};
+
+export type GetKnowledgeBaseDetailParams = {
+  knowledgeId: string;
+  auth: ApiAuth;
+  callback: KnowledgeClientCallback<GetKnowledgeResponse>;
 };
 
 export type UpdateKnowledgeBaseDetailParams = {
@@ -127,6 +136,44 @@ export type ListKnowledgeLogsParams = {
   auth: ApiAuth;
 };
 
+export type GetKnowledgeActivityLogParams = {
+  projectId: string;
+  activityId: string;
+  auth: ApiAuth;
+};
+
+export type DeleteKnowledgeDocumentSegmentParams = {
+  documentId: string;
+  segmentIndex: string;
+  reason: string;
+  auth: ApiAuth;
+  callback: KnowledgeClientCallback<BaseResponse>;
+};
+
+export type UpdateKnowledgeDocumentSegmentEntitiesParams = {
+  documentId: string;
+  segmentIndex: string;
+  organizations: string[];
+  dates: string[];
+  products: string[];
+  events: string[];
+  people: string[];
+  times: string[];
+  quantities: string[];
+  locations: string[];
+  industries: string[];
+  documentName: string;
+  auth: ApiAuth;
+  callback: KnowledgeClientCallback<BaseResponse>;
+};
+
+const createDebuggerMetadata = ({ projectId, token, userId }: ApiAuth) =>
+  ConnectionConfig.WithDebugger({
+    authorization: token,
+    userId,
+    projectId,
+  });
+
 const createPaginate = (page: number, pageSize: number): Paginate => {
   const paginate = new Paginate();
   paginate.setPage(page);
@@ -179,6 +226,19 @@ export const listKnowledgeBases = ({
     criteria,
     callback,
     createApiMetadata(auth),
+  );
+};
+
+export const getKnowledgeBaseDetail = ({
+  knowledgeId,
+  auth,
+  callback,
+}: GetKnowledgeBaseDetailParams): void => {
+  GetKnowledgeBase(
+    connectionConfig,
+    knowledgeId,
+    callback,
+    createDebuggerMetadata(auth),
   );
 };
 
@@ -351,10 +411,74 @@ export const listKnowledgeLogs = ({
   return GetAllKnowledgeLog(
     connectionConfig,
     request,
-    ConnectionConfig.WithDebugger({
-      authorization: auth.token,
-      projectId: auth.projectId,
-      userId: auth.userId,
-    }),
+    createDebuggerMetadata(auth),
+  );
+};
+
+export const getKnowledgeActivityLog = ({
+  projectId,
+  activityId,
+  auth,
+}: GetKnowledgeActivityLogParams): Promise<GetKnowledgeLogResponse> => {
+  const request = new GetKnowledgeLogRequest();
+  request.setId(activityId);
+  request.setProjectid(projectId);
+
+  return GetKnowledgeLog(
+    connectionConfig,
+    request,
+    createDebuggerMetadata(auth),
+  );
+};
+
+export const deleteKnowledgeDocumentSegmentByReason = ({
+  documentId,
+  segmentIndex,
+  reason,
+  auth,
+  callback,
+}: DeleteKnowledgeDocumentSegmentParams): void => {
+  DeleteKnowledgeDocumentSegment(
+    connectionConfig,
+    documentId,
+    segmentIndex,
+    reason,
+    callback,
+    createApiMetadata(auth),
+  );
+};
+
+export const updateKnowledgeDocumentSegmentEntities = ({
+  documentId,
+  segmentIndex,
+  organizations,
+  dates,
+  products,
+  events,
+  people,
+  times,
+  quantities,
+  locations,
+  industries,
+  documentName,
+  auth,
+  callback,
+}: UpdateKnowledgeDocumentSegmentEntitiesParams): void => {
+  UpdateKnowledgeDocumentSegment(
+    connectionConfig,
+    documentId,
+    segmentIndex,
+    organizations,
+    dates,
+    products,
+    events,
+    people,
+    times,
+    quantities,
+    locations,
+    industries,
+    documentName,
+    callback,
+    createApiMetadata(auth),
   );
 };

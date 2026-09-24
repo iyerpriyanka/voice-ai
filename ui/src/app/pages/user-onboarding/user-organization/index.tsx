@@ -2,18 +2,17 @@ import React, { useCallback, useContext, useState } from 'react';
 import { Helmet } from '@/app/components/app-shell/helmet';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { CreateOrganization } from '@rapidaai/react';
 import { CreateOrganizationResponse } from '@rapidaai/react';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/stores/app';
 import { ServiceError } from '@rapidaai/react';
 import { AuthContext } from '@/context/auth-context';
-import { connectionConfig } from '@/configs';
 import { Stack, TextInput } from '@/app/components/ui/primitives';
 import { PrimaryButton } from '@/app/components/ui/primitives';
 import { Notification } from '@/app/components/ui/feedback';
 import { ArrowRight } from '@carbon/icons-react';
 import { Select, SelectItem } from '@carbon/react';
+import { createWorkspaceOrganization } from '@/clients';
 
 export function CreateOrganizationPage() {
   const navigate = useNavigate();
@@ -56,14 +55,13 @@ export function CreateOrganizationPage() {
 
   const onCreateOrganization = data => {
     showLoader('overlay');
-    CreateOrganization(
-      connectionConfig,
-      data.organizationName,
-      data.organizationSize,
-      data.organizationIndustry,
-      { authorization: token, 'x-auth-id': authId },
-      afterCreateOrganization,
-    );
+    createWorkspaceOrganization({
+      name: data.organizationName,
+      size: data.organizationSize,
+      industry: data.organizationIndustry,
+      auth: { token, userId: authId },
+      callback: afterCreateOrganization,
+    });
   };
 
   const formError =

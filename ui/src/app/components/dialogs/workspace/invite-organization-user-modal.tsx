@@ -1,9 +1,4 @@
 import { useCallback, useContext, useMemo, useState } from 'react';
-import {
-  InviteUserToOrganization,
-  InviteUserToOrganizationRequest,
-  ProjectRoleAssignment,
-} from '@rapidaai/react';
 import { Dropdown } from '@carbon/react';
 import toast from 'react-hot-toast/headless';
 import {
@@ -21,11 +16,11 @@ import { ErrorMessage } from '@/app/components/ui/feedback';
 import { AuthContext } from '@/context/auth-context';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/stores/app';
-import { connectionConfig } from '@/configs';
 import {
   ProjectRoleRow,
   ProjectRoleTable,
 } from '@/app/components/domain/project-role-table';
+import { inviteOrganizationUser } from '@/clients';
 
 const PROJECT_ACTION_ERROR =
   'Unable to process your request. please try again later.';
@@ -98,24 +93,14 @@ export function InviteOrganizationUserDialog({
     setError('');
     showLoader('overlay');
 
-    const req = new InviteUserToOrganizationRequest();
-    req.setEmail(email);
-    req.setOrganizationrole(organizationRole);
-    req.setProjectrolesList(
-      projectRoleRows
-        .filter(row => row.projectId && row.projectRole)
-        .map(row => {
-          const assignment = new ProjectRoleAssignment();
-          assignment.setProjectid(row.projectId);
-          assignment.setProjectrole(row.projectRole);
-          return assignment;
-        }),
-    );
-
     try {
-      const response = await InviteUserToOrganization(connectionConfig, req, {
-        authorization: token,
-        'x-auth-id': authId,
+      const response = await inviteOrganizationUser({
+        email,
+        organizationRole,
+        projectRoles: projectRoleRows.filter(
+          row => row.projectId && row.projectRole,
+        ),
+        auth: { token, userId: authId },
       });
       hideLoader();
 
