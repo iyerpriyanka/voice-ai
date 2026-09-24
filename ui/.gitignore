@@ -10,6 +10,7 @@ allure-results
 allure-report
 node_modules
 stats.json
+dependency-graph.dot
 .pnp
 .pnp.js
 
