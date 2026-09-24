@@ -1,30 +1,29 @@
 import React, { FC, useState } from 'react';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { PrimaryButton, SecondaryButton } from '@/app/components/carbon/button';
-import { Stack, TextInput, TextArea } from '@/app/components/carbon/form';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
+import { Stack, TextInput, TextArea } from '@/app/components/ui/primitives';
 import { ButtonSet, NumberInput } from '@carbon/react';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { randomMeaningfullName } from '@/utils';
-import { EndpointDropdown } from '@/app/components/dropdown/endpoint-dropdown';
+import { EndpointDropdown } from '@/app/components/domain/dropdowns/endpoint-dropdown';
 import {
-  CreateAssistantConfiguration,
   CreateAssistantConfigurationRequest,
   Endpoint,
   Metadata,
 } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
-import { connectionConfig } from '@/configs';
-import { TabForm } from '@/app/components/form/tab-form';
+import { TabForm } from '@/app/components/ui/composites';
 import {
   ASSISTANT_CONDITION_KEY_OPTIONS,
   ASSISTANT_CONDITION_OPERATOR_OPTIONS,
   ASSISTANT_CONDITION_SOURCE_OPTIONS,
   ASSISTANT_CONDITION_VALUE_OPTIONS_BY_KEY,
   AssistantMappingTable,
-} from '@/app/components/tools/common';
-import { SourceConditionRule } from '@/app/components/conditions/source-condition-rule';
-import { InputGroup } from '@/app/components/input-group/index';
+} from '@/app/components/domain/tools/common';
+import { SourceConditionRule } from '@/app/components/domain/conditions/source-condition-rule';
+import { InputGroup } from '@/app/components/ui/primitives';
+import { createAssistantConfigurationFromRequest } from '@/clients/assistant.client';
 
 // ── Parameter types ──────────────────────────────────────────────────────────
 
@@ -169,15 +168,10 @@ export const CreateAssistantAnalysis: FC<{ assistantId: string }> = ({
     request.setOptionsList(options);
 
     try {
-      const response = await CreateAssistantConfiguration(
-        connectionConfig,
+      const response = await createAssistantConfigurationFromRequest({
         request,
-        {
-          'x-auth-id': authId,
-          authorization: token,
-          'x-project-id': projectId,
-        },
-      );
+        auth: { projectId, token, userId: authId },
+      });
 
       if (response?.getSuccess()) {
         toast.success('Analysis added to assistant successfully');

@@ -9,7 +9,7 @@ jest.mock('@/utils/loadable', () => ({
   }),
 }));
 
-jest.mock('@/app/components/carbon/loading', () => ({
+jest.mock('@/app/components/ui/feedback/loading', () => ({
   PageLoading: ({ className }: any) => (
     <div data-testid="carbon-page-loading" className={className}>
       Loading
@@ -25,7 +25,7 @@ describe('endpoint route loading', () => {
 
   it('uses Carbon PageLoading for all endpoint lazy route fallbacks', () => {
     require('@/app/pages/endpoint');
-    const { PageLoading } = require('@/app/components/carbon/loading');
+    const { PageLoading } = require('@/app/components/ui/feedback/loading');
 
     expect(mockFallbacks).toHaveLength(5);
     mockFallbacks.forEach(fallback => {

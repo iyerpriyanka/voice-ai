@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react';
 import { CONFIG } from '@/configs';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { PrimaryButton, SecondaryButton } from '@/app/components/carbon/button';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import {
   BuildinTool,
@@ -10,14 +10,13 @@ import {
   GetDefaultToolConfigIfInvalid,
   GetDefaultToolDefintion,
   ValidateToolDefaultOptions,
-} from '@/app/components/tools';
-import { ToolDefinitionForm } from '@/app/components/tools/common';
-import { CreateAssistantTool } from '@rapidaai/react';
+} from '@/app/components/domain/tools/tool-registry';
+import { ToolDefinitionForm } from '@/app/components/domain/tools/common';
 import toast from 'react-hot-toast/headless';
-import { useRapidaStore } from '@/hooks';
-import { connectionConfig } from '@/configs';
-import { TabForm } from '@/app/components/form/tab-form';
+import { useRapidaStore } from '@/stores/app';
+import { TabForm } from '@/app/components/ui/composites';
 import { ButtonSet } from '@carbon/react';
+import { createAssistantToolForAssistant } from '@/clients/assistant.client';
 
 export const CreateTool: FC<{ assistantId: string }> = ({ assistantId }) => {
   const navigator = useGlobalNavigation();
@@ -109,15 +108,15 @@ export const CreateTool: FC<{ assistantId: string }> = ({ assistantId }) => {
     }
 
     showLoader();
-    CreateAssistantTool(
-      connectionConfig,
+    createAssistantToolForAssistant({
       assistantId,
-      toolDefinition.name,
-      toolDefinition.description,
-      JSON.parse(toolDefinition.parameters),
-      buildinToolConfig.code,
-      buildinToolConfig.parameters,
-      (err, response) => {
+      name: toolDefinition.name,
+      description: toolDefinition.description,
+      fields: JSON.parse(toolDefinition.parameters),
+      executionMethod: buildinToolConfig.code,
+      executionOptions: buildinToolConfig.parameters,
+      auth: { projectId, token, userId: authId },
+      callback: (err, response) => {
         hideLoader();
         if (err) {
           setErrorMessage(
@@ -143,12 +142,7 @@ export const CreateTool: FC<{ assistantId: string }> = ({ assistantId }) => {
           );
         }
       },
-      {
-        'x-auth-id': authId,
-        authorization: token,
-        'x-project-id': projectId,
-      },
-    );
+    });
   };
 
   return (

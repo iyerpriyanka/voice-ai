@@ -5,6 +5,9 @@ src/styles/generated/tailwindcss.css
 .env.local
 coverage
 build
+storybook-static
+allure-results
+allure-report
 node_modules
 stats.json
 dependency-graph.dot

@@ -1,7 +1,7 @@
 import { Conversations } from '@/app/pages/assistant/view/conversations';
 import { Overview } from '@/app/pages/assistant/view/overview';
 import { Version } from '@/app/pages/assistant/view/version-list';
-import { useAssistantPageStore } from '@/hooks/use-assistant-page-store';
+import { useAssistantPageStore } from '@/stores/assistant/assistant.store';
 import { useParams } from 'react-router-dom';
 
 export const ViewAssistantPage = () => {

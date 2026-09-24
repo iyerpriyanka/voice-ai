@@ -17,9 +17,7 @@ let mockCredential = {
 };
 
 jest.mock('@rapidaai/react', () => ({
-  ConnectionConfig: class ConnectionConfig {
-    constructor(_: unknown) {}
-  },
+  ConnectionConfig: class ConnectionConfig {},
   CreateProject: jest.fn(),
 }));
 
@@ -28,7 +26,7 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
 }));
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/stores/app', () => ({
   useRapidaStore: () => ({
     loading: false,
     showLoader: mockShowLoader,
@@ -40,27 +38,31 @@ jest.mock('@/hooks/use-credential', () => ({
   useCurrentCredential: () => mockCredential,
 }));
 
-jest.mock('@/app/components/helmet', () => ({
+jest.mock('@/app/components/app-shell/helmet', () => ({
   Helmet: () => null,
 }));
 
-jest.mock('@/app/components/carbon/form', () => ({
+jest.mock('@/app/components/ui/primitives/form', () => ({
   Stack: ({ children }: any) => <div>{children}</div>,
   TextInput: require('react').forwardRef(
-    ({ labelText, helperText, ...props }: any, ref: any) => <input ref={ref} {...props} />,
+    ({ labelText, helperText, ...props }: any, ref: any) => (
+      <input ref={ref} {...props} />
+    ),
   ),
   TextArea: require('react').forwardRef(
-    ({ labelText, helperText, ...props }: any, ref: any) => <textarea ref={ref} {...props} />,
+    ({ labelText, helperText, ...props }: any, ref: any) => (
+      <textarea ref={ref} {...props} />
+    ),
   ),
 }));
 
-jest.mock('@/app/components/carbon/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   PrimaryButton: ({ children, isLoading, renderIcon, ...props }: any) => (
     <button {...props}>{children}</button>
   ),
 }));
 
-jest.mock('@/app/components/carbon/notification', () => ({
+jest.mock('@/app/components/ui/feedback/notification', () => ({
   Notification: ({ subtitle }: any) => <div>{subtitle}</div>,
 }));
 
@@ -91,9 +93,12 @@ describe('CreateProjectPage', () => {
 
     renderWithAuth(authorize);
 
-    fireEvent.change(screen.getByPlaceholderText('eg: Acme Support Operations'), {
-      target: { value: 'Support Bot' },
-    });
+    fireEvent.change(
+      screen.getByPlaceholderText('eg: Acme Support Operations'),
+      {
+        target: { value: 'Support Bot' },
+      },
+    );
     fireEvent.change(
       screen.getByPlaceholderText(
         'eg: White-label inbound voice agents for healthcare support across US and UK',
@@ -121,13 +126,18 @@ describe('CreateProjectPage', () => {
 
     renderWithAuth();
 
-    fireEvent.change(screen.getByPlaceholderText('eg: Acme Support Operations'), {
-      target: { value: 'Support Bot' },
-    });
+    fireEvent.change(
+      screen.getByPlaceholderText('eg: Acme Support Operations'),
+      {
+        target: { value: 'Support Bot' },
+      },
+    );
     fireEvent.click(screen.getByRole('button', { name: 'Go to dashboard' }));
 
     expect(
-      await screen.findByText('Unable to process your request. Please try again later.'),
+      await screen.findByText(
+        'Unable to process your request. Please try again later.',
+      ),
     ).toBeInTheDocument();
   });
 
@@ -140,13 +150,18 @@ describe('CreateProjectPage', () => {
 
     renderWithAuth();
 
-    fireEvent.change(screen.getByPlaceholderText('eg: Acme Support Operations'), {
-      target: { value: 'Support Bot' },
-    });
+    fireEvent.change(
+      screen.getByPlaceholderText('eg: Acme Support Operations'),
+      {
+        target: { value: 'Support Bot' },
+      },
+    );
     fireEvent.click(screen.getByRole('button', { name: 'Go to dashboard' }));
 
     expect(
-      await screen.findByText('Unable to create project. Please check the details.'),
+      await screen.findByText(
+        'Unable to create project. Please check the details.',
+      ),
     ).toBeInTheDocument();
   });
 });

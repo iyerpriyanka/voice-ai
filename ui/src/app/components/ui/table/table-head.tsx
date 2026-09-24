@@ -1,0 +1,81 @@
+import { InputCheckbox } from '@/app/components/ui/primitives/input-checkbox';
+import { cn } from '@/utils';
+import { memo } from 'react';
+
+interface TableHeadProps {
+  columns: { name: string; key: string }[];
+}
+
+export function TableHead(props: TableHeadProps & { isActionable?: boolean }) {
+  return (
+    <thead className="">
+      <tr className="bg-light-background dark:bg-gray-950 border-b">
+        {props.columns.map((cl, idx) => {
+          return (
+            <th
+              key={idx}
+              className={cn(
+                'whitespace-no-wrap p-0 m-0 md:px-5 px-2 py-2 text-left uppercase text-xs/6 font-medium tracking-wider relative text-muted',
+              )}
+            >
+              {cl.name}
+            </th>
+          );
+        })}
+        {props.isActionable && (
+          <th className="whitespace-no-wrap px-2 md:px-5 py-3 w-20">
+            <span className="absolute w-px h-px p-0 -m-px overflow-hidden whitespace-no-wrap border-0">
+              Menu
+            </span>
+          </th>
+        )}
+      </tr>
+    </thead>
+  );
+}
+
+function TableHederWithCheckboxComponent(
+  props: TableHeadProps & { ontoggle: (checked: boolean) => void },
+) {
+  return (
+    <thead className="dark:bg-gray-950/30 bg-gray-100/50 border-b dark:border-gray-800">
+      <tr className="">
+        <th
+          className={cn(
+            'whitespace-no-wrap px-2 md:px-5 py-3 w-20',
+            'font-semibold text-sm text-left capitalize',
+          )}
+        >
+          <div className="flex justify-between">
+            <InputCheckbox
+              aria-label="Select all rows"
+              onChange={event => props.ontoggle(event.currentTarget.checked)}
+            />
+            <span className="w-0.5 bg-slate-300 dark:bg-gray-800 h-4"></span>
+          </div>
+        </th>
+        {props.columns.map((cl, idx) => {
+          return (
+            <th
+              key={idx}
+              className={cn(
+                'whitespace-no-wrap px-2 md:px-5 py-3',
+                'font-semibold text-sm text-left capitalize',
+              )}
+            >
+              <div className="flex justify-between">
+                {cl.name}
+
+                {idx !== props.columns.length - 1 && (
+                  <span className="w-0.5 bg-slate-300 dark:bg-gray-800 h-4"></span>
+                )}
+              </div>
+            </th>
+          );
+        })}
+      </tr>
+    </thead>
+  );
+}
+
+export const TableHederWithCheckbox = memo(TableHederWithCheckboxComponent);

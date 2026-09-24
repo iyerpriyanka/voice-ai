@@ -1,0 +1,22 @@
+import type { LabelHTMLAttributes, ReactNode } from 'react';
+import { cn } from '@/utils';
+
+interface LabelProp extends LabelHTMLAttributes<HTMLLabelElement> {
+  for?: string;
+  text?: ReactNode;
+}
+
+export function Label(props: LabelProp) {
+  return (
+    <label
+      htmlFor={props.for}
+      className={cn(
+        'leading-6 cursor-pointer inline-flex items-center capitalize font-medium text-[0.95rem] dark:text-base',
+        props.className,
+      )}
+      onClick={props.onClick}
+    >
+      {props.text || props.children}
+    </label>
+  );
+}

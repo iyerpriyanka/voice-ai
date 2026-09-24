@@ -1,18 +1,17 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { Helmet } from '@/app/components/helmet';
+import { Helmet } from '@/app/components/app-shell/helmet';
 import {
   ArchiveProjectResponse,
   GetAllProjectResponse,
   Project,
+  ServiceError,
 } from '@rapidaai/react';
-import { CreateProjectDialog } from '@/app/components/base/modal/create-project-modal';
-import { GetAllProject, DeleteProject } from '@rapidaai/react';
+import { CreateProjectDialog } from '@/app/components/dialogs/workspace';
 import { useCredential } from '@/hooks/use-credential';
 import toast from 'react-hot-toast/headless';
-import { useRapidaStore } from '@/hooks';
-import { ServiceError } from '@rapidaai/react';
-import { PrimaryButton } from '@/app/components/carbon/button';
-import { Pagination } from '@/app/components/carbon/pagination';
+import { useRapidaStore } from '@/stores/app';
+import { PrimaryButton } from '@/app/components/ui/primitives';
+import { Pagination } from '@/app/components/ui/primitives';
 import { Add, Edit, Renew, TrashCan } from '@carbon/icons-react';
 import {
   Table,
@@ -29,17 +28,17 @@ import {
   Button,
   RadioButton,
 } from '@carbon/react';
-import { ProjectUserGroupAvatar } from '@/app/components/avatar/project-user-group-avatar';
+import { ProjectUserGroupAvatar } from '@/app/components/domain/avatar/project-user-group-avatar';
 import { toHumanReadableDate } from '@/utils/date';
-import { RoleIndicator } from '@/app/components/indicators/role';
-import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
-import { PageTitleWithCount } from '@/app/components/blocks/page-title-with-count';
-import { TableSection } from '@/app/components/sections/table-section';
-import { connectionConfig } from '@/configs';
-import { ConfirmDeleteDialog } from '@/app/components/base/modal/confirm-delete';
+import { RoleIndicator } from '@/app/components/domain/indicators/role';
+import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
+import { PageTitleWithCount } from '@/app/components/layout/blocks/page-title-with-count';
+import { TableSection } from '@/app/components/layout/sections/table-section';
+import { ConfirmDeleteDialog } from '@/app/components/dialogs/shared';
 import { AuthContext } from '@/context/auth-context';
-import { UpdateProjectDialog } from '@/app/components/base/modal/update-project-modal';
-import { CarbonIconIndicator } from '@/app/components/carbon/icon-indicator';
+import { UpdateProjectDialog } from '@/app/components/dialogs/workspace';
+import { CarbonIconIndicator } from '@/app/components/ui/feedback';
+import { deleteWorkspaceProject, listWorkspaceProjects } from '@/clients';
 
 const headers = [
   { key: 'name', header: 'Name' },
@@ -93,17 +92,13 @@ export function ProjectPage() {
     criteria: { key: string; value: string }[],
   ) => {
     showLoader();
-    return GetAllProject(
-      connectionConfig,
+    return listWorkspaceProjects({
       page,
       pageSize,
       criteria,
-      afterGettingProject,
-      {
-        authorization: token,
-        'x-auth-id': userId,
-      },
-    );
+      auth: { token, userId },
+      callback: afterGettingProject,
+    });
   };
 
   useEffect(() => {
@@ -111,10 +106,13 @@ export function ProjectPage() {
   }, [page, pageSize, criteria]);
 
   const onDeleteProject = (projectId: string) => {
-    DeleteProject(
-      connectionConfig,
+    deleteWorkspaceProject({
       projectId,
-      (err: ServiceError | null, apr: ArchiveProjectResponse | null) => {
+      auth: { token, userId },
+      callback: (
+        err: ServiceError | null,
+        apr: ArchiveProjectResponse | null,
+      ) => {
         if (err) {
           setProjectPendingDelete(null);
           return;
@@ -126,11 +124,7 @@ export function ProjectPage() {
           setSelectedProjectId(null);
         }
       },
-      {
-        authorization: token,
-        'x-auth-id': userId,
-      },
-    );
+    });
   };
 
   return (

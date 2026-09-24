@@ -13,15 +13,11 @@ jest.mock('@/utils', () => ({
   cn: (...inputs: any[]) => inputs.filter(Boolean).join(' '),
 }));
 
-jest.mock('lucide-react', () => ({
-  ChevronDown: () => null,
-}));
-
-jest.mock('@/app/components/blocks/section-divider', () => ({
+jest.mock('@/app/components/layout/blocks/section-divider', () => ({
   SectionDivider: ({ label }: { label: string }) => <div>{label}</div>,
 }));
 
-jest.mock('@/app/components/providers/speech-to-text', () => ({
+jest.mock('@/app/components/domain/providers/speech-to-text', () => ({
   SpeechToTextProvider: ({
     onChangeProvider,
   }: {
@@ -33,7 +29,7 @@ jest.mock('@/app/components/providers/speech-to-text', () => ({
   ),
 }));
 
-jest.mock('@/app/components/providers/vad', () => ({
+jest.mock('@/app/components/domain/providers/vad', () => ({
   VADProvider: ({
     onChangeProvider,
   }: {
@@ -45,12 +41,15 @@ jest.mock('@/app/components/providers/vad', () => ({
   ),
 }));
 
-jest.mock('@/app/components/providers/microphone/barge-in-trigger-control', () => ({
-  MICROPHONE_BARGE_IN_TRIGGER_KEY: 'microphone.barge_in_trigger',
-  BargeInTriggerControl: () => <div>barge-in control</div>,
-}));
+jest.mock(
+  '@/app/components/domain/providers/microphone/barge-in-trigger-control',
+  () => ({
+    MICROPHONE_BARGE_IN_TRIGGER_KEY: 'microphone.barge_in_trigger',
+    BargeInTriggerControl: () => <div>barge-in control</div>,
+  }),
+);
 
-jest.mock('@/app/components/providers/end-of-speech', () => ({
+jest.mock('@/app/components/domain/providers/end-of-speech', () => ({
   EndOfSpeechProvider: ({
     onChangeProvider,
   }: {
@@ -62,7 +61,7 @@ jest.mock('@/app/components/providers/end-of-speech', () => ({
   ),
 }));
 
-jest.mock('@/app/components/providers/noise-removal', () => ({
+jest.mock('@/app/components/domain/providers/noise-removal', () => ({
   NoiseCancellationProvider: ({
     onChangeNoiseCancellationProvider,
   }: {
@@ -77,22 +76,22 @@ jest.mock('@/app/components/providers/noise-removal', () => ({
   ),
 }));
 
-jest.mock('@/app/components/providers/speech-to-text/provider', () => ({
+jest.mock('@/app/components/domain/providers/speech-to-text/provider', () => ({
   GetDefaultMicrophoneConfig: (...args: any[]) =>
     mockGetDefaultMicrophoneConfig(...args),
   GetDefaultSpeechToTextIfInvalid: (...args: any[]) =>
     mockGetDefaultSpeechToTextIfInvalid(...args),
 }));
 
-jest.mock('@/app/components/providers/vad/provider', () => ({
+jest.mock('@/app/components/domain/providers/vad/provider', () => ({
   GetDefaultVADConfig: (...args: any[]) => mockGetDefaultVADConfig(...args),
 }));
 
-jest.mock('@/app/components/providers/end-of-speech/provider', () => ({
+jest.mock('@/app/components/domain/providers/end-of-speech/provider', () => ({
   GetDefaultEOSConfig: (...args: any[]) => mockGetDefaultEOSConfig(...args),
 }));
 
-jest.mock('@/app/components/providers/noise-removal/provider', () => ({
+jest.mock('@/app/components/domain/providers/noise-removal/provider', () => ({
   GetDefaultNoiseCancellationConfig: (...args: any[]) =>
     mockGetDefaultNoiseCancellationConfig(...args),
 }));
@@ -123,7 +122,9 @@ describe('ConfigureAudioInputProvider design integration', () => {
       createMetadata('microphone.vad.confidence', '0.6'),
       createMetadata('microphone.denoising.provider', 'rn_noise'),
     ];
-    const sttDefaults = [createMetadata('listen.model', 'whisper-large-v3-turbo')];
+    const sttDefaults = [
+      createMetadata('listen.model', 'whisper-large-v3-turbo'),
+    ];
 
     mockGetDefaultMicrophoneConfig.mockReturnValue(microphoneDefaults);
     mockGetDefaultSpeechToTextIfInvalid.mockReturnValue(sttDefaults);
@@ -139,7 +140,8 @@ describe('ConfigureAudioInputProvider design integration', () => {
     fireEvent.click(screen.getByRole('button', { name: 'change stt' }));
 
     expect(mockGetDefaultMicrophoneConfig).toHaveBeenCalledTimes(1);
-    const microphoneOnly = mockGetDefaultMicrophoneConfig.mock.calls[0][0] as Metadata[];
+    const microphoneOnly = mockGetDefaultMicrophoneConfig.mock
+      .calls[0][0] as Metadata[];
     expect(microphoneOnly.map(m => m.getKey()).sort()).toEqual(
       [
         'microphone.eos.fallback_timeout',
@@ -166,9 +168,15 @@ describe('ConfigureAudioInputProvider design integration', () => {
       createMetadata('microphone.eos.provider', 'silence_based_eos'),
       createMetadata('microphone.denoising.provider', 'legacy_noise'),
     ];
-    const vadDefaults = [createMetadata('microphone.vad.provider', 'firered_vad')];
-    const eosDefaults = [createMetadata('microphone.eos.provider', 'livekit_eos')];
-    const noiseDefaults = [createMetadata('microphone.denoising.provider', 'rn_noise')];
+    const vadDefaults = [
+      createMetadata('microphone.vad.provider', 'firered_vad'),
+    ];
+    const eosDefaults = [
+      createMetadata('microphone.eos.provider', 'livekit_eos'),
+    ];
+    const noiseDefaults = [
+      createMetadata('microphone.denoising.provider', 'rn_noise'),
+    ];
 
     mockGetDefaultVADConfig.mockReturnValue(vadDefaults);
     mockGetDefaultEOSConfig.mockReturnValue(eosDefaults);
@@ -197,14 +205,11 @@ describe('ConfigureAudioInputProvider design integration', () => {
       'rn_noise',
       inputParameters,
     );
-    expect(mockGetDefaultEOSConfig).toHaveBeenCalledWith(
-      'livekit_eos',
-      [
-        createMetadata('listen.model', 'nova-3'),
-        createMetadata('microphone.vad.provider', 'silero_vad'),
-        createMetadata('microphone.denoising.provider', 'legacy_noise'),
-      ],
-    );
+    expect(mockGetDefaultEOSConfig).toHaveBeenCalledWith('livekit_eos', [
+      createMetadata('listen.model', 'nova-3'),
+      createMetadata('microphone.vad.provider', 'silero_vad'),
+      createMetadata('microphone.denoising.provider', 'legacy_noise'),
+    ]);
 
     expect(setAudioInputConfig).toHaveBeenCalledWith({
       provider: 'deepgram',
@@ -233,9 +238,15 @@ describe('ConfigureAudioInputProvider design integration', () => {
     fireEvent.click(
       screen.getByRole('button', { name: /show advanced settings/i }),
     );
-    expect(screen.getByRole('button', { name: 'change vad' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'change eos' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'change noise' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'change vad' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'change eos' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'change noise' }),
+    ).toBeInTheDocument();
 
     fireEvent.click(
       screen.getByRole('button', { name: /hide advanced settings/i }),

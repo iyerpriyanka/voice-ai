@@ -1,5 +1,5 @@
-import { TertiaryButton, GhostButton } from '@/app/components/carbon/button';
-import { Check, Copy, Pause, Play } from 'lucide-react';
+import { TertiaryButton, GhostButton } from '@/app/components/ui/primitives';
+import { Checkmark, Copy, Pause, Play } from '@carbon/icons-react';
 import { FC, useRef, useState } from 'react';
 
 export const VoiceCard: FC<{
@@ -126,9 +126,9 @@ export const VoiceCard: FC<{
         </div>
         <GhostButton size="md" onClick={handleCopy} title="Copy Voice ID">
           {copied ? (
-            <Check className="text-green-400 w-4 h-4" strokeWidth={1.5} />
+            <Checkmark className="text-green-400 w-4 h-4" />
           ) : (
-            <Copy className="text-slate-400 w-4 h-4" strokeWidth={1.5} />
+            <Copy className="text-slate-400 w-4 h-4" />
           )}
         </GhostButton>
       </div>

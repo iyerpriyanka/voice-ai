@@ -7,7 +7,7 @@ import {
 } from '@rapidaai/react';
 import { Endpoint, EndpointProviderModel } from '@rapidaai/react';
 import { InvokeResponse } from '@rapidaai/react';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { useCredential } from '@/hooks/use-credential';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';

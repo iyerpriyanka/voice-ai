@@ -1,10 +1,10 @@
-import { PageActionButtonBlock } from '@/app/components/blocks/page-action-button-block';
-import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
-import { PageTitleBlock } from '@/app/components/blocks/page-title-block';
-import { PrimaryButton, GhostButton } from '@/app/components/carbon/button';
-import { Select } from '@/app/components/form/select';
-import { Slider } from '@/app/components/form/slider';
-import { InputGroup } from '@/app/components/input-group';
+import { PageActionButtonBlock } from '@/app/components/layout/blocks/page-action-button-block';
+import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
+import { PageTitleBlock } from '@/app/components/layout/blocks/page-title-block';
+import { PrimaryButton, GhostButton } from '@/app/components/ui/primitives';
+import { Select } from '@/app/components/ui/primitives';
+import { Slider } from '@/app/components/ui/primitives';
+import { InputGroup } from '@/app/components/ui/primitives';
 
 const harmfulCategories = [
   {
@@ -171,7 +171,8 @@ export const ConfigureAssistantContentFilterPage = () => {
         </div>
       </div>
       <PageActionButtonBlock errorMessage={errorMessage}>
-        <GhostButton size="md"
+        <GhostButton
+          size="md"
           onClick={() => {
             //   goToAssistant(assistantId);
           }}

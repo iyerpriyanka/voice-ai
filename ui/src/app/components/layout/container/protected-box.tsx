@@ -1,0 +1,74 @@
+import React, { useContext, useEffect } from 'react';
+import { Navigate, useLocation, useSearchParams } from 'react-router-dom';
+import { AuthContext } from '@/context/auth-context';
+
+export function ProtectedBox({ children }: { children: React.ReactElement }) {
+  const { pathname, search } = useLocation();
+  const { isAuthenticated, isThereOrganization, isThereProject } =
+    useContext(AuthContext);
+
+  if (isAuthenticated && !isAuthenticated()) {
+    return <Navigate to={`/auth/signin${search}`} />;
+  }
+
+  if (pathname === '/onboarding/organization') {
+    return children;
+  }
+
+  if (isThereOrganization && !isThereOrganization())
+    return <Navigate to="/onboarding/organization" />;
+
+  if (pathname === '/onboarding/project') {
+    return children;
+  }
+
+  if (isThereProject && !isThereProject())
+    return <Navigate to="/onboarding/project" />;
+
+  return children;
+}
+
+interface IgnoreBoxProps {
+  children: React.ReactElement;
+  replaceLocation?: (url: string) => void;
+}
+
+export function IgnoreBox({
+  children,
+  replaceLocation = window.location.replace.bind(window.location),
+}: IgnoreBoxProps) {
+  const [searchParams] = useSearchParams();
+  const nextUrl = searchParams.get('next');
+  const externalValidation = searchParams.get('externalValidation');
+  const {
+    unauthenticate,
+    isAuthenticated,
+    isThereOrganization,
+    isThereProject,
+  } = useContext(AuthContext);
+
+  useEffect(() => {
+    const isAuthValid = () =>
+      isAuthenticated &&
+      isAuthenticated() &&
+      isThereOrganization &&
+      isThereOrganization() &&
+      isThereProject &&
+      isThereProject();
+
+    if (nextUrl && externalValidation && isAuthValid()) {
+      replaceLocation(nextUrl);
+      return;
+    }
+    if (unauthenticate) unauthenticate();
+  }, [
+    externalValidation,
+    isAuthenticated,
+    isThereOrganization,
+    isThereProject,
+    nextUrl,
+    replaceLocation,
+    unauthenticate,
+  ]);
+  return children;
+}

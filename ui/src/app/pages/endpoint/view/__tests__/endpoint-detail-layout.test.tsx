@@ -5,7 +5,7 @@ import '@testing-library/jest-dom';
 import { EndpointSideNav } from '@/app/pages/endpoint/view/endpoint-side-nav';
 import { ViewEndpointPage } from '@/app/pages/endpoint/view';
 import { EndpointViewLayout } from '@/app/pages/endpoint/view/endpoint-view.layout';
-import { useEndpointPageStore } from '@/hooks';
+import { useEndpointPageStore } from '@/stores/endpoint';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 const mockNavigate = jest.fn();
@@ -23,10 +23,19 @@ jest.mock('react-router-dom', () => ({
 }));
 
 jest.mock('@carbon/icons-react', () => ({
+  Application: ({ size }: any) => (
+    <span data-icon-size={size}>application</span>
+  ),
   Checkmark: ({ size }: any) => <span data-icon-size={size}>checkmark</span>,
+  Code: ({ size }: any) => <span data-icon-size={size}>code</span>,
   Copy: ({ size }: any) => <span data-icon-size={size}>copy</span>,
+  Debug: ({ size }: any) => <span data-icon-size={size}>debug</span>,
   Edit: ({ size }: any) => <span data-icon-size={size}>edit</span>,
+  Globe: ({ size }: any) => <span data-icon-size={size}>globe</span>,
   Information: ({ size }: any) => <span data-icon-size={size}>info</span>,
+  LogoPython: ({ size }: any) => <span data-icon-size={size}>python</span>,
+  LogoReact: ({ size }: any) => <span data-icon-size={size}>react</span>,
+  Phone: ({ size }: any) => <span data-icon-size={size}>phone</span>,
   SourceControl: ({ size }: any) => (
     <span data-icon-size={size}>source-control</span>
   ),
@@ -39,16 +48,12 @@ jest.mock('@/hooks/use-credential', () => ({
   useCredential: () => ['user-1', 'token-1', 'project-1'],
 }));
 
-jest.mock('@/hooks', () => {
-  const actual = jest.requireActual('@/hooks');
-  return {
-    ...actual,
-    useRapidaStore: () => ({
-      showLoader: mockShowLoader,
-      hideLoader: mockHideLoader,
-    }),
-  };
-});
+jest.mock('@/stores/app', () => ({
+  useRapidaStore: () => ({
+    showLoader: mockShowLoader,
+    hideLoader: mockHideLoader,
+  }),
+}));
 
 jest.mock('@carbon/react', () => ({
   Breadcrumb: ({ children }: any) => <nav>{children}</nav>,
@@ -114,19 +119,22 @@ jest.mock('@/app/pages/endpoint/view/version-list', () => ({
   Version: () => <section>Endpoint versions</section>,
 }));
 
-jest.mock('@/app/components/base/modal/endpoint-instruction-modal', () => ({
-  EndpointInstructionDialog: () => null,
-}));
+jest.mock(
+  '@/app/components/dialogs/endpoint/endpoint-instruction-modal',
+  () => ({
+    EndpointInstructionDialog: () => null,
+  }),
+);
 
-jest.mock('@/app/components/base/modal/create-tag-modal', () => ({
+jest.mock('@/app/components/dialogs/shared/create-tag-modal', () => ({
   CreateTagDialog: () => null,
 }));
 
-jest.mock('@/app/components/base/modal/update-description-modal', () => ({
+jest.mock('@/app/components/dialogs/shared/update-description-modal', () => ({
   UpdateDescriptionDialog: () => null,
 }));
 
-jest.mock('@/app/components/helmet', () => ({
+jest.mock('@/app/components/app-shell/helmet', () => ({
   Helmet: () => null,
 }));
 

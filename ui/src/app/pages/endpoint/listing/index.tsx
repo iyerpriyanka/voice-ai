@@ -2,18 +2,18 @@ import { useEffect, useCallback, useState } from 'react';
 import { SingleEndpoint } from './single-endpoint';
 import { useCredential } from '@/hooks/use-credential';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useEndpointPageStore } from '@/hooks';
-import { Helmet } from '@/app/components/helmet';
+import { useEndpointPageStore } from '@/stores/endpoint';
+import { Helmet } from '@/app/components/app-shell/helmet';
 import { Endpoint } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
-import { useRapidaStore } from '@/hooks';
-import { PrimaryButton } from '@/app/components/carbon/button';
-import { Pagination } from '@/app/components/carbon/pagination';
-import { EmptyState } from '@/app/components/carbon/empty-state';
+import { useRapidaStore } from '@/stores/app';
+import { PrimaryButton } from '@/app/components/ui/primitives';
+import { Pagination } from '@/app/components/ui/primitives';
+import { EmptyState } from '@/app/components/ui/feedback';
 import { Add, Renew, Connect } from '@carbon/icons-react';
-import { PageLoading } from '@/app/components/carbon/loading';
-import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
-import { PageTitleBlock } from '@/app/components/blocks/page-title-block';
+import { PageLoading } from '@/app/components/ui/feedback';
+import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
+import { PageTitleBlock } from '@/app/components/layout/blocks/page-title-block';
 import {
   Table,
   TableHead,

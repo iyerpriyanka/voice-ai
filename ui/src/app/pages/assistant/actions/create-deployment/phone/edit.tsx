@@ -5,45 +5,45 @@ import {
 } from '@/app/pages/assistant/actions/create-deployment/commons/configure-experience';
 import { ConfigureAudioInputProvider } from '@/app/pages/assistant/actions/create-deployment/commons/configure-audio-input';
 import { ConfigureAudioOutputProvider } from '@/app/pages/assistant/actions/create-deployment/commons/configure-audio-output';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { useAllProviderCredentials } from '@/hooks/use-model';
 import { FC, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import {
   AssistantPhoneDeployment,
-  ConnectionConfig,
   CreateAssistantDeploymentRequest,
-  CreateAssistantPhoneDeployment,
   DeploymentAudioProvider,
   GetAssistantDeploymentRequest,
   Metadata,
 } from '@rapidaai/react';
-import { GetAssistantPhoneDeployment } from '@rapidaai/react';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import toast from 'react-hot-toast/headless';
-import { Helmet } from '@/app/components/helmet';
+import { Helmet } from '@/app/components/app-shell/helmet';
 import {
   GetDefaultMicrophoneConfig,
   GetDefaultSpeechToTextIfInvalid,
   ValidateSpeechToTextIfInvalid,
-} from '@/app/components/providers/speech-to-text/provider';
+} from '@/app/components/domain/providers/speech-to-text/provider';
 import {
   GetDefaultSpeakerConfig,
   GetDefaultTextToSpeechIfInvalid,
   ValidateTextToSpeechIfInvalid,
-} from '@/app/components/providers/text-to-speech/provider';
-import { connectionConfig } from '@/configs';
+} from '@/app/components/domain/providers/text-to-speech/provider';
 import {
   TelephonyProvider,
   GetDefaultTelephonyConfigIfInvalid,
   ValidateTelephonyOptions,
-} from '@/app/components/providers/telephony';
+} from '@/app/components/domain/providers/telephony';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
-import { Tabs } from '@/app/components/carbon/tabs';
-import { PrimaryButton, SecondaryButton } from '@/app/components/carbon/button';
-import { Notification } from '@/app/components/carbon/notification';
+import { Tabs } from '@/app/components/ui/primitives';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
+import { Notification } from '@/app/components/ui/feedback';
 import { ButtonSet } from '@carbon/react';
+import {
+  createAssistantDeploymentByType,
+  getAssistantDeploymentByType,
+} from '@/clients/assistant.client';
 
 const EDIT_TABS = [
   {
@@ -145,15 +145,11 @@ const EditAssistantCallDeployment: FC<{ assistantId: string }> = ({
     showLoader('block');
     const request = new GetAssistantDeploymentRequest();
     request.setAssistantid(assistantId);
-    GetAssistantPhoneDeployment(
-      connectionConfig,
+    getAssistantDeploymentByType({
       request,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: authId,
-        projectId,
-      }),
-    )
+      deploymentType: 'phone',
+      auth: { projectId, token, userId: authId },
+    })
       .then(response => {
         hideLoader();
         const deployment = response?.getData();
@@ -325,15 +321,11 @@ const EditAssistantCallDeployment: FC<{ assistantId: string }> = ({
 
     req.setPhone(deployment);
 
-    CreateAssistantPhoneDeployment(
-      connectionConfig,
-      req,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: authId,
-        projectId,
-      }),
-    )
+    createAssistantDeploymentByType({
+      request: req,
+      deploymentType: 'phone',
+      auth: { projectId, token, userId: authId },
+    })
       .then(response => {
         if (response?.getData() && response.getSuccess()) {
           toast.success('Phone call deployment updated successfully.');

@@ -5,17 +5,17 @@ import {
   AssistantConversationTelephonyEvent,
 } from '@rapidaai/react';
 import { useCredential } from '@/hooks/use-credential';
-import { useRapidaStore } from '@/hooks/use-rapida-store';
+import { useRapidaStore } from '@/stores/app';
 import toast from 'react-hot-toast/headless';
 import { toDate, toHumanReadableDateTime } from '@/utils/date';
-import { useAssistantConversationListPageStore } from '@/hooks/use-assistant-conversation-list-page-store';
-import { CarbonStatusIndicator } from '@/app/components/carbon/status-indicator';
-import SourceIndicator from '@/app/components/indicators/source';
+import { useAssistantConversationListPageStore } from '@/stores/assistant/assistant-conversation-list.store';
+import { CarbonStatusIndicator } from '@/app/components/ui/feedback';
+import SourceIndicator from '@/app/components/domain/indicators/source';
 import { getStatusMetric, getConversationDuration } from '@/utils/metadata';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { ConversationDirectionIndicator } from '@/app/components/indicators/conversation-direction';
+import { ConversationDirectionIndicator } from '@/app/components/domain/indicators/conversation-direction';
 import { CONFIG } from '@/configs';
-import { AssistantConversationTelephonyEventDialog } from '@/app/components/base/modal/assistant-conversation-telephony-event-modal';
+import { AssistantConversationTelephonyEventDialog } from '@/app/components/dialogs/conversation';
 import { ChannelIndicator } from './channel-indicator';
 import { DisconnectReasonIndicator } from './disconnect-reason-indicator';
 import { DurationBreakdownToggletip } from './duration-breakdown-toggletip';
@@ -36,9 +36,9 @@ import {
   Loading,
   Link,
 } from '@carbon/react';
-import { Pagination } from '@/app/components/carbon/pagination';
-import { IconOnlyButton } from '@/app/components/carbon/button';
-import { EmptyState } from '@/app/components/carbon/empty-state';
+import { Pagination } from '@/app/components/ui/primitives';
+import { IconOnlyButton } from '@/app/components/ui/primitives';
+import { EmptyState } from '@/app/components/ui/feedback';
 import {
   Renew,
   Download,

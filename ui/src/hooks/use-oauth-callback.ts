@@ -2,19 +2,10 @@ import { useCallback, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useCredential } from '@/hooks/use-credential';
 import { useProviderContext } from '@/context/provider-context';
-import { connectionConfig } from '@/configs';
 import toast from 'react-hot-toast/headless';
+import type { ConnectProviderParams, ConnectResponse } from '@/clients';
 
-type ConnectResponse = { getSuccess(): boolean; getRedirectto(): string };
-type ConnectFn = (
-  config: typeof connectionConfig,
-  providerSlug: string,
-  code: string,
-  state: string,
-  scope: string,
-  headers: { authorization: string; 'x-project-id': string; 'x-auth-id': string },
-  callback: (err: unknown, res: ConnectResponse | null) => void,
-) => void;
+type ConnectFn = (params: ConnectProviderParams) => void;
 
 /**
  * Handles the OAuth callback flow for connect-knowledge and connect-action pages.
@@ -34,7 +25,7 @@ export function useOAuthCallback(
   const onComplete = useCallback(
     (err: unknown, res: ConnectResponse | null) => {
       if (res?.getSuccess()) {
-        providerCtx.reloadToolCredentials();
+        providerCtx.reloadProviderCredentials();
         navigate(res.getRedirectto());
         return;
       }
@@ -46,15 +37,14 @@ export function useOAuthCallback(
   );
 
   useEffect(() => {
-    connectFn(
-      connectionConfig,
+    connectFn({
       providerSlug,
       code,
       state,
       scope,
-      { authorization: token, 'x-project-id': projectId, 'x-auth-id': userId },
-      onComplete,
-    );
+      auth: { projectId, token, userId },
+      callback: onComplete,
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state, code, scope]);
 }

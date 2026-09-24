@@ -1,11 +1,11 @@
-import { ActionConnect } from '@rapidaai/react';
 import { FC } from 'react';
-import { PageLoader } from '@/app/components/loader/page-loader';
+import { PageLoader } from '@/app/components/ui/feedback';
 import { useOAuthCallback } from '@/hooks/use-oauth-callback';
+import { connectActionProvider } from '@/clients';
 
 export const ConnectGithubActionPage: FC = () => {
   useOAuthCallback(
-    ActionConnect,
+    connectActionProvider,
     'github',
     'Unable to connect github, please try again later.',
   );

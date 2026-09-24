@@ -1,26 +1,22 @@
 import React, { FC, useState } from 'react';
-import {
-  CreateAssistantConfiguration,
-  CreateAssistantConfigurationRequest,
-  Metadata,
-} from '@rapidaai/react';
+import { CreateAssistantConfigurationRequest, Metadata } from '@rapidaai/react';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { useCurrentCredential } from '@/hooks/use-credential';
-import { useRapidaStore } from '@/hooks';
-import { connectionConfig } from '@/configs';
+import { useRapidaStore } from '@/stores/app';
 import toast from 'react-hot-toast/headless';
-import { PrimaryButton, SecondaryButton } from '@/app/components/carbon/button';
-import { Stack } from '@/app/components/carbon/form';
-import { Notification } from '@/app/components/carbon/notification';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
+import { Stack } from '@/app/components/ui/primitives';
+import { Notification } from '@/app/components/ui/feedback';
 import { ButtonSet } from '@carbon/react';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
-import { TelemetryProvider } from '@/app/components/providers/telemetry';
+import { TelemetryProvider } from '@/app/components/domain/providers/telemetry';
 import {
   GetDefaultTelemetryIfInvalid,
   ValidateTelemetry,
-} from '@/app/components/providers/telemetry/provider';
+} from '@/app/components/domain/providers/telemetry/provider';
 import { TELEMETRY_PROVIDER } from '@/providers';
-import { InputGroup } from '@/app/components/input-group';
+import { InputGroup } from '@/app/components/ui/primitives';
+import { createAssistantConfigurationFromRequest } from '@/clients/assistant.client';
 
 const telemetryConfigurationType = 'telemetry';
 
@@ -63,10 +59,9 @@ export const CreateAssistantTelemetry: FC<{ assistantId: string }> = ({
     request.setOptionsList(parameters);
 
     showLoader();
-    CreateAssistantConfiguration(connectionConfig, request, {
-      'x-auth-id': authId,
-      authorization: token,
-      'x-project-id': projectId,
+    createAssistantConfigurationFromRequest({
+      request,
+      auth: { projectId, token, userId: authId },
     })
       .then(response => {
         hideLoader();

@@ -1,10 +1,10 @@
-import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
-import { Helmet } from '@/app/components/helmet';
-import { Tab } from '@/app/components/tab';
+import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
+import { Helmet } from '@/app/components/app-shell/helmet';
+import { Tab } from '@/app/components/ui/primitives';
 import { AccountSetting } from '@/app/pages/user/account-setting/account-setting';
 import { NotificationSetting } from '@/app/pages/user/account-setting/notification-setting';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft } from '@carbon/icons-react';
 
 export const AccountSettingPage = () => {
   const { goToDashboard } = useGlobalNavigation();
@@ -13,13 +13,14 @@ export const AccountSettingPage = () => {
       <Helmet title="Account settings" />
       <PageHeaderBlock>
         <div className="flex items-center gap-1.5 min-w-0">
-          <div
+          <button
+            type="button"
             onClick={() => goToDashboard()}
             className="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-primary transition-colors cursor-pointer shrink-0"
           >
-            <ChevronLeft className="w-4 h-4" strokeWidth={1.5} />
+            <ChevronLeft size={16} data-testid="dashboard-back-icon" />
             <span className="text-sm font-medium">Dashboard</span>
-          </div>
+          </button>
         </div>
       </PageHeaderBlock>
       <div className="flex min-h-0 flex-1 flex-col">

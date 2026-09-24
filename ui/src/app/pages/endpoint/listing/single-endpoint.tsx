@@ -1,15 +1,15 @@
 import { FC } from 'react';
 import { Endpoint } from '@rapidaai/react';
-import { useEndpointPageStore } from '@/hooks';
+import { useEndpointPageStore } from '@/stores/endpoint';
 import { nanoToMilli, toHumanReadableRelativeTime } from '@/utils/date';
 import { useNavigate } from 'react-router-dom';
 import { TableRow, TableCell, Tag, Link } from '@carbon/react';
-import { ProviderTag } from '@/app/components/carbon/provider-tag';
+import { ProviderTag } from '@/app/components/domain/provider-tag';
 import { Launch, View, SourceControl } from '@carbon/icons-react';
-import { RecordStatusIndicator } from '@/app/components/carbon/record-status-indicator';
-import { VersionIndicator } from '@/app/components/indicators/version';
-import { IconOnlyButton } from '@/app/components/carbon/button';
-import { CopyButton } from '@/app/components/carbon/button/copy-button';
+import { RecordStatusIndicator } from '@/app/components/ui/feedback';
+import { VersionIndicator } from '@/app/components/domain/indicators/version';
+import { IconOnlyButton } from '@/app/components/ui/primitives';
+import { CopyButton } from '@/app/components/ui/primitives';
 import { cn } from '@/utils';
 import { auditActorLabel, createdAuditActor } from '@/utils/audit-actor';
 

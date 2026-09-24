@@ -1,21 +1,15 @@
 import { useEffect, useState, useCallback } from 'react';
-import { Helmet } from '@/app/components/helmet';
-import { InviteOrganizationUserDialog } from '@/app/components/base/modal/invite-organization-user-modal';
-import { InviteProjectUserDialog } from '@/app/components/base/modal/invite-project-user-modal';
-import {
-  DeleteUserFromOrganization,
-  DeleteUserFromOrganizationRequest,
-  UpdateUserOrganizationRole,
-  UpdateUserOrganizationRoleRequest,
-  User,
-} from '@rapidaai/react';
+import { Helmet } from '@/app/components/app-shell/helmet';
+import { InviteOrganizationUserDialog } from '@/app/components/dialogs/workspace';
+import { InviteProjectUserDialog } from '@/app/components/dialogs/workspace';
+import { User } from '@rapidaai/react';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import toast from 'react-hot-toast/headless';
-import { useRapidaStore } from '@/hooks';
-import { useUserPageStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
+import { useUserPageStore } from '@/stores/user';
 import { SingleUser } from '@/app/pages/workspace/user/single-user';
-import { PrimaryButton } from '@/app/components/carbon/button';
-import { Pagination } from '@/app/components/carbon/pagination';
+import { PrimaryButton } from '@/app/components/ui/primitives';
+import { Pagination } from '@/app/components/ui/primitives';
 import { Add, Renew, TrashCan, UserAdmin } from '@carbon/icons-react';
 import {
   Table,
@@ -30,11 +24,11 @@ import {
   TableToolbarSearch,
   Button,
 } from '@carbon/react';
-import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
-import { PageTitleWithCount } from '@/app/components/blocks/page-title-with-count';
-import { TableSection } from '@/app/components/sections/table-section';
-import { ConfirmDeleteDialog } from '@/app/components/base/modal/confirm-delete';
-import { connectionConfig } from '@/configs';
+import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
+import { PageTitleWithCount } from '@/app/components/layout/blocks/page-title-with-count';
+import { TableSection } from '@/app/components/layout/sections/table-section';
+import { ConfirmDeleteDialog } from '@/app/components/dialogs/shared';
+import { deleteOrganizationUser, updateOrganizationUserRole } from '@/clients';
 
 const headers = [
   { key: 'id', header: 'ID' },
@@ -88,13 +82,11 @@ export function UserPage() {
 
   const onDeleteOrganizationUser = async (user: User) => {
     showLoader('overlay');
-    const req = new DeleteUserFromOrganizationRequest();
-    req.setUserid(user.getId());
 
     try {
-      const response = await DeleteUserFromOrganization(connectionConfig, req, {
-        authorization: token,
-        'x-auth-id': authId,
+      const response = await deleteOrganizationUser({
+        userId: user.getId(),
+        auth: { token, userId: authId },
       });
       hideLoader();
 
@@ -121,14 +113,12 @@ export function UserPage() {
     organizationRole: string,
   ) => {
     showLoader('overlay');
-    const req = new UpdateUserOrganizationRoleRequest();
-    req.setUserid(user.getId());
-    req.setOrganizationrole(organizationRole);
 
     try {
-      const response = await UpdateUserOrganizationRole(connectionConfig, req, {
-        authorization: token,
-        'x-auth-id': authId,
+      const response = await updateOrganizationUserRole({
+        userId: user.getId(),
+        organizationRole,
+        auth: { token, userId: authId },
       });
       hideLoader();
 

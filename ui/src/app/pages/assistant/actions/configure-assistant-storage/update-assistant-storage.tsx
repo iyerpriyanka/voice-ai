@@ -1,20 +1,17 @@
 import React, { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
-  GetAssistantConfiguration,
   GetAssistantConfigurationRequest,
   Metadata,
-  UpdateAssistantConfiguration,
   UpdateAssistantConfigurationRequest,
 } from '@rapidaai/react';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { useCurrentCredential } from '@/hooks/use-credential';
-import { useRapidaStore } from '@/hooks';
-import { connectionConfig } from '@/configs';
+import { useRapidaStore } from '@/stores/app';
 import toast from 'react-hot-toast/headless';
-import { PrimaryButton, SecondaryButton } from '@/app/components/carbon/button';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
 import { ButtonSet } from '@carbon/react';
-import { Stack } from '@/app/components/carbon/form';
+import { Stack } from '@/app/components/ui/primitives';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import {
   CloudStorageProvider,
@@ -25,9 +22,13 @@ import {
   StorageFileSelector,
   upsertStorageFilesOption,
   ValidateStorageOptions,
-} from '@/app/components/providers/storage';
-import { InputGroup } from '@/app/components/input-group';
-import { Notification } from '@/app/components/carbon/notification';
+} from '@/app/components/domain/providers/storage';
+import { InputGroup } from '@/app/components/ui/primitives';
+import { Notification } from '@/app/components/ui/feedback';
+import {
+  getAssistantConfigurationByRequest,
+  updateAssistantConfigurationFromRequest,
+} from '@/clients/assistant.client';
 
 const storageConfigurationType = 'storage';
 
@@ -54,10 +55,9 @@ export const UpdateAssistantStorage: FC<{ assistantId: string }> = ({
     request.setId(storageId);
 
     showLoader();
-    GetAssistantConfiguration(connectionConfig, request, {
-      'x-auth-id': authId,
-      authorization: token,
-      'x-project-id': projectId,
+    getAssistantConfigurationByRequest({
+      request,
+      auth: { projectId, token, userId: authId },
     })
       .then(response => {
         hideLoader();
@@ -125,10 +125,9 @@ export const UpdateAssistantStorage: FC<{ assistantId: string }> = ({
     request.setOptionsList(upsertStorageFilesOption(parameters, selectedFiles));
 
     showLoader();
-    UpdateAssistantConfiguration(connectionConfig, request, {
-      'x-auth-id': authId,
-      authorization: token,
-      'x-project-id': projectId,
+    updateAssistantConfigurationFromRequest({
+      request,
+      auth: { projectId, token, userId: authId },
     })
       .then(response => {
         hideLoader();

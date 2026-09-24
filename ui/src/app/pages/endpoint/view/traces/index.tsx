@@ -1,26 +1,26 @@
 import { useState, useEffect, FC } from 'react';
-import { Helmet } from '@/app/components/helmet';
+import { Helmet } from '@/app/components/app-shell/helmet';
 import { useCredential } from '@/hooks/use-credential';
 import toast from 'react-hot-toast/headless';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { Endpoint, EndpointLog } from '@rapidaai/react';
-import { SourceIndicator } from '@/app/components/indicators/source';
+import { SourceIndicator } from '@/app/components/domain/indicators/source';
 import {
   formatNanoToReadableMilli,
   toDateString,
   toHumanReadableDateTime,
 } from '@/utils/date';
 import { getTimeTakenMetric, getTotalTokenMetric } from '@/utils/metadata';
-import { EndpointTraceModal } from '@/app/components/base/modal/endpoint-trace-modal';
-import { useEndpointLogPage } from '@/hooks/use-endpoint-log-page-store';
-import { CarbonStatusIndicator } from '@/app/components/carbon/status-indicator';
-import { Pagination } from '@/app/components/carbon/pagination';
-import { IconOnlyButton } from '@/app/components/carbon/button';
-import { CopyButton } from '@/app/components/carbon/button/copy-button';
-import { DateFilter } from '@/app/components/carbon/date-filter';
-import { EmptyState } from '@/app/components/carbon/empty-state';
+import { EndpointTraceModal } from '@/app/components/dialogs/endpoint';
+import { useEndpointLogPage } from '@/stores/endpoint/endpoint-log.store';
+import { CarbonStatusIndicator } from '@/app/components/ui/feedback';
+import { Pagination } from '@/app/components/ui/primitives';
+import { IconOnlyButton } from '@/app/components/ui/primitives';
+import { CopyButton } from '@/app/components/ui/primitives';
+import { DateFilter } from '@/app/components/ui/composites';
+import { EmptyState } from '@/app/components/ui/feedback';
 import { Renew, View, Activity } from '@carbon/icons-react';
-import { ScrollableTableSection } from '@/app/components/sections/table-section';
+import { ScrollableTableSection } from '@/app/components/layout/sections/table-section';
 
 import {
   Table,

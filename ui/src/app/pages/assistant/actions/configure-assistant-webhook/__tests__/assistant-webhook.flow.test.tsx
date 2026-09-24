@@ -150,7 +150,7 @@ jest.mock('react-router-dom', () => ({
   useParams: () => mockParams,
 }));
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/stores/app', () => ({
   useRapidaStore: () => ({
     loading: false,
     showLoader: mockShowLoader,
@@ -173,7 +173,7 @@ jest.mock('@/app/pages/assistant/actions/hooks/use-confirmation', () => ({
   }),
 }));
 
-jest.mock('@/app/components/form/tab-form', () => ({
+jest.mock('@/app/components/ui/composites/tab-form', () => ({
   TabForm: ({ form, activeTab, errorMessage, formHeading }: any) => {
     const React = require('react');
     const active = form.find((f: any) => f.code === activeTab) || form[0];
@@ -194,7 +194,7 @@ jest.mock('@/app/components/form/tab-form', () => ({
   },
 }));
 
-jest.mock('@/app/components/carbon/form', () => {
+jest.mock('@/app/components/ui/primitives/form', () => {
   const React = require('react');
   return {
     Stack: ({ children }: any) => React.createElement('div', null, children),
@@ -246,7 +246,7 @@ jest.mock('@/app/components/carbon/form', () => {
   };
 });
 
-jest.mock('@/app/components/input-group', () => {
+jest.mock('@/app/components/ui/primitives/input-group', () => {
   const React = require('react');
   return {
     InputGroup: ({ title, children }: any) =>
@@ -259,7 +259,7 @@ jest.mock('@/app/components/input-group', () => {
   };
 });
 
-jest.mock('@/app/components/form/slider', () => {
+jest.mock('@/app/components/ui/primitives/slider', () => {
   const React = require('react');
   return {
     Slider: ({ value, onSlide }: any) =>
@@ -272,7 +272,7 @@ jest.mock('@/app/components/form/slider', () => {
   };
 });
 
-jest.mock('@/app/components/carbon/button', () => {
+jest.mock('@/app/components/ui/primitives/button', () => {
   const React = require('react');
   return {
     PrimaryButton: ({
@@ -307,6 +307,18 @@ jest.mock('@carbon/react', () => {
   return {
     ButtonSet: ({ children }: any) =>
       React.createElement('div', null, children),
+    Table: ({ children }: any) => React.createElement('table', null, children),
+    TableBody: ({ children }: any) =>
+      React.createElement('tbody', null, children),
+    TableCell: ({ children, colSpan }: any) =>
+      React.createElement('td', { colSpan }, children),
+    TableContainer: ({ children }: any) =>
+      React.createElement('div', null, children),
+    TableHead: ({ children }: any) =>
+      React.createElement('thead', null, children),
+    TableHeader: ({ children }: any) =>
+      React.createElement('th', null, children),
+    TableRow: ({ children }: any) => React.createElement('tr', null, children),
     Tooltip: ({ children }: any) => React.createElement('span', null, children),
     Select: ({ id, labelText, value, onChange, children, hideLabel }: any) =>
       React.createElement(

@@ -45,7 +45,7 @@ jest.mock('@/hooks/use-credential', () => ({
   useCurrentCredential: () => ({ authId: 'u1', token: 't1', projectId: 'p1' }),
 }));
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/stores/app', () => ({
   useRapidaStore: () => ({
     loading: false,
     showLoader: mockShowLoader,
@@ -69,7 +69,7 @@ jest.mock(
   }),
 );
 
-jest.mock('@/app/components/carbon/notification', () => ({
+jest.mock('@/app/components/ui/feedback/notification', () => ({
   Notification: ({ subtitle }: any) => <div>{subtitle}</div>,
 }));
 

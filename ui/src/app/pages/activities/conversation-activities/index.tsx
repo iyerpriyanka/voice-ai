@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import { useCredential } from '@/hooks/use-credential';
-import { useRapidaStore } from '@/hooks/use-rapida-store';
+import { useRapidaStore } from '@/stores/app';
 import toast from 'react-hot-toast/headless';
 import { AssistantConversationMessage } from '@rapidaai/react';
 import {
@@ -13,14 +13,14 @@ import {
   getMetadataValueOrDefault,
   getTimeTakenMetric,
 } from '@/utils/metadata';
-import { useConversationLogPageStore } from '@/hooks/use-conversation-log-page-store';
-import { Helmet } from '@/app/components/helmet';
-import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
-import { PageTitleWithCount } from '@/app/components/blocks/page-title-with-count';
+import { useConversationLogPageStore } from '@/stores/activity/conversation-log.store';
+import { Helmet } from '@/app/components/app-shell/helmet';
+import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
+import { PageTitleWithCount } from '@/app/components/layout/blocks/page-title-with-count';
 import { CONFIG } from '@/configs';
-import { CarbonStatusIndicator } from '@/app/components/carbon/status-indicator';
-import SourceIndicator from '@/app/components/indicators/source';
-import { ConversationLogDialog } from '@/app/components/base/modal/conversation-log-modal';
+import { CarbonStatusIndicator } from '@/app/components/ui/feedback';
+import SourceIndicator from '@/app/components/domain/indicators/source';
+import { ConversationLogDialog } from '@/app/components/dialogs/activity/conversation-log-modal';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 
 import {
@@ -36,8 +36,8 @@ import {
   Tag,
   Link,
 } from '@carbon/react';
-import { Pagination } from '@/app/components/carbon/pagination';
-import { IconOnlyButton } from '@/app/components/carbon/button';
+import { Pagination } from '@/app/components/ui/primitives';
+import { IconOnlyButton } from '@/app/components/ui/primitives';
 import {
   Download,
   Renew,
@@ -48,8 +48,8 @@ import {
   User as UserIcon,
   Chat,
 } from '@carbon/icons-react';
-import { EmptyState } from '@/app/components/carbon/empty-state';
-import { ScrollableTableSection } from '@/app/components/sections/table-section';
+import { EmptyState } from '@/app/components/ui/feedback';
+import { ScrollableTableSection } from '@/app/components/layout/sections/table-section';
 import { ConversationLogQuerySearch } from './conversation-query-search';
 
 export const ListingPage: FC<{}> = () => {

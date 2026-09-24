@@ -1,11 +1,8 @@
-import { GhostButton } from '@/app/components/carbon/button';
-import { CloseIcon } from '@/app/components/Icon/Close';
-import { FileExtensionIcon } from '@/app/components/Icon/file-extension';
-import { FileUploadIcon } from '@/app/components/Icon/file-upload';
-import { SingleDotIcon } from '@/app/components/Icon/single-dot';
-import SingleRowWrapper from '@/app/components/wrapper/single-row-wrapper';
-import { useCreateKnowledgeDocumentPageStore } from '@/hooks/use-create-knowledge-document-page-store';
+import { GhostButton } from '@/app/components/ui/primitives';
+import SingleRowWrapper from '@/app/components/layout/wrapper/single-row-wrapper';
+import { useCreateKnowledgeDocumentPageStore } from '@/stores/knowledge/create-knowledge-document.store';
 import { formatFileSize } from '@/utils/format';
+import { Close, Document, DotMark, Upload } from '@carbon/icons-react';
 import { FC, useCallback } from 'react';
 import { useDropzone, Accept } from 'react-dropzone';
 
@@ -84,7 +81,7 @@ export const ManualFile: FC<ManualFileProps> = ({
       >
         <div className="h-full w-full text-center flex flex-col justify-center items-center px-4 space-y-4 min-h-[400px]">
           <div className="p-4 border rounded-[4px] bg-white/10 backdrop-blur-sm">
-            <FileUploadIcon className="h-8 w-8 flex-no-shrink opacity-60" />
+            <Upload className="h-8 w-8 flex-no-shrink opacity-60" />
           </div>
           <p className="cursor-pointer opacity-70 text-base font-medium">
             <span className="underline text-blue-600 dark:text-blue-400">
@@ -101,12 +98,12 @@ export const ManualFile: FC<ManualFileProps> = ({
                   key={`kd-${idx}`}
                 >
                   <div className="flex items-center">
-                    <FileExtensionIcon filename={knowledgeDocument.name} />
+                    <Document className="w-5 h-5" />
                     <span className="inline-block pl-2 font-medium">
                       {knowledgeDocument.name}
                     </span>
                     <span>
-                      <SingleDotIcon />
+                      <DotMark className="w-5 h-5 opacity-75" />
                     </span>
                     <span className="inline-block pl-2 font-medium">
                       {formatFileSize(knowledgeDocument.size)}
@@ -118,7 +115,7 @@ export const ManualFile: FC<ManualFileProps> = ({
                       onRemoveKnowledgeDocument(knowledgeDocument.name);
                     }}
                   >
-                    <CloseIcon className="w-4 h-4" />
+                    <Close className="w-4 h-4" />
                   </GhostButton>
                 </SingleRowWrapper>
               );

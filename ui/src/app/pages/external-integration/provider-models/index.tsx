@@ -1,7 +1,7 @@
-import { Helmet } from '@/app/components/helmet';
-import { ProviderCard } from '@/app/components/base/cards/provider-card';
-import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
-import { PageTitleBlock } from '@/app/components/blocks/page-title-block';
+import { Helmet } from '@/app/components/app-shell/helmet';
+import { ProviderCard } from '@/app/components/domain/cards/provider-card';
+import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
+import { PageTitleBlock } from '@/app/components/layout/blocks/page-title-block';
 import { cn } from '@/utils';
 import { INTEGRATION_PROVIDER } from '@/providers';
 import { useState } from 'react';

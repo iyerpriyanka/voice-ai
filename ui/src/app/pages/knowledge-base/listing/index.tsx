@@ -1,24 +1,24 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Helmet } from '@/app/components/helmet';
+import { Helmet } from '@/app/components/app-shell/helmet';
 import { useCredential } from '@/hooks/use-credential';
-import { useRapidaStore } from '@/hooks';
-import { TablePagination } from '@/app/components/base/tables/table-pagination';
-import { SearchIconInput } from '@/app/components/form/input/IconInput';
-import { BluredWrapper } from '@/app/components/wrapper/blured-wrapper';
+import { useRapidaStore } from '@/stores/app';
+import { TablePagination } from '@/app/components/ui/table';
+import { SearchIconInput } from '@/app/components/ui/composites';
+import { BluredWrapper } from '@/app/components/layout/wrapper/blured-wrapper';
 import toast from 'react-hot-toast/headless';
-import { useKnowledgePageStore } from '@/hooks/use-knowledge-page-store';
+import { useKnowledgePageStore } from '@/stores/knowledge/knowledge.store';
 import { Knowledge } from '@rapidaai/react';
-import { PageLoading } from '@/app/components/carbon/loading';
-import { ClickableKnowledgeCard } from '@/app/components/base/cards/knowledge-card';
-import { EmptyState } from '@/app/components/carbon/empty-state';
-import { HowKnowledgeWorksDialog } from '@/app/components/base/modal/how-it-works-modal/how-knowledge-works';
+import { PageLoading } from '@/app/components/ui/feedback';
+import { ClickableKnowledgeCard } from '@/app/components/domain/cards/knowledge-card';
+import { EmptyState } from '@/app/components/ui/feedback';
+import { HowKnowledgeWorksDialog } from '@/app/components/dialogs/knowledge';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { GhostButton } from '@/app/components/carbon/button';
-import { Plus, RotateCw } from 'lucide-react';
-import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
-import { PageTitleBlock } from '@/app/components/blocks/page-title-block';
+import { GhostButton } from '@/app/components/ui/primitives';
+import { Add, Renew } from '@carbon/icons-react';
+import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
+import { PageTitleBlock } from '@/app/components/layout/blocks/page-title-block';
 import { cn } from '@/utils';
-import { PaginationButtonBlock } from '@/app/components/blocks/pagination-button-block';
+import { PaginationButtonBlock } from '@/app/components/layout/blocks/pagination-button-block';
 
 /**
  * Knowledge base page
@@ -90,7 +90,7 @@ export function KnowledgePage() {
             className="flex items-center gap-2 px-4 text-sm text-white bg-primary hover:bg-primary/90 transition-colors whitespace-nowrap"
           >
             Add new knowledge
-            <Plus strokeWidth={1.5} className="w-4 h-4" />
+            <Add className="w-4 h-4" />
           </button>
         </div>
       </PageHeaderBlock>
@@ -107,19 +107,20 @@ export function KnowledgePage() {
           />
           <GhostButton
             size="md"
+            hasIconOnly
+            iconDescription="Refresh knowledge bases"
+            renderIcon={Renew}
             onClick={() => {
               getKnowledges(projectId, token, userId);
             }}
-          >
-            <RotateCw strokeWidth={1.5} className="h-4 w-4" />
-          </GhostButton>
+          />
         </PaginationButtonBlock>
       </BluredWrapper>
 
       {loading ? (
         <PageLoading className="h-full" />
       ) : knowledgeActions.knowledgeBases &&
-      knowledgeActions.knowledgeBases.length > 0 ? (
+        knowledgeActions.knowledgeBases.length > 0 ? (
         <section className="grid content-start grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 grow shrink-0 m-4">
           {knowledgeActions.knowledgeBases.map((kf, idx) => (
             <ClickableKnowledgeCard key={idx} knowledge={kf} />

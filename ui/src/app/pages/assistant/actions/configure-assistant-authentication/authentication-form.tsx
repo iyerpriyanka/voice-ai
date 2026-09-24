@@ -1,17 +1,10 @@
 import { FC, useEffect, useState } from 'react';
 import {
-  CreateAssistantConfiguration,
   CreateAssistantConfigurationRequest,
-  GetAllAssistantConfiguration,
-  GetAllAssistantConfigurationRequest,
   Metadata,
-  Paginate,
-  UpdateAssistantConfiguration,
   UpdateAssistantConfigurationRequest,
 } from '@rapidaai/react';
 import {
-  Breadcrumb,
-  BreadcrumbItem,
   ButtonSet,
   Select as CarbonSelect,
   SelectItem,
@@ -22,11 +15,10 @@ import toast from 'react-hot-toast/headless';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
-import { connectionConfig } from '@/configs';
-import { Notification } from '@/app/components/carbon/notification';
-import { PrimaryButton, SecondaryButton } from '@/app/components/carbon/button';
-import { InputGroup } from '@/app/components/input-group';
-import { APiStringHeader } from '@/app/components/external-api/api-header';
+import { Notification } from '@/app/components/ui/feedback';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
+import { InputGroup } from '@/app/components/ui/primitives';
+import { APiStringHeader } from '@/app/components/domain/external-api/api-header';
 import {
   ASSISTANT_CONDITION_KEY_OPTIONS,
   ASSISTANT_CONDITION_OPERATOR_OPTIONS,
@@ -34,9 +26,9 @@ import {
   ASSISTANT_CONDITION_VALUE_OPTIONS_BY_KEY,
   ParameterEditor,
   normalizeAssistantConditionEntries,
-} from '@/app/components/tools/common';
-import { SourceConditionRule } from '@/app/components/conditions/source-condition-rule';
-import { Stack, TextInput } from '@/app/components/carbon/form';
+} from '@/app/components/domain/tools/common';
+import { SourceConditionRule } from '@/app/components/domain/conditions/source-condition-rule';
+import { Stack, TextInput } from '@/app/components/ui/primitives';
 
 import {
   AUTH_KEY_OPTIONS_BY_TYPE,
@@ -59,6 +51,11 @@ import {
   toApiFailBehavior,
   toOptionMap,
 } from './shared';
+import {
+  createAssistantConfigurationFromRequest,
+  listAssistantConfigurations,
+  updateAssistantConfigurationFromRequest,
+} from '@/clients/assistant.client';
 
 const authenticationConfigurationType = 'authentication';
 
@@ -110,19 +107,13 @@ const AuthenticationFormBase: FC<SharedAuthenticationFormProps> = ({
     setIsInitializing(true);
     resetForm();
 
-    const request = new GetAllAssistantConfigurationRequest();
-    request.setAssistantid(assistantId);
-    request.setConfigurationtype(authenticationConfigurationType);
-
-    const paginate = new Paginate();
-    paginate.setPage(1);
-    paginate.setPagesize(1);
-    request.setPaginate(paginate);
-
-    GetAllAssistantConfiguration(connectionConfig, request, {
-      'x-auth-id': authId,
-      authorization: token,
-      'x-project-id': projectId,
+    listAssistantConfigurations({
+      assistantId,
+      configurationType: authenticationConfigurationType,
+      page: 1,
+      pageSize: 1,
+      criteria: [],
+      auth: { projectId, token, userId: authId },
     })
       .then(response => {
         if (!response?.getSuccess()) {
@@ -322,23 +313,15 @@ const AuthenticationFormBase: FC<SharedAuthenticationFormProps> = ({
     request.setEnabled(true);
     request.setOptionsList(buildOptions());
 
-    const authHeader = {
-      'x-auth-id': authId,
-      authorization: token,
-      'x-project-id': projectId,
-    };
-
     const response = authenticationId
-      ? await UpdateAssistantConfiguration(
-          connectionConfig,
-          request as UpdateAssistantConfigurationRequest,
-          authHeader,
-        )
-      : await CreateAssistantConfiguration(
-          connectionConfig,
-          request as CreateAssistantConfigurationRequest,
-          authHeader,
-        );
+      ? await updateAssistantConfigurationFromRequest({
+          request: request as UpdateAssistantConfigurationRequest,
+          auth: { projectId, token, userId: authId },
+        })
+      : await createAssistantConfigurationFromRequest({
+          request: request as CreateAssistantConfigurationRequest,
+          auth: { projectId, token, userId: authId },
+        });
 
     if (response?.getSuccess()) {
       toast.success('Assistant authentication saved successfully.');

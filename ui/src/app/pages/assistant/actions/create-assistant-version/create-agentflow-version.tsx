@@ -3,22 +3,19 @@ import {
   AgentflowDefinition,
   AgentflowVersionBuilder,
 } from '@/app/pages/assistant/actions/create-assistant-version/agentflow-version-builder';
-import { ErrorContainer } from '@/app/components/error-container';
-import { connectionConfig } from '@/configs';
-import { useRapidaStore } from '@/hooks';
+import { ErrorContainer } from '@/app/components/ui/feedback';
+import { useRapidaStore } from '@/stores/app';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import {
-  AssistantDefinition,
-  CreateAssistantProvider,
-  CreateAssistantProviderRequest,
-  GetAssistant,
-  GetAssistantRequest,
-} from '@rapidaai/react';
+import { CreateAssistantProviderRequest } from '@rapidaai/react';
 import { Struct } from 'google-protobuf/google/protobuf/struct_pb';
 import type { JavaScriptValue } from 'google-protobuf/google/protobuf/struct_pb';
 import { useParams } from 'react-router-dom';
 import toast from 'react-hot-toast/headless';
+import {
+  createAssistantProviderFromRequest,
+  getAssistantByIdWithApi,
+} from '@/clients/assistant.client';
 
 const toAgentflowStruct = (definition: AgentflowDefinition) =>
   Struct.fromJavaScript(
@@ -75,15 +72,9 @@ function CreateAgentflowVersionBuilder({
     const loadCurrentAgentflow = async () => {
       showLoader('overlay');
       try {
-        const request = new GetAssistantRequest();
-        const assistantDefinition = new AssistantDefinition();
-        assistantDefinition.setAssistantid(assistantId);
-        request.setAssistantdefinition(assistantDefinition);
-
-        const response = await GetAssistant(connectionConfig, request, {
-          authorization: token,
-          'x-auth-id': authId,
-          'x-project-id': projectId,
+        const response = await getAssistantByIdWithApi({
+          assistantId,
+          auth: { projectId, token, userId: authId },
         });
 
         if (!isMounted) return;
@@ -137,15 +128,10 @@ function CreateAgentflowVersionBuilder({
       request.setDescription(definition.description ?? '');
       request.setAgentflow(agentflow);
 
-      const response = await CreateAssistantProvider(
-        connectionConfig,
+      const response = await createAssistantProviderFromRequest({
         request,
-        {
-          authorization: token,
-          'x-auth-id': authId,
-          'x-project-id': projectId,
-        },
-      );
+        auth: { projectId, token, userId: authId },
+      });
 
       if (!response?.getSuccess()) {
         throw new Error(

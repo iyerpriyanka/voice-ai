@@ -1,24 +1,18 @@
-import { RedNoticeBlock } from '@/app/components/container/message/notice-block';
-import { FormLabel } from '@/app/components/form-label';
-import { PrimaryButton } from '@/app/components/carbon/button';
+import { FormLabel } from '@/app/components/ui/primitives';
+import { PrimaryButton } from '@/app/components/ui/primitives';
 import { ChevronRight } from '@carbon/icons-react';
-import { FieldSet } from '@/app/components/form/fieldset';
-import { Input } from '@/app/components/form/input';
-import { InputHelper } from '@/app/components/input-helper';
-import { PageActionButtonBlock } from '@/app/components/blocks/page-action-button-block';
-import { SectionDivider } from '@/app/components/blocks/section-divider';
-import { connectionConfig } from '@/configs';
-import { useRapidaStore } from '@/hooks';
-import {
-  ChangePassword,
-  ChangePasswordRequest,
-  ConnectionConfig,
-} from '@rapidaai/react';
+import { FieldSet } from '@/app/components/ui/primitives';
+import { Input } from '@/app/components/ui/primitives';
+import { InputHelper } from '@/app/components/ui/primitives';
+import { SectionDivider } from '@/app/components/layout/blocks/section-divider';
+import { useRapidaStore } from '@/stores/app';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast/headless';
 import { useNavigate } from 'react-router-dom';
 import { useCurrentCredential } from '@/hooks/use-credential';
+import { changeAccountPassword } from '@/clients';
+import { Notification } from '@/app/components/ui/feedback';
 
 export const AccountSetting = () => {
   /**
@@ -56,18 +50,11 @@ export const AccountSetting = () => {
       return;
     }
     showLoader();
-    const request = new ChangePasswordRequest();
-    request.setOldpassword(data.current_password);
-    request.setPassword(data.password);
-    ChangePassword(
-      connectionConfig,
-      request,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: authId,
-        projectId: projectId,
-      }),
-    )
+    changeAccountPassword({
+      currentPassword: data.current_password,
+      password: data.password,
+      auth: { token, userId: authId, projectId },
+    })
       .then(rlp => {
         hideLoader();
         if (rlp?.getSuccess()) {
@@ -156,6 +143,9 @@ export const AccountSetting = () => {
                 placeholder="*******"
               ></Input>
             </FieldSet>
+            {error && (
+              <Notification kind="error" title="Error" subtitle={error} />
+            )}
           </div>
           <div className="flex-col gap-6">
             <PrimaryButton

@@ -1,9 +1,9 @@
 import { FC, useEffect, useState } from 'react';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useParams } from 'react-router-dom';
-import { Helmet } from '@/app/components/helmet';
-import { PrimaryButton, SecondaryButton } from '@/app/components/carbon/button';
+import { Helmet } from '@/app/components/app-shell/helmet';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
 import {
   ButtonSet,
   Toggletip,
@@ -11,36 +11,31 @@ import {
   ToggletipContent,
 } from '@carbon/react';
 import { Information } from '@carbon/icons-react';
-import { TabForm } from '@/app/components/form/tab-form';
-import { FieldSet } from '@/app/components/form/fieldset';
+import { TabForm } from '@/app/components/ui/composites';
+import { FieldSet } from '@/app/components/ui/primitives';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import {
-  CreateAssistantProvider,
-  GetAssistantProviderResponse,
-  GetAssistantRequest,
-  GetAssistant,
-  CreateAssistantProviderRequest,
-  AssistantDefinition,
-  Metadata,
-  ConnectionConfig,
-} from '@rapidaai/react';
-import { FormLabel } from '@/app/components/form-label';
-import { Textarea } from '@/app/components/form/textarea';
-import { ConfigPrompt } from '@/app/components/configuration/config-prompt';
-import { ErrorContainer } from '@/app/components/error-container';
+import { CreateAssistantProviderRequest, Metadata } from '@rapidaai/react';
+import type { GetAssistantProviderResponse } from '@rapidaai/react';
+import { FormLabel } from '@/app/components/ui/primitives';
+import { Textarea } from '@/app/components/ui/primitives';
+import { ConfigPrompt } from '@/app/components/domain/configuration/config-prompt';
+import { ErrorContainer } from '@/app/components/ui/feedback';
 import { ChatCompletePrompt, Prompt } from '@/utils/prompt';
 import {
   GetDefaultTextProviderConfigIfInvalid,
   GetDefaultTextProviderConfigOnProviderSwitch,
   TextProvider,
-} from '@/app/components/providers/text';
+} from '@/app/components/domain/providers/text';
 import { randomString } from '@/utils';
-import { ValidateTextProviderDefaultOptions } from '@/app/components/providers/text/index';
+import { ValidateTextProviderDefaultOptions } from '@/app/components/domain/providers/text';
 import { useAllProviderCredentials } from '@/hooks/use-model';
-import { connectionConfig } from '@/configs';
-import { DocNoticeBlock } from '@/app/components/container/message/notice-block/doc-notice-block';
+import { DocNoticeBlock } from '@/app/components/layout/container/message/notice-block/doc-notice-block';
 import toast from 'react-hot-toast/headless';
+import {
+  createAssistantProviderWithDebuggerFromRequest,
+  getAssistantById,
+} from '@/clients/assistant.client';
 
 /**
  *
@@ -185,15 +180,10 @@ const CreateNewVersion: FC<{ assistantId: string }> = ({ assistantId }) => {
     request.setAssistantid(assistantId);
     request.setDescription(versionMessage);
     //
-    CreateAssistantProvider(
-      connectionConfig,
+    createAssistantProviderWithDebuggerFromRequest({
       request,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: authId,
-        projectId: projectId,
-      }),
-    )
+      auth: { projectId, token, userId: authId },
+    })
       .then((car: GetAssistantProviderResponse) => {
         hideLoader();
         if (car?.getSuccess()) {
@@ -223,19 +213,10 @@ const CreateNewVersion: FC<{ assistantId: string }> = ({ assistantId }) => {
   //
   useEffect(() => {
     showLoader();
-    const request = new GetAssistantRequest();
-    const assistantDef = new AssistantDefinition();
-    assistantDef.setAssistantid(assistantId);
-    request.setAssistantdefinition(assistantDef);
-    GetAssistant(
-      connectionConfig,
-      request,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: authId,
-        projectId: projectId,
-      }),
-    )
+    getAssistantById({
+      assistantId,
+      auth: { projectId, token, userId: authId },
+    })
       .then(response => {
         hideLoader();
         if (response?.getSuccess()) {

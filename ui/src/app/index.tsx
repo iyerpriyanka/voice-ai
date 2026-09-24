@@ -10,11 +10,11 @@ import { ReactFlowProvider } from 'reactflow';
 import 'reactflow/dist/style.css';
 import {} from '@/styles/global-styles';
 import * as WebRoutes from '@/app/routes';
-import { GA } from '@/app/components/ga';
+import { GA } from '@/app/components/app-shell/ga';
 import React from 'react';
 import { StaticPageNotFoundPage } from '@/app/pages/static-pages';
 import { AuthProvider } from '@/context/auth-context';
-import { Helmet } from '@/app/components/helmet';
+import { Helmet } from '@/app/components/app-shell/helmet';
 import { CONFIG } from '@/configs';
 
 /**

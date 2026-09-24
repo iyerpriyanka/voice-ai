@@ -1,5 +1,5 @@
 import { lazyLoad } from '@/utils/loadable';
-import { PageLoading } from '@/app/components/carbon/loading';
+import { PageLoading } from '@/app/components/ui/feedback';
 
 export const DeploymentEndpointPage = lazyLoad(
   () => import('./listing'),

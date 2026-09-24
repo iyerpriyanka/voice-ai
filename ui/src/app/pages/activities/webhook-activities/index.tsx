@@ -1,20 +1,19 @@
 import { useState, useEffect } from 'react';
-import { Helmet } from '@/app/components/helmet';
+import { Helmet } from '@/app/components/app-shell/helmet';
 import { useCredential } from '@/hooks/use-credential';
 import toast from 'react-hot-toast/headless';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import {
   formatNanoToReadableMilli,
   toHumanReadableDateTime,
 } from '@/utils/date';
-import { HttpStatusSpanIndicator } from '@/app/components/indicators/http-status';
-import { PageTitleWithCount } from '@/app/components/blocks/page-title-with-count';
-import { useWebhookLogPage } from '@/hooks/use-webhook-log-page-store';
-import { RequestLogDialog } from '@/app/components/base/modal/webhook-log-modal';
-import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
+import { HttpStatusSpanIndicator } from '@/app/components/domain/indicators/http-status';
+import { PageTitleWithCount } from '@/app/components/layout/blocks/page-title-with-count';
+import { useWebhookLogPage } from '@/stores/activity/webhook-log.store';
+import { RequestLogDialog } from '@/app/components/dialogs/activity';
+import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
-import { RetryAssistantHTTPLogRequest, RetryHTTPLog } from '@rapidaai/react';
-import { connectionConfig } from '@/configs';
+import { retryWebhookActivityLog } from '@/clients';
 
 import {
   Table,
@@ -29,12 +28,12 @@ import {
   Tag,
   Link,
 } from '@carbon/react';
-import { Pagination } from '@/app/components/carbon/pagination';
-import { IconOnlyButton } from '@/app/components/carbon/button';
-import { UrlTableCell } from '@/app/components/carbon/url-table-cell';
+import { Pagination } from '@/app/components/ui/primitives';
+import { IconOnlyButton } from '@/app/components/ui/primitives';
+import { UrlTableCell } from '@/app/components/ui/table';
 import { Renew, View, EventSchedule, Launch } from '@carbon/icons-react';
-import { EmptyState } from '@/app/components/carbon/empty-state';
-import { ScrollableTableSection } from '@/app/components/sections/table-section';
+import { EmptyState } from '@/app/components/ui/feedback';
+import { ScrollableTableSection } from '@/app/components/layout/sections/table-section';
 import { RequestLogQuerySearch } from './request-query-search';
 
 export function ListingPage() {
@@ -87,15 +86,12 @@ export function ListingPage() {
 
   const retryRequestLog = async (requestLogId: string) => {
     showLoader();
-    const request = new RetryAssistantHTTPLogRequest();
-    request.setProjectid(projectId);
-    request.setId(requestLogId);
 
     try {
-      const response = await RetryHTTPLog(connectionConfig, request, {
-        authorization: token,
-        'x-project-id': projectId,
-        'x-auth-id': userId,
+      const response = await retryWebhookActivityLog({
+        projectId,
+        requestLogId,
+        auth: { projectId, token, userId },
       });
 
       if (response?.getSuccess()) {

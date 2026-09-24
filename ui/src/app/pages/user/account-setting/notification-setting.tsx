@@ -1,24 +1,18 @@
-import { FormLabel } from '@/app/components/form-label';
-import { PrimaryButton } from '@/app/components/carbon/button';
+import { FormLabel } from '@/app/components/ui/primitives';
+import { PrimaryButton } from '@/app/components/ui/primitives';
 import { ChevronRight } from '@carbon/icons-react';
-import { InputCheckbox } from '@/app/components/carbon/form/input-checkbox';
-import { FieldSet } from '@/app/components/form/fieldset';
-import { InputHelper } from '@/app/components/input-helper';
-import { connectionConfig } from '@/configs';
+import { InputCheckbox } from '@/app/components/ui/primitives';
+import { FieldSet } from '@/app/components/ui/primitives';
+import { InputHelper } from '@/app/components/ui/primitives';
 import { RAPIDA_SYSTEM_NOTIFICATION } from '@/models/notification';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { PageActionButtonBlock } from '@/app/components/blocks/page-action-button-block';
-import { SectionDivider } from '@/app/components/blocks/section-divider';
-import {
-  UpdateNotificationSettingRequest,
-  NotificationSetting as Setting,
-  UpdateNotificationSetting,
-  ConnectionConfig,
-} from '@rapidaai/react';
+import { PageActionButtonBlock } from '@/app/components/layout/blocks/page-action-button-block';
+import { SectionDivider } from '@/app/components/layout/blocks/section-divider';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import toast from 'react-hot-toast/headless';
 import { cn } from '@/utils';
+import { updateUserNotificationSettings } from '@/clients';
 
 export const NotificationSetting = () => {
   /**
@@ -43,32 +37,10 @@ export const NotificationSetting = () => {
   const onSubmit = (data: any) => {
     setError('');
     setIsSaving(true);
-    const notificationSettingRequest = new UpdateNotificationSettingRequest();
-    const buildEventNotification = (prefix: string, obj: any) => {
-      Object.entries(obj).forEach(([key, value]) => {
-        const eventNotification = new Setting();
-        eventNotification.setChannel('email'); // Example channel, adjust if needed
-        eventNotification.setEventtype(prefix ? `${prefix}.${key}` : key); // Use prefix to build event type
-
-        if (typeof value === 'boolean') {
-          eventNotification.setEnabled(value);
-          notificationSettingRequest.addSettings(eventNotification);
-        } else {
-          // Recursive case: handle nested objects
-          buildEventNotification(prefix ? `${prefix}.${key}` : key, value);
-        }
-      });
-    };
-    buildEventNotification('', data);
-    UpdateNotificationSetting(
-      connectionConfig,
-      notificationSettingRequest,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: authId,
-        projectId: projectId,
-      }),
-    )
+    updateUserNotificationSettings({
+      values: data,
+      auth: { token, userId: authId, projectId },
+    })
       .then(rlp => {
         if (rlp?.getSuccess()) {
           toast.success(

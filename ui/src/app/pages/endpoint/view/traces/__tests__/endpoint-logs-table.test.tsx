@@ -57,7 +57,7 @@ jest.mock('@/hooks/use-credential', () => ({
   useCredential: () => ['user-1', 'token-1', 'project-1'],
 }));
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/stores/app', () => ({
   useRapidaStore: () => ({
     loading: false,
     showLoader: mockShowLoader,
@@ -65,7 +65,7 @@ jest.mock('@/hooks', () => ({
   }),
 }));
 
-jest.mock('@/hooks/use-endpoint-log-page-store', () => ({
+jest.mock('@/stores/endpoint/endpoint-log.store', () => ({
   useEndpointLogPage: () => ({
     getLogs: mockGetLogs,
     getLog: mockGetLog,
@@ -84,36 +84,36 @@ jest.mock('@/hooks/use-endpoint-log-page-store', () => ({
   }),
 }));
 
-jest.mock('@/app/components/helmet', () => ({
+jest.mock('@/app/components/app-shell/helmet', () => ({
   Helmet: () => null,
 }));
 
-jest.mock('@/app/components/base/modal/endpoint-trace-modal', () => ({
+jest.mock('@/app/components/dialogs/endpoint/endpoint-trace-modal', () => ({
   EndpointTraceModal: ({ modalOpen }: any) =>
     modalOpen ? <section>endpoint-log-modal</section> : null,
 }));
 
-jest.mock('@/app/components/carbon/date-filter', () => ({
+jest.mock('@/app/components/ui/composites/date-filter', () => ({
   DateFilter: () => <div>date-filter</div>,
 }));
 
-jest.mock('@/app/components/carbon/status-indicator', () => ({
+jest.mock('@/app/components/ui/feedback/status-indicator', () => ({
   CarbonStatusIndicator: ({ state }: any) => <span>Status {state}</span>,
 }));
 
-jest.mock('@/app/components/indicators/source', () => ({
+jest.mock('@/app/components/domain/indicators/source', () => ({
   SourceIndicator: ({ source }: any) => <span>Source {source}</span>,
 }));
 
-jest.mock('@/app/components/carbon/pagination', () => ({
+jest.mock('@/app/components/ui/primitives/pagination', () => ({
   Pagination: () => <div>pagination</div>,
 }));
 
-jest.mock('@/app/components/carbon/empty-state', () => ({
+jest.mock('@/app/components/ui/feedback/empty-state', () => ({
   EmptyState: ({ title }: any) => <div>{title}</div>,
 }));
 
-jest.mock('@/app/components/carbon/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   IconOnlyButton: ({ iconDescription, onClick }: any) => (
     <button type="button" aria-label={iconDescription} onClick={onClick}>
       {iconDescription}
@@ -121,13 +121,13 @@ jest.mock('@/app/components/carbon/button', () => ({
   ),
 }));
 
-jest.mock('@/app/components/carbon/button/copy-button', () => ({
+jest.mock('@/app/components/ui/primitives/buttons/copy-button', () => ({
   CopyButton: ({ children }: any) => (
     <button type="button">Copy {children}</button>
   ),
 }));
 
-jest.mock('@/app/components/sections/table-section', () => ({
+jest.mock('@/app/components/layout/sections/table-section', () => ({
   ScrollableTableSection: ({ children }: any) => (
     <section data-testid="scrollable-table">{children}</section>
   ),

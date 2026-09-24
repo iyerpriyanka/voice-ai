@@ -59,7 +59,7 @@ jest.mock('@/hooks/use-credential', () => ({
   useCredential: () => ['u1', 't1', 'p1'],
 }));
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/stores/app', () => ({
   useRapidaStore: () => ({
     loading: false,
     showLoader: mockShowLoader,
@@ -67,7 +67,7 @@ jest.mock('@/hooks', () => ({
   }),
 }));
 
-jest.mock('@/hooks/use-webhook-log-page-store', () => ({
+jest.mock('@/stores/activity/webhook-log.store', () => ({
   useWebhookLogPage: () => ({
     getActivities: mockGetActivities,
     addCriterias: mockAddCriterias,
@@ -136,41 +136,41 @@ jest.mock('@/app/pages/assistant/actions/hooks/use-confirmation', () => {
   };
 });
 
-jest.mock('@/app/components/base/modal/webhook-log-modal', () => ({
+jest.mock('@/app/components/dialogs/activity', () => ({
   RequestLogDialog: ({ modalOpen }: any) =>
     modalOpen ? <div>request-log-modal</div> : null,
 }));
 
-jest.mock('@/app/components/helmet', () => ({
+jest.mock('@/app/components/app-shell/helmet', () => ({
   Helmet: () => null,
 }));
 
-jest.mock('@/app/components/carbon/query-search', () => ({
+jest.mock('@/app/components/ui/composites/query-search', () => ({
   QuerySearch: ({ placeholder }: any) => <input placeholder={placeholder} />,
   parseQuerySearchFilters: () => [],
 }));
 
-jest.mock('@/app/components/blocks/page-title-with-count', () => ({
+jest.mock('@/app/components/layout/blocks/page-title-with-count', () => ({
   PageTitleWithCount: ({ children }: any) => <div>{children}</div>,
 }));
 
-jest.mock('@/app/components/blocks/page-header-block', () => ({
+jest.mock('@/app/components/layout/blocks/page-header-block', () => ({
   PageHeaderBlock: ({ children }: any) => <div>{children}</div>,
 }));
 
-jest.mock('@/app/components/carbon/table-link', () => ({
+jest.mock('@/app/components/ui/table/table-link', () => ({
   TableLink: ({ children, href }: any) => <a href={href}>{children}</a>,
 }));
 
-jest.mock('@/app/components/carbon/pagination', () => ({
+jest.mock('@/app/components/ui/primitives/pagination', () => ({
   Pagination: () => <div>pagination</div>,
 }));
 
-jest.mock('@/app/components/carbon/empty-state', () => ({
+jest.mock('@/app/components/ui/feedback/empty-state', () => ({
   EmptyState: ({ title }: any) => <div>{title}</div>,
 }));
 
-jest.mock('@/app/components/carbon/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   IconOnlyButton: ({
     iconDescription,
     children,
@@ -189,7 +189,7 @@ jest.mock('@/utils/date', () => ({
   toHumanReadableDateTime: () => 'May 10, 2026',
 }));
 
-jest.mock('@/app/components/indicators/http-status', () => ({
+jest.mock('@/app/components/domain/indicators/http-status', () => ({
   HttpStatusSpanIndicator: ({ status }: any) => <span>{status}</span>,
 }));
 

@@ -4,17 +4,17 @@ import {
   AssistantConversationMessage,
 } from '@rapidaai/react';
 import { FC, useCallback, useContext, useEffect, useRef } from 'react';
-import { AssistantChatContext } from '@/hooks/use-assistant-chat';
+import { AssistantChatContext } from '@/stores/assistant/assistant-chat.store';
 import { useBoolean } from 'ahooks';
-import { SectionLoader } from '@/app/components/loader/section-loader';
+import { SectionLoader } from '@/app/components/ui/feedback';
 import { Renew, Download, Chat } from '@carbon/icons-react';
-import { GhostButton } from '@/app/components/carbon/button';
+import { GhostButton } from '@/app/components/ui/primitives';
 import { Tag, DefinitionTooltip } from '@carbon/react';
-import { EmptyState } from '@/app/components/carbon/empty-state';
+import { EmptyState } from '@/app/components/ui/feedback';
 import { getStatusMetric } from '@/utils/metadata';
-import { CarbonStatusIndicator } from '@/app/components/carbon/status-indicator';
+import { CarbonStatusIndicator } from '@/app/components/ui/feedback';
 import { toHumanReadableDateTime } from '@/utils/date';
-import { AudioPlayer } from '@/app/components/audio-player';
+import { AudioPlayer } from '@/app/components/ui/composites/audio-player';
 import { getRoleVisual } from '@/app/pages/assistant/view/conversations/conversation-messages.helpers';
 
 export const ConversationMessages: FC<{

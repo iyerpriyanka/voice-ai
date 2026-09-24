@@ -1,7 +1,7 @@
-import { CardOptionMenu } from '@/app/components/menu';
+import { CardOptionMenu } from '@/app/components/ui/composites';
 import { cn } from '@/utils';
 import { KnowledgeDocument } from '@rapidaai/react';
-import { ReloadIcon } from '@/app/components/Icon/Reload';
+import { Renew } from '@carbon/icons-react';
 
 /**
  *
@@ -21,7 +21,7 @@ export function DocumentOption(props: {
       option: (
         <div className="flex items-center text-sm">
           <span>Re-index the document</span>
-          <ReloadIcon className="w-4 h-4 ml-2" />
+          <Renew className="w-4 h-4 ml-2" />
         </div>
       ),
       onActionClick: () => {

@@ -1,17 +1,17 @@
 import { Metadata } from '@rapidaai/react';
-import { TextToSpeechProvider } from '@/app/components/providers/text-to-speech';
+import { TextToSpeechProvider } from '@/app/components/domain/providers/text-to-speech';
 import { useCallback, useState } from 'react';
 import {
   GetDefaultSpeakerConfig,
   GetDefaultTextToSpeechIfInvalid,
-} from '@/app/components/providers/text-to-speech/provider';
+} from '@/app/components/domain/providers/text-to-speech/provider';
 import {
   CONJUNCTION_BOUNDARIES,
   PRONUNCIATION_DICTIONARIES,
 } from '@/providers';
 import { ChevronDown } from '@carbon/icons-react';
 import { cn } from '@/utils';
-import { TextInput } from '@/app/components/carbon/form';
+import { TextInput } from '@/app/components/ui/primitives';
 import { Dropdown, MultiSelect, Slider } from '@carbon/react';
 
 const AMBIENT_OPTIONS = [

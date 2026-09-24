@@ -23,8 +23,14 @@ const DETAIL_FIELDS = [
   { key: 'call_error', label: 'Call error' },
 ] as const;
 
-const getMetadataValue = (metadata: Metadata[] | undefined, key: string): string =>
-  metadata?.find(item => item.getKey() === key)?.getValue()?.trim() ?? '';
+const getMetadataValue = (
+  metadata: Metadata[] | undefined,
+  key: string,
+): string =>
+  metadata
+    ?.find(item => item.getKey() === key)
+    ?.getValue()
+    ?.trim() ?? '';
 
 const humanize = (value: string): string =>
   value
@@ -43,8 +49,14 @@ const isTerminalStatus = (status?: string): boolean => {
 };
 
 const isBusy = (reason?: string | null, metadata?: Metadata[]): boolean => {
-  const failureClass = getMetadataValue(metadata, 'failure_class').toLowerCase();
-  const failureReason = getMetadataValue(metadata, 'failure_reason').toLowerCase();
+  const failureClass = getMetadataValue(
+    metadata,
+    'failure_class',
+  ).toLowerCase();
+  const failureReason = getMetadataValue(
+    metadata,
+    'failure_reason',
+  ).toLowerCase();
   const sliReason = getMetadataValue(metadata, 'sli_reason').toLowerCase();
   const providerStatusCode = getMetadataValue(metadata, 'provider_status_code');
   const rawReason = reason?.trim().toLowerCase();
@@ -110,7 +122,8 @@ export const getDisconnectReasonDisplay = (
   if (!isTerminalStatus(status)) {
     return {
       label: 'In progress',
-      tooltip: 'The session has not ended yet, so no disconnect reason is available.',
+      tooltip:
+        'The session has not ended yet, so no disconnect reason is available.',
       details,
     };
   }

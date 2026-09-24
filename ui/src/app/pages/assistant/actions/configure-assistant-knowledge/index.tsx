@@ -1,18 +1,18 @@
-import { GhostButton } from '@/app/components/carbon/button';
-import { useRapidaStore } from '@/hooks';
+import { GhostButton } from '@/app/components/ui/primitives';
+import { useRapidaStore } from '@/stores/app';
 import { FC, useEffect } from 'react';
 import toast from 'react-hot-toast/headless';
 import { useParams } from 'react-router-dom';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { EmptyState } from '@/app/components/carbon/empty-state';
-import { SelectKnowledgeCard } from '@/app/components/base/cards/knowledge-card';
-import { ExternalLink, Info, Plus } from 'lucide-react';
-import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
-import { PageTitleBlock } from '@/app/components/blocks/page-title-block';
+import { EmptyState } from '@/app/components/ui/feedback';
+import { SelectKnowledgeCard } from '@/app/components/domain/cards/knowledge-card';
+import { Add, Information, Launch } from '@carbon/icons-react';
+import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
+import { PageTitleBlock } from '@/app/components/layout/blocks/page-title-block';
 import { useCurrentCredential } from '@/hooks/use-credential';
-import { useAssistantKnowledgePageStore } from '@/app/pages/assistant/actions/store/use-knowledge-page-store';
-import { SectionLoader } from '@/app/components/loader/section-loader';
-import { TablePagination } from '@/app/components/base/tables/table-pagination';
+import { useAssistantKnowledgePageStore } from '@/stores/assistant/actions';
+import { SectionLoader } from '@/app/components/ui/feedback';
+import { TablePagination } from '@/app/components/ui/table';
 import { UpdateKnowledge } from '@/app/pages/assistant/actions/configure-assistant-knowledge/update-assistant-knowledge';
 import { CreateKnowledge } from '@/app/pages/assistant/actions/configure-assistant-knowledge/create-assistant-knowledge';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
@@ -122,7 +122,7 @@ const ConfigureAssistantKnowledge: FC<{ assistantId: string }> = ({
             className="flex items-center gap-2 px-4 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 border-r border-gray-200 dark:border-gray-800 transition-colors whitespace-nowrap"
           >
             Create new knowledge
-            <ExternalLink className="w-4 h-4" strokeWidth={1.5} />
+            <Launch className="w-4 h-4" />
           </button>
           <button
             type="button"
@@ -130,7 +130,7 @@ const ConfigureAssistantKnowledge: FC<{ assistantId: string }> = ({
             className="flex items-center gap-2 px-4 text-sm text-white bg-primary hover:bg-primary/90 transition-colors whitespace-nowrap"
           >
             Connect knowledge
-            <Plus className="w-4 h-4" strokeWidth={1.5} />
+            <Add className="w-4 h-4" />
           </button>
         </div>
       </PageHeaderBlock>
@@ -138,7 +138,7 @@ const ConfigureAssistantKnowledge: FC<{ assistantId: string }> = ({
         className="flex items-center p-2 px-4 text-blue-800 border-l-4 border-blue-300 bg-blue-50 dark:text-blue-400 dark:bg-gray-800 dark:border-blue-800"
         role="alert"
       >
-        <Info className="shrink-0 w-4 h-4" />
+        <Information className="shrink-0 w-4 h-4" />
         <div className="ms-3 text-sm font-medium">
           Provide the specific knowledge your assistant will use to deliver
           accurate and relevant answers.

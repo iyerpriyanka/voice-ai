@@ -17,9 +17,7 @@ let mockCredential = {
 };
 
 jest.mock('@rapidaai/react', () => ({
-  ConnectionConfig: class ConnectionConfig {
-    constructor(_: unknown) {}
-  },
+  ConnectionConfig: class ConnectionConfig {},
   CreateOrganization: jest.fn(),
 }));
 
@@ -28,7 +26,7 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
 }));
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/stores/app', () => ({
   useRapidaStore: () => ({
     loading: false,
     showLoader: mockShowLoader,
@@ -40,24 +38,26 @@ jest.mock('@/hooks/use-credential', () => ({
   useCurrentCredential: () => mockCredential,
 }));
 
-jest.mock('@/app/components/helmet', () => ({
+jest.mock('@/app/components/app-shell/helmet', () => ({
   Helmet: () => null,
 }));
 
-jest.mock('@/app/components/carbon/form', () => ({
+jest.mock('@/app/components/ui/primitives/form', () => ({
   Stack: ({ children }: any) => <div>{children}</div>,
   TextInput: require('react').forwardRef(
-    ({ labelText, helperText, ...props }: any, ref: any) => <input ref={ref} {...props} />,
+    ({ labelText, helperText, ...props }: any, ref: any) => (
+      <input ref={ref} {...props} />
+    ),
   ),
 }));
 
-jest.mock('@/app/components/carbon/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   PrimaryButton: ({ children, isLoading, renderIcon, ...props }: any) => (
     <button {...props}>{children}</button>
   ),
 }));
 
-jest.mock('@/app/components/carbon/notification', () => ({
+jest.mock('@/app/components/ui/feedback/notification', () => ({
   Notification: ({ subtitle }: any) => <div>{subtitle}</div>,
 }));
 
@@ -97,7 +97,9 @@ describe('CreateOrganizationPage', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
 
-    expect(await screen.findByText('Please provide an industry.')).toBeInTheDocument();
+    expect(
+      await screen.findByText('Please provide an industry.'),
+    ).toBeInTheDocument();
     expect(CreateOrganization).not.toHaveBeenCalled();
   });
 
@@ -114,9 +116,12 @@ describe('CreateOrganizationPage', () => {
     fireEvent.change(screen.getByPlaceholderText('eg: Acme Voice Studio'), {
       target: { value: 'My Org' },
     });
-    fireEvent.change(screen.getByPlaceholderText('eg: Agency services, healthcare, finance'), {
-      target: { value: 'Software' },
-    });
+    fireEvent.change(
+      screen.getByPlaceholderText('eg: Agency services, healthcare, finance'),
+      {
+        target: { value: 'Software' },
+      },
+    );
     fireEvent.change(screen.getByRole('combobox'), {
       target: { value: 'agency' },
     });
@@ -144,13 +149,18 @@ describe('CreateOrganizationPage', () => {
     fireEvent.change(screen.getByPlaceholderText('eg: Acme Voice Studio'), {
       target: { value: 'My Org' },
     });
-    fireEvent.change(screen.getByPlaceholderText('eg: Agency services, healthcare, finance'), {
-      target: { value: 'Software' },
-    });
+    fireEvent.change(
+      screen.getByPlaceholderText('eg: Agency services, healthcare, finance'),
+      {
+        target: { value: 'Software' },
+      },
+    );
     fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
 
     expect(
-      await screen.findByText('Unable to process your request. Please try again later.'),
+      await screen.findByText(
+        'Unable to process your request. Please try again later.',
+      ),
     ).toBeInTheDocument();
   });
 
@@ -166,11 +176,16 @@ describe('CreateOrganizationPage', () => {
     fireEvent.change(screen.getByPlaceholderText('eg: Acme Voice Studio'), {
       target: { value: 'My Org' },
     });
-    fireEvent.change(screen.getByPlaceholderText('eg: Agency services, healthcare, finance'), {
-      target: { value: 'Software' },
-    });
+    fireEvent.change(
+      screen.getByPlaceholderText('eg: Agency services, healthcare, finance'),
+      {
+        target: { value: 'Software' },
+      },
+    );
     fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
 
-    expect(await screen.findByText('Please provide valid credentials to sign in.')).toBeInTheDocument();
+    expect(
+      await screen.findByText('Please provide valid credentials to sign in.'),
+    ).toBeInTheDocument();
   });
 });

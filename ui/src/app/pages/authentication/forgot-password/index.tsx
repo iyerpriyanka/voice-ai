@@ -1,17 +1,16 @@
 import React, { useCallback, useState } from 'react';
-import { Helmet } from '@/app/components/helmet';
-import { ForgotPassword } from '@rapidaai/react';
+import { Helmet } from '@/app/components/app-shell/helmet';
 import { ForgotPasswordResponse } from '@rapidaai/react';
 import { useForm } from 'react-hook-form';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { ServiceError } from '@rapidaai/react';
-import { connectionConfig } from '@/configs';
-import { Stack, TextInput } from '@/app/components/carbon/form';
-import { PrimaryButton } from '@/app/components/carbon/button';
-import { Notification } from '@/app/components/carbon/notification';
+import { Stack, TextInput } from '@/app/components/ui/primitives';
+import { PrimaryButton } from '@/app/components/ui/primitives';
+import { Notification } from '@/app/components/ui/feedback';
 import { ArrowRight } from '@carbon/icons-react';
 import { Link } from '@carbon/react';
 import { useTheme } from '@/theme/theme-provider';
+import { forgotPassword } from '@/clients';
 
 export function ForgotPasswordPage() {
   const { theme } = useTheme();
@@ -45,7 +44,7 @@ export function ForgotPasswordPage() {
 
   const onForgotPassword = data => {
     showLoader('overlay');
-    ForgotPassword(connectionConfig, data.email, afterForgotPassword);
+    forgotPassword(data.email, afterForgotPassword);
   };
 
   return (

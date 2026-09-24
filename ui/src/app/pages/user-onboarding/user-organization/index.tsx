@@ -1,19 +1,18 @@
 import React, { useCallback, useContext, useState } from 'react';
-import { Helmet } from '@/app/components/helmet';
+import { Helmet } from '@/app/components/app-shell/helmet';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { CreateOrganization } from '@rapidaai/react';
 import { CreateOrganizationResponse } from '@rapidaai/react';
 import { useCurrentCredential } from '@/hooks/use-credential';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { ServiceError } from '@rapidaai/react';
 import { AuthContext } from '@/context/auth-context';
-import { connectionConfig } from '@/configs';
-import { Stack, TextInput } from '@/app/components/carbon/form';
-import { PrimaryButton } from '@/app/components/carbon/button';
-import { Notification } from '@/app/components/carbon/notification';
+import { Stack, TextInput } from '@/app/components/ui/primitives';
+import { PrimaryButton } from '@/app/components/ui/primitives';
+import { Notification } from '@/app/components/ui/feedback';
 import { ArrowRight } from '@carbon/icons-react';
 import { Select, SelectItem } from '@carbon/react';
+import { createWorkspaceOrganization } from '@/clients';
 
 export function CreateOrganizationPage() {
   const navigate = useNavigate();
@@ -37,8 +36,14 @@ export function CreateOrganizationPage() {
       if (org?.getSuccess()) {
         authorize &&
           authorize(
-            () => { hideLoader(); return navigate('/onboarding/project'); },
-            () => { hideLoader(); setError('Please provide valid credentials to sign in.'); },
+            () => {
+              hideLoader();
+              return navigate('/onboarding/project');
+            },
+            () => {
+              hideLoader();
+              setError('Please provide valid credentials to sign in.');
+            },
           );
       } else {
         hideLoader();
@@ -50,14 +55,13 @@ export function CreateOrganizationPage() {
 
   const onCreateOrganization = data => {
     showLoader('overlay');
-    CreateOrganization(
-      connectionConfig,
-      data.organizationName,
-      data.organizationSize,
-      data.organizationIndustry,
-      { authorization: token, 'x-auth-id': authId },
-      afterCreateOrganization,
-    );
+    createWorkspaceOrganization({
+      name: data.organizationName,
+      size: data.organizationSize,
+      industry: data.organizationIndustry,
+      auth: { token, userId: authId },
+      callback: afterCreateOrganization,
+    });
   };
 
   const formError =
@@ -70,7 +74,9 @@ export function CreateOrganizationPage() {
     <>
       <Helmet title="Onboarding: Create an organization" />
       <div className="mb-4">
-        <h1 className="text-xl font-light tracking-tight">Set up your organization</h1>
+        <h1 className="text-xl font-light tracking-tight">
+          Set up your organization
+        </h1>
         <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
           Create the top-level workspace that owns assistants, credentials,
           client programs, and governance settings.
@@ -87,7 +93,9 @@ export function CreateOrganizationPage() {
             defaultValue={`${user?.name}'s Organization`}
             placeholder="eg: Acme Voice Studio"
             helperText="Use your agency, brand, or operating company name."
-            {...register('organizationName', { required: 'Please enter the organization name.' })}
+            {...register('organizationName', {
+              required: 'Please enter the organization name.',
+            })}
           />
           <Select
             id="org-size"
@@ -107,7 +115,9 @@ export function CreateOrganizationPage() {
             required
             placeholder="eg: Agency services, healthcare, finance"
             helperText="Used to suggest integrations and assistant templates for your market."
-            {...register('organizationIndustry', { required: 'Please provide an industry.' })}
+            {...register('organizationIndustry', {
+              required: 'Please provide an industry.',
+            })}
           />
           {formError && (
             <Notification kind="error" title="Error" subtitle={formError} />

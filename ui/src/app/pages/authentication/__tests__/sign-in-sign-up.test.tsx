@@ -47,8 +47,6 @@ let mockWorkspace = {
 
 jest.mock('@rapidaai/react', () => {
   class ConnectionConfig {
-    constructor(_: unknown) {}
-
     static WithDebugger(config: unknown) {
       return config;
     }
@@ -76,7 +74,7 @@ jest.mock('@/workspace', () => ({
   useWorkspace: () => mockWorkspace,
 }));
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/stores/app', () => ({
   useRapidaStore: () => ({
     loading: false,
     showLoader: mockShowLoader,
@@ -98,15 +96,15 @@ jest.mock('@/configs', () => ({
   connectionConfig: {},
 }));
 
-jest.mock('@/app/components/helmet', () => ({
+jest.mock('@/app/components/app-shell/helmet', () => ({
   Helmet: () => null,
 }));
 
-jest.mock('@/app/components/carbon/button/social-button-group', () => ({
+jest.mock('@/app/components/ui/primitives/buttons/social-button-group', () => ({
   SocialButtonGroup: () => <div data-testid="social-buttons" />,
 }));
 
-jest.mock('@/app/components/carbon/form', () => ({
+jest.mock('@/app/components/ui/primitives/form', () => ({
   Stack: ({ children }: any) => <div>{children}</div>,
   TextInput: require('react').forwardRef(
     ({ labelText: _labelText, ...props }: any, ref: any) => (
@@ -115,11 +113,11 @@ jest.mock('@/app/components/carbon/form', () => ({
   ),
 }));
 
-jest.mock('@/app/components/carbon/notification', () => ({
+jest.mock('@/app/components/ui/feedback/notification', () => ({
   Notification: ({ subtitle }: { subtitle: string }) => <div>{subtitle}</div>,
 }));
 
-jest.mock('@/app/components/carbon/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   PrimaryButton: ({
     children,
     isLoading: _i,

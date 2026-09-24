@@ -1,0 +1,358 @@
+import { CodeSnippet, Tag } from '@carbon/react';
+import { Tab } from '@/app/components/ui/primitives';
+import { RapidaCredentialCard } from '@/app/components/domain/cards/rapida-credential-card';
+import type {
+  Endpoint,
+  EndpointProviderModel,
+  Variable,
+} from '@rapidaai/react';
+import type { ReactNode } from 'react';
+
+interface EndpointIntegrationProps {
+  endpoint: Endpoint;
+  credentialCard?: ReactNode;
+}
+
+interface CodeBlockProps {
+  code: string;
+  language: string;
+}
+
+interface StepProps {
+  number: number;
+  title: string;
+  description: string;
+  children: ReactNode;
+}
+
+function CodeBlock({ code, language }: CodeBlockProps) {
+  return (
+    <div className="w-full" data-language={language}>
+      <CodeSnippet
+        aria-label={`${language} code snippet`}
+        copyButtonDescription={`Copy ${language} snippet`}
+        copyText={code}
+        feedback="Copied"
+        maxCollapsedNumberOfRows={20}
+        maxExpandedNumberOfRows={40}
+        minCollapsedNumberOfRows={3}
+        type="multi"
+        wrapText
+      >
+        {code}
+      </CodeSnippet>
+    </div>
+  );
+}
+
+function Step({ number, title, description, children }: StepProps) {
+  return (
+    <section className="px-4 py-5 space-y-3 border-b border-gray-200 dark:border-gray-800 last:border-b-0">
+      <div className="flex items-center gap-2.5">
+        <Tag size="sm" type="blue">
+          Step {number}
+        </Tag>
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+          {title}
+        </h3>
+      </div>
+      <p className="text-sm text-gray-500 dark:text-gray-400">{description}</p>
+      {children}
+    </section>
+  );
+}
+
+export function EndpointIntegration({
+  endpoint,
+  credentialCard,
+}: EndpointIntegrationProps) {
+  const epm = endpoint.getEndpointprovidermodel();
+  const credentials = credentialCard ?? <RapidaCredentialCard />;
+
+  return (
+    <Tab
+      active="Python"
+      className="bg-white dark:bg-gray-900 sticky top-0 z-10"
+      tabs={[
+        {
+          label: 'Python',
+          element: (
+            <div className="pb-10 w-full">
+              <Step
+                number={1}
+                title="Install the SDK"
+                description="Install the Rapida Python SDK using pip."
+              >
+                <CodeBlock language="bash" code={`pip install rapida-python`} />
+              </Step>
+
+              <Step
+                number={2}
+                title="Authenticate"
+                description={`Copy your publishable API key and replace RAPIDA_API_KEY in the code below.`}
+              >
+                {credentials}
+              </Step>
+
+              <Step
+                number={3}
+                title="Import & initialise"
+                description="Import the required classes and create a Rapida client."
+              >
+                <CodeBlock
+                  language="python"
+                  code={`from rapida import RapidaClient, RapidaClientOptions, RapidaEnvironment
+from rapida.values import StringValue, AudioValue, FileValue, URLValue
+
+client = RapidaClient(
+    RapidaClientOptions(
+        api_key="RAPIDA_API_KEY",
+        environment=RapidaEnvironment.PRODUCTION,
+    )
+)`}
+                />
+              </Step>
+
+              <Step
+                number={4}
+                title="Invoke your endpoint"
+                description="Call the endpoint with the required input arguments."
+              >
+                <CodeBlock language="python" code={buildPythonInvoke(epm)} />
+              </Step>
+            </div>
+          ),
+        },
+        {
+          label: 'TypeScript',
+          element: (
+            <div className="pb-10 w-full">
+              <Step
+                number={1}
+                title="Install the SDK"
+                description="Install the Rapida Node.js SDK using npm or yarn."
+              >
+                <CodeBlock
+                  language="bash"
+                  code={`npm install @rapidaai/rapida-node\n# or\nyarn add @rapidaai/rapida-node`}
+                />
+              </Step>
+
+              <Step
+                number={2}
+                title="Authenticate"
+                description="Copy your publishable API key and replace RAPIDA_API_KEY in the code below."
+              >
+                {credentials}
+              </Step>
+
+              <Step
+                number={3}
+                title="Import & initialise"
+                description="Import the required classes and create a Rapida client."
+              >
+                <CodeBlock
+                  language="typescript"
+                  code={`import {
+  RapidaClient,
+  RapidaClientOptions,
+  RapidaEnvironment,
+} from '@rapidaai/rapida-node';
+import {
+  AudioValue,
+  FileValue,
+  StringValue,
+  URLValue,
+} from '@rapidaai/rapida-node/values';
+
+const client = new RapidaClient(
+  new RapidaClientOptions({
+    apiKey: 'RAPIDA_API_KEY',
+    environment: RapidaEnvironment.PRODUCTION,
+  }),
+);`}
+                />
+              </Step>
+
+              <Step
+                number={4}
+                title="Invoke your endpoint"
+                description="Call the endpoint with the required input arguments."
+              >
+                <CodeBlock
+                  language="typescript"
+                  code={buildTypeScriptInvoke(epm)}
+                />
+              </Step>
+            </div>
+          ),
+        },
+        {
+          label: 'Golang',
+          element: (
+            <div className="pb-10 w-full">
+              <Step
+                number={1}
+                title="Install the SDK"
+                description="Add the Rapida Go module to your project."
+              >
+                <CodeBlock
+                  language="bash"
+                  code={`go get github.com/rapidaai/rapida-go`}
+                />
+              </Step>
+
+              <Step
+                number={2}
+                title="Authenticate"
+                description="Copy your publishable API key and replace RAPIDA_API_KEY in the code below."
+              >
+                {credentials}
+              </Step>
+
+              <Step
+                number={3}
+                title="Import & initialise"
+                description="Import the required packages and create a Rapida client."
+              >
+                <CodeBlock
+                  language="go"
+                  code={`import (
+    "github.com/rapidaai/rapida-go/rapida"
+    "github.com/rapidaai/rapida-go/rapida_builders"
+)
+
+client, err := rapida.GetClient(
+    rapida_builders.ClientOptionBuilder().
+        WithApiKey("RAPIDA_API_KEY").
+        Build(),
+)
+if err != nil {
+    log.Fatalf("failed to create client: %v", err)
+}`}
+                />
+              </Step>
+
+              <Step
+                number={4}
+                title="Invoke your endpoint"
+                description="Build the endpoint definition and invoke it with your inputs."
+              >
+                <CodeBlock language="go" code={buildGolangInvoke(endpoint)} />
+              </Step>
+            </div>
+          ),
+        },
+      ]}
+    />
+  );
+}
+
+const buildPythonInvoke = (epm: EndpointProviderModel | undefined): string => {
+  if (!epm) {
+    return `response = await client.invoke(
+    endpoint=("ENDPOINT_ID", "ENDPOINT_VERSION"),
+    inputs={},
+)
+for item in response.get_data():
+    print(item.to_text())`;
+  }
+
+  const vars = getPromptVariables(epm);
+  const inputs = buildPythonInputs(vars);
+
+  return `response = await client.invoke(
+    endpoint=("${epm.getEndpointid()}", "vrsn_${epm.getId()}"),
+    inputs={${inputs}},
+)
+for item in response.get_data():
+    print(item.to_text())`;
+};
+
+const buildPythonInputs = (vars: Variable[]): string => {
+  if (vars.length === 0) return '';
+  return vars
+    .map(v => {
+      if (v.getType() === 'audio-files')
+        return `\n        "${v.getName()}": AudioValue("/path/to/audio")`;
+      if (v.getType() === 'files')
+        return `\n        "${v.getName()}": FileValue("/path/to/file")`;
+      if (v.getType() === 'url')
+        return `\n        "${v.getName()}": URLValue("https://example.com")`;
+      return `\n        "${v.getName()}": StringValue("example-value")`;
+    })
+    .join(',');
+};
+
+const buildTypeScriptInvoke = (
+  epm: EndpointProviderModel | undefined,
+): string => {
+  if (!epm) {
+    return `const response = await client.invoke({
+  endpoint: ['ENDPOINT_ID', 'ENDPOINT_VERSION'],
+  inputs: {},
+});
+for (const item of await response.getData()) {
+  console.log(await item.toText());
+}`;
+  }
+
+  const vars = getPromptVariables(epm);
+  const inputs = buildTypeScriptInputs(vars);
+
+  return `const response = await client.invoke({
+  endpoint: ['${epm.getEndpointid()}', 'vrsn_${epm.getId()}'],
+  inputs: {${inputs}},
+});
+for (const item of await response.getData()) {
+  console.log(await item.toText());
+}`;
+};
+
+const buildTypeScriptInputs = (vars: Variable[]): string => {
+  if (vars.length === 0) return '';
+  return vars
+    .map(v => {
+      if (v.getType() === 'audio-files') {
+        return `\n    ${v.getName()}: new AudioValue('/path/to/audio')`;
+      }
+      if (v.getType() === 'files') {
+        return `\n    ${v.getName()}: new FileValue('/path/to/file')`;
+      }
+      if (v.getType() === 'url') {
+        return `\n    ${v.getName()}: new URLValue('https://example.com')`;
+      }
+      return `\n    ${v.getName()}: new StringValue('example-value')`;
+    })
+    .join(',');
+};
+
+const buildGolangInvoke = (endpoint: Endpoint): string => {
+  const epm = endpoint.getEndpointprovidermodel();
+  const endpointId = epm ? epm.getEndpointid() : 'ENDPOINT_ID';
+
+  return `endpoint, err := rapida_builders.NewEndpointDefinitionBuilder().
+    WithEndpointId("${endpointId}").
+    Build()
+
+request := rapida_builders.NewInvokeRequestBuilder(endpoint).
+    AddStringInput("variable", "value").
+    Build()
+
+res, err := client.Invoke(request)
+if err == nil && res.IsSuccess() {
+    data, _ := res.GetData()
+    for _, item := range data {
+        text, _ := item.ToText()
+        println(text)
+    }
+}`;
+};
+
+const getPromptVariables = (epm: EndpointProviderModel): Variable[] => {
+  const prompt = epm.getChatcompleteprompt();
+  if (!prompt) {
+    return [];
+  }
+  return prompt.getPromptvariablesList();
+};

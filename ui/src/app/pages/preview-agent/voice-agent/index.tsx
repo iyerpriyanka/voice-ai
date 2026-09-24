@@ -2,13 +2,13 @@ import {
   PrimaryButton,
   GhostButton,
   IconOnlyButton,
-} from '@/app/components/carbon/button';
-import { Dropdown } from '@/app/components/carbon/dropdown';
-import { Form, Stack, TextInput } from '@/app/components/carbon/form';
+} from '@/app/components/ui/primitives';
+import { Dropdown } from '@/app/components/ui/primitives';
+import { Form, Stack, TextInput } from '@/app/components/ui/primitives';
 import { ArrowLeft, PhoneOutgoing } from '@carbon/icons-react';
-import { Notification } from '@/app/components/carbon/notification';
-import { Tabs } from '@/app/components/carbon/tabs';
-import { Text } from '@/app/components/carbon/text';
+import { Notification } from '@/app/components/ui/feedback';
+import { Tabs } from '@/app/components/ui/primitives';
+import { Text } from '@/app/components/ui/primitives';
 import {
   ArgumentList,
   ConfigEmpty,
@@ -37,10 +37,9 @@ import {
   AssistantDefinition,
   CreatePhoneCallRequest,
   Assistant,
-  GetAssistant,
-  GetAssistantRequest,
   Variable,
 } from '@rapidaai/react';
+import { getAssistantByIdWithApi } from '@/clients/assistant.client';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Navigate, useParams, useSearchParams } from 'react-router-dom';
 
@@ -162,11 +161,14 @@ export const PreviewPhoneAgent = () => {
     setArgumentMap(new Map());
     setErrorMessage('');
 
-    const request = new GetAssistantRequest();
-    const assistantDef = new AssistantDefinition();
-    assistantDef.setAssistantid(assistantId);
-    request.setAssistantdefinition(assistantDef);
-    GetAssistant(connectionCfg, request)
+    getAssistantByIdWithApi({
+      assistantId,
+      auth: {
+        token,
+        projectId,
+        userId: authId,
+      },
+    })
       .then(response => {
         if (!isMounted) return;
         if (response?.getSuccess()) {
@@ -197,7 +199,7 @@ export const PreviewPhoneAgent = () => {
     return () => {
       isMounted = false;
     };
-  }, [assistantId, connectionCfg]);
+  }, [assistantId, authId, projectId, token]);
 
   if (!assistantId) {
     return <Navigate to="/404" replace />;

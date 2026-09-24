@@ -1,19 +1,18 @@
 import { createContext, useContext } from 'use-context-selector';
 import { useCallback, useEffect, useState } from 'react';
-import { ConnectionConfig, ServiceError } from '@rapidaai/react';
+import { ServiceError } from '@rapidaai/react';
 import {
   GetAllOrganizationCredentialResponse,
   VaultCredential,
 } from '@rapidaai/react';
-import { GetAllOrganizationCredential } from '@rapidaai/react';
 
 import {
   LOCAL_STORAGE_PROVIDER_CREDENTIALS,
   serializeProto,
   useLocalStorageSync,
 } from '@/hooks/use-storage-sync';
-import { connectionConfig } from '@/configs';
 import { useCurrentCredential } from '@/hooks/use-credential';
+import { listOrganizationCredentials } from '@/clients';
 
 const ProviderContext = createContext<{
   providerCredentials: VaultCredential[];
@@ -78,18 +77,13 @@ export const ProviderContextProvider = ({
    * gettung all the organization
    */
   const getAllOrganizationCredential = () => {
-    GetAllOrganizationCredential(
-      connectionConfig,
-      1,
-      100,
-      [],
-      afterGettingAllCredential,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: authId,
-        projectId: projectId,
-      }),
-    );
+    listOrganizationCredentials({
+      page: 1,
+      pageSize: 100,
+      criteria: [],
+      auth: { token, userId: authId, projectId },
+      callback: afterGettingAllCredential,
+    });
   };
 
   /**

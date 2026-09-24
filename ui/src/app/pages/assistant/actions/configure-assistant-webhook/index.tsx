@@ -3,17 +3,17 @@ import { useParams } from 'react-router-dom';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { toHumanReadableDateTime } from '@/utils/date';
 import { useCurrentCredential } from '@/hooks/use-credential';
-import { useRapidaStore } from '@/hooks';
-import { SectionLoader } from '@/app/components/loader/section-loader';
+import { useRapidaStore } from '@/stores/app';
+import { SectionLoader } from '@/app/components/ui/feedback';
 import { CreateAssistantWebhook } from './create-assistant-webhook';
 import toast from 'react-hot-toast/headless';
-import { EmptyState } from '@/app/components/carbon/empty-state';
+import { EmptyState } from '@/app/components/ui/feedback';
 import { UpdateAssistantWebhook } from '@/app/pages/assistant/actions/configure-assistant-webhook/update-assistant-webhook';
-import { useAssistantWebhookPageStore } from '@/app/pages/assistant/actions/store/use-webhook-page-store';
-import { IconOnlyButton, PrimaryButton } from '@/app/components/carbon/button';
-import { RecordStatusIndicator } from '@/app/components/carbon/record-status-indicator';
-import { UrlTableCell } from '@/app/components/carbon/url-table-cell';
-import { Pagination } from '@/app/components/carbon/pagination';
+import { useAssistantWebhookPageStore } from '@/stores/assistant/actions';
+import { IconOnlyButton, PrimaryButton } from '@/app/components/ui/primitives';
+import { RecordStatusIndicator } from '@/app/components/ui/feedback';
+import { UrlTableCell } from '@/app/components/ui/table';
+import { Pagination } from '@/app/components/ui/primitives';
 import { Add, Renew, Webhook } from '@carbon/icons-react';
 import { Tag } from '@carbon/react';
 import {
@@ -39,7 +39,7 @@ import {
 import {
   ScrollableTableSection,
   TableSection,
-} from '@/app/components/sections/table-section';
+} from '@/app/components/layout/sections/table-section';
 
 const getWebhookOptionMap = (row: any): Map<string, string> => {
   const map = new Map<string, string>();
@@ -183,7 +183,9 @@ const ConfigureAssistantWebhook: FC<{ assistantId: string }> = ({
         hideLoader();
       },
       () => {
-        toast.success(`Webhook ${enabled ? 'enabled' : 'disabled'} successfully`);
+        toast.success(
+          `Webhook ${enabled ? 'enabled' : 'disabled'} successfully`,
+        );
         setPendingWebhookAction(null);
         get();
       },
@@ -254,7 +256,9 @@ const ConfigureAssistantWebhook: FC<{ assistantId: string }> = ({
             Cancel
           </Button>
           <Button
-            kind={pendingWebhookAction?.kind === 'enable' ? 'primary' : 'danger'}
+            kind={
+              pendingWebhookAction?.kind === 'enable' ? 'primary' : 'danger'
+            }
             size="md"
             onClick={() => {
               if (!pendingWebhookAction) return;

@@ -33,12 +33,15 @@ jest.mock('@/hooks/use-credential', () => ({
   useCredential: () => ['user-1', 'token-1', 'project-1'],
 }));
 
-jest.mock('@/hooks/use-assistant-page-store', () => ({
+jest.mock('@/stores/assistant/assistant.store', () => ({
   useAssistantPageStore: () => mockAssistantState,
 }));
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/stores/endpoint', () => ({
   useEndpointPageStore: () => mockEndpointState,
+}));
+
+jest.mock('@/stores/app', () => ({
   useRapidaStore: () => ({
     loading: mockLoading,
     showLoader: mockShowLoader,
@@ -46,22 +49,22 @@ jest.mock('@/hooks', () => ({
   }),
 }));
 
-jest.mock('@/app/components/helmet', () => ({
+jest.mock('@/app/components/app-shell/helmet', () => ({
   Helmet: () => null,
 }));
 
-jest.mock('@/app/components/carbon/loading', () => ({
+jest.mock('@/app/components/ui/feedback/loading', () => ({
   PageLoading: () => <div>Loading page</div>,
 }));
 
-jest.mock('@/app/components/carbon/modal', () => ({
+jest.mock('@/app/components/ui/primitives/modal', () => ({
   Modal: ({ children, open }: any) =>
     open ? <div role="dialog">{children}</div> : null,
   ModalBody: ({ children }: any) => <div>{children}</div>,
   ModalHeader: ({ title }: any) => <h2>{title}</h2>,
 }));
 
-jest.mock('@/app/components/carbon/pagination', () => ({
+jest.mock('@/app/components/ui/primitives/pagination', () => ({
   Pagination: ({ onChange, pageSize }: any) => (
     <button onClick={() => onChange({ page: 2, pageSize })}>Next page</button>
   ),

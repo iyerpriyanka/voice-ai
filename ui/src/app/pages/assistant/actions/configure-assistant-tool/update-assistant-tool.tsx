@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { CONFIG } from '@/configs';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { PrimaryButton, SecondaryButton } from '@/app/components/carbon/button';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
 import { ButtonSet } from '@carbon/react';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import {
@@ -11,14 +11,16 @@ import {
   GetDefaultToolConfigIfInvalid,
   GetDefaultToolDefintion,
   ValidateToolDefaultOptions,
-} from '@/app/components/tools';
-import { ToolDefinitionForm } from '@/app/components/tools/common';
-import { GetAssistantTool, UpdateAssistantTool } from '@rapidaai/react';
+} from '@/app/components/domain/tools/tool-registry';
+import { ToolDefinitionForm } from '@/app/components/domain/tools/common';
 import { useParams } from 'react-router-dom';
 import toast from 'react-hot-toast/headless';
-import { useRapidaStore } from '@/hooks';
-import { connectionConfig } from '@/configs';
-import { TabForm } from '@/app/components/form/tab-form';
+import { useRapidaStore } from '@/stores/app';
+import { TabForm } from '@/app/components/ui/composites';
+import {
+  getAssistantToolById,
+  updateAssistantToolById,
+} from '@/clients/assistant.client';
 
 export const UpdateTool: FC<{ assistantId: string }> = ({ assistantId }) => {
   const navigator = useGlobalNavigation();
@@ -74,11 +76,11 @@ export const UpdateTool: FC<{ assistantId: string }> = ({ assistantId }) => {
 
   useEffect(() => {
     showLoader();
-    GetAssistantTool(
-      connectionConfig,
+    getAssistantToolById({
       assistantId,
-      assistantToolId!,
-      (err, res) => {
+      toolId: assistantToolId!,
+      auth: { projectId, token, userId: authId },
+      callback: (err, res) => {
         hideLoader();
         if (err) {
           toast.error('Unable to load tool, please try again later.');
@@ -100,12 +102,7 @@ export const UpdateTool: FC<{ assistantId: string }> = ({ assistantId }) => {
           });
         }
       },
-      {
-        'x-auth-id': authId,
-        authorization: token,
-        'x-project-id': projectId,
-      },
-    );
+    });
   }, [assistantId, assistantToolId, authId, token, projectId]);
 
   const isMCP = buildinToolConfig.code === 'mcp';
@@ -153,16 +150,16 @@ export const UpdateTool: FC<{ assistantId: string }> = ({ assistantId }) => {
     }
 
     showLoader();
-    UpdateAssistantTool(
-      connectionConfig,
+    updateAssistantToolById({
       assistantId,
-      assistantToolId!,
-      toolDefinition.name,
-      toolDefinition.description,
-      JSON.parse(toolDefinition.parameters),
-      buildinToolConfig.code,
-      buildinToolConfig.parameters,
-      (err, response) => {
+      toolId: assistantToolId!,
+      name: toolDefinition.name,
+      description: toolDefinition.description,
+      fields: JSON.parse(toolDefinition.parameters),
+      executionMethod: buildinToolConfig.code,
+      executionOptions: buildinToolConfig.parameters,
+      auth: { projectId, token, userId: authId },
+      callback: (err, response) => {
         hideLoader();
         if (err) {
           setErrorMessage(
@@ -186,12 +183,7 @@ export const UpdateTool: FC<{ assistantId: string }> = ({ assistantId }) => {
           );
         }
       },
-      {
-        'x-auth-id': authId,
-        authorization: token,
-        'x-project-id': projectId,
-      },
-    );
+    });
   };
 
   return (

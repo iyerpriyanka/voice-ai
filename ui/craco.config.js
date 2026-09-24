@@ -1,5 +1,8 @@
 const path = require('path');
+const os = require('os');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
+
+const shouldUseAllure = process.env.ALLURE_REPORT === 'true';
 
 module.exports = {
   jest: {
@@ -12,6 +15,22 @@ module.exports = {
         ...(jestConfig.setupFilesAfterEnv || []),
         '<rootDir>/src/setup-tests.ts',
       ];
+      if (shouldUseAllure) {
+        jestConfig.testEnvironment = 'allure-jest/jsdom';
+        jestConfig.testEnvironmentOptions = {
+          ...(jestConfig.testEnvironmentOptions || {}),
+          resultsDir: 'allure-results',
+          environmentInfo: {
+            project: 'rapida.ai ui',
+            testRunner: 'jest',
+            node: process.version,
+            os: `${os.type()} ${os.release()}`,
+          },
+          globalLabels: {
+            layer: 'ui',
+          },
+        };
+      }
       return jestConfig;
     },
   },

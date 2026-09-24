@@ -183,7 +183,7 @@ test('returns deterministic, sorted diagnostics', context => {
   );
   writeFixtureFile(
     repoRoot,
-    'ui/src/app/components/aside/index.tsx',
+    'ui/src/app/components/aside.tsx',
     'const classes = "bg-white";\n',
   );
   writeFixtureFile(

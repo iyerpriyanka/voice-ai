@@ -1,6 +1,6 @@
-import { Helmet } from '@/app/components/helmet';
-import { EmptyState } from '@/app/components/carbon/empty-state';
-import { IconOnlyButton } from '@/app/components/carbon/button';
+import { Helmet } from '@/app/components/app-shell/helmet';
+import { EmptyState } from '@/app/components/ui/feedback';
+import { IconOnlyButton } from '@/app/components/ui/primitives';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import {
@@ -22,36 +22,21 @@ import {
   useState,
 } from 'react';
 import { useParams } from 'react-router-dom';
-import {
-  Assistant,
-  AssistantDefinition,
-  ConnectionConfig,
-  DisableAssistantApiDeployment,
-  DisableAssistantDebuggerDeployment,
-  DisableAssistantPhoneDeployment,
-  DisableAssistantWebpluginDeployment,
-  GetAssistant,
-  GetAssistantDeploymentRequest,
-  GetAssistantRequest,
-} from '@rapidaai/react';
+import { Assistant, GetAssistantDeploymentRequest } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
-import { connectionConfig } from '@/configs';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { toHumanReadableDateTime } from '@/utils/date';
-import { AssistantPhoneCallDeploymentDialog } from '@/app/components/base/modal/assistant-phone-call-deployment-modal';
-import { AssistantDebugDeploymentDialog } from '@/app/components/base/modal/assistant-debug-deployment-modal';
-import { AssistantWebWidgetlDeploymentDialog } from '@/app/components/base/modal/assistant-web-widget-deployment-modal';
-import { AssistantApiDeploymentDialog } from '@/app/components/base/modal/assistant-api-deployment-modal';
+import { AssistantPhoneCallDeploymentDialog } from '@/app/components/dialogs/assistant';
+import { AssistantDebugDeploymentDialog } from '@/app/components/dialogs/assistant';
+import { AssistantWebWidgetlDeploymentDialog } from '@/app/components/dialogs/assistant';
+import { AssistantApiDeploymentDialog } from '@/app/components/dialogs/assistant';
 import {
   AssistantDeploymentType,
   AssistantDeploymentVersionsModal,
-} from '@/app/components/base/modal/assistant-deployment-versions-modal';
-import SourceIndicator from '@/app/components/indicators/source';
-import { RecordStatusIndicator } from '@/app/components/carbon/record-status-indicator';
-import {
-  OverflowMenu,
-  OverflowMenuItem,
-} from '@/app/components/carbon/overflow-menu';
+} from '@/app/components/dialogs/assistant';
+import SourceIndicator from '@/app/components/domain/indicators/source';
+import { RecordStatusIndicator } from '@/app/components/ui/feedback';
+import { OverflowMenu, OverflowMenuItem } from '@/app/components/ui/primitives';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -73,6 +58,10 @@ import {
   RadioButton,
   Tag,
 } from '@carbon/react';
+import {
+  disableAssistantDeploymentByType,
+  getAssistantById,
+} from '@/clients/assistant.client';
 
 type DeploymentType = 'debugger' | 'api' | 'web' | 'phone';
 
@@ -101,19 +90,10 @@ export const ConfigureAssistantDeploymentPage = () => {
     (id: typeof assistantId) => {
       if (id) {
         showLoader('block');
-        const request = new GetAssistantRequest();
-        const assistantDef = new AssistantDefinition();
-        assistantDef.setAssistantid(id);
-        request.setAssistantdefinition(assistantDef);
-        GetAssistant(
-          connectionConfig,
-          request,
-          ConnectionConfig.WithDebugger({
-            authorization: token,
-            userId: authId,
-            projectId: projectId,
-          }),
-        )
+        getAssistantById({
+          assistantId: id,
+          auth: { projectId, token, userId: authId },
+        })
           .then(epmr => {
             hideLoader();
             if (epmr?.getSuccess()) {
@@ -130,7 +110,7 @@ export const ConfigureAssistantDeploymentPage = () => {
           .catch(() => hideLoader());
       }
     },
-    [token, authId, projectId],
+    [authId, hideLoader, projectId, showLoader, token],
   );
 
   useEffect(() => {
@@ -167,19 +147,6 @@ export const ConfigureAssistantDeploymentPage = () => {
       const request = new GetAssistantDeploymentRequest();
       request.setAssistantid(assistantId);
 
-      const auth = ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: authId,
-        projectId,
-      });
-
-      const disableByType = {
-        api: DisableAssistantApiDeployment,
-        debugger: DisableAssistantDebuggerDeployment,
-        phone: DisableAssistantPhoneDeployment,
-        web: DisableAssistantWebpluginDeployment,
-      } as const;
-
       const labelByType = {
         api: 'API',
         debugger: 'Debugger',
@@ -188,11 +155,11 @@ export const ConfigureAssistantDeploymentPage = () => {
       } as const;
 
       try {
-        const response = await disableByType[type](
-          connectionConfig,
+        const response = await disableAssistantDeploymentByType({
           request,
-          auth,
-        );
+          deploymentType: type,
+          auth: { projectId, token, userId: authId },
+        });
         if (response?.getSuccess()) {
           toast.success(`${labelByType[type]} deployment disabled.`);
           setSelectedDeploymentType(null);
@@ -426,7 +393,6 @@ export const ConfigureAssistantDeploymentPage = () => {
             <>
               <TableBatchAction
                 renderIcon={Edit}
-                kind="ghost"
                 onClick={() => {
                   selectedDeployment.onEdit();
                   setSelectedDeploymentType(null);

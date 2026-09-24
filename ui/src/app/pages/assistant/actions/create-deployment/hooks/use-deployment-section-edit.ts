@@ -4,25 +4,15 @@ import {
   AssistantDebuggerDeployment,
   AssistantPhoneDeployment,
   AssistantWebpluginDeployment,
-  ConnectionConfig,
-  CreateAssistantDebuggerDeployment,
-  CreateAssistantApiDeployment,
-  CreateAssistantPhoneDeployment,
-  CreateAssistantWebpluginDeployment,
   CreateAssistantDeploymentRequest,
   DeploymentAudioProvider,
-  GetAssistantDebuggerDeployment,
-  GetAssistantApiDeployment,
-  GetAssistantPhoneDeployment,
-  GetAssistantWebpluginDeployment,
   GetAssistantDeploymentRequest,
   Metadata,
 } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
-import { connectionConfig } from '@/configs';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useAllProviderCredentials } from '@/hooks/use-model';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import {
   DEFAULT_IDEAL_TIMEOUT,
   ExperienceConfig,
@@ -31,16 +21,20 @@ import {
   GetDefaultMicrophoneConfig,
   GetDefaultSpeechToTextIfInvalid,
   ValidateSpeechToTextIfInvalid,
-} from '@/app/components/providers/speech-to-text/provider';
+} from '@/app/components/domain/providers/speech-to-text/provider';
 import {
   GetDefaultSpeakerConfig,
   GetDefaultTextToSpeechIfInvalid,
   ValidateTextToSpeechIfInvalid,
-} from '@/app/components/providers/text-to-speech/provider';
+} from '@/app/components/domain/providers/text-to-speech/provider';
 import {
   GetDefaultTelephonyConfigIfInvalid,
   ValidateTelephonyOptions,
-} from '@/app/components/providers/telephony';
+} from '@/app/components/domain/providers/telephony';
+import {
+  createAssistantDeploymentByType,
+  getAssistantDeploymentByType,
+} from '@/clients/assistant.client';
 
 export type EditSection =
   | 'telephony'
@@ -70,32 +64,6 @@ const DEFAULT_EXPERIENCE: ExperienceConfig = {
   idealMessage: 'Are you there?',
   maxCallDuration: '300',
   idleTimeoutBackoffTimes: '2',
-};
-
-const getDeploymentFetcher = (type: DeploymentType) => {
-  switch (type) {
-    case 'debugger':
-      return GetAssistantDebuggerDeployment;
-    case 'api':
-      return GetAssistantApiDeployment;
-    case 'web':
-      return GetAssistantWebpluginDeployment;
-    case 'phone':
-      return GetAssistantPhoneDeployment;
-  }
-};
-
-const getDeploymentCreator = (type: DeploymentType) => {
-  switch (type) {
-    case 'debugger':
-      return CreateAssistantDebuggerDeployment;
-    case 'api':
-      return CreateAssistantApiDeployment;
-    case 'web':
-      return CreateAssistantWebpluginDeployment;
-    case 'phone':
-      return CreateAssistantPhoneDeployment;
-  }
 };
 
 const DEPLOYMENT_LABELS: Record<DeploymentType, string> = {
@@ -152,16 +120,6 @@ export function useDeploymentSectionEdit(
     experience: { ...DEFAULT_EXPERIENCE },
   });
 
-  const authHeaders = useCallback(
-    () =>
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: authId,
-        projectId,
-      }),
-    [token, authId, projectId],
-  );
-
   const getProviderCredentials = (provider: string) =>
     providerCredentials.filter(c => c.getProvider() === provider);
 
@@ -170,95 +128,96 @@ export function useDeploymentSectionEdit(
       if (!assistantId) return Promise.resolve();
       const request = new GetAssistantDeploymentRequest();
       request.setAssistantid(assistantId);
-      const fetcher = getDeploymentFetcher(type);
-      return fetcher(connectionConfig, request, authHeaders()).then(
-        (response: any) => {
-          const deployment = response?.getData();
-          if (!deployment) return;
+      return getAssistantDeploymentByType({
+        request,
+        deploymentType: type,
+        auth: { projectId, token, userId: authId },
+      }).then((response: any) => {
+        const deployment = response?.getData();
+        if (!deployment) return;
 
-          const fetchedExperience: ExperienceConfig = {
-            greeting: deployment.getGreeting(),
-            greetingInterruptible: deployment.hasGreetinginterruptible?.()
-              ? deployment.getGreetinginterruptible()
-              : true,
-            messageOnError: deployment.getMistake(),
-            unclearInputTimeout: deployment.hasUnclearinputtimeout?.()
-              ? deployment.getUnclearinputtimeout().toString()
-              : undefined,
-            unclearInputMessage: deployment.hasUnclearinputmessage?.()
-              ? deployment.getUnclearinputmessage()
-              : undefined,
-            idealTimeout: deployment.getIdealtimeout(),
-            idealMessage: deployment.getIdealtimeoutmessage(),
-            maxCallDuration: deployment.getMaxsessionduration(),
-            idleTimeoutBackoffTimes: deployment.getIdealtimeoutbackoff(),
-            ...(type === 'web' && deployment.getSuggestionList
-              ? { suggestions: deployment.getSuggestionList() || [] }
-              : {}),
+        const fetchedExperience: ExperienceConfig = {
+          greeting: deployment.getGreeting(),
+          greetingInterruptible: deployment.hasGreetinginterruptible?.()
+            ? deployment.getGreetinginterruptible()
+            : true,
+          messageOnError: deployment.getMistake(),
+          unclearInputTimeout: deployment.hasUnclearinputtimeout?.()
+            ? deployment.getUnclearinputtimeout().toString()
+            : undefined,
+          unclearInputMessage: deployment.hasUnclearinputmessage?.()
+            ? deployment.getUnclearinputmessage()
+            : undefined,
+          idealTimeout: deployment.getIdealtimeout(),
+          idealMessage: deployment.getIdealtimeoutmessage(),
+          maxCallDuration: deployment.getMaxsessionduration(),
+          idleTimeoutBackoffTimes: deployment.getIdealtimeoutbackoff(),
+          ...(type === 'web' && deployment.getSuggestionList
+            ? { suggestions: deployment.getSuggestionList() || [] }
+            : {}),
+        };
+        setExperienceConfig(fetchedExperience);
+
+        let fetchedInputAudio: AudioConfig | undefined;
+        if (deployment.getInputaudio()) {
+          const p = deployment.getInputaudio()!;
+          fetchedInputAudio = {
+            provider: p.getAudioprovider() || 'deepgram',
+            parameters: p.getAudiooptionsList() || [],
           };
-          setExperienceConfig(fetchedExperience);
-
-          let fetchedInputAudio: AudioConfig | undefined;
-          if (deployment.getInputaudio()) {
-            const p = deployment.getInputaudio()!;
-            fetchedInputAudio = {
-              provider: p.getAudioprovider() || 'deepgram',
-              parameters: p.getAudiooptionsList() || [],
-            };
-            setVoiceInputEnable(true);
-            setAudioInputConfig({
-              provider: p.getAudioprovider() || 'deepgram',
-              parameters: GetDefaultSpeechToTextIfInvalid(
-                p.getAudioprovider() || 'deepgram',
-                GetDefaultMicrophoneConfig(p.getAudiooptionsList() || []),
-              ),
-            });
-          } else {
-            setVoiceInputEnable(false);
-          }
-
-          let fetchedOutputAudio: AudioConfig | undefined;
-          if (deployment.getOutputaudio()) {
-            const p = deployment.getOutputaudio()!;
-            fetchedOutputAudio = {
-              provider: p.getAudioprovider() || 'cartesia',
-              parameters: p.getAudiooptionsList() || [],
-            };
-            setVoiceOutputEnable(true);
-            setAudioOutputConfig({
-              provider: p.getAudioprovider() || 'cartesia',
-              parameters: GetDefaultTextToSpeechIfInvalid(
-                p.getAudioprovider() || 'cartesia',
-                GetDefaultSpeakerConfig(p.getAudiooptionsList() || []),
-              ),
-            });
-          } else {
-            setVoiceOutputEnable(false);
-          }
-
-          let fetchedTelephony: TelephonyConfig | undefined;
-          if (type === 'phone' && deployment.getPhoneprovidername?.()) {
-            const provider = deployment.getPhoneprovidername() || '';
-            fetchedTelephony = {
-              provider,
-              parameters: GetDefaultTelephonyConfigIfInvalid(
-                provider,
-                deployment.getPhoneoptionsList?.() || [],
-              ),
-            };
-            setTelephonyConfig(fetchedTelephony);
-          }
-
-          setExistingConfig({
-            experience: fetchedExperience,
-            inputAudio: fetchedInputAudio,
-            outputAudio: fetchedOutputAudio,
-            telephony: fetchedTelephony,
+          setVoiceInputEnable(true);
+          setAudioInputConfig({
+            provider: p.getAudioprovider() || 'deepgram',
+            parameters: GetDefaultSpeechToTextIfInvalid(
+              p.getAudioprovider() || 'deepgram',
+              GetDefaultMicrophoneConfig(p.getAudiooptionsList() || []),
+            ),
           });
-        },
-      );
+        } else {
+          setVoiceInputEnable(false);
+        }
+
+        let fetchedOutputAudio: AudioConfig | undefined;
+        if (deployment.getOutputaudio()) {
+          const p = deployment.getOutputaudio()!;
+          fetchedOutputAudio = {
+            provider: p.getAudioprovider() || 'cartesia',
+            parameters: p.getAudiooptionsList() || [],
+          };
+          setVoiceOutputEnable(true);
+          setAudioOutputConfig({
+            provider: p.getAudioprovider() || 'cartesia',
+            parameters: GetDefaultTextToSpeechIfInvalid(
+              p.getAudioprovider() || 'cartesia',
+              GetDefaultSpeakerConfig(p.getAudiooptionsList() || []),
+            ),
+          });
+        } else {
+          setVoiceOutputEnable(false);
+        }
+
+        let fetchedTelephony: TelephonyConfig | undefined;
+        if (type === 'phone' && deployment.getPhoneprovidername?.()) {
+          const provider = deployment.getPhoneprovidername() || '';
+          fetchedTelephony = {
+            provider,
+            parameters: GetDefaultTelephonyConfigIfInvalid(
+              provider,
+              deployment.getPhoneoptionsList?.() || [],
+            ),
+          };
+          setTelephonyConfig(fetchedTelephony);
+        }
+
+        setExistingConfig({
+          experience: fetchedExperience,
+          inputAudio: fetchedInputAudio,
+          outputAudio: fetchedOutputAudio,
+          telephony: fetchedTelephony,
+        });
+      });
     },
-    [assistantId, authHeaders],
+    [assistantId, authId, projectId, token],
   );
 
   const openEditModal = useCallback(
@@ -444,8 +403,11 @@ export function useDeploymentSectionEdit(
       req.setPhone(d);
     }
 
-    const creator = getDeploymentCreator(type);
-    creator(connectionConfig, req, authHeaders())
+    createAssistantDeploymentByType({
+      request: req,
+      deploymentType: type,
+      auth: { projectId, token, userId: authId },
+    })
       .then((response: any) => {
         if (response?.getData() && response.getSuccess()) {
           toast.success(

@@ -1,4 +1,4 @@
-import { FlexBox } from '@/app/components/container/flex-box';
+import { FlexBox } from '@/app/components/layout/container/flex-box';
 import { useTheme } from '@/theme/theme-provider';
 
 export function PrivacyPage() {

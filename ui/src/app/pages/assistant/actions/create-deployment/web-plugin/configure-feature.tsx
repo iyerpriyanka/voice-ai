@@ -1,6 +1,6 @@
-import { InputCheckbox } from '@/app/components/carbon/form/input-checkbox';
-import { FormLabel } from '@/app/components/form-label';
-import { InputHelper } from '@/app/components/input-helper';
+import { InputCheckbox } from '@/app/components/ui/primitives';
+import { FormLabel } from '@/app/components/ui/primitives';
+import { InputHelper } from '@/app/components/ui/primitives';
 
 export interface FeatureConfig {
   qAListing: boolean;

@@ -1,22 +1,22 @@
 import { useCallback, useState } from 'react';
-import { SpeechToTextProvider } from '@/app/components/providers/speech-to-text';
-import { NoiseCancellationProvider } from '@/app/components/providers/noise-removal';
-import { GetDefaultNoiseCancellationConfig } from '@/app/components/providers/noise-removal/provider';
-import { EndOfSpeechProvider } from '@/app/components/providers/end-of-speech';
+import { SpeechToTextProvider } from '@/app/components/domain/providers/speech-to-text';
+import { NoiseCancellationProvider } from '@/app/components/domain/providers/noise-removal';
+import { GetDefaultNoiseCancellationConfig } from '@/app/components/domain/providers/noise-removal/provider';
+import { EndOfSpeechProvider } from '@/app/components/domain/providers/end-of-speech';
 import { Metadata } from '@rapidaai/react';
 import {
   GetDefaultMicrophoneConfig,
   GetDefaultSpeechToTextIfInvalid,
-} from '@/app/components/providers/speech-to-text/provider';
-import { GetDefaultEOSConfig } from '@/app/components/providers/end-of-speech/provider';
-import { GetDefaultVADConfig } from '@/app/components/providers/vad/provider';
-import { VADProvider } from '@/app/components/providers/vad';
+} from '@/app/components/domain/providers/speech-to-text/provider';
+import { GetDefaultEOSConfig } from '@/app/components/domain/providers/end-of-speech/provider';
+import { GetDefaultVADConfig } from '@/app/components/domain/providers/vad/provider';
+import { VADProvider } from '@/app/components/domain/providers/vad';
 import { ChevronDown } from '@carbon/icons-react';
 import { cn } from '@/utils';
 import {
   BargeInTriggerControl,
   MICROPHONE_BARGE_IN_TRIGGER_KEY,
-} from '@/app/components/providers/microphone/barge-in-trigger-control';
+} from '@/app/components/domain/providers/microphone/barge-in-trigger-control';
 
 interface ConfigureAudioInputProviderProps {
   audioInputConfig: { provider: string; parameters: Metadata[] };

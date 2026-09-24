@@ -1,0 +1,21 @@
+{
+  "items": [
+    {
+      "id": "endpoint-log-1",
+      "endpointId": "endpoint-1",
+      "endpointProviderModelId": "model-1",
+      "source": "web-app",
+      "status": "SUCCESS",
+      "timeTaken": "3000000"
+    },
+    {
+      "id": "endpoint-log-2",
+      "endpointId": "endpoint-1",
+      "endpointProviderModelId": "model-2",
+      "source": "api",
+      "status": "FAILED",
+      "timeTaken": "8000000"
+    }
+  ],
+  "totalCount": 2
+}

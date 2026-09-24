@@ -1,11 +1,11 @@
-import { useAssistantProviderPageStore } from '@/hooks';
+import { useAssistantProviderPageStore } from '@/stores/assistant';
 import { useCredential } from '@/hooks/use-credential';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast/headless';
 import { Assistant, GetAllAssistantProviderResponse } from '@rapidaai/react';
-import { SectionLoader } from '@/app/components/loader/section-loader';
-import { TableSection } from '@/app/components/sections/table-section';
-import { Pagination } from '@/app/components/carbon/pagination';
+import { SectionLoader } from '@/app/components/ui/feedback';
+import { TableSection } from '@/app/components/layout/sections/table-section';
+import { Pagination } from '@/app/components/ui/primitives';
 import { toHumanReadableDateTime } from '@/utils/date';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { auditActorLabel, createdAuditActor } from '@/utils/audit-actor';

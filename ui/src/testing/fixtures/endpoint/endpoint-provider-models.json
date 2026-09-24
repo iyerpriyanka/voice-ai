@@ -1,0 +1,17 @@
+{
+  "items": [
+    {
+      "id": "model-1",
+      "endpointId": "endpoint-1",
+      "version": "v1",
+      "provider": "openai"
+    },
+    {
+      "id": "model-2",
+      "endpointId": "endpoint-1",
+      "version": "v2",
+      "provider": "groq"
+    }
+  ],
+  "totalCount": 2
+}

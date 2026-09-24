@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Helmet } from '@/app/components/helmet';
+import { Helmet } from '@/app/components/app-shell/helmet';
 import { useCredential } from '@/hooks/use-credential';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import toast from 'react-hot-toast/headless';
 import SingleAssistant from './single-assistant';
-import { useAssistantPageStore } from '@/hooks/use-assistant-page-store';
+import { useAssistantPageStore } from '@/stores/assistant/assistant.store';
 import { Assistant } from '@rapidaai/react';
-import { EmptyState } from '@/app/components/carbon/empty-state';
-import { Pagination } from '@/app/components/carbon/pagination';
+import { EmptyState } from '@/app/components/ui/feedback';
+import { Pagination } from '@/app/components/ui/primitives';
 import {
   Add,
   Bot,
@@ -30,10 +30,10 @@ import {
   SkeletonPlaceholder,
   SkeletonText,
 } from '@carbon/react';
-import { PrimaryButton } from '@/app/components/carbon/button';
-import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
-import { PageTitleBlock } from '@/app/components/blocks/page-title-block';
-import { Modal, ModalBody, ModalHeader } from '@/app/components/carbon/modal';
+import { PrimaryButton } from '@/app/components/ui/primitives';
+import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
+import { PageTitleBlock } from '@/app/components/layout/blocks/page-title-block';
+import { Modal, ModalBody, ModalHeader } from '@/app/components/ui/primitives';
 import {
   AssistantQuerySearch,
   getAssistantSearchCriteria,

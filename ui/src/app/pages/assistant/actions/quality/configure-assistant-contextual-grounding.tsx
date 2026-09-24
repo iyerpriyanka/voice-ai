@@ -1,19 +1,19 @@
-import { PageActionButtonBlock } from '@/app/components/blocks/page-action-button-block';
-import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
-import { PageTitleBlock } from '@/app/components/blocks/page-title-block';
-import { FormLabel } from '@/app/components/form-label';
+import { PageActionButtonBlock } from '@/app/components/layout/blocks/page-action-button-block';
+import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
+import { PageTitleBlock } from '@/app/components/layout/blocks/page-title-block';
+import { FormLabel } from '@/app/components/ui/primitives';
 import {
   PrimaryButton,
   TertiaryButton,
   GhostButton,
-} from '@/app/components/carbon/button';
-import { FieldSet } from '@/app/components/form/fieldset';
-import { Input } from '@/app/components/form/input';
-import { Select } from '@/app/components/form/select';
-import { Slider } from '@/app/components/form/slider';
-import { SwitchWithLabel } from '@/app/components/form/switch';
-import { InputGroup } from '@/app/components/input-group';
-import { InputHelper } from '@/app/components/input-helper';
+} from '@/app/components/ui/primitives';
+import { FieldSet } from '@/app/components/ui/primitives';
+import { Input } from '@/app/components/ui/primitives';
+import { Select } from '@/app/components/ui/primitives';
+import { Slider } from '@/app/components/ui/primitives';
+import { SwitchWithLabel } from '@/app/components/ui/primitives';
+import { InputGroup } from '@/app/components/ui/primitives';
+import { InputHelper } from '@/app/components/ui/primitives';
 import { useState } from 'react';
 
 export const ConfigureAssistantContextualGroundingPage = () => {

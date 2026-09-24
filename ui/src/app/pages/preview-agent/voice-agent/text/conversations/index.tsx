@@ -1,6 +1,6 @@
-import { Tooltip } from '@/app/components/base/tooltip';
-import { BrandedLogo } from '@/app/components/brand/branded-logo';
-import { TextImage } from '@/app/components/text-image';
+import { FloatingTooltip as Tooltip } from '@/app/components/ui/primitives';
+import { BrandedLogo } from '@/app/components/layout/brand/branded-logo';
+import { TextImage } from '@/app/components/ui/primitives';
 import { toHumanReadableRelativeTimeFromDate } from '@/utils/date';
 import {
   Feedback,
@@ -14,7 +14,7 @@ import {
 import { FC, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useCurrentCredential } from '@/hooks/use-credential';
-import { MessageFeedbackDialog } from '@/app/components/base/modal/message-feedback-modal';
+import { MessageFeedbackDialog } from '@/app/components/dialogs/shared/message-feedback-modal';
 import MarkdownPreview from '@uiw/react-markdown-preview';
 import { cn } from '@/utils';
 import { useTheme } from '@/theme/theme-provider';

@@ -7,7 +7,7 @@ jest.mock('@/utils/loadable', () => ({
   lazyLoad: (...args: any[]) => mockLazyLoad(...args),
 }));
 
-jest.mock('@/app/components/loader/page-loader', () => ({
+jest.mock('@/app/components/ui/feedback/loaders/page-loader', () => ({
   PageLoader: () => <div data-testid="page-loader" />,
 }));
 

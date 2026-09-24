@@ -1,21 +1,21 @@
 import { useParams } from 'react-router-dom';
 import { useCallback, useEffect, useState } from 'react';
 import { useCredential } from '@/hooks/use-credential';
-import { useRapidaStore } from '@/hooks/use-rapida-store';
+import { useRapidaStore } from '@/stores/app';
 import { KnowledgeDocument } from '@rapidaai/react';
-import { useCreateKnowledgeDocumentPageStore } from '@/hooks/use-create-knowledge-document-page-store';
-import { PrimaryButton, SecondaryButton } from '@/app/components/carbon/button';
+import { useCreateKnowledgeDocumentPageStore } from '@/stores/knowledge/create-knowledge-document.store';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
 import { ButtonSet } from '@carbon/react';
 import { ManualFile } from '@/app/pages/knowledge-base/action/components/datasource-uploader/manual-file';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { ErrorMessage } from '@/app/components/form/error-message';
+import { ErrorMessage } from '@/app/components/ui/feedback/error-message';
 import { RapidaDocumentType } from '@/utils/rapida_document';
-import { ArrowLeft, UploadIcon } from 'lucide-react';
-import { Select } from '@/app/components/form/select';
-import { Helmet } from '@/app/components/helmet';
-import { FormLabel } from '@/app/components/form-label';
-import { DocNoticeBlock } from '@/app/components/container/message/notice-block/doc-notice-block';
-import { SectionDivider } from '@/app/components/blocks/section-divider';
+import { ArrowLeft } from '@carbon/icons-react';
+import { Select } from '@/app/components/ui/primitives';
+import { Helmet } from '@/app/components/app-shell/helmet';
+import { FormLabel } from '@/app/components/ui/primitives';
+import { DocNoticeBlock } from '@/app/components/layout/container/message/notice-block/doc-notice-block';
+import { SectionDivider } from '@/app/components/layout/blocks/section-divider';
 
 export function CreateKnowledgeStructureDocumentPage() {
   const { id } = useParams();
@@ -84,7 +84,7 @@ export function CreateKnowledgeStructureDocumentPage() {
           className="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary transition-colors"
           onClick={goBack}
         >
-          <ArrowLeft className="w-4 h-4" strokeWidth={1.5} />
+          <ArrowLeft className="w-4 h-4" />
           Back to knowledge
         </button>
       </div>

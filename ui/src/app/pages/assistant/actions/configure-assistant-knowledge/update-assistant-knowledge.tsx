@@ -1,38 +1,34 @@
-import {
-  GetAssistantKnowledge,
-  UpdateAssistantKnowledge,
-} from '@rapidaai/react';
-import { Card } from '@/app/components/base/cards';
-import { PageActionButtonBlock } from '@/app/components/blocks/page-action-button-block';
-import { KnowledgeDropdown } from '@/app/components/dropdown/knowledge-dropdown';
-import { FormLabel } from '@/app/components/form-label';
-import { PrimaryButton, GhostButton } from '@/app/components/carbon/button';
-import CheckboxCard from '@/app/components/form/checkbox-card';
-import { FieldSet } from '@/app/components/form/fieldset';
-import { Input } from '@/app/components/form/input';
-import { Slider } from '@/app/components/form/slider';
-import { SwitchWithLabel } from '@/app/components/form/switch';
-import { HybridSearchIcon } from '@/app/components/Icon/hybrid-search';
-import { TextSearchIcon } from '@/app/components/Icon/text-search';
-import { VectorSearchIcon } from '@/app/components/Icon/vector-search';
-import { InputHelper } from '@/app/components/input-helper';
+import { Card } from '@/app/components/ui/primitives';
+import { PageActionButtonBlock } from '@/app/components/layout/blocks/page-action-button-block';
+import { KnowledgeDropdown } from '@/app/components/domain/dropdowns/knowledge-dropdown';
+import { FormLabel } from '@/app/components/ui/primitives';
+import { PrimaryButton, GhostButton } from '@/app/components/ui/primitives';
+import { CheckboxCard } from '@/app/components/ui/primitives';
+import { FieldSet } from '@/app/components/ui/primitives';
+import { Input } from '@/app/components/ui/primitives';
+import { Slider } from '@/app/components/ui/primitives';
+import { SwitchWithLabel } from '@/app/components/ui/primitives';
+import { InputHelper } from '@/app/components/ui/primitives';
 import {
   GetDefaultRerankerConfigIfInvalid,
   RerankerProvider,
-} from '@/app/components/providers/reranker';
-import { Tooltip } from '@/app/components/tooltip';
+} from '@/app/components/domain/providers/reranker';
+import { Tooltip } from '@/app/components/ui/primitives';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { RETRIEVE_METHOD } from '@/models/datasets';
 import { cn } from '@/utils';
 import { retrieveMethodFromString } from '@/utils';
-import { InfoIcon } from 'lucide-react';
+import { DataBase, Information, ModelAlt, Search } from '@carbon/icons-react';
 import { FC, useEffect, useState } from 'react';
 import toast from 'react-hot-toast/headless';
 import { useParams } from 'react-router-dom';
-import { connectionConfig } from '@/configs';
+import {
+  getAssistantKnowledgeLinkById,
+  updateAssistantKnowledgeLink,
+} from '@/clients/assistant.client';
 
 export const UpdateKnowledge: FC<{ assistantId: string }> = ({
   assistantId,
@@ -78,11 +74,11 @@ export const UpdateKnowledge: FC<{ assistantId: string }> = ({
 
   useEffect(() => {
     showLoader();
-    GetAssistantKnowledge(
-      connectionConfig,
+    getAssistantKnowledgeLinkById({
       assistantId,
-      assistantKnowledgeId!,
-      (err, res) => {
+      assistantKnowledgeId: assistantKnowledgeId!,
+      auth: { projectId, token, userId: authId },
+      callback: (err, res) => {
         hideLoader();
         if (err) {
           toast.error('Unable to assistant knowledge, please try again later.');
@@ -104,12 +100,7 @@ export const UpdateKnowledge: FC<{ assistantId: string }> = ({
           }
         }
       },
-      {
-        'x-auth-id': authId,
-        authorization: token,
-        'x-project-id': projectId,
-      },
-    );
+    });
   }, [assistantId, assistantKnowledgeId, authId, token, projectId]);
 
   const onSubmit = async (e: React.FormEvent) => {
@@ -117,18 +108,18 @@ export const UpdateKnowledge: FC<{ assistantId: string }> = ({
     if (!validateForm()) return;
 
     try {
-      UpdateAssistantKnowledge(
-        connectionConfig,
-        assistantKnowledgeId!,
+      updateAssistantKnowledgeLink({
+        assistantKnowledgeId: assistantKnowledgeId!,
         assistantId,
         knowledgeId,
-        {
+        retrievalOptions: {
           searchMethod: searchType,
           topK: topK,
           scoreThreshold: scoreThreshold,
           rerankingEnable: false,
         },
-        (err, response) => {
+        auth: { projectId, token, userId: authId },
+        callback: (err, response) => {
           if (err) {
             setErrorMessage(
               'Unable to update assistant knowledge, please check and try again.',
@@ -155,12 +146,7 @@ export const UpdateKnowledge: FC<{ assistantId: string }> = ({
             );
           }
         },
-        {
-          'x-auth-id': authId,
-          authorization: token,
-          'x-project-id': projectId,
-        },
-      );
+      });
     } catch (error) {
       setErrorMessage('Failed to configure webhook. Please try again.');
       console.error('Error configuring webhook:', error);
@@ -200,7 +186,7 @@ export const UpdateKnowledge: FC<{ assistantId: string }> = ({
                 >
                   <Card className="p-3 flex flex-row space-x-3 bg-light-background">
                     <div className="rounded-[2px] flex items-center justify-center bg-blue-200/30 dark:bg-blue-200/10 shrink-0 h-10 w-10">
-                      <HybridSearchIcon className="text-blue-600" />
+                      <DataBase className="text-blue-600" />
                     </div>
                     <div className="flex flex-col">
                       <span className="font-medium text-[14px]">
@@ -224,7 +210,7 @@ export const UpdateKnowledge: FC<{ assistantId: string }> = ({
                 >
                   <Card className="p-3 flex flex-row space-x-3 bg-light-background">
                     <div className="rounded-[2px] flex items-center justify-center bg-blue-200/30 dark:bg-blue-200/10 shrink-0 h-10 w-10">
-                      <VectorSearchIcon className="text-blue-600" />
+                      <ModelAlt className="text-blue-600" />
                     </div>
                     <div className="flex flex-col">
                       <span className="font-medium text-[14px]">
@@ -247,7 +233,7 @@ export const UpdateKnowledge: FC<{ assistantId: string }> = ({
                 >
                   <Card className="p-3 flex flex-row space-x-3 bg-light-background">
                     <div className="rounded-[2px] flex items-center justify-center bg-blue-200/30 dark:bg-blue-200/10 shrink-0 h-10 w-10">
-                      <TextSearchIcon className="text-blue-600" />
+                      <Search className="text-blue-600" />
                     </div>
                     <div className="flex flex-col">
                       <span className="font-medium text-[14px]">
@@ -267,7 +253,7 @@ export const UpdateKnowledge: FC<{ assistantId: string }> = ({
               <FieldSet className="flex justify-between">
                 <FormLabel htmlFor="top_k">
                   Top K
-                  <Tooltip icon={<InfoIcon className="w-4 h-4 ml-1" />}>
+                  <Tooltip icon={<Information className="w-4 h-4 ml-1" />}>
                     <p className={cn('font-normal text-sm p-1 w-64')}>
                       Used to filter chunks that are most similar to user
                       questions. The system will also dynamically adjust the
@@ -300,7 +286,7 @@ export const UpdateKnowledge: FC<{ assistantId: string }> = ({
               <FieldSet className="flex justify-between">
                 <FormLabel htmlFor="score_threshold">
                   Score Threshold
-                  <Tooltip icon={<InfoIcon className="w-4 h-4 ml-1" />}>
+                  <Tooltip icon={<Information className="w-4 h-4 ml-1" />}>
                     <p className={cn('font-normal text-sm p-1 w-64')}>
                       Used to filter chunks that are most similar to user
                       questions. The system will also dynamically adjust the
@@ -356,7 +342,8 @@ export const UpdateKnowledge: FC<{ assistantId: string }> = ({
         </div>
       </div>
       <PageActionButtonBlock errorMessage={errorMessage}>
-        <GhostButton size="md"
+        <GhostButton
+          size="md"
           onClick={() => showDialog(navigator.goBack)}
           type="button"
         >

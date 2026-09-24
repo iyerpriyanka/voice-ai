@@ -1,18 +1,17 @@
 import React, { useCallback, useContext, useState } from 'react';
-import { Helmet } from '@/app/components/helmet';
+import { Helmet } from '@/app/components/app-shell/helmet';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { CreateProject } from '@rapidaai/react';
 import { CreateProjectResponse } from '@rapidaai/react';
 import { useCurrentCredential } from '@/hooks/use-credential';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { ServiceError } from '@rapidaai/react';
 import { AuthContext } from '@/context/auth-context';
-import { connectionConfig } from '@/configs';
-import { Stack, TextInput, TextArea } from '@/app/components/carbon/form';
-import { PrimaryButton } from '@/app/components/carbon/button';
-import { Notification } from '@/app/components/carbon/notification';
+import { Stack, TextInput, TextArea } from '@/app/components/ui/primitives';
+import { PrimaryButton } from '@/app/components/ui/primitives';
+import { Notification } from '@/app/components/ui/feedback';
 import { ArrowRight } from '@carbon/icons-react';
+import { createWorkspaceProject } from '@/clients';
 
 export function CreateProjectPage() {
   const navigate = useNavigate();
@@ -33,7 +32,8 @@ export function CreateProjectPage() {
         authorize &&
           authorize(
             () => navigate('/dashboard'),
-            () => setError('Unable to create project. Please check the details.'),
+            () =>
+              setError('Unable to create project. Please check the details.'),
           );
       } else {
         setError('Unable to create project. Please check the details.');
@@ -44,20 +44,21 @@ export function CreateProjectPage() {
 
   const onCreateProject = data => {
     showLoader('overlay');
-    CreateProject(
-      connectionConfig,
-      data.projectName,
-      data.projectDescription,
-      { authorization: token, 'x-auth-id': authId },
-      afterCreateProject,
-    );
+    createWorkspaceProject({
+      name: data.projectName,
+      description: data.projectDescription,
+      auth: { token, userId: authId },
+      callback: afterCreateProject,
+    });
   };
 
   return (
     <>
       <Helmet title="Onboarding: Create a Project" />
       <div className="mb-4">
-        <h1 className="text-xl font-light tracking-tight">Create your first project</h1>
+        <h1 className="text-xl font-light tracking-tight">
+          Create your first project
+        </h1>
         <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
           Projects help you separate client accounts, brands, regions, or
           internal product teams.

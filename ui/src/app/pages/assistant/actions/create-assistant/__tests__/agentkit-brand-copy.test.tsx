@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import { CreateAgentKit } from '../create-agentkit';
@@ -102,7 +102,7 @@ jest.mock('react-router-dom', () => ({
 
 jest.mock('@/configs', () => ({ connectionConfig: {} }));
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/stores/app', () => ({
   useRapidaStore: () => ({
     loading: false,
     showLoader: mockShowLoader,
@@ -141,7 +141,7 @@ jest.mock('@/app/pages/assistant/actions/hooks/use-confirmation', () => ({
   }),
 }));
 
-jest.mock('@/app/components/form/tab-form', () => ({
+jest.mock('@/app/components/ui/composites/tab-form', () => ({
   TabForm: ({ activeTab, errorMessage, form, formHeading }: any) => {
     const active = form.find((item: any) => item.code === activeTab) ?? form[0];
     return (
@@ -164,7 +164,7 @@ jest.mock('@/app/components/form/tab-form', () => ({
   },
 }));
 
-jest.mock('@/app/components/carbon/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   PrimaryButton: ({ children, isLoading: _isLoading, ...props }: any) => (
     <button {...props}>{children}</button>
   ),
@@ -187,32 +187,41 @@ jest.mock('@carbon/react', () => ({
   ToggletipContent: ({ children }: any) => <span>{children}</span>,
 }));
 
-jest.mock('@carbon/icons-react', () => ({
-  ChevronDown: () => <span />,
-  Information: () => <span />,
-}));
+jest.mock('@carbon/icons-react', () => {
+  const Icon =
+    (testId: string) =>
+    ({ className, size, strokeWidth }: any) => (
+      <svg
+        className={className}
+        data-size={size}
+        data-stroke-width={strokeWidth}
+        data-testid={testId}
+      />
+    );
 
-jest.mock('lucide-react', () => ({
-  Bug: () => <span />,
-  ChevronRight: () => <span />,
-  Code: () => <span />,
-  ExternalLink: () => <span />,
-  Globe: () => <span />,
-  Info: () => <span />,
-  PhoneCall: () => <span />,
-}));
+  return {
+    ChevronDown: Icon('chevron-down-icon'),
+    ChevronRight: Icon('chevron-right-icon'),
+    Code: Icon('code-icon'),
+    Debug: Icon('debug-icon'),
+    Globe: Icon('globe-icon'),
+    Information: Icon('information-icon'),
+    Launch: Icon('launch-icon'),
+    Phone: Icon('phone-icon'),
+  };
+});
 
-jest.mock('@/app/components/helmet', () => ({ Helmet: () => null }));
-jest.mock('@/app/components/form/fieldset', () => ({
+jest.mock('@/app/components/app-shell/helmet', () => ({ Helmet: () => null }));
+jest.mock('@/app/components/ui/primitives/fieldset', () => ({
   FieldSet: ({ children }: any) => <div>{children}</div>,
 }));
-jest.mock('@/app/components/form-label', () => ({
+jest.mock('@/app/components/ui/primitives/form-label', () => ({
   FormLabel: ({ children }: any) => <label>{children}</label>,
 }));
-jest.mock('@/app/components/form/input', () => ({
+jest.mock('@/app/components/ui/primitives/input', () => ({
   Input: (props: any) => <input {...props} />,
 }));
-jest.mock('@/app/components/form/select', () => ({
+jest.mock('@/app/components/ui/primitives/select', () => ({
   Select: ({ options = [], ...props }: any) => (
     <select {...props}>
       {options.map((option: { name: string; value: string }) => (
@@ -223,35 +232,37 @@ jest.mock('@/app/components/form/select', () => ({
     </select>
   ),
 }));
-jest.mock('@/app/components/form/textarea', () => ({
+jest.mock('@/app/components/ui/primitives/textarea', () => ({
   Textarea: (props: any) => <textarea {...props} />,
 }));
-jest.mock('@/app/components/form/tag-input', () => ({ TagInput: () => null }));
-jest.mock('@/app/components/form/tag-input/assistant-tags', () => ({
+jest.mock('@/app/components/ui/composites/tag-input', () => ({
+  TagInput: () => null,
+}));
+jest.mock('@/app/components/domain/tags/assistant-tags', () => ({
   AssistantTag: [],
 }));
 jest.mock(
-  '@/app/components/container/message/notice-block/doc-notice-block',
+  '@/app/components/layout/container/message/notice-block/doc-notice-block',
   () => ({
     DocNoticeBlock: ({ children }: any) => <div>{children}</div>,
   }),
 );
-jest.mock('@/app/components/container/message/notice-block', () => ({
+jest.mock('@/app/components/layout/container/message/notice-block', () => ({
   YellowNoticeBlock: ({ children }: any) => <div>{children}</div>,
 }));
-jest.mock('@/app/components/external-api/api-parameter', () => ({
+jest.mock('@/app/components/domain/external-api/api-parameter', () => ({
   APiParameter: () => null,
 }));
-jest.mock('@/app/components/input-helper', () => ({
+jest.mock('@/app/components/ui/primitives/input-helper', () => ({
   InputHelper: ({ children }: any) => <div>{children}</div>,
 }));
-jest.mock('@/app/components/form/editor/code-editor', () => ({
+jest.mock('@/app/components/ui/editor/code-editor', () => ({
   CodeEditor: (props: any) => <textarea {...props} />,
 }));
-jest.mock('@/app/components/blocks/section-divider', () => ({
+jest.mock('@/app/components/layout/blocks/section-divider', () => ({
   SectionDivider: ({ label }: any) => <div>{label}</div>,
 }));
-jest.mock('@/app/components/error-container', () => ({
+jest.mock('@/app/components/ui/feedback/error-container', () => ({
   ErrorContainer: ({ code, title }: any) => (
     <div>
       <span>{code}</span>
@@ -344,6 +355,14 @@ describe('AgentKit brand copy', () => {
     expect(document.body).toHaveTextContent(
       'where your Acme Voice AgentKit is running',
     );
+    expect(document.body).toHaveTextContent('Show advanced settings');
+    expect(screen.getByTestId('chevron-down-icon')).toHaveAttribute(
+      'data-size',
+      '16',
+    );
+    expect(screen.getByTestId('chevron-down-icon')).not.toHaveAttribute(
+      'data-stroke-width',
+    );
     expect(document.body).not.toHaveTextContent('Rapida AgentKit');
   });
 
@@ -352,6 +371,12 @@ describe('AgentKit brand copy', () => {
 
     expect(document.body).toHaveTextContent(
       'Connect your external AI agent to Acme Voice using a WebSocket endpoint.',
+    );
+    expect(screen.getByTestId('information-icon')).not.toHaveAttribute(
+      'data-stroke-width',
+    );
+    expect(screen.getByTestId('launch-icon')).not.toHaveAttribute(
+      'data-stroke-width',
     );
     expect(document.body).not.toHaveTextContent('Rapida');
   });

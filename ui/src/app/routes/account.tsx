@@ -1,5 +1,5 @@
-import { MissionBox } from '@/app/components/container/mission-box';
-import { ProtectedBox } from '@/app/components/container/protected-box';
+import { MissionBox } from '@/app/components/layout/container/mission-box';
+import { ProtectedBox } from '@/app/components/layout/container/protected-box';
 import { AccountSettingPage } from '@/app/pages/user';
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';

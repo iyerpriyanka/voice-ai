@@ -1,5 +1,5 @@
-import ConfigSelect from '@/app/components/configuration/config-var/config-select';
-import { TextInput, TextArea, Stack } from '@/app/components/carbon/form';
+import ConfigSelect from '@/app/components/domain/configuration/config-var/config-select';
+import { TextInput, TextArea, Stack } from '@/app/components/ui/primitives';
 import {
   DEFAULT_IDEAL_TIMEOUT,
   DEFAULT_UNCLEAR_INPUT_MESSAGE,

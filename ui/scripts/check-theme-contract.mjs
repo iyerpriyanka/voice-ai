@@ -11,21 +11,21 @@ export const DEFAULT_REPO_ROOT = resolve(
 );
 
 export const SHELL_CONTRACTS = Object.freeze({
-  'ui/src/app/components/aside/index.tsx': [
+  'ui/src/app/components/layout/aside.tsx': [
     'bg-shell',
     'text-foreground',
     'border-border-subtle',
   ],
-  'ui/src/app/components/navigation/actionable-header/index.tsx': [
+  'ui/src/app/components/layout/navigation/actionable-header.tsx': [
     'bg-shell',
     'text-foreground',
     'border-border-subtle',
   ],
-  'ui/src/app/components/navigation/header/index.tsx': [
+  'ui/src/app/components/layout/navigation/header.tsx': [
     'bg-shell',
     'border-border-subtle',
   ],
-  'ui/src/app/components/navigation/sidebar/index.tsx': [
+  'ui/src/app/components/layout/navigation/sidebar.tsx': [
     'border-border-subtle',
     'text-muted',
     'text-foreground',
@@ -67,11 +67,12 @@ export const BRAND_LITERAL_ALLOWLIST = Object.freeze({
     reason:
       'legacy icon component definition, not tenant-visible branding by itself',
   },
-  'ui/src/app/components/integration-document/endpoint-integration.tsx': {
-    literals: ['Rapida', 'rapida'],
-    reason:
-      'SDK package and client class names are external developer API identifiers',
-  },
+  'ui/src/app/components/domain/integration-document/endpoint-integration.tsx':
+    {
+      literals: ['Rapida', 'rapida'],
+      reason:
+        'SDK package and client class names are external developer API identifiers',
+    },
   'ui/src/app/pages/static-pages/terms.tsx': {
     literals: ['Rapida.AI', 'support@rapida.ai'],
     reason: 'terms of service must identify the Rapida legal entity',
@@ -86,11 +87,11 @@ export const BRAND_LITERAL_ALLOWLIST = Object.freeze({
       reason:
         'legacy conversation role value is mapped to a tenant-neutral display label',
     },
-  'ui/src/app/components/base/modal/assistant-instruction-modal/index.tsx': {
+  'ui/src/app/components/dialogs/assistant/assistant-instruction-modal.tsx': {
     literals: ['cdn-01.rapida.ai'],
     reason: 'web widget script URL is a deployment snippet asset source',
   },
-  'ui/src/app/components/base/modal/assistant-web-widget-deployment-modal/index.tsx':
+  'ui/src/app/components/dialogs/assistant/assistant-web-widget-deployment-modal.tsx':
     {
       literals: ['cdn-01.rapida.ai'],
       reason: 'web widget script URL is a deployment snippet asset source',
@@ -192,7 +193,7 @@ const walkFiles = directory => {
 const isBrandScanFile = sourcePath => {
   if (
     sourcePath.includes('/__tests__/') ||
-    sourcePath.includes('/components/providers/') ||
+    sourcePath.includes('/components/domain/providers/') ||
     /\.(?:test|spec)\.[cm]?[jt]sx?$/.test(sourcePath)
   ) {
     return false;

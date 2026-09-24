@@ -5,7 +5,7 @@ import {
   WebWidgetExperienceConfig,
 } from '@/app/pages/assistant/actions/create-deployment/web-plugin/configure-experience';
 import { DEFAULT_IDEAL_TIMEOUT } from '@/app/pages/assistant/actions/create-deployment/commons/configure-experience';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { useAllProviderCredentials } from '@/hooks/use-model';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
@@ -13,33 +13,33 @@ import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   AssistantWebpluginDeployment,
-  ConnectionConfig,
   CreateAssistantDeploymentRequest,
-  CreateAssistantWebpluginDeployment,
   DeploymentAudioProvider,
   GetAssistantDeploymentRequest,
   Metadata,
 } from '@rapidaai/react';
-import { GetAssistantWebpluginDeployment } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
-import { Helmet } from '@/app/components/helmet';
+import { Helmet } from '@/app/components/app-shell/helmet';
 import {
   GetDefaultMicrophoneConfig,
   GetDefaultSpeechToTextIfInvalid,
   ValidateSpeechToTextIfInvalid,
-} from '@/app/components/providers/speech-to-text/provider';
+} from '@/app/components/domain/providers/speech-to-text/provider';
 import {
   GetDefaultSpeakerConfig,
   GetDefaultTextToSpeechIfInvalid,
   ValidateTextToSpeechIfInvalid,
-} from '@/app/components/providers/text-to-speech/provider';
-import { connectionConfig } from '@/configs';
+} from '@/app/components/domain/providers/text-to-speech/provider';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
-import { Tabs } from '@/app/components/carbon/tabs';
-import { PrimaryButton, SecondaryButton } from '@/app/components/carbon/button';
-import { InputCheckbox } from '@/app/components/carbon/form/input-checkbox';
+import { Tabs } from '@/app/components/ui/primitives';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
+import { InputCheckbox } from '@/app/components/ui/primitives';
 import { ButtonSet, CheckboxGroup } from '@carbon/react';
-import { Notification } from '@/app/components/carbon/notification';
+import { Notification } from '@/app/components/ui/feedback';
+import {
+  createAssistantDeploymentByType,
+  getAssistantDeploymentByType,
+} from '@/clients/assistant.client';
 
 const EDIT_TABS = [
   { code: 'experience', name: 'Experience' },
@@ -118,15 +118,11 @@ const EditAssistantWebDeployment: FC<{ assistantId: string }> = ({
     showLoader('block');
     const req = new GetAssistantDeploymentRequest();
     req.setAssistantid(assistantId);
-    GetAssistantWebpluginDeployment(
-      connectionConfig,
-      req,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: authId,
-        projectId,
-      }),
-    )
+    getAssistantDeploymentByType({
+      request: req,
+      deploymentType: 'web',
+      auth: { projectId, token, userId: authId },
+    })
       .then(response => {
         hideLoader();
         const deployment = response?.getData();
@@ -295,15 +291,11 @@ const EditAssistantWebDeployment: FC<{ assistantId: string }> = ({
     }
 
     req.setPlugin(webDeployment);
-    CreateAssistantWebpluginDeployment(
-      connectionConfig,
-      req,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: authId,
-        projectId,
-      }),
-    )
+    createAssistantDeploymentByType({
+      request: req,
+      deploymentType: 'web',
+      auth: { projectId, token, userId: authId },
+    })
       .then(response => {
         if (response?.getData() && response.getSuccess()) {
           toast.success('Web widget deployment updated successfully.');

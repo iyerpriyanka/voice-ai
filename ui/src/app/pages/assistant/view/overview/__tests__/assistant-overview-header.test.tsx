@@ -7,7 +7,7 @@ import { Overview } from '@/app/pages/assistant/view/overview';
 const mockGoToCreateAssistantVersion = jest.fn();
 let mockLoading = false;
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/stores/app', () => ({
   useRapidaStore: () => ({
     loading: mockLoading,
   }),
@@ -20,11 +20,11 @@ jest.mock('@/hooks/use-global-navigator', () => ({
   }),
 }));
 
-jest.mock('@/app/components/loader/section-loader', () => ({
+jest.mock('@/app/components/ui/feedback/loaders/section-loader', () => ({
   SectionLoader: () => <div>Loading section</div>,
 }));
 
-jest.mock('@/app/components/carbon/notification', () => ({
+jest.mock('@/app/components/ui/feedback/notification', () => ({
   LinkNotification: ({ title }: any) => <div>{title}</div>,
 }));
 

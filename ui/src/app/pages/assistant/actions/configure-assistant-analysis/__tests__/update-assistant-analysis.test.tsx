@@ -139,7 +139,7 @@ jest.mock('@/app/pages/assistant/actions/hooks/use-confirmation', () => ({
   }),
 }));
 
-jest.mock('@/app/components/dropdown/endpoint-dropdown', () => ({
+jest.mock('@/app/components/domain/dropdowns/endpoint-dropdown', () => ({
   EndpointDropdown: ({ onChangeEndpoint }: any) => (
     <button
       type="button"
@@ -154,7 +154,7 @@ jest.mock('@/app/components/dropdown/endpoint-dropdown', () => ({
   ),
 }));
 
-jest.mock('@/app/components/form/tab-form', () => ({
+jest.mock('@/app/components/ui/composites/tab-form', () => ({
   TabForm: ({ form, activeTab, errorMessage, formHeading }: any) => {
     const React = require('react');
     const active = form.find((f: any) => f.code === activeTab) || form[0];
@@ -175,7 +175,7 @@ jest.mock('@/app/components/form/tab-form', () => ({
   },
 }));
 
-jest.mock('@/app/components/carbon/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   TertiaryButton: ({ children, ...props }: any) => (
     <button {...props}>{children}</button>
   ),
@@ -184,7 +184,7 @@ jest.mock('@/app/components/carbon/button', () => ({
   ),
 }));
 
-jest.mock('@/app/components/carbon/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   PrimaryButton: ({ children, renderIcon: _renderIcon, ...props }: any) => (
     <button {...props}>{children}</button>
   ),
@@ -196,7 +196,7 @@ jest.mock('@/app/components/carbon/button', () => ({
   ),
 }));
 
-jest.mock('@/app/components/carbon/form', () => ({
+jest.mock('@/app/components/ui/primitives/form', () => ({
   Stack: ({ children }: any) => <div>{children}</div>,
   TextInput: ({
     id,
@@ -254,6 +254,15 @@ jest.mock('@carbon/react', () => ({
     </div>
   ),
   SelectItem: ({ value, text }: any) => <option value={value}>{text}</option>,
+  Table: ({ children }: any) => <table>{children}</table>,
+  TableBody: ({ children }: any) => <tbody>{children}</tbody>,
+  TableCell: ({ children, colSpan }: any) => (
+    <td colSpan={colSpan}>{children}</td>
+  ),
+  TableContainer: ({ children }: any) => <section>{children}</section>,
+  TableHead: ({ children }: any) => <thead>{children}</thead>,
+  TableHeader: ({ children }: any) => <th>{children}</th>,
+  TableRow: ({ children }: any) => <tr>{children}</tr>,
   Tooltip: ({ children }: any) => <span>{children}</span>,
   Button: ({
     children,
@@ -279,19 +288,19 @@ jest.mock('@carbon/react', () => ({
   ),
 }));
 
-jest.mock('@/app/components/form/fieldset', () => ({
+jest.mock('@/app/components/ui/primitives/fieldset', () => ({
   FieldSet: ({ children }: any) => <div>{children}</div>,
 }));
 
-jest.mock('@/app/components/form-label', () => ({
+jest.mock('@/app/components/ui/primitives/form-label', () => ({
   FormLabel: ({ children }: any) => <label>{children}</label>,
 }));
 
-jest.mock('@/app/components/form/input', () => ({
+jest.mock('@/app/components/ui/primitives/input', () => ({
   Input: ({ ...props }: any) => <input {...props} />,
 }));
 
-jest.mock('@/app/components/form/select', () => ({
+jest.mock('@/app/components/ui/primitives/select', () => ({
   Select: ({ options = [], value, onChange }: any) => (
     <select value={value} onChange={onChange}>
       {options.map((o: any) => (
@@ -303,22 +312,16 @@ jest.mock('@/app/components/form/select', () => ({
   ),
 }));
 
-jest.mock('@/app/components/form/textarea', () => ({
+jest.mock('@/app/components/ui/primitives/textarea', () => ({
   Textarea: ({ ...props }: any) => <textarea {...props} />,
 }));
 
-jest.mock('@/app/components/input-helper', () => ({
+jest.mock('@/app/components/ui/primitives/input-helper', () => ({
   InputHelper: ({ children }: any) => <span>{children}</span>,
 }));
 
-jest.mock('@/app/components/blocks/section-divider', () => ({
+jest.mock('@/app/components/layout/blocks/section-divider', () => ({
   SectionDivider: ({ label }: any) => <h3>{label}</h3>,
-}));
-
-jest.mock('lucide-react', () => ({
-  ArrowRight: () => <span>arrow-right</span>,
-  Plus: () => <span>plus</span>,
-  Trash2: () => <span>trash</span>,
 }));
 
 describe('UpdateAssistantAnalysis', () => {

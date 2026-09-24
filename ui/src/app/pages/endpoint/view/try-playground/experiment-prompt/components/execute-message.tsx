@@ -1,10 +1,8 @@
 import { Metric } from '@rapidaai/react';
-import { ExclamationTriangleIcon } from '@/app/components/Icon/exclamation-triangle';
-import { PlayIcon } from '@/app/components/Icon/Play';
-import { TickIcon } from '@/app/components/Icon/Tick';
-import { PlainWrapper } from '@/app/components/wrapper/alert-wrapper';
+import { PlainWrapper } from '@/app/components/layout/wrapper/alert-wrapper';
 import { cn } from '@/utils';
 import { Loading } from '@carbon/react';
+import { Checkmark, Play, WarningAlt } from '@carbon/icons-react';
 import React, { FC } from 'react';
 import { FieldErrors } from 'react-hook-form';
 
@@ -26,7 +24,7 @@ export const ExecuteMessage: FC<{
   if (apiError)
     return (
       <PlainWrapper className={className}>
-        <ExclamationTriangleIcon className="w-5 h-5 text-red-600 dark:text-red-700" />
+        <WarningAlt className="w-5 h-5 text-red-600 dark:text-red-700" />
         <div className="text-sm text-red-600">{apiError}</div>
       </PlainWrapper>
     );
@@ -34,7 +32,7 @@ export const ExecuteMessage: FC<{
   if (formError && Object.entries(formError).length > 0)
     return (
       <PlainWrapper className={className}>
-        <ExclamationTriangleIcon className="w-5 h-5 text-red-600 dark:text-red-700" />
+        <WarningAlt className="w-5 h-5 text-red-600 dark:text-red-700" />
         <ul className="text-sm text-red-600">
           {Object.entries(formError).map(([key, error]) => (
             <li key={key}>{error?.message?.toString()}</li>
@@ -45,14 +43,14 @@ export const ExecuteMessage: FC<{
   if (metrics.length > 0) {
     return (
       <PlainWrapper className={className}>
-        <TickIcon className="w-5 h-5 text-green-600 dark:text-green-700" />
+        <Checkmark className="w-5 h-5 text-green-600 dark:text-green-700" />
         <div className="text-sm font-medium">Executed successfully.</div>
       </PlainWrapper>
     );
   }
   return (
     <PlainWrapper>
-      <PlayIcon className="w-5 h-5 text-blue-600 dark:text-blue-700" />
+      <Play className="w-5 h-5 text-blue-600 dark:text-blue-700" />
       <div className="text-sm font-medium">
         Click on the button to execute endpoint.
       </div>

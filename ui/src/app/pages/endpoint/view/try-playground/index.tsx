@@ -1,7 +1,7 @@
 import { Endpoint, EndpointProviderModel } from '@rapidaai/react';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import { TryChatComplete } from '@/app/pages/endpoint/view/try-playground/experiment-prompt/try-chat-complete';
-import { Helmet } from '@/app/components/helmet';
+import { Helmet } from '@/app/components/app-shell/helmet';
 import { Launch } from '@carbon/icons-react';
 import { useDocumentationUrl } from '@/theme/documentation-url';
 

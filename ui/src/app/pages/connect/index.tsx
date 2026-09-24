@@ -1,5 +1,5 @@
 import { lazyLoad } from '@/utils/loadable';
-import { LineLoader } from '@/app/components/loader/line-loader';
+import { LineLoader } from '@/app/components/ui/feedback';
 
 export const ConnectGoogleDriveKnowledge = lazyLoad(
   () => import('./connect-knowledge/google-drive'),

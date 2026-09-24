@@ -1,15 +1,12 @@
 import { Endpoint, EndpointProviderModel } from '@rapidaai/react';
-import { useEndpointProviderModelPageStore } from '@/hooks';
-import { useRapidaStore } from '@/hooks';
+import { useEndpointProviderModelPageStore } from '@/stores/endpoint';
+import { useRapidaStore } from '@/stores/app';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast/headless';
-import {
-  toHumanReadableDateTime,
-  toHumanReadableRelativeTime,
-} from '@/utils/date';
-import { TableSection } from '@/app/components/sections/table-section';
-import { Pagination } from '@/app/components/carbon/pagination';
+import { toHumanReadableDateTime } from '@/utils/date';
+import { TableSection } from '@/app/components/layout/sections/table-section';
+import { Pagination } from '@/app/components/ui/primitives';
 import IconIndicator from '@carbon/react/es/components/IconIndicator';
 import { auditActorLabel, createdAuditActor } from '@/utils/audit-actor';
 import {
@@ -28,7 +25,7 @@ import {
   RadioButton,
 } from '@carbon/react';
 import { Copy, Checkmark, Rocket, Renew } from '@carbon/icons-react';
-import { EmptyState } from '@/app/components/carbon/empty-state';
+import { EmptyState } from '@/app/components/ui/feedback';
 
 const headers = [
   { key: 'description', header: 'Description' },

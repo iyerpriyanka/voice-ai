@@ -32,11 +32,11 @@ import {
   Paginate,
 } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
-import { Helmet } from '@/app/components/helmet';
-import { EmptyState } from '@/app/components/carbon/empty-state';
-import { Pagination } from '@/app/components/carbon/pagination';
-import { ScrollableTableSection } from '@/app/components/sections/table-section';
-import { CopyButton } from '@/app/components/carbon/button/copy-button';
+import { Helmet } from '@/app/components/app-shell/helmet';
+import { EmptyState } from '@/app/components/ui/feedback';
+import { Pagination } from '@/app/components/ui/primitives';
+import { ScrollableTableSection } from '@/app/components/layout/sections/table-section';
+import { CopyButton } from '@/app/components/ui/primitives';
 import { connectionConfig } from '@/configs';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import {

@@ -8,7 +8,7 @@ import {
 } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { ConfigureAssistantWebhookPage } from '@/app/pages/assistant/actions/configure-assistant-webhook';
-import { useAssistantWebhookPageStore } from '@/app/pages/assistant/actions/store/use-webhook-page-store';
+import { useAssistantWebhookPageStore } from '@/stores/assistant/actions';
 
 const mockGetAssistantWebhook = jest.fn();
 const mockDeleteAssistantWebhook = jest.fn();
@@ -31,7 +31,7 @@ jest.mock('@/hooks/use-global-navigator', () => ({
   }),
 }));
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/stores/app', () => ({
   useRapidaStore: () => ({
     loading: false,
     showLoader: mockShowLoader,
@@ -39,20 +39,20 @@ jest.mock('@/hooks', () => ({
   }),
 }));
 
-jest.mock('@/app/components/loader/section-loader', () => ({
+jest.mock('@/app/components/ui/feedback/loaders/section-loader', () => ({
   SectionLoader: () => <div>loading</div>,
 }));
 
-jest.mock('@/app/components/sections/table-section', () => ({
+jest.mock('@/app/components/layout/sections/table-section', () => ({
   TableSection: ({ children }: any) => <div>{children}</div>,
   ScrollableTableSection: ({ children }: any) => <div>{children}</div>,
 }));
 
-jest.mock('@/app/components/carbon/empty-state', () => ({
+jest.mock('@/app/components/ui/feedback/empty-state', () => ({
   EmptyState: ({ title }: any) => <div>{title}</div>,
 }));
 
-jest.mock('@/app/components/carbon/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   IconOnlyButton: ({
     children,
     renderIcon: _renderIcon,
@@ -64,7 +64,7 @@ jest.mock('@/app/components/carbon/button', () => ({
   ),
 }));
 
-jest.mock('@/app/components/carbon/pagination', () => ({
+jest.mock('@/app/components/ui/primitives/pagination', () => ({
   Pagination: ({ onChange, pageSize }: any) => (
     <div>
       <button

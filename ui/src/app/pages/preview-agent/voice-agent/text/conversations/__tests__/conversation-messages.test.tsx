@@ -32,11 +32,11 @@ jest.mock('@uiw/react-markdown-preview', () => ({
   default: ({ source }: { source: string }) => <div>{source}</div>,
 }));
 
-jest.mock('@/app/components/base/tooltip', () => ({
+jest.mock('@/app/components/ui/primitives/floating-tooltip', () => ({
   Tooltip: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-jest.mock('@/app/components/base/modal/message-feedback-modal', () => ({
+jest.mock('@/app/components/dialogs/shared/message-feedback-modal', () => ({
   MessageFeedbackDialog: () => null,
 }));
 

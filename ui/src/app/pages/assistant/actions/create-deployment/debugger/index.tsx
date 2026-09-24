@@ -7,7 +7,7 @@ import {
 } from '@/app/pages/assistant/actions/create-deployment/commons/configure-experience';
 import { ConfigureAudioOutputProvider } from '@/app/pages/assistant/actions/create-deployment/commons/configure-audio-output';
 import { ConfigureAudioInputProvider } from '@/app/pages/assistant/actions/create-deployment/commons/configure-audio-input';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { useAllProviderCredentials } from '@/hooks/use-model';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
@@ -15,37 +15,37 @@ import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import {
   AssistantDebuggerDeployment,
-  ConnectionConfig,
-  CreateAssistantDebuggerDeployment,
   CreateAssistantDeploymentRequest,
   DeploymentAudioProvider,
   GetAssistantDeploymentRequest,
   Metadata,
 } from '@rapidaai/react';
-import { GetAssistantDebuggerDeployment } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
-import { Helmet } from '@/app/components/helmet';
+import { Helmet } from '@/app/components/app-shell/helmet';
 import {
   GetDefaultMicrophoneConfig,
   GetDefaultSpeechToTextIfInvalid,
   ValidateSpeechToTextIfInvalid,
-} from '@/app/components/providers/speech-to-text/provider';
+} from '@/app/components/domain/providers/speech-to-text/provider';
 import {
   GetDefaultSpeakerConfig,
   GetDefaultTextToSpeechIfInvalid,
   ValidateTextToSpeechIfInvalid,
-} from '@/app/components/providers/text-to-speech/provider';
-import { connectionConfig } from '@/configs';
+} from '@/app/components/domain/providers/text-to-speech/provider';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
-import { DebuggerDeploymentSuccessDialog } from '@/app/components/base/modal/debugger-deployment-success-modal';
-import { TabForm } from '@/app/components/form/tab-form';
+import { DebuggerDeploymentSuccessDialog } from '@/app/components/dialogs/assistant';
+import { TabForm } from '@/app/components/ui/composites';
 import {
   PrimaryButton,
   SecondaryButton,
   GhostButton,
-} from '@/app/components/carbon/button';
+} from '@/app/components/ui/primitives';
 import { ButtonSet, CheckboxGroup } from '@carbon/react';
-import { InputCheckbox } from '@/app/components/carbon/form/input-checkbox';
+import { InputCheckbox } from '@/app/components/ui/primitives';
+import {
+  createAssistantDeploymentByType,
+  getAssistantDeploymentByType,
+} from '@/clients/assistant.client';
 
 type SectionCode = 'experience' | 'stt' | 'tts';
 type ExistingDebuggerConfig = {
@@ -170,15 +170,11 @@ const ConfigureAssistantDebuggerDeployment: FC<{ assistantId: string }> = ({
     showLoader('block');
     const request = new GetAssistantDeploymentRequest();
     request.setAssistantid(assistantId);
-    GetAssistantDebuggerDeployment(
-      connectionConfig,
+    getAssistantDeploymentByType({
       request,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        projectId,
-        userId: authId,
-      }),
-    )
+      deploymentType: 'debugger',
+      auth: { projectId, token, userId: authId },
+    })
       .then(response => {
         hideLoader();
         const deployment = response?.getData();
@@ -408,15 +404,11 @@ const ConfigureAssistantDebuggerDeployment: FC<{ assistantId: string }> = ({
     const req = new CreateAssistantDeploymentRequest();
     req.setDebugger(deployment);
 
-    CreateAssistantDebuggerDeployment(
-      connectionConfig,
-      req,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: authId,
-        projectId,
-      }),
-    )
+    createAssistantDeploymentByType({
+      request: req,
+      deploymentType: 'debugger',
+      auth: { projectId, token, userId: authId },
+    })
       .then(response => {
         if (response?.getData() && response.getSuccess()) {
           if (isSectionMode) {

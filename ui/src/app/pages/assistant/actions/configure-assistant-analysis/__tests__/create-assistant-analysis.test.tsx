@@ -103,7 +103,7 @@ jest.mock('@/app/pages/assistant/actions/hooks/use-confirmation', () => ({
   }),
 }));
 
-jest.mock('@/app/components/dropdown/endpoint-dropdown', () => ({
+jest.mock('@/app/components/domain/dropdowns/endpoint-dropdown', () => ({
   EndpointDropdown: ({ onChangeEndpoint }: any) => (
     <button
       type="button"
@@ -118,7 +118,7 @@ jest.mock('@/app/components/dropdown/endpoint-dropdown', () => ({
   ),
 }));
 
-jest.mock('@/app/components/form/tab-form', () => ({
+jest.mock('@/app/components/ui/composites/tab-form', () => ({
   TabForm: ({ form, activeTab, errorMessage, formHeading }: any) => {
     const React = require('react');
     const active = form.find((f: any) => f.code === activeTab) || form[0];
@@ -139,7 +139,7 @@ jest.mock('@/app/components/form/tab-form', () => ({
   },
 }));
 
-jest.mock('@/app/components/carbon/form', () => ({
+jest.mock('@/app/components/ui/primitives/form', () => ({
   Stack: ({ children }: any) => <div>{children}</div>,
   TextInput: ({
     labelText: _l,
@@ -163,7 +163,7 @@ jest.mock('@/app/components/carbon/form', () => ({
   }: any) => <textarea {...props} />,
 }));
 
-jest.mock('@/app/components/carbon/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   PrimaryButton: ({
     children,
     isLoading: _,
@@ -203,6 +203,15 @@ jest.mock('@carbon/react', () => ({
     <select {...props}>{children}</select>
   ),
   SelectItem: ({ value, text }: any) => <option value={value}>{text}</option>,
+  Table: ({ children }: any) => <table>{children}</table>,
+  TableBody: ({ children }: any) => <tbody>{children}</tbody>,
+  TableCell: ({ children, colSpan }: any) => (
+    <td colSpan={colSpan}>{children}</td>
+  ),
+  TableContainer: ({ children }: any) => <section>{children}</section>,
+  TableHead: ({ children }: any) => <thead>{children}</thead>,
+  TableHeader: ({ children }: any) => <th>{children}</th>,
+  TableRow: ({ children }: any) => <tr>{children}</tr>,
   Tooltip: ({ children }: any) => <span>{children}</span>,
   NumberInput: ({
     label,

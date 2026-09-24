@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import { SingleEndpoint } from '@/app/pages/endpoint/listing/single-endpoint';
-import { useEndpointPageStore } from '@/hooks/use-endpoint-page-store';
+import { useEndpointPageStore } from '@/stores/endpoint/endpoint.store';
 
 const mockNavigate = jest.fn();
 const mockWriteText = jest.fn();
@@ -30,23 +30,23 @@ jest.mock('@carbon/react', () => ({
   ),
 }));
 
-jest.mock('@/app/components/carbon/record-status-indicator', () => ({
+jest.mock('@/app/components/ui/feedback/record-status-indicator', () => ({
   RecordStatusIndicator: ({ state }: any) => <span>Status: {state}</span>,
 }));
 
-jest.mock('@/app/components/carbon/provider-tag', () => ({
+jest.mock('@/app/components/domain/provider-tag', () => ({
   ProviderTag: ({ provider }: any) => <span>Provider: {provider}</span>,
 }));
 
-jest.mock('@/app/components/indicators/version', () => ({
+jest.mock('@/app/components/domain/indicators/version', () => ({
   VersionIndicator: ({ id }: any) => <span>Version: vrsn_{id}</span>,
 }));
 
-jest.mock('@/app/components/carbon/button/copy-button', () => ({
+jest.mock('@/app/components/ui/primitives/buttons/copy-button', () => ({
   CopyButton: ({ children }: any) => <button>Copy {children}</button>,
 }));
 
-jest.mock('@/app/components/carbon/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   IconOnlyButton: ({ iconDescription, onClick }: any) => (
     <button aria-label={iconDescription} onClick={onClick}>
       {iconDescription}
@@ -80,7 +80,11 @@ const makeEndpoint = ({
       getId: () => 'model-1',
       getStatus: () => 'DEPLOYED',
       getModelprovidername: () => 'openai',
-      getCreatedactor: () => ({ getType: () => 'user', getId: () => '42', getDisplayname: () => 'Prashant' }),
+      getCreatedactor: () => ({
+        getType: () => 'user',
+        getId: () => '42',
+        getDisplayname: () => 'Prashant',
+      }),
     }),
     getEndpointanalytics: () => ({
       getCount: () => totalCount,

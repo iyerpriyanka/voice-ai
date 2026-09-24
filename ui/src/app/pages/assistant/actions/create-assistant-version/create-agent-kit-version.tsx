@@ -1,9 +1,9 @@
 import { FC, useEffect, useState } from 'react';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { useCredential } from '@/hooks/use-credential';
 import { useParams } from 'react-router-dom';
-import { Helmet } from '@/app/components/helmet';
-import { PrimaryButton, SecondaryButton } from '@/app/components/carbon/button';
+import { Helmet } from '@/app/components/app-shell/helmet';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
 import {
   ButtonSet,
   Slider,
@@ -12,30 +12,26 @@ import {
   ToggletipContent,
 } from '@carbon/react';
 import { ChevronDown, Information } from '@carbon/icons-react';
-import { TabForm } from '@/app/components/form/tab-form';
-import { FieldSet } from '@/app/components/form/fieldset';
+import { TabForm } from '@/app/components/ui/composites';
+import { FieldSet } from '@/app/components/ui/primitives';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import {
-  AssistantDefinition,
-  ConnectionConfig,
-  CreateAssistantProvider,
-  CreateAssistantProviderRequest,
-  GetAssistantProviderResponse,
-  GetAssistantRequest,
-} from '@rapidaai/react';
-import { FormLabel } from '@/app/components/form-label';
-import { Textarea } from '@/app/components/form/textarea';
-import { ErrorContainer } from '@/app/components/error-container';
-import { GetAssistant } from '@rapidaai/react';
-import { connectionConfig } from '@/configs';
-import { DocNoticeBlock } from '@/app/components/container/message/notice-block/doc-notice-block';
-import { Input } from '@/app/components/form/input';
-import { Select } from '@/app/components/form/select';
-import { APiParameter } from '@/app/components/external-api/api-parameter';
-import { CodeEditor } from '@/app/components/form/editor/code-editor';
+import { CreateAssistantProviderRequest } from '@rapidaai/react';
+import type { GetAssistantProviderResponse } from '@rapidaai/react';
+import { FormLabel } from '@/app/components/ui/primitives';
+import { Textarea } from '@/app/components/ui/primitives';
+import { ErrorContainer } from '@/app/components/ui/feedback';
+import { DocNoticeBlock } from '@/app/components/layout/container/message/notice-block/doc-notice-block';
+import { Input } from '@/app/components/ui/primitives';
+import { Select } from '@/app/components/ui/primitives';
+import { APiParameter } from '@/app/components/domain/external-api/api-parameter';
+import { CodeEditor } from '@/app/components/ui/editor/code-editor';
 import toast from 'react-hot-toast/headless';
 import { useTheme } from '@/theme/theme-provider';
+import {
+  createAssistantProviderFromRequest,
+  getAssistantById,
+} from '@/clients/assistant.client';
 
 const TRANSPORT_SECURITY_OPTIONS = [
   { name: 'Default', value: '' },
@@ -275,10 +271,9 @@ const CreateNewVersion: FC<{ assistantId: string }> = ({ assistantId }) => {
     request.setAgentkit(agentKit);
     request.setAssistantid(assistantId);
     request.setDescription(versionMessage);
-    CreateAssistantProvider(connectionConfig, request, {
-      authorization: token,
-      'x-auth-id': userId,
-      'x-project-id': projectId,
+    createAssistantProviderFromRequest({
+      request,
+      auth: { projectId, token, userId },
     })
       .then((car: GetAssistantProviderResponse) => {
         hideLoader();
@@ -308,19 +303,10 @@ const CreateNewVersion: FC<{ assistantId: string }> = ({ assistantId }) => {
 
   useEffect(() => {
     showLoader();
-    const request = new GetAssistantRequest();
-    const assistantDef = new AssistantDefinition();
-    assistantDef.setAssistantid(assistantId);
-    request.setAssistantdefinition(assistantDef);
-    GetAssistant(
-      connectionConfig,
-      request,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: userId,
-        projectId: projectId,
-      }),
-    )
+    getAssistantById({
+      assistantId,
+      auth: { projectId, token, userId },
+    })
       .then(response => {
         hideLoader();
         if (response?.getSuccess()) {

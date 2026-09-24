@@ -4,16 +4,16 @@ import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { toHumanReadableDateTime } from '@/utils/date';
 import { Add, Renew, ChartLine } from '@carbon/icons-react';
 import { useCurrentCredential } from '@/hooks/use-credential';
-import { useRapidaStore } from '@/hooks';
-import { SectionLoader } from '@/app/components/loader/section-loader';
+import { useRapidaStore } from '@/stores/app';
+import { SectionLoader } from '@/app/components/ui/feedback';
 import toast from 'react-hot-toast/headless';
-import { EmptyState } from '@/app/components/carbon/empty-state';
+import { EmptyState } from '@/app/components/ui/feedback';
 import { CreateAssistantAnalysis } from '@/app/pages/assistant/actions/configure-assistant-analysis/create-assistant-analysis';
-import { useAssistantAnalysisPageStore } from '@/app/pages/assistant/actions/store/use-analysis-page-store';
+import { useAssistantAnalysisPageStore } from '@/stores/assistant/actions';
 import { UpdateAssistantAnalysis } from '@/app/pages/assistant/actions/configure-assistant-analysis/update-assistant-analysis';
-import { IconOnlyButton, PrimaryButton } from '@/app/components/carbon/button';
-import { RecordStatusIndicator } from '@/app/components/carbon/record-status-indicator';
-import { Pagination } from '@/app/components/carbon/pagination';
+import { IconOnlyButton, PrimaryButton } from '@/app/components/ui/primitives';
+import { RecordStatusIndicator } from '@/app/components/ui/feedback';
+import { Pagination } from '@/app/components/ui/primitives';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -34,7 +34,7 @@ import {
   OverflowMenu,
   OverflowMenuItem,
 } from '@carbon/react';
-import { TableSection } from '@/app/components/sections/table-section';
+import { TableSection } from '@/app/components/layout/sections/table-section';
 
 const getAnalysisOptionMap = (row: any): Map<string, string> => {
   const map = new Map<string, string>();
@@ -230,7 +230,9 @@ const ConfigureAssistantAnalysis: FC<{ assistantId: string }> = ({
             Cancel
           </Button>
           <Button
-            kind={pendingAnalysisAction?.kind === 'enable' ? 'primary' : 'danger'}
+            kind={
+              pendingAnalysisAction?.kind === 'enable' ? 'primary' : 'danger'
+            }
             size="md"
             onClick={() => {
               if (!pendingAnalysisAction) return;

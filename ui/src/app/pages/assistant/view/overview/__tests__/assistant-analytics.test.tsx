@@ -3,9 +3,8 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 const mockGoToAssistantSessionList = jest.fn();
-const mockGetAssistantDashboard = jest.fn();
+const mockGetAssistantDashboardRange = jest.fn();
 const mockToastError = jest.fn();
-const mockDashboardRequestInstances: any[] = [];
 let mockCredential = {
   authId: 'auth-1',
   token: 'token-1',
@@ -77,8 +76,9 @@ jest.mock('@/hooks/use-credential', () => ({
   useCurrentCredential: () => mockCredential,
 }));
 
-jest.mock('@/configs', () => ({
-  connectionConfig: {},
+jest.mock('@/clients/assistant.client', () => ({
+  getAssistantDashboardRange: (...args: unknown[]) =>
+    mockGetAssistantDashboardRange(...args),
 }));
 
 jest.mock('recharts', () => {
@@ -99,11 +99,11 @@ jest.mock('recharts', () => {
   };
 });
 
-jest.mock('@/app/components/carbon/dropdown', () => ({
+jest.mock('@/app/components/ui/primitives/dropdown', () => ({
   Dropdown: ({ label }: any) => <div>{label}</div>,
 }));
 
-jest.mock('@/app/components/carbon/tile', () => ({
+jest.mock('@/app/components/ui/primitives/tile', () => ({
   Tile: ({ children }: any) => <div>{children}</div>,
 }));
 
@@ -136,31 +136,6 @@ jest.mock('@carbon/react', () => ({
   ToggletipLabel: ({ children }: any) => <span>{children}</span>,
 }));
 
-jest.mock('@rapidaai/react', () => ({
-  GetAssistantDashboard: (...args: any[]) => mockGetAssistantDashboard(...args),
-  GetAssistantDashboardRequest: class {
-    assistantid = '';
-    fromdate: unknown;
-    todate: unknown;
-
-    constructor() {
-      mockDashboardRequestInstances.push(this);
-    }
-
-    setAssistantid(value: string) {
-      this.assistantid = value;
-    }
-
-    setFromdate(value: unknown) {
-      this.fromdate = value;
-    }
-
-    setTodate(value: unknown) {
-      this.todate = value;
-    }
-  },
-}));
-
 const {
   AssistantAnalytics,
 } = require('@/app/pages/assistant/view/overview/assistant-analytics');
@@ -168,13 +143,12 @@ const {
 describe('AssistantAnalytics sessions toggletip', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockDashboardRequestInstances.length = 0;
     mockCredential = {
       authId: 'auth-1',
       token: 'token-1',
       projectId: 'project-1',
     };
-    mockGetAssistantDashboard.mockResolvedValue({
+    mockGetAssistantDashboardRange.mockResolvedValue({
       getSuccess: () => true,
       getData: () => mockDashboard,
     });
@@ -197,7 +171,7 @@ describe('AssistantAnalytics sessions toggletip', () => {
   });
 
   it('keeps dashboard card structure visible while metrics are loading', () => {
-    mockGetAssistantDashboard.mockReturnValue(new Promise(() => {}));
+    mockGetAssistantDashboardRange.mockReturnValue(new Promise(() => {}));
 
     const assistant = { getId: () => 'assistant-1' } as any;
     render(<AssistantAnalytics assistant={assistant} />);
@@ -244,26 +218,42 @@ describe('AssistantAnalytics sessions toggletip', () => {
     });
   });
 
-  it('loads dashboard using assistant id, date range, and auth headers', async () => {
+  it('loads dashboard using assistant id, date range, and auth context', async () => {
     const assistant = { getId: () => 'assistant-1' } as any;
     render(<AssistantAnalytics assistant={assistant} />);
 
     await waitFor(() => {
-      expect(mockGetAssistantDashboard).toHaveBeenCalled();
+      expect(mockGetAssistantDashboardRange).toHaveBeenCalled();
       expect(screen.getByText('500 tokens used')).toBeInTheDocument();
     });
 
-    expect(mockDashboardRequestInstances[0].assistantid).toBe('assistant-1');
-    expect(mockDashboardRequestInstances[0].fromdate).toBeDefined();
-    expect(mockDashboardRequestInstances[0].todate).toBeDefined();
-    expect(mockGetAssistantDashboard).toHaveBeenCalledWith(
-      {},
-      mockDashboardRequestInstances[0],
-      {
-        authorization: 'token-1',
-        'x-auth-id': 'auth-1',
-        'x-project-id': 'project-1',
-      },
+    expect(mockGetAssistantDashboardRange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        assistantId: 'assistant-1',
+        fromDate: expect.any(Object),
+        toDate: expect.any(Object),
+        auth: {
+          projectId: 'project-1',
+          token: 'token-1',
+          userId: 'auth-1',
+        },
+      }),
+    );
+  });
+
+  it('converts dashboard date range into protobuf timestamps', async () => {
+    const assistant = { getId: () => 'assistant-1' } as any;
+    render(<AssistantAnalytics assistant={assistant} />);
+
+    await waitFor(() => {
+      expect(mockGetAssistantDashboardRange).toHaveBeenCalled();
+    });
+
+    const params = mockGetAssistantDashboardRange.mock.calls[0][0];
+    expect(typeof params.fromDate.getSeconds()).toBe('number');
+    expect(typeof params.toDate.getSeconds()).toBe('number');
+    expect(params.toDate.getSeconds()).toBeGreaterThanOrEqual(
+      params.fromDate.getSeconds(),
     );
   });
 
@@ -277,11 +267,13 @@ describe('AssistantAnalytics sessions toggletip', () => {
     const assistant = { getId: () => 'assistant-1' } as any;
     render(<AssistantAnalytics assistant={assistant} />);
 
-    expect(mockGetAssistantDashboard).not.toHaveBeenCalled();
+    expect(mockGetAssistantDashboardRange).not.toHaveBeenCalled();
   });
 
   it('toasts and shows unavailable state instead of zero metrics when dashboard load fails', async () => {
-    mockGetAssistantDashboard.mockRejectedValue(new Error('network failure'));
+    mockGetAssistantDashboardRange.mockRejectedValue(
+      new Error('network failure'),
+    );
 
     const assistant = { getId: () => 'assistant-1' } as any;
     render(<AssistantAnalytics assistant={assistant} />);

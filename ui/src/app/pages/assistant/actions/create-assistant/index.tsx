@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Helmet } from '@/app/components/helmet';
-import { useRapidaStore } from '@/hooks';
-import { TabForm } from '@/app/components/form/tab-form';
-import { PrimaryButton, SecondaryButton } from '@/app/components/carbon/button';
+import { Helmet } from '@/app/components/app-shell/helmet';
+import { useRapidaStore } from '@/stores/app';
+import { TabForm } from '@/app/components/ui/composites';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
 import {
   ButtonSet,
   Table,
@@ -22,52 +22,55 @@ import {
 } from '@carbon/react';
 import {
   Assistant,
-  ConnectionConfig,
   CreateAssistantProviderRequest,
   CreateAssistantRequest,
-  GetAssistantResponse,
   Metadata,
 } from '@rapidaai/react';
+import type { GetAssistantResponse } from '@rapidaai/react';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useAllProviderCredentials } from '@/hooks/use-model';
-import { ConfigPrompt } from '@/app/components/configuration/config-prompt';
+import { ConfigPrompt } from '@/app/components/domain/configuration/config-prompt';
 import { randomMeaningfullName, randomString } from '@/utils';
-import { TextInput, TextArea, Stack } from '@/app/components/carbon/form';
-import { TagInput } from '@/app/components/form/tag-input';
-import { AssistantTag } from '@/app/components/form/tag-input/assistant-tags';
+import { TextInput, TextArea, Stack } from '@/app/components/ui/primitives';
+import { TagInput } from '@/app/components/ui/composites';
+import { AssistantTag } from '@/app/components/domain/tags/assistant-tags';
 import {
   GetDefaultTextProviderConfigIfInvalid,
   GetDefaultTextProviderConfigOnProviderSwitch,
   TextProvider,
   ValidateTextProviderDefaultOptions,
-} from '@/app/components/providers/text';
-import { BuildinToolConfig } from '@/app/components/tools';
+} from '@/app/components/domain/providers/text';
+import { BuildinToolConfig } from '@/app/components/domain/tools/tool-registry';
 import {
   getToolConditionSource,
   getToolConditionSourceLabel,
-} from '@/app/components/tools/common';
-import { ArrowUpRight } from 'lucide-react';
+} from '@/app/components/domain/tools/common';
 import { BUILDIN_TOOLS } from '@/llm-tools';
-import { EmptyState } from '@/app/components/carbon/empty-state';
-import { ConfigureAssistantToolDialog } from '@/app/components/base/modal/assistant-configure-tool-modal';
-import { DocNoticeBlock } from '@/app/components/container/message/notice-block/doc-notice-block';
-import { CreateAssistant } from '@rapidaai/react';
+import { EmptyState } from '@/app/components/ui/feedback';
+import { ConfigureAssistantToolDialog } from '@/app/components/dialogs/assistant';
+import { DocNoticeBlock } from '@/app/components/layout/container/message/notice-block/doc-notice-block';
 import { CreateAssistantToolRequest } from '@rapidaai/react';
 import { Struct } from 'google-protobuf/google/protobuf/struct_pb';
-import { connectionConfig } from '@/configs';
 import { ChatCompletePrompt } from '@/utils/prompt';
 import toast from 'react-hot-toast/headless';
-import { ConfigureAssistantNextDialog } from '@/app/components/base/modal/assistant-configure-next-modal';
-import { SectionDivider } from '@/app/components/blocks/section-divider';
-import { CornerBorderOverlay } from '@/app/components/base/corner-border';
-import { Add, Edit, ToolKit, TrashCan } from '@carbon/icons-react';
+import { ConfigureAssistantNextDialog } from '@/app/components/dialogs/assistant';
+import { SectionDivider } from '@/app/components/layout/blocks/section-divider';
+import { CornerBorderOverlay } from '@/app/components/ui/primitives';
+import {
+  Add,
+  ArrowUpRight,
+  Edit,
+  ToolKit,
+  TrashCan,
+} from '@carbon/icons-react';
 import {
   AssistantTemplate,
   ConfigureAssistantTemplateDialog,
-} from '@/app/components/base/modal/configure-assistant-template-modal';
+} from '@/app/components/dialogs/assistant';
 import { useTheme } from '@/theme/theme-provider';
+import { createAssistantWithDebuggerFromRequest } from '@/clients/assistant.client';
 
 /**
  *
@@ -261,15 +264,10 @@ export function CreateAssistantPage() {
     request.setName(name);
     request.setTagsList(tags);
     request.setDescription(description);
-    CreateAssistant(
-      connectionConfig,
+    createAssistantWithDebuggerFromRequest({
       request,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: authId,
-        projectId: projectId,
-      }),
-    )
+      auth: { projectId, token, userId: authId },
+    })
       .then((car: GetAssistantResponse) => {
         hideLoader();
         if (car?.getSuccess()) {
@@ -469,7 +467,6 @@ export function CreateAssistantPage() {
                     </div>
                     <ArrowUpRight
                       className="shrink-0 mt-0.5 text-gray-500 dark:text-gray-400 group-hover:text-primary transition-colors"
-                      strokeWidth={1.5}
                       size={16}
                     />
                   </button>

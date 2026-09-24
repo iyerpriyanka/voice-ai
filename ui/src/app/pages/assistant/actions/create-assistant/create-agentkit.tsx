@@ -1,38 +1,42 @@
 import { useState } from 'react';
-import { Helmet } from '@/app/components/helmet';
-import { useRapidaStore } from '@/hooks';
-import { TabForm } from '@/app/components/form/tab-form';
-import { PrimaryButton, SecondaryButton } from '@/app/components/carbon/button';
+import { Helmet } from '@/app/components/app-shell/helmet';
+import { useRapidaStore } from '@/stores/app';
+import { TabForm } from '@/app/components/ui/composites';
+import { PrimaryButton, SecondaryButton } from '@/app/components/ui/primitives';
 import { ButtonSet, Slider } from '@carbon/react';
-import { ChevronDown } from '@carbon/icons-react';
+import {
+  ChevronDown,
+  ChevronRight,
+  Code,
+  Debug,
+  Globe,
+  Phone,
+} from '@carbon/icons-react';
 import {
   Assistant,
   CreateAssistantProviderRequest,
   CreateAssistantRequest,
-  GetAssistantResponse,
 } from '@rapidaai/react';
+import type { GetAssistantResponse } from '@rapidaai/react';
 import { useConfirmDialog } from '@/app/pages/assistant/actions/hooks/use-confirmation';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { randomMeaningfullName } from '@/utils';
-import { FieldSet } from '@/app/components/form/fieldset';
-import { FormLabel } from '@/app/components/form-label';
-import { Input } from '@/app/components/form/input';
-import { Select } from '@/app/components/form/select';
-import { Textarea } from '@/app/components/form/textarea';
-import { TagInput } from '@/app/components/form/tag-input';
-import { AssistantTag } from '@/app/components/form/tag-input/assistant-tags';
-import { Bug, ChevronRight, Code, PhoneCall } from 'lucide-react';
-import { DocNoticeBlock } from '@/app/components/container/message/notice-block/doc-notice-block';
-import { CreateAssistant } from '@rapidaai/react';
-import { connectionConfig } from '@/configs';
-import { Globe } from 'lucide-react';
-import { APiParameter } from '@/app/components/external-api/api-parameter';
-import { InputHelper } from '@/app/components/input-helper';
-import { CodeEditor } from '@/app/components/form/editor/code-editor';
+import { FieldSet } from '@/app/components/ui/primitives';
+import { FormLabel } from '@/app/components/ui/primitives';
+import { Input } from '@/app/components/ui/primitives';
+import { Select } from '@/app/components/ui/primitives';
+import { Textarea } from '@/app/components/ui/primitives';
+import { TagInput } from '@/app/components/ui/composites';
+import { AssistantTag } from '@/app/components/domain/tags/assistant-tags';
+import { DocNoticeBlock } from '@/app/components/layout/container/message/notice-block/doc-notice-block';
+import { APiParameter } from '@/app/components/domain/external-api/api-parameter';
+import { InputHelper } from '@/app/components/ui/primitives';
+import { CodeEditor } from '@/app/components/ui/editor/code-editor';
 import toast from 'react-hot-toast/headless';
-import { SectionDivider } from '@/app/components/blocks/section-divider';
+import { SectionDivider } from '@/app/components/layout/blocks/section-divider';
 import { useTheme } from '@/theme/theme-provider';
+import { createAssistantFromRequest } from '@/clients/assistant.client';
 
 const TRANSPORT_SECURITY_OPTIONS = [
   { name: 'Default', value: '' },
@@ -171,10 +175,9 @@ export function CreateAgentKit() {
     request.setName(name);
     request.setTagsList(tags);
     request.setDescription(description);
-    CreateAssistant(connectionConfig, request, {
-      authorization: token,
-      'x-auth-id': authId,
-      'x-project-id': projectId,
+    createAssistantFromRequest({
+      request,
+      auth: { projectId, token, userId: authId },
     })
       .then((car: GetAssistantResponse) => {
         hideLoader();
@@ -685,10 +688,7 @@ export function CreateAgentKit() {
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 divide-x divide-gray-200 dark:divide-gray-800">
                         <div className="border-y border-gray-200 dark:border-gray-800 grid grid-rows-[1fr_auto]">
                           <div className="px-4 py-2">
-                            <PhoneCall
-                              className="w-6 h-6 opacity-70 mt-4"
-                              strokeWidth={1.5}
-                            />
+                            <Phone className="w-6 h-6 opacity-70 mt-4" />
                             <div className="flex items-center gap-2 mt-4">
                               <h3 className="text-base/7 font-semibold">
                                 Phone call
@@ -712,10 +712,7 @@ export function CreateAgentKit() {
 
                         <div className="border-y border-gray-200 dark:border-gray-800 grid grid-rows-[1fr_auto]">
                           <div className="px-4 py-2">
-                            <Code
-                              className="w-6 h-6 opacity-70 mt-4"
-                              strokeWidth={1.5}
-                            />
+                            <Code className="w-6 h-6 opacity-70 mt-4" />
                             <div className="flex items-center gap-2 mt-4">
                               <h3 className="text-base/7 font-semibold">API</h3>
                             </div>
@@ -737,10 +734,7 @@ export function CreateAgentKit() {
 
                         <div className="border-y border-gray-200 dark:border-gray-800 grid grid-rows-[1fr_auto]">
                           <div className="px-4 py-2">
-                            <Globe
-                              className="w-6 h-6 opacity-70 mt-4"
-                              strokeWidth={1.5}
-                            />
+                            <Globe className="w-6 h-6 opacity-70 mt-4" />
                             <div className="flex items-center gap-2 mt-4">
                               <h3 className="text-base/7 font-semibold">
                                 Web Widget
@@ -765,10 +759,7 @@ export function CreateAgentKit() {
 
                         <div className="border-y border-gray-200 dark:border-gray-800 grid grid-rows-[1fr_auto]">
                           <div className="px-4 py-2">
-                            <Bug
-                              className="w-6 h-6 opacity-70 mt-4"
-                              strokeWidth={1.5}
-                            />
+                            <Debug className="w-6 h-6 opacity-70 mt-4" />
                             <div className="flex items-center gap-2 mt-4">
                               <h3 className="text-base/7 font-semibold">
                                 Debugger / Testing
@@ -809,7 +800,7 @@ export function CreateAgentKit() {
                           conversation transcripts, quality, sentiment, and SOP
                           adherence analysis, custom reporting and dashboards.
                         </div>
-                        <ChevronRight className="w-5 h-5" strokeWidth={1.5} />
+                        <ChevronRight className="w-5 h-5" />
                       </div>
                     </div>
                   </div>
@@ -831,7 +822,7 @@ export function CreateAgentKit() {
                           ended, escalation to a human agent, custom events for
                           analytics or CRM sync.
                         </div>
-                        <ChevronRight className="w-5 h-5" strokeWidth={1.5} />
+                        <ChevronRight className="w-5 h-5" />
                       </div>
                     </div>
                   </div>

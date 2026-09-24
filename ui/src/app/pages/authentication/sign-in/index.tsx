@@ -1,25 +1,24 @@
 import { useState, useContext, useEffect, useCallback } from 'react';
-import { Helmet } from '@/app/components/helmet';
-import { SocialButtonGroup } from '@/app/components/carbon/button/social-button-group';
+import { Helmet } from '@/app/components/app-shell/helmet';
+import { SocialButtonGroup } from '@/app/components/ui/primitives/buttons/social-button-group';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import {
-  AuthenticateResponse,
-  Google,
-  Linkedin,
-  Github,
-  AuthenticateUser,
-} from '@rapidaai/react';
-import { useRapidaStore } from '@/hooks';
+import { AuthenticateResponse } from '@rapidaai/react';
+import { useRapidaStore } from '@/stores/app';
 import { ServiceError } from '@rapidaai/react';
 import { AuthContext } from '@/context/auth-context';
 import { useWorkspace } from '@/workspace';
-import { connectionConfig } from '@/configs';
-import { Stack, TextInput } from '@/app/components/carbon/form';
-import { PrimaryButton } from '@/app/components/carbon/button';
-import { Notification } from '@/app/components/carbon/notification';
+import { Stack, TextInput } from '@/app/components/ui/primitives';
+import { PrimaryButton } from '@/app/components/ui/primitives';
+import { Notification } from '@/app/components/ui/feedback';
 import { ArrowRight } from '@carbon/icons-react';
 import { Link, PasswordInput } from '@carbon/react';
+import {
+  authenticateUser,
+  githubAuth,
+  googleAuth,
+  linkedinAuth,
+} from '@/clients';
 
 export function SignInPage() {
   let navigate = useNavigate();
@@ -60,23 +59,15 @@ export function SignInPage() {
 
   const onAuthenticate = data => {
     showLoader();
-    AuthenticateUser(
-      connectionConfig,
-      data.email,
-      data.password,
-      afterAuthenticate,
-    );
+    authenticateUser(data.email, data.password, afterAuthenticate);
   };
 
   useEffect(() => {
     if (state && code) {
       showLoader();
-      if (state === 'google')
-        Google(connectionConfig, afterAuthenticate, state, code);
-      if (state === 'linkedin')
-        Linkedin(connectionConfig, afterAuthenticate, state, code);
-      if (state === 'github')
-        Github(connectionConfig, afterAuthenticate, state, code);
+      if (state === 'google') googleAuth(afterAuthenticate, state, code);
+      if (state === 'linkedin') linkedinAuth(afterAuthenticate, state, code);
+      if (state === 'github') githubAuth(afterAuthenticate, state, code);
     }
   }, [afterAuthenticate, code, state]);
 

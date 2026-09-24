@@ -1,8 +1,4 @@
 import { useState, useContext, useCallback, useEffect, FC } from 'react';
-import {
-  CreateProjectCredential,
-  GetAllProjectCredential,
-} from '@rapidaai/react';
 import { useCredential, useCurrentCredential } from '@/hooks/use-credential';
 import {
   CreateProjectCredentialResponse,
@@ -10,12 +6,12 @@ import {
   ProjectCredential,
 } from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
-import { Helmet } from '@/app/components/helmet';
-import { EmptyState } from '@/app/components/carbon/empty-state';
+import { Helmet } from '@/app/components/app-shell/helmet';
+import { EmptyState } from '@/app/components/ui/feedback';
 import { AuthContext } from '@/context/auth-context';
-import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
-import { PageTitleBlock } from '@/app/components/blocks/page-title-block';
-import { PageTitleWithCount } from '@/app/components/blocks/page-title-with-count';
+import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
+import { PageTitleBlock } from '@/app/components/layout/blocks/page-title-block';
+import { PageTitleWithCount } from '@/app/components/layout/blocks/page-title-with-count';
 import {
   Add,
   Renew,
@@ -24,14 +20,17 @@ import {
   Copy,
   Checkmark,
 } from '@carbon/icons-react';
-import { connectionConfig } from '@/configs';
 import { toHumanReadableDate } from '@/utils/date';
-import { DocNoticeBlock } from '@/app/components/container/message/notice-block/doc-notice-block';
-import { FieldSet } from '@/app/components/form/fieldset';
-import { FormLabel } from '@/app/components/form-label';
-import { CopyButton } from '@/app/components/carbon/button/copy-button';
-import { GhostButton } from '@/app/components/carbon/button';
-import { BaseCard } from '@/app/components/base/cards';
+import { DocNoticeBlock } from '@/app/components/layout/container/message/notice-block/doc-notice-block';
+import { FieldSet } from '@/app/components/ui/primitives';
+import { FormLabel } from '@/app/components/ui/primitives';
+import { CopyButton } from '@/app/components/ui/primitives';
+import { GhostButton } from '@/app/components/ui/primitives';
+import { BaseCard } from '@/app/components/ui/primitives';
+import {
+  createProjectPublishableCredential,
+  listProjectCredentials,
+} from '@/clients';
 
 /**
  *
@@ -58,16 +57,12 @@ export function ProjectCredentialPage() {
    */
   const onCreateProjectCredential = () => {
     if (!currentProjectRole) return;
-    CreateProjectCredential(
-      connectionConfig,
-      currentProjectRole?.projectid,
-      'publishable key',
-      afterCreateProjectCredential,
-      {
-        authorization: token,
-        'x-auth-id': userId,
-      },
-    );
+    createProjectPublishableCredential({
+      projectId: currentProjectRole.projectid,
+      name: 'publishable key',
+      auth: { token, userId },
+      callback: afterCreateProjectCredential,
+    });
   };
 
   /**
@@ -124,15 +119,11 @@ export function ProjectCredentialPage() {
 
   const getAllProjectCredential = () => {
     if (currentProjectRole)
-      GetAllProjectCredential(
-        connectionConfig,
-        currentProjectRole.projectid,
-        afterGetAllProjectCredential,
-        {
-          authorization: token,
-          'x-auth-id': userId,
-        },
-      );
+      listProjectCredentials({
+        projectId: currentProjectRole.projectid,
+        auth: { token, userId },
+        callback: afterGetAllProjectCredential,
+      });
   };
   /**
    *

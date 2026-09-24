@@ -1,17 +1,17 @@
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { useCredential } from '@/hooks/use-credential';
 import React, { useCallback, useEffect } from 'react';
 import toast from 'react-hot-toast/headless';
-import { BluredWrapper } from '@/app/components/wrapper/blured-wrapper';
-import { SearchIconInput } from '@/app/components/form/input/IconInput';
+import { BluredWrapper } from '@/app/components/layout/wrapper/blured-wrapper';
+import { SearchIconInput } from '@/app/components/ui/composites';
 import { KnowledgeDocument } from '@rapidaai/react';
-import { useKnowledgeDocumentPageStore } from '@/hooks/use-knowledge-document-page-store';
-import { TablePagination } from '@/app/components/base/tables/table-pagination';
+import { useKnowledgeDocumentPageStore } from '@/stores/knowledge/knowledge-document.store';
+import { TablePagination } from '@/app/components/ui/table';
 import { SingleDocument } from '@/app/pages/knowledge-base/view/documents/single-document';
 import { Knowledge } from '@rapidaai/react';
-import { PageLoading } from '@/app/components/carbon/loading';
-import { EmptyState } from '@/app/components/carbon/empty-state';
-import { ScrollableResizableTable } from '@/app/components/data-table';
+import { PageLoading } from '@/app/components/ui/feedback';
+import { EmptyState } from '@/app/components/ui/feedback';
+import { ScrollableResizableTable } from '@/app/components/ui/table';
 
 export function Documents(props: {
   currentKnowledge: Knowledge;
@@ -53,7 +53,7 @@ export function Documents(props: {
       {rapidaContext.loading ? (
         <PageLoading className="h-full grow" />
       ) : knowledgeDocumentAction.documents &&
-      knowledgeDocumentAction.documents.length > 0 ? (
+        knowledgeDocumentAction.documents.length > 0 ? (
         <div className="flex flex-col h-full flex-1">
           <BluredWrapper className="p-0">
             <SearchIconInput className="bg-light-background" />

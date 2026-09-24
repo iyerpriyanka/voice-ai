@@ -1,19 +1,19 @@
 import { useState, useEffect } from 'react';
-import { Helmet } from '@/app/components/helmet';
+import { Helmet } from '@/app/components/app-shell/helmet';
 import { useCredential } from '@/hooks/use-credential';
 import toast from 'react-hot-toast/headless';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import {
   formatNanoToReadableMilli,
   toHumanReadableDateTime,
 } from '@/utils/date';
-import { PageTitleWithCount } from '@/app/components/blocks/page-title-with-count';
-import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
-import { useToolActivityLogPage } from '@/hooks/use-tool-activity-log-page-store';
-import { ToolLogDialog } from '@/app/components/base/modal/tool-log-modal';
-import { CarbonStatusIndicator } from '@/app/components/carbon/status-indicator';
-import { Pagination } from '@/app/components/carbon/pagination';
-import { IconOnlyButton } from '@/app/components/carbon/button';
+import { PageTitleWithCount } from '@/app/components/layout/blocks/page-title-with-count';
+import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
+import { useToolActivityLogPage } from '@/stores/activity/tool-activity-log.store';
+import { ToolLogDialog } from '@/app/components/dialogs/activity';
+import { CarbonStatusIndicator } from '@/app/components/ui/feedback';
+import { Pagination } from '@/app/components/ui/primitives';
+import { IconOnlyButton } from '@/app/components/ui/primitives';
 
 import {
   Table,
@@ -28,8 +28,8 @@ import {
   Link,
 } from '@carbon/react';
 import { Renew, View, Launch, ToolKit } from '@carbon/icons-react';
-import { EmptyState } from '@/app/components/carbon/empty-state';
-import { ScrollableTableSection } from '@/app/components/sections/table-section';
+import { EmptyState } from '@/app/components/ui/feedback';
+import { ScrollableTableSection } from '@/app/components/layout/sections/table-section';
 import { ToolLogQuerySearch } from './tool-query-search';
 
 export function ListingPage() {

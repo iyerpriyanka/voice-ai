@@ -148,7 +148,7 @@ jest.mock('@/app/pages/assistant/actions/hooks/use-confirmation', () => ({
   }),
 }));
 
-jest.mock('@/app/components/input-group', () => ({
+jest.mock('@/app/components/ui/primitives/input-group', () => ({
   InputGroup: ({ title, children }: any) => (
     <section>
       {title ? <div>{title}</div> : null}
@@ -157,23 +157,23 @@ jest.mock('@/app/components/input-group', () => ({
   ),
 }));
 
-jest.mock('@/app/components/conditions/source-condition-rule', () => ({
+jest.mock('@/app/components/domain/conditions/source-condition-rule', () => ({
   SourceConditionRule: () => <div>conditions</div>,
 }));
 
-jest.mock('@/app/components/external-api/api-header', () => ({
+jest.mock('@/app/components/domain/external-api/api-header', () => ({
   APiStringHeader: () => <div>headers</div>,
 }));
 
-jest.mock('@/app/components/carbon/notification', () => ({
+jest.mock('@/app/components/ui/feedback/notification', () => ({
   Notification: ({ subtitle }: any) => <div>{subtitle}</div>,
 }));
 
-jest.mock('@/app/components/carbon/status-indicator', () => ({
+jest.mock('@/app/components/ui/feedback/status-indicator', () => ({
   CarbonStatusIndicator: ({ state }: any) => <span>{state}</span>,
 }));
 
-jest.mock('@/app/components/carbon/overflow-menu', () => ({
+jest.mock('@/app/components/ui/primitives/overflow-menu', () => ({
   OverflowMenu: ({ children }: any) => <div>{children}</div>,
   OverflowMenuItem: ({ itemText, onClick, disabled }: any) => (
     <button disabled={disabled} onClick={onClick}>
@@ -182,7 +182,7 @@ jest.mock('@/app/components/carbon/overflow-menu', () => ({
   ),
 }));
 
-jest.mock('@/app/components/carbon/empty-state', () => ({
+jest.mock('@/app/components/ui/feedback/empty-state', () => ({
   EmptyState: ({
     title,
     subtitle,
@@ -199,15 +199,15 @@ jest.mock('@/app/components/carbon/empty-state', () => ({
   ),
 }));
 
-jest.mock('@/app/components/loader/section-loader', () => ({
+jest.mock('@/app/components/ui/feedback/loaders/section-loader', () => ({
   SectionLoader: () => <div>loading</div>,
 }));
 
-jest.mock('@/app/components/sections/table-section', () => ({
+jest.mock('@/app/components/layout/sections/table-section', () => ({
   TableSection: ({ children }: any) => <div>{children}</div>,
 }));
 
-jest.mock('@/app/components/carbon/form', () => ({
+jest.mock('@/app/components/ui/primitives/form', () => ({
   Stack: ({ children }: any) => <div>{children}</div>,
   TextInput: ({ id, labelText, value, onChange, hideLabel }: any) => (
     <div>
@@ -220,7 +220,7 @@ jest.mock('@/app/components/carbon/form', () => ({
   ),
 }));
 
-jest.mock('@/app/components/carbon/button', () => ({
+jest.mock('@/app/components/ui/primitives/button', () => ({
   PrimaryButton: ({
     children,
     isLoading: _isLoading,
@@ -313,7 +313,7 @@ jest.mock('@carbon/react', () => ({
   Tooltip: ({ children }: any) => <span>{children}</span>,
 }));
 
-jest.mock('@/app/components/carbon/record-status-indicator', () => ({
+jest.mock('@/app/components/ui/feedback/record-status-indicator', () => ({
   RecordStatusIndicator: ({ state }: any) => (
     <span>
       {state === 'ACTIVE'
@@ -325,7 +325,7 @@ jest.mock('@/app/components/carbon/record-status-indicator', () => ({
   ),
 }));
 
-jest.mock('@/app/components/carbon/url-table-cell', () => ({
+jest.mock('@/app/components/ui/table/url-table-cell', () => ({
   UrlTableCell: ({ url }: any) => <td>{url || '-'}</td>,
 }));
 
@@ -395,6 +395,14 @@ describe('CreateAssistantAuthenticationPage', () => {
         screen.getByRole('button', { name: 'Save authentication' }),
       ).not.toBeDisabled(),
     );
+  };
+
+  const clickSaveAuthentication = async () => {
+    const saveButton = screen.getByRole('button', {
+      name: 'Save authentication',
+    });
+    fireEvent.click(saveButton);
+    await waitFor(() => expect(saveButton).not.toBeDisabled());
   };
 
   it('keeps save enabled and validates on click', async () => {
@@ -469,9 +477,7 @@ describe('CreateAssistantAuthenticationPage', () => {
       target: { value: 'providerCallIdValue' },
     });
 
-    fireEvent.click(
-      screen.getByRole('button', { name: 'Save authentication' }),
-    );
+    await clickSaveAuthentication();
 
     await waitFor(() =>
       expect(CreateAssistantConfiguration).toHaveBeenCalledTimes(1),
@@ -504,9 +510,7 @@ describe('CreateAssistantAuthenticationPage', () => {
 
     render(<UpdateAssistantAuthenticationPage />);
     await waitUntilReady();
-    fireEvent.click(
-      screen.getByRole('button', { name: 'Save authentication' }),
-    );
+    await clickSaveAuthentication();
 
     await waitFor(() =>
       expect(UpdateAssistantConfiguration).toHaveBeenCalledTimes(1),
@@ -532,9 +536,7 @@ describe('CreateAssistantAuthenticationPage', () => {
     fireEvent.change(screen.getByTestId('assistant-auth-endpoint'), {
       target: { value: 'https://auth.example.com/resolve' },
     });
-    fireEvent.click(
-      screen.getByRole('button', { name: 'Save authentication' }),
-    );
+    await clickSaveAuthentication();
 
     await waitFor(() =>
       expect(CreateAssistantConfiguration).toHaveBeenCalledTimes(1),
@@ -593,9 +595,7 @@ describe('CreateAssistantAuthenticationPage', () => {
     fireEvent.change(screen.getByTestId('assistant-auth-fail-behavior'), {
       target: { value: 'do_nothing' },
     });
-    fireEvent.click(
-      screen.getByRole('button', { name: 'Save authentication' }),
-    );
+    await clickSaveAuthentication();
 
     await waitFor(() =>
       expect(CreateAssistantConfiguration).toHaveBeenCalledTimes(1),
@@ -663,9 +663,7 @@ describe('CreateAssistantAuthenticationPage', () => {
     fireEvent.change(screen.getByTestId('assistant-auth-endpoint'), {
       target: { value: 'https://auth.example.com/resolve' },
     });
-    fireEvent.click(
-      screen.getByRole('button', { name: 'Save authentication' }),
-    );
+    await clickSaveAuthentication();
 
     await waitFor(() =>
       expect(UpdateAssistantConfiguration).toHaveBeenCalledTimes(1),

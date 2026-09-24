@@ -1,17 +1,16 @@
 import React, { useCallback, useState } from 'react';
-import { Helmet } from '@/app/components/helmet';
+import { Helmet } from '@/app/components/app-shell/helmet';
 import { useNavigate, useParams } from 'react-router-dom';
-import { CreatePassword } from '@rapidaai/react';
 import { CreatePasswordResponse } from '@rapidaai/react';
 import { useForm } from 'react-hook-form';
 import { ServiceError } from '@rapidaai/react';
-import { connectionConfig } from '@/configs';
-import { useRapidaStore } from '@/hooks';
-import { Stack } from '@/app/components/carbon/form';
-import { PrimaryButton } from '@/app/components/carbon/button';
-import { Notification } from '@/app/components/carbon/notification';
+import { useRapidaStore } from '@/stores/app';
+import { Stack } from '@/app/components/ui/primitives';
+import { PrimaryButton } from '@/app/components/ui/primitives';
+import { Notification } from '@/app/components/ui/feedback';
 import { ArrowRight } from '@carbon/icons-react';
 import { PasswordInput } from '@carbon/react';
+import { createPassword } from '@/clients';
 
 export function ChangePasswordPage() {
   const { register, handleSubmit } = useForm();
@@ -52,7 +51,7 @@ export function ChangePasswordPage() {
       return;
     }
     showLoader();
-    CreatePassword(connectionConfig, token, data.password, afterCreatePassword);
+    createPassword(token, data.password, afterCreatePassword);
   };
 
   return (

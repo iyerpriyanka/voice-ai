@@ -1,13 +1,14 @@
 import { FC, HTMLAttributes, useState, useMemo, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ChevronDown, Check } from 'lucide-react';
 import {
+  Checkmark,
+  ChevronDown,
   Microphone,
   MicrophoneOff,
   Chat,
   StopFilledAlt,
 } from '@carbon/icons-react';
-import { GhostButton } from '@/app/components/carbon/button';
+import { GhostButton } from '@/app/components/ui/primitives';
 import {
   useConnectAgent,
   MultibandAudioVisualizerComponent,
@@ -155,10 +156,7 @@ export const AudioMessagingAction: FC<AudioMessagingActionProps> = ({
                             </span>
                           </div>
                           {isActive && (
-                            <Check
-                              className="w-4 h-4 shrink-0 text-white"
-                              strokeWidth={2}
-                            />
+                            <Checkmark className="w-4 h-4 shrink-0 text-white" />
                           )}
                         </button>
                       );
@@ -174,7 +172,6 @@ export const AudioMessagingAction: FC<AudioMessagingActionProps> = ({
                     {activeDeviceLabel}
                   </span>
                   <ChevronDown
-                    strokeWidth={1.5}
                     className={cn(
                       'w-4 h-4 transition-transform duration-300 text-gray-500 dark:text-gray-400',
                       isOpen ? 'rotate-180' : '',

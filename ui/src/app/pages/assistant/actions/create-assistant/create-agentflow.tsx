@@ -2,17 +2,16 @@ import {
   AgentflowBuilder,
   AgentflowDefinition,
 } from '@/app/pages/assistant/actions/agentflow';
-import { connectionConfig } from '@/configs';
-import { useRapidaStore } from '@/hooks';
+import { useRapidaStore } from '@/stores/app';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import {
-  CreateAssistant,
   CreateAssistantProviderRequest,
   CreateAssistantRequest,
 } from '@rapidaai/react';
 import { Struct } from 'google-protobuf/google/protobuf/struct_pb';
 import type { JavaScriptValue } from 'google-protobuf/google/protobuf/struct_pb';
+import { createAssistantFromRequest } from '@/clients/assistant.client';
 
 const toAgentflowStruct = (definition: AgentflowDefinition) =>
   Struct.fromJavaScript(
@@ -41,10 +40,9 @@ export function CreateAgentflow() {
       request.setDescription(definition.description ?? '');
       request.setTagsList(definition.tags ?? []);
 
-      const response = await CreateAssistant(connectionConfig, request, {
-        authorization: token,
-        'x-auth-id': authId,
-        'x-project-id': projectId,
+      const response = await createAssistantFromRequest({
+        request,
+        auth: { projectId, token, userId: authId },
       });
 
       if (!response?.getSuccess()) {

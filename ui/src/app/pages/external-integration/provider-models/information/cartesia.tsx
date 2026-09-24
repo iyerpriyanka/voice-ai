@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react';
-import { SearchIconInput } from '@/app/components/form/input/IconInput';
-import { Helmet } from '@/app/components/helmet';
-import { BluredWrapper } from '@/app/components/wrapper/blured-wrapper';
-import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
-import { PageTitleBlock } from '@/app/components/blocks/page-title-block';
+import { SearchIconInput } from '@/app/components/ui/composites';
+import { Helmet } from '@/app/components/app-shell/helmet';
+import { BluredWrapper } from '@/app/components/layout/wrapper/blured-wrapper';
+import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
+import { PageTitleBlock } from '@/app/components/layout/blocks/page-title-block';
 import { TEXT_TO_SPEECH, CARTESIA_VOICE } from '@/providers';
-import { PaginationButtonBlock } from '@/app/components/blocks/pagination-button-block';
+import { PaginationButtonBlock } from '@/app/components/layout/blocks/pagination-button-block';
 import { cn } from '@/utils';
-import { CreateProviderCredentialDialog } from '@/app/components/base/modal/create-provider-credential-modal';
-import { ViewProviderCredentialDialog } from '@/app/components/base/modal/view-provider-credential-modal';
+import { CreateProviderCredentialDialog } from '@/app/components/dialogs/provider';
+import { ViewProviderCredentialDialog } from '@/app/components/dialogs/provider';
 import { useAllProviderCredentials } from '@/hooks/use-model';
-import { Check, Plus } from 'lucide-react';
-import { Tooltip } from '@/app/components/tooltip';
-import { PrimaryButton, GhostButton } from '@/app/components/carbon/button';
+import { Add, Checkmark } from '@carbon/icons-react';
+import { Tooltip } from '@/app/components/ui/primitives';
+import { PrimaryButton, GhostButton } from '@/app/components/ui/primitives';
 import { VoiceCard } from '@/app/pages/external-integration/provider-models/information/voice-card';
 import { useLocation } from 'react-router-dom';
 
@@ -92,7 +92,7 @@ export function CartesiaModelInformationPage() {
               <span className="inline-flex items-center">
                 <Tooltip
                   icon={
-                    <Check
+                    <Checkmark
                       className={cn(
                         connected
                           ? 'bg-blue-500 text-white'
@@ -133,7 +133,7 @@ export function CartesiaModelInformationPage() {
             }}
           >
             Add new credential
-            <Plus strokeWidth={1.5} className="ml-1.5 h-4 w-4" />
+            <Add className="ml-1.5 h-4 w-4" />
           </PrimaryButton>
         </PaginationButtonBlock>
       </BluredWrapper>

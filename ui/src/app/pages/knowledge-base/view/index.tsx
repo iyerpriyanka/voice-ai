@@ -1,26 +1,25 @@
-import { Helmet } from '@/app/components/helmet';
-import { useRapidaStore } from '@/hooks';
+import { Helmet } from '@/app/components/app-shell/helmet';
+import { useRapidaStore } from '@/stores/app';
 import { useCredential } from '@/hooks/use-credential';
 import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast/headless';
 import { useParams } from 'react-router-dom';
-import { Tab } from '@/app/components/tab';
+import { Tab } from '@/app/components/ui/primitives';
 import { Documents } from './documents';
-import { ConnectionConfig, GetKnowledgeBase } from '@rapidaai/react';
 import { GetKnowledgeResponse } from '@rapidaai/react';
 import { cn } from '@/utils';
 import { toHumanReadableRelativeTime } from '@/utils/date';
-import { useKnowledgePageStore } from '@/hooks/use-knowledge-page-store';
-import { CreateTagDialog } from '@/app/components/base/modal/create-tag-modal';
-import { UpdateDescriptionDialog } from '@/app/components/base/modal/update-description-modal';
+import { useKnowledgePageStore } from '@/stores/knowledge/knowledge.store';
+import { CreateTagDialog } from '@/app/components/dialogs/shared/create-tag-modal';
+import { UpdateDescriptionDialog } from '@/app/components/dialogs/shared';
 import { Tag } from '@rapidaai/react';
 import { ServiceError } from '@rapidaai/react';
 import { DocumentSegments } from '@/app/pages/knowledge-base/view/document-segments';
-import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
-import { PageTitleBlock } from '@/app/components/blocks/page-title-block';
-import { connectionConfig } from '@/configs';
-import { CreateKnowledgeDocumentDialog } from '@/app/components/base/modal/create-knowledge-document-modal';
-import { Plus } from 'lucide-react';
+import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
+import { PageTitleBlock } from '@/app/components/layout/blocks/page-title-block';
+import { CreateKnowledgeDocumentDialog } from '@/app/components/dialogs/knowledge';
+import { Add } from '@carbon/icons-react';
+import { getKnowledgeBaseDetail } from '@/clients/knowledge.client';
 
 /**
  *
@@ -33,33 +32,7 @@ export function ViewKnowledgePage() {
   const { onChangeCurrentKnowledge, currentKnowledge, ...knowledgeActions } =
     useKnowledgePageStore();
 
-  /**
-   * get all the models when type change
-   */
-
   const { id } = useParams();
-  const getKnowledge = useCallback(
-    id => {
-      if (id) {
-        showLoader('overlay');
-        GetKnowledgeBase(
-          connectionConfig,
-          id,
-          afterGetKnowledge,
-          ConnectionConfig.WithDebugger({
-            authorization: token,
-            userId: userId,
-            projectId: projectId,
-          }),
-        );
-      }
-    },
-    [id],
-  );
-  //
-  useEffect(() => {
-    getKnowledge(id);
-  }, [id]);
 
   const afterGetKnowledge = useCallback(
     (err: ServiceError | null, uvcr: GetKnowledgeResponse | null) => {
@@ -77,8 +50,26 @@ export function ViewKnowledgePage() {
         );
       }
     },
-    [],
+    [hideLoader, onChangeCurrentKnowledge],
   );
+
+  const getKnowledge = useCallback(
+    (knowledgeId?: string) => {
+      if (!knowledgeId) return;
+      showLoader('overlay');
+      getKnowledgeBaseDetail({
+        knowledgeId,
+        auth: { projectId, token, userId },
+        callback: afterGetKnowledge,
+      });
+    },
+    [afterGetKnowledge, projectId, showLoader, token, userId],
+  );
+
+  useEffect(() => {
+    getKnowledge(id);
+  }, [getKnowledge, id]);
+
   return (
     <>
       <UpdateDescriptionDialog
@@ -164,7 +155,7 @@ export function ViewKnowledgePage() {
               className="flex items-center gap-2 px-4 text-sm text-white bg-primary hover:bg-primary/90 transition-colors whitespace-nowrap"
             >
               Add new document
-              <Plus strokeWidth={1.5} className="w-4 h-4" />
+              <Add className="w-4 h-4" />
             </button>
           </div>
         </PageHeaderBlock>

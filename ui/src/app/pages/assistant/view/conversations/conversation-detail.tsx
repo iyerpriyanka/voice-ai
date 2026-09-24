@@ -1,20 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   AssistantChatContext,
   useAssistantChat,
-} from '@/hooks/use-assistant-chat';
+} from '@/stores/assistant/assistant-chat.store';
 import { ConversationMessages } from '@/app/pages/assistant/view/conversations/conversation-messages';
-import {
-  ConnectionConfig,
-  FieldSelector,
-  GetAssistantConversation,
-  GetAssistantConversationRequest,
-} from '@rapidaai/react';
 import { useParams } from 'react-router-dom';
 import { useCurrentCredential } from '@/hooks/use-credential';
-import { AssistantConversation } from '@rapidaai/react';
-import { useRapidaStore } from '@/hooks';
-import { PageLoader } from '@/app/components/loader/page-loader';
+import type { AssistantConversation } from '@rapidaai/react';
+import { useRapidaStore } from '@/stores/app';
+import { PageLoader } from '@/app/components/ui/feedback';
 import {
   ArrowLeft,
   Renew,
@@ -23,19 +17,19 @@ import {
   ChartLine,
 } from '@carbon/icons-react';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
-import { GhostButton } from '@/app/components/carbon/button';
-import { PageHeaderBlock } from '@/app/components/blocks/page-header-block';
-import { Table } from '@/app/components/base/tables/table';
-import { TableHead } from '@/app/components/base/tables/table-head';
-import { TableBody } from '@/app/components/base/tables/table-body';
-import { TableRow } from '@/app/components/base/tables/table-row';
-import { TableCell } from '@/app/components/base/tables/table-cell';
-import { EmptyState } from '@/app/components/carbon/empty-state';
-import { connectionConfig } from '@/configs';
+import { GhostButton } from '@/app/components/ui/primitives';
+import { PageHeaderBlock } from '@/app/components/layout/blocks/page-header-block';
+import { Table } from '@/app/components/ui/table';
+import { TableHead } from '@/app/components/ui/table';
+import { TableBody } from '@/app/components/ui/table';
+import { TableRow } from '@/app/components/ui/table';
+import { TableCell } from '@/app/components/ui/table';
+import { EmptyState } from '@/app/components/ui/feedback';
 import { cn } from '@/utils';
-import { CarbonStatusIndicator } from '@/app/components/carbon/status-indicator';
+import { CarbonStatusIndicator } from '@/app/components/ui/feedback';
 import { getStatusMetric } from '@/utils/metadata';
-import { Tabs } from '@/app/components/carbon/tabs';
+import { Tabs } from '@/app/components/ui/primitives';
+import { getAssistantConversationDetail } from '@/clients/assistant.client';
 
 // ── Tab definitions ───────────────────────────────────────────────────────────
 
@@ -65,23 +59,16 @@ export function ConversationDetailPage() {
     0,
   );
 
-  const get = () => {
+  const get = useCallback(() => {
+    if (!assistantId || !sessionId) return;
+
     showLoader();
-    const request = new GetAssistantConversationRequest();
-    request.setAssistantid(assistantId!);
-    request.setId(sessionId!);
-    const filed = new FieldSelector();
-    filed.setField('recording');
-    request.addSelectors(filed);
-    GetAssistantConversation(
-      connectionConfig,
-      request,
-      ConnectionConfig.WithDebugger({
-        authorization: token,
-        userId: authId,
-        projectId: projectId,
-      }),
-    )
+    getAssistantConversationDetail({
+      assistantId,
+      conversationId: sessionId,
+      fields: ['recording'],
+      auth: { projectId, token, userId: authId },
+    })
       .then(response => {
         hideLoader();
         if (response?.getSuccess() && response.getData()) {
@@ -91,12 +78,19 @@ export function ConversationDetailPage() {
       .catch(() => {
         hideLoader();
       });
-  };
+  }, [
+    assistantId,
+    authId,
+    hideLoader,
+    projectId,
+    sessionId,
+    showLoader,
+    token,
+  ]);
 
   useEffect(() => {
-    if (!assistantId || !sessionId) return;
     get();
-  }, [assistantId, sessionId]);
+  }, [get]);
 
   if (loading || currentConversation == null) {
     return <PageLoader />;
