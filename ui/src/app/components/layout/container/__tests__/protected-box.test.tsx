@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AuthContext } from '@/context/auth-context';
@@ -127,6 +127,33 @@ describe('IgnoreBox', () => {
     );
 
     expect(screen.getByText('Auth content')).toBeInTheDocument();
+  });
+
+  it('does not repeat unauthenticate after the auth store updates', async () => {
+    const unauthenticate = jest.fn();
+
+    function AuthStoreUpdateHarness() {
+      const [, setRefreshCount] = useState(0);
+      const onUnauthenticate = useCallback(() => {
+        unauthenticate();
+        setRefreshCount(count => count + 1);
+      }, []);
+
+      return (
+        <AuthContext.Provider value={{ unauthenticate: onUnauthenticate }}>
+          <MemoryRouter initialEntries={['/auth/signin']}>
+            <IgnoreBox>
+              <div>Auth content</div>
+            </IgnoreBox>
+          </MemoryRouter>
+        </AuthContext.Provider>
+      );
+    }
+
+    render(<AuthStoreUpdateHarness />);
+
+    expect(screen.getByText('Auth content')).toBeInTheDocument();
+    await waitFor(() => expect(unauthenticate).toHaveBeenCalledTimes(1));
   });
 
   it('redirects valid external auth sessions without unauthenticating', async () => {

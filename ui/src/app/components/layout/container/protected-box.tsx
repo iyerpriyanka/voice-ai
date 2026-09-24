@@ -33,9 +33,13 @@ interface IgnoreBoxProps {
   replaceLocation?: (url: string) => void;
 }
 
+const replaceWindowLocation = (url: string) => {
+  window.location.replace(url);
+};
+
 export function IgnoreBox({
   children,
-  replaceLocation = window.location.replace.bind(window.location),
+  replaceLocation = replaceWindowLocation,
 }: IgnoreBoxProps) {
   const [searchParams] = useSearchParams();
   const nextUrl = searchParams.get('next');

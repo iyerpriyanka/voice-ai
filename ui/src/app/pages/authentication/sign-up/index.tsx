@@ -99,7 +99,7 @@ export function SignUpPage() {
           <h1 className="m-0 text-[1.8rem] leading-tight">Signup</h1>
           <p className="mt-1.5 text-sm leading-[1.4286] text-(--cds-text-secondary)">
             Already have an account? &nbsp;
-            <Link href="/auth/signin" className="text-sm">
+            <Link href="/auth/signin" className="text-sm !underline">
               Sign-in
             </Link>
           </p>

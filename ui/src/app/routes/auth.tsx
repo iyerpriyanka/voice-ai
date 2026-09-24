@@ -12,7 +12,6 @@ export function AuthRoute() {
   return (
     <Routes>
       <Route
-        path="/"
         element={
           <IgnoreBox>
             <FlexBox>
@@ -24,8 +23,8 @@ export function AuthRoute() {
         }
       >
         <Route path="signup" element={<AuthSignUpPage />} />
-        <Route index path="/" element={<AuthSignInPage />} />
-        <Route index path="signin" element={<AuthSignInPage />} />
+        <Route index element={<AuthSignInPage />} />
+        <Route path="signin" element={<AuthSignInPage />} />
         <Route path="forgot-password" element={<AuthForgotPasswordPage />} />
         <Route
           path="change-password/:token"

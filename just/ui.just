@@ -89,6 +89,31 @@ ui-test path=ui_test_path: ui-setup
 ui-test-coverage: ui-setup
     cd ui && yarn test:coverage
 
+# Install browser binaries for Playwright.
+ui-e2e-install: ui-setup
+    cd ui && yarn e2e:install
+
+# Check that the Playwright route manifest matches app route roots.
+ui-e2e-routes: ui-setup
+    cd ui && yarn check:e2e-routes
+
+# Run Playwright route smoke tests. Run ui-e2e-install once first.
+ui-e2e-smoke: ui-setup
+    cd ui && yarn e2e:smoke
+
+# Run the Playwright accessibility gate. Run ui-e2e-install once first.
+ui-e2e-a11y: ui-setup
+    cd ui && yarn e2e:a11y
+
+# Capture the Playwright screenshot journey. Run ui-e2e-install once first.
+ui-e2e-screenshots: ui-setup
+    cd ui && yarn e2e:screenshots
+
+# Run all Playwright e2e checks. Run ui-e2e-install once first.
+ui-e2e: ui-setup
+    cd ui && yarn check:e2e-routes
+    cd ui && yarn e2e
+
 # Generate an Allure report. Set UI_TEST_PATH or pass a path to focus the run.
 ui-report path=ui_test_path: ui-setup
     #!/usr/bin/env bash
