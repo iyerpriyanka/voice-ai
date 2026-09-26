@@ -146,7 +146,7 @@ export function TextProvider({
     <>
       <Stack>
         <div className="w-full">
-          <div className="flex w-full items-center">
+          <div className="text-provider-label-row mb-1 flex w-full items-center text-xs leading-4 text-[var(--cds-text-secondary)]">
             <div className="w-48 shrink-0">
               <span className="inline-flex items-center gap-1">
                 Model provider

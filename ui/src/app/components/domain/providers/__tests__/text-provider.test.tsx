@@ -154,6 +154,16 @@ describe('TextProvider', () => {
     ).not.toBeInTheDocument();
     expect(screen.getByText('Model')).toBeInTheDocument();
 
+    const labelRow = screen
+      .getByText('Model provider')
+      .closest('.text-provider-label-row');
+    expect(labelRow).toHaveClass(
+      'mb-1',
+      'text-xs',
+      'leading-4',
+      'text-[var(--cds-text-secondary)]',
+    );
+
     const selects = screen.getAllByRole('combobox');
     expect(selects).toHaveLength(2);
     expect(selects[1]).toBeDisabled();
@@ -190,7 +200,9 @@ describe('TextProvider', () => {
 
     expect(screen.getByTestId('config-text')).toHaveTextContent('openai');
     expect(
-      screen.getByRole('combobox', { name: 'Select provider' }).closest('.flex'),
+      screen
+        .getByRole('combobox', { name: 'Select provider' })
+        .closest('.flex'),
     ).toHaveClass('w-full');
 
     fireEvent.click(screen.getByText('Pick credential'));
