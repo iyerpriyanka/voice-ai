@@ -75,6 +75,23 @@ export const ValidateTextProviderDefaultOptions = (
 const getProviderName = (item: RapidaProvider | null): string =>
   item?.name ?? '';
 
+function TextProviderModelPlaceholder() {
+  return (
+    <div className="flex-1 min-w-0">
+      <Dropdown
+        id="text-model-placeholder"
+        titleText="Model"
+        hideLabel
+        label="Select model"
+        size="md"
+        items={[]}
+        itemToString={() => ''}
+        disabled
+      />
+    </div>
+  );
+}
+
 export function TextProviderConfigComponent({
   provider,
   parameters,
@@ -128,37 +145,50 @@ export function TextProvider({
   return (
     <>
       <Stack>
-        <div className="flex items-stretch border border-gray-200 dark:border-gray-700">
-          <div className="w-48 shrink-0 border-r border-gray-200 dark:border-gray-700">
-            <Dropdown
-              id="text-provider"
-              titleText={
-                <span className="inline-flex items-center gap-1">
-                  Model provider
-                  <HelpToggletip
-                    label="Model provider"
-                    helpText="Select the provider and model configuration used by this agent."
-                  />
-                </span>
-              }
-              label="Select provider"
-              size="md"
-              items={textProviders}
-              selectedItem={selectedProvider}
-              itemToString={getProviderName}
-              onChange={({
-                selectedItem,
-              }: ProviderSelectionChange<RapidaProvider>) => {
-                if (selectedItem) onChangeProvider(selectedItem.code);
-              }}
-            />
+        <div className="w-full">
+          <div className="flex w-full items-center">
+            <div className="w-48 shrink-0">
+              <span className="inline-flex items-center gap-1">
+                Model provider
+                <HelpToggletip
+                  label="Model provider"
+                  helpText="Select the provider and model configuration used by this agent."
+                />
+              </span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <span>Model</span>
+            </div>
           </div>
-          <TextProviderConfigComponent
-            parameters={parameters}
-            provider={provider}
-            onChangeParameter={onChangeParameter}
-            onChangeProvider={onChangeProvider}
-          />
+          <div className="text-provider-combo-row flex w-full items-stretch bg-[var(--cds-field)] border-b border-b-[var(--cds-border-strong)]">
+            <div className="w-48 shrink-0 border-r border-gray-200 dark:border-gray-700">
+              <Dropdown
+                id="text-provider"
+                titleText="Model provider"
+                hideLabel
+                label="Select provider"
+                size="md"
+                items={textProviders}
+                selectedItem={selectedProvider}
+                itemToString={getProviderName}
+                onChange={({
+                  selectedItem,
+                }: ProviderSelectionChange<RapidaProvider>) => {
+                  if (selectedItem) onChangeProvider(selectedItem.code);
+                }}
+              />
+            </div>
+            {provider ? (
+              <TextProviderConfigComponent
+                parameters={parameters}
+                provider={provider}
+                onChangeParameter={onChangeParameter}
+                onChangeProvider={onChangeProvider}
+              />
+            ) : (
+              <TextProviderModelPlaceholder />
+            )}
+          </div>
         </div>
       </Stack>
       {provider && (

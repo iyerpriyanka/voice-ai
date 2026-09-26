@@ -75,13 +75,16 @@ jest.mock('@carbon/react', () => ({
     onChange,
     selectedItem,
     titleText,
+    disabled,
+    hideLabel,
   }: any) => (
     <div>
-      {titleText ? <span>{titleText}</span> : null}
+      {titleText && !hideLabel ? <span>{titleText}</span> : null}
       <span data-testid={`${id}-empty-name`}>{itemToString?.(null)}</span>
       <select
         aria-label={label}
         value={selectedItem?.code ?? ''}
+        disabled={disabled}
         onChange={event => {
           const selected = items.find(
             (item: any) => item.code === event.target.value,
@@ -149,8 +152,23 @@ describe('TextProvider', () => {
     expect(
       screen.queryByRole('option', { name: 'Missing' }),
     ).not.toBeInTheDocument();
+    expect(screen.getByText('Model')).toBeInTheDocument();
+
+    const selects = screen.getAllByRole('combobox');
+    expect(selects).toHaveLength(2);
+    expect(selects[1]).toBeDisabled();
 
     const select = screen.getByRole('combobox', { name: 'Select provider' });
+    const selectorGroup = select.closest('.flex');
+    expect(selectorGroup).toHaveClass(
+      'text-provider-combo-row',
+      'w-full',
+      'items-stretch',
+      'border-b',
+    );
+    expect(selectorGroup).not.toHaveClass('w-fit');
+    expect(selectorGroup).not.toHaveClass('gap-3');
+
     fireEvent.change(select, { target: { value: 'openai' } });
     fireEvent.change(select, { target: { value: '' } });
 
@@ -171,6 +189,10 @@ describe('TextProvider', () => {
     );
 
     expect(screen.getByTestId('config-text')).toHaveTextContent('openai');
+    expect(
+      screen.getByRole('combobox', { name: 'Select provider' }).closest('.flex'),
+    ).toHaveClass('w-full');
+
     fireEvent.click(screen.getByText('Pick credential'));
 
     let nextParameters = onChangeParameter.mock.calls[0][0] as Metadata[];

@@ -986,6 +986,10 @@ describe('ConfigRenderer', () => {
       // Should render the bolt/x toggle button
       const button = screen.getByRole('button');
       expect(button).toBeInTheDocument();
+      expect(button).toHaveClass('!h-10', '!w-10');
+
+      const advancedColumn = button.parentElement;
+      expect(advancedColumn).toHaveClass('flex', 'border-l');
     });
 
     it('renders a single advanced json field full width', () => {

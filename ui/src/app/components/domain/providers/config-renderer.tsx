@@ -462,7 +462,7 @@ function TextCategoryLayout({
   };
 
   return (
-    <div className="flex-1 flex items-stretch">
+    <div className="flex-1 flex items-stretch min-w-0">
       <div className="flex-1 min-w-0">
         {mainParam?.type === 'dropdown' &&
           renderTextMainDropdown(
@@ -473,13 +473,14 @@ function TextCategoryLayout({
             updateParameter,
           )}
       </div>
-      <div className="shrink-0 border-l border-gray-200 dark:border-gray-700">
+      <div className="shrink-0 flex border-l border-gray-200 dark:border-gray-700">
         <Button
           hasIconOnly
           renderIcon={SettingsAdjust}
           iconDescription="Advanced settings"
           kind="ghost"
           size="md"
+          className="!h-10 !min-h-10 !w-10 !p-0 !bg-[var(--cds-field)]"
           onClick={handleOpen}
         />
         <ComposedModal
@@ -821,6 +822,8 @@ function renderTextMainDropdown(
       <ComboBox
         id={`text-main-combo-${param.key}`}
         aria-label={param.label}
+        titleText={param.label}
+        hideLabel
         items={data}
         size="md"
         selectedItem={selectedItem}

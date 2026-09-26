@@ -288,6 +288,28 @@
   }
 }
 
+.text-provider-combo-row {
+  .cds--dropdown,
+  .cds--list-box,
+  .cds--list-box__field {
+    border: none;
+    background-color: transparent;
+  }
+
+  .cds--list-box__field {
+    height: 2.5rem;
+    min-height: 2.5rem;
+  }
+
+  .cds--list-box--expanded .cds--list-box__field {
+    border: none;
+  }
+
+  .cds--btn {
+    border: none;
+  }
+}
+
 // ─── Notice link style — action button as inline link ────────────────────────
 .notice-link-style .cds--actionable-notification__action-button {
   background: none !important;
