@@ -97,7 +97,7 @@ export function ForgotPasswordPage() {
 
       <Stack gap={2}>
         <p className="text-center">
-          <Link href="/auth/signin" className="text-sm">
+          <Link href="/auth/signin" className="text-sm !underline">
             Back to sign in?
           </Link>
         </p>

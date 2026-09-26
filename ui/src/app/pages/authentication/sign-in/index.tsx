@@ -79,7 +79,7 @@ export function SignInPage() {
         {workspace.authentication.signUp.enable && (
           <p className="mt-1.5 text-sm leading-[1.4286] text-(--cds-text-secondary)">
             Don't have an account? &nbsp;
-            <Link href="/auth/signup" className="text-sm">
+            <Link href="/auth/signup" className="text-sm !underline">
               Sign-up
             </Link>
           </p>
@@ -131,7 +131,7 @@ export function SignInPage() {
 
       <Stack gap={2}>
         <p className="text-center">
-          <Link href="/auth/forgot-password" className="text-sm">
+          <Link href="/auth/forgot-password" className="text-sm !underline">
             Can't sign in?
           </Link>
         </p>
