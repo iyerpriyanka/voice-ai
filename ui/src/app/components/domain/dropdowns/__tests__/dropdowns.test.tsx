@@ -293,6 +293,18 @@ describe('domain dropdowns', () => {
     expect(credentialRow).toHaveClass('bg-[var(--cds-field)]', 'border-b');
     expect(endpointRow).toHaveClass('bg-[var(--cds-field)]', 'border-b');
     expect(knowledgeRow).toHaveClass('bg-[var(--cds-field)]', 'border-b');
+    expect(screen.getByText('Credential')).toHaveClass(
+      'cds--label',
+      'domain-connected-dropdown-label',
+    );
+    expect(screen.getByText('Endpoint')).toHaveClass(
+      'cds--label',
+      'domain-connected-dropdown-label',
+    );
+    expect(screen.getByText('Knowledge')).toHaveClass(
+      'cds--label',
+      'domain-connected-dropdown-label',
+    );
     expect(
       within(credentialRow as HTMLElement).getByRole('button', {
         name: 'Refresh credentials',

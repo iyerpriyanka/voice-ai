@@ -54,7 +54,7 @@ export function CredentialDropdownView({
 
   return (
     <div className={cn(className)}>
-      <div className="mb-1 inline-flex items-center gap-1 text-xs leading-4 text-[var(--cds-text-secondary)]">
+      <div className="cds--label domain-connected-dropdown-label !inline-flex items-center gap-1">
         Credential
         <Toggletip align="right">
           <ToggletipButton label="Show credential information">

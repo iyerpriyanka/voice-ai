@@ -34,9 +34,7 @@ export function EndpointDropdownView({
 
   return (
     <div className={cn(className)}>
-      <div className="mb-1 text-xs leading-4 text-[var(--cds-text-secondary)]">
-        Endpoint
-      </div>
+      <div className="cds--label domain-connected-dropdown-label">Endpoint</div>
       <div className="domain-connected-dropdown-row flex w-full items-stretch bg-[var(--cds-field)] border-b border-b-[var(--cds-border-strong)]">
         <div className="min-w-0 flex-1">
           <Dropdown

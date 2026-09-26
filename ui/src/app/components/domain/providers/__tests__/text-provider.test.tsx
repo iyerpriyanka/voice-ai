@@ -158,10 +158,9 @@ describe('TextProvider', () => {
       .getByText('Model provider')
       .closest('.text-provider-label-row');
     expect(labelRow).toHaveClass(
-      'mb-1',
-      'text-xs',
-      'leading-4',
-      'text-[var(--cds-text-secondary)]',
+      'cds--label',
+      'text-provider-label-row',
+      '!flex',
     );
 
     const selects = screen.getAllByRole('combobox');
