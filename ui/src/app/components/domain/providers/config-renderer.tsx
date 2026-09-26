@@ -195,6 +195,12 @@ export function ConfigRenderer({
   const regularParams = visibleParameters.filter(p => !p.advanced);
   const advancedParams = visibleParameters.filter(p => p.advanced);
   const hasAdvanced = advancedParams.length > 0;
+  const textMainParam =
+    category === 'text' ? regularParams.find(isModelSelectorParameter) : null;
+  const shouldUseTextLayout =
+    category === 'text' &&
+    textMainParam &&
+    (hasAdvanced || regularParams.length === 1);
 
   const renderField = (param: ParameterConfig) => {
     if (!isVisible(param)) return null;
@@ -390,11 +396,10 @@ export function ConfigRenderer({
     }
   };
 
-  if (category === 'text' && hasAdvanced) {
-    const mainParam = regularParams[0];
+  if (shouldUseTextLayout) {
     return (
       <TextCategoryLayout
-        mainParam={mainParam}
+        mainParam={textMainParam}
         provider={provider}
         advancedParams={advancedParams}
         getParamValue={getParamValue}
@@ -473,38 +478,40 @@ function TextCategoryLayout({
             updateParameter,
           )}
       </div>
-      <div className="shrink-0 flex border-l border-gray-200 dark:border-gray-700">
-        <Button
-          hasIconOnly
-          renderIcon={SettingsAdjust}
-          iconDescription="Advanced settings"
-          kind="ghost"
-          size="md"
-          className="!h-10 !min-h-10 !w-10 !p-0 !bg-[var(--cds-field)]"
-          onClick={handleOpen}
-        />
-        <ComposedModal
-          open={advancedOpen}
-          onClose={handleClose}
-          preventCloseOnClickOutside
-          size="lg"
-        >
-          <ModalHeader title="Advanced Settings" />
-          <ModalBody>
-            <div className="grid grid-cols-3 gap-4">
-              {advancedParams.map(renderField)}
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <SecondaryButton size="md" onClick={handleClose}>
-              Close
-            </SecondaryButton>
-            <PrimaryButton size="md" onClick={handleComplete}>
-              Complete
-            </PrimaryButton>
-          </ModalFooter>
-        </ComposedModal>
-      </div>
+      {advancedParams.length > 0 && (
+        <div className="shrink-0 flex border-l border-gray-200 dark:border-gray-700">
+          <Button
+            hasIconOnly
+            renderIcon={SettingsAdjust}
+            iconDescription="Advanced settings"
+            kind="ghost"
+            size="md"
+            className="!h-10 !min-h-10 !w-10 !p-0 !bg-[var(--cds-field)]"
+            onClick={handleOpen}
+          />
+          <ComposedModal
+            open={advancedOpen}
+            onClose={handleClose}
+            preventCloseOnClickOutside
+            size="lg"
+          >
+            <ModalHeader title="Advanced Settings" />
+            <ModalBody>
+              <div className="grid grid-cols-3 gap-4">
+                {advancedParams.map(renderField)}
+              </div>
+            </ModalBody>
+            <ModalFooter>
+              <SecondaryButton size="md" onClick={handleClose}>
+                Close
+              </SecondaryButton>
+              <PrimaryButton size="md" onClick={handleComplete}>
+                Complete
+              </PrimaryButton>
+            </ModalFooter>
+          </ComposedModal>
+        </div>
+      )}
     </div>
   );
 }
@@ -822,8 +829,6 @@ function renderTextMainDropdown(
       <ComboBox
         id={`text-main-combo-${param.key}`}
         aria-label={param.label}
-        titleText={param.label}
-        hideLabel
         items={data}
         size="md"
         selectedItem={selectedItem}
@@ -850,8 +855,8 @@ function renderTextMainDropdown(
   return (
     <CarbonDropdown
       id={`text-main-dropdown-${param.key}`}
-      titleText={param.label}
-      hideLabel
+      aria-label={param.label}
+      titleText=""
       label="Select model"
       size="md"
       items={data}

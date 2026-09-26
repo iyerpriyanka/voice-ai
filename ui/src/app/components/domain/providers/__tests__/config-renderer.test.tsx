@@ -169,6 +169,7 @@ jest.mock('@carbon/react', () => {
           'select',
           {
             id,
+            'data-title-text': titleText ?? '',
             role: 'combobox',
             value: getValue(selectedItem),
             onChange: (e: any) => {
@@ -206,6 +207,7 @@ jest.mock('@carbon/react', () => {
           : null,
         React.createElement('input', {
           id: `${id}-input`,
+          'data-title-text': titleText ?? '',
           defaultValue: selectedItem?.name || '',
           placeholder: placeholder || '',
           onChange: () => {},
@@ -990,6 +992,43 @@ describe('ConfigRenderer', () => {
 
       const advancedColumn = button.parentElement;
       expect(advancedColumn).toHaveClass('flex', 'border-l');
+      expect(screen.getByRole('combobox')).toHaveAttribute(
+        'data-title-text',
+        '',
+      );
+    });
+
+    it('keeps the text model selector compact without resolved advanced params', () => {
+      const modelOnlyConfig: CategoryConfig = {
+        parameters: [
+          {
+            key: 'model.id',
+            label: 'Model',
+            type: 'dropdown',
+            required: true,
+            data: 'models.json',
+            valueField: 'id',
+          },
+        ],
+      };
+
+      render(
+        <ConfigRenderer
+          provider="test"
+          category="text"
+          config={modelOnlyConfig}
+          parameters={[createMetadata('model.id', 'stale-model')]}
+          onParameterChange={mockOnChange}
+        />,
+      );
+
+      const modelDropdown = screen.getByRole('combobox');
+      expect(modelDropdown).toHaveAttribute(
+        'id',
+        'text-main-dropdown-model.id',
+      );
+      expect(modelDropdown).toHaveAttribute('data-title-text', '');
+      expect(screen.queryByText('Model')).not.toBeInTheDocument();
     });
 
     it('renders a single advanced json field full width', () => {
@@ -1233,6 +1272,7 @@ describe('ConfigRenderer', () => {
       );
 
       const modelInput = screen.getByPlaceholderText('Select model');
+      expect(modelInput).toHaveAttribute('data-title-text', '');
       fireEvent.change(modelInput, { target: { value: 'custom-model-x' } });
       fireEvent.blur(modelInput);
 
