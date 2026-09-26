@@ -1,10 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import {
-  GetAssistantConfigurationRequest,
-  Metadata,
-  UpdateAssistantConfigurationRequest,
-} from '@rapidaai/react';
+import { Metadata } from '@rapidaai/react';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/stores/app';
@@ -21,8 +17,8 @@ import {
 import { InputGroup } from '@/app/components/ui/primitives';
 import { Notification } from '@/app/components/ui/feedback';
 import {
-  getAssistantConfigurationByRequest,
-  updateAssistantConfigurationFromRequest,
+  getAssistantConfigurationById,
+  updateAssistantConfigurationById,
 } from '@/clients/assistant.client';
 
 const telemetryConfigurationType = 'telemetry';
@@ -43,13 +39,10 @@ export const UpdateAssistantTelemetry: FC<{ assistantId: string }> = ({
   useEffect(() => {
     if (!telemetryId) return;
 
-    const request = new GetAssistantConfigurationRequest();
-    request.setAssistantid(assistantId);
-    request.setId(telemetryId);
-
     showLoader();
-    getAssistantConfigurationByRequest({
-      request,
+    getAssistantConfigurationById({
+      assistantId,
+      configurationId: telemetryId,
       auth: { projectId, token, userId: authId },
     })
       .then(response => {
@@ -103,17 +96,14 @@ export const UpdateAssistantTelemetry: FC<{ assistantId: string }> = ({
       return;
     }
 
-    const request = new UpdateAssistantConfigurationRequest();
-    request.setId(telemetryId);
-    request.setAssistantid(assistantId);
-    request.setConfigurationtype(telemetryConfigurationType);
-    request.setProvider(provider);
-    request.setEnabled(true);
-    request.setOptionsList(parameters);
-
     showLoader();
-    updateAssistantConfigurationFromRequest({
-      request,
+    updateAssistantConfigurationById({
+      assistantId,
+      configurationId: telemetryId,
+      configurationType: telemetryConfigurationType,
+      provider,
+      enabled: true,
+      options: parameters,
       auth: { projectId, token, userId: authId },
     })
       .then(response => {

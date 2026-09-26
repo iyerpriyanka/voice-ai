@@ -3,6 +3,7 @@ import {
   GetActivities,
   GetAllAssistantToolLog,
   GetAllHTTPLog,
+  GetAllTelemetry,
   GetActivity,
   GetAssistantToolLog,
   GetHTTPLog,
@@ -14,6 +15,7 @@ import {
   getActivityLog,
   getToolActivityLog,
   getWebhookActivityLog,
+  listTelemetry,
   listActivities,
   listConversationMessages,
   listToolActivityLogs,
@@ -107,6 +109,57 @@ jest.mock('@rapidaai/react', () => {
     }
   }
 
+  class TelemetryRequest {
+    private paginate?: Paginate;
+    private criterias: Criteria[] = [];
+    private order?: Ordering;
+
+    setPaginate(paginate: Paginate) {
+      this.paginate = paginate;
+    }
+
+    getPaginate() {
+      return this.paginate;
+    }
+
+    setCriteriasList(criteria: Criteria[]) {
+      this.criterias = criteria;
+    }
+
+    getCriteriasList() {
+      return this.criterias;
+    }
+
+    setOrder(order: Ordering) {
+      this.order = order;
+    }
+
+    getOrder() {
+      return this.order;
+    }
+  }
+
+  class Ordering {
+    private column = '';
+    private order = '';
+
+    setColumn(column: string) {
+      this.column = column;
+    }
+
+    getColumn() {
+      return this.column;
+    }
+
+    setOrder(order: string) {
+      this.order = order;
+    }
+
+    getOrder() {
+      return this.order;
+    }
+  }
+
   class RequestWithProjectAndId {
     private id = '';
     private projectId = '';
@@ -142,11 +195,13 @@ jest.mock('@rapidaai/react', () => {
     GetAllAssistantToolLogRequest: RequestWithProject,
     GetAllHTTPLog: jest.fn(),
     GetAllTelemetry: jest.fn(),
+    GetAllTelemetryRequest: TelemetryRequest,
     GetAssistantHTTPLogRequest: RequestWithProjectAndId,
     GetAssistantToolLog: jest.fn(),
     GetAssistantToolLogRequest: RequestWithProjectAndId,
     GetHTTPLog: jest.fn(),
     GetMessages: jest.fn(),
+    Ordering,
     Paginate,
     RetryAssistantHTTPLogRequest: RequestWithProjectAndId,
     RetryHTTPLog: jest.fn(),
@@ -346,5 +401,42 @@ describe('activity client', () => {
       retryRequest,
       metadata,
     );
+  });
+
+  it('lists telemetry with pagination, criteria, order, and debugger metadata', async () => {
+    const telemetryResponse = { getSuccess: () => true };
+    (GetAllTelemetry as jest.Mock).mockResolvedValue(telemetryResponse);
+
+    await expect(
+      listTelemetry({
+        page: 5,
+        pageSize: 100,
+        criteria: [
+          { key: 'assistantId', value: 'assistant-1', logic: 'match' },
+          { key: 'timestamp', value: '2026-01-01', logic: '>=' },
+        ],
+        order: { column: 'occurredAt', order: 'desc' },
+        auth,
+      }),
+    ).resolves.toBe(telemetryResponse);
+
+    const request = (GetAllTelemetry as jest.Mock).mock.calls[0][1];
+    const debuggerMetadata = (ConnectionConfig.WithDebugger as jest.Mock).mock
+      .results[0].value;
+
+    expect(GetAllTelemetry).toHaveBeenCalledWith(
+      { endpoint: 'test-endpoint' },
+      request,
+      debuggerMetadata,
+    );
+    expect(request.getPaginate().getPage()).toBe(5);
+    expect(request.getPaginate().getPagesize()).toBe(100);
+    expect(request.getCriteriasList()[0].getKey()).toBe('assistantId');
+    expect(request.getCriteriasList()[0].getValue()).toBe('assistant-1');
+    expect(request.getCriteriasList()[0].getLogic()).toBe('match');
+    expect(request.getCriteriasList()[1].getKey()).toBe('timestamp');
+    expect(request.getCriteriasList()[1].getLogic()).toBe('>=');
+    expect(request.getOrder().getColumn()).toBe('occurredAt');
+    expect(request.getOrder().getOrder()).toBe('desc');
   });
 });

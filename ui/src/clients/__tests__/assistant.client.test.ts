@@ -1,21 +1,33 @@
 import {
   ConnectionConfig,
+  CreateAssistantApiDeployment,
+  CreateAssistantConfiguration,
   DeleteAssistant,
+  DisableAssistantApiDeployment,
   GetAllAssistantApiDeployment,
   GetAllAssistantDebuggerDeployment,
   GetAssistant,
+  GetAssistantApiDeployment,
+  GetAssistantConfiguration,
   GetAssistantConversation,
   GetAssistantDashboard,
+  UpdateAssistantConfiguration,
   UpdateAssistantDetail,
 } from '@rapidaai/react';
 
 import {
+  createAssistantDeploymentByType,
+  createAssistantConfigurationForAssistant,
   deleteAssistantById,
+  disableAssistantDeploymentByType,
   getAssistantById,
   getAssistantByIdWithApi,
+  getAssistantConfigurationById,
   getAssistantConversationDetail,
+  getAssistantDeploymentByType,
   getAssistantDashboardRange,
   listAssistantDeploymentVersions,
+  updateAssistantConfigurationById,
   updateAssistantDescription,
 } from '@/clients/assistant.client';
 
@@ -171,6 +183,114 @@ jest.mock('@rapidaai/react', () => {
     }
   }
 
+  class GetAssistantDeploymentRequest {
+    private assistantId = '';
+
+    setAssistantid(assistantId: string) {
+      this.assistantId = assistantId;
+    }
+
+    getAssistantid() {
+      return this.assistantId;
+    }
+  }
+
+  class CreateAssistantDeploymentRequest {
+    private api: unknown;
+    private debuggerDeployment: unknown;
+    private phone: unknown;
+    private plugin: unknown;
+
+    setApi(deployment: unknown) {
+      this.api = deployment;
+    }
+
+    getApi() {
+      return this.api;
+    }
+
+    setDebugger(deployment: unknown) {
+      this.debuggerDeployment = deployment;
+    }
+
+    getDebugger() {
+      return this.debuggerDeployment;
+    }
+
+    setPhone(deployment: unknown) {
+      this.phone = deployment;
+    }
+
+    getPhone() {
+      return this.phone;
+    }
+
+    setPlugin(deployment: unknown) {
+      this.plugin = deployment;
+    }
+
+    getPlugin() {
+      return this.plugin;
+    }
+  }
+
+  class AssistantConfigurationRequest {
+    private id = '';
+    private assistantId = '';
+    private configurationType = '';
+    private provider = '';
+    private enabled = false;
+    private options: unknown[] = [];
+
+    setId(id: string) {
+      this.id = id;
+    }
+
+    getId() {
+      return this.id;
+    }
+
+    setAssistantid(assistantId: string) {
+      this.assistantId = assistantId;
+    }
+
+    getAssistantid() {
+      return this.assistantId;
+    }
+
+    setConfigurationtype(configurationType: string) {
+      this.configurationType = configurationType;
+    }
+
+    getConfigurationtype() {
+      return this.configurationType;
+    }
+
+    setProvider(provider: string) {
+      this.provider = provider;
+    }
+
+    getProvider() {
+      return this.provider;
+    }
+
+    setEnabled(enabled: boolean) {
+      this.enabled = enabled;
+    }
+
+    getEnabled() {
+      return this.enabled;
+    }
+
+    setOptionsList(options: unknown[]) {
+      this.options = options;
+    }
+
+    getOptionsList() {
+      return this.options;
+    }
+  }
+
   return {
     ConnectionConfig: {
       WithDebugger: jest.fn(metadata => ({ debugger: metadata })),
@@ -180,7 +300,9 @@ jest.mock('@rapidaai/react', () => {
     Criteria: class {},
     CreateAssistant: jest.fn(),
     CreateAssistantApiDeployment: jest.fn(),
+    CreateAssistantDeploymentRequest,
     CreateAssistantConfiguration: jest.fn(),
+    CreateAssistantConfigurationRequest: AssistantConfigurationRequest,
     CreateAssistantDebuggerDeployment: jest.fn(),
     CreateAssistantKnowledge: jest.fn(),
     CreateAssistantPhoneDeployment: jest.fn(),
@@ -193,7 +315,7 @@ jest.mock('@rapidaai/react', () => {
     DeleteAssistantConfiguration: jest.fn(),
     DeleteAssistantKnowledge: jest.fn(),
     DeleteAssistantTool: jest.fn(),
-    DeleteAssistantConfigurationRequest: class {},
+    DeleteAssistantConfigurationRequest: AssistantConfigurationRequest,
     DisableAssistantApiDeployment: jest.fn(),
     DisableAssistantDebuggerDeployment: jest.fn(),
     DisableAssistantPhoneDeployment: jest.fn(),
@@ -218,6 +340,7 @@ jest.mock('@rapidaai/react', () => {
     GetAssistant: jest.fn(),
     GetAssistantApiDeployment: jest.fn(),
     GetAssistantConfiguration: jest.fn(),
+    GetAssistantConfigurationRequest: AssistantConfigurationRequest,
     GetAssistantConversation: jest.fn(),
     GetAssistantConversationRequest,
     GetAssistantDashboard: jest.fn(),
@@ -226,13 +349,14 @@ jest.mock('@rapidaai/react', () => {
     GetAssistantKnowledge: jest.fn(),
     GetAssistantMessages: jest.fn(),
     GetAssistantPhoneDeployment: jest.fn(),
+    GetAssistantDeploymentRequest,
     GetAssistantRequest,
     GetAssistantTool: jest.fn(),
     GetAssistantWebpluginDeployment: jest.fn(),
     GetAssistantWhatsappDeployment: jest.fn(),
     Paginate,
     UpdateAssistantConfiguration: jest.fn(),
-    UpdateAssistantConfigurationRequest: class {},
+    UpdateAssistantConfigurationRequest: AssistantConfigurationRequest,
     UpdateAssistantDetail: jest.fn(),
     UpdateAssistantKnowledge: jest.fn(),
     UpdateAssistantTool: jest.fn(),
@@ -340,6 +464,77 @@ describe('assistant client', () => {
     );
   });
 
+  it('creates assistant configuration with API metadata', () => {
+    const options = [{ key: 'endpoint' }];
+
+    createAssistantConfigurationForAssistant({
+      assistantId: 'assistant-1',
+      configurationType: 'webhook',
+      provider: 'http',
+      enabled: true,
+      options: options as any,
+      auth,
+    });
+
+    const request = (CreateAssistantConfiguration as jest.Mock).mock
+      .calls[0][1];
+    expect(request.getAssistantid()).toBe('assistant-1');
+    expect(request.getConfigurationtype()).toBe('webhook');
+    expect(request.getProvider()).toBe('http');
+    expect(request.getEnabled()).toBe(true);
+    expect(request.getOptionsList()).toBe(options);
+    expect(CreateAssistantConfiguration).toHaveBeenCalledWith(
+      { endpoint: 'test-endpoint' },
+      request,
+      apiMetadata,
+    );
+  });
+
+  it('gets assistant configuration by id with API metadata', () => {
+    getAssistantConfigurationById({
+      assistantId: 'assistant-1',
+      configurationId: 'config-1',
+      auth,
+    });
+
+    const request = (GetAssistantConfiguration as jest.Mock).mock.calls[0][1];
+    expect(request.getAssistantid()).toBe('assistant-1');
+    expect(request.getId()).toBe('config-1');
+    expect(GetAssistantConfiguration).toHaveBeenCalledWith(
+      { endpoint: 'test-endpoint' },
+      request,
+      apiMetadata,
+    );
+  });
+
+  it('updates assistant configuration with API metadata', () => {
+    const options = [{ key: 'enabled' }];
+
+    updateAssistantConfigurationById({
+      assistantId: 'assistant-1',
+      configurationId: 'config-1',
+      configurationType: 'authentication',
+      provider: 'http',
+      enabled: false,
+      options: options as any,
+      auth,
+    });
+
+    const request = (UpdateAssistantConfiguration as jest.Mock).mock
+      .calls[0][1];
+    expect(request.getAssistantid()).toBe('assistant-1');
+    expect(request.getId()).toBe('config-1');
+    expect(request.getConfigurationtype()).toBe('authentication');
+    expect(request.getProvider()).toBe('http');
+    expect(request.getEnabled()).toBe(false);
+    expect(request.getOptionsList()).toBe(options);
+    expect(UpdateAssistantConfiguration).toHaveBeenCalledWith(
+      { endpoint: 'test-endpoint' },
+      request,
+      apiMetadata,
+    );
+  });
+
   it('gets dashboard data with a request-scoped date range', () => {
     const fromDate = { seconds: 1 };
     const toDate = { seconds: 2 };
@@ -407,6 +602,67 @@ describe('assistant client', () => {
     expect(request.getPaginate().getPage()).toBe(2);
     expect(request.getPaginate().getPagesize()).toBe(25);
     expect(GetAllAssistantDebuggerDeployment).toHaveBeenCalledWith(
+      { endpoint: 'test-endpoint' },
+      request,
+      debuggerMetadata,
+    );
+  });
+
+  it('gets deployment by type with assistant id', () => {
+    getAssistantDeploymentByType({
+      assistantId: 'assistant-1',
+      deploymentType: 'api',
+      auth,
+    });
+
+    const request = (GetAssistantApiDeployment as jest.Mock).mock.calls[0][1];
+    const debuggerMetadata = (ConnectionConfig.WithDebugger as jest.Mock).mock
+      .results[0].value;
+
+    expect(request.getAssistantid()).toBe('assistant-1');
+    expect(GetAssistantApiDeployment).toHaveBeenCalledWith(
+      { endpoint: 'test-endpoint' },
+      request,
+      debuggerMetadata,
+    );
+  });
+
+  it('creates deployment by type with concrete deployment payload', () => {
+    const deployment = { assistantId: 'assistant-1' };
+
+    createAssistantDeploymentByType({
+      deploymentType: 'api',
+      deployment: deployment as any,
+      auth,
+    });
+
+    const request = (CreateAssistantApiDeployment as jest.Mock).mock
+      .calls[0][1];
+    const debuggerMetadata = (ConnectionConfig.WithDebugger as jest.Mock).mock
+      .results[0].value;
+
+    expect(request.getApi()).toBe(deployment);
+    expect(CreateAssistantApiDeployment).toHaveBeenCalledWith(
+      { endpoint: 'test-endpoint' },
+      request,
+      debuggerMetadata,
+    );
+  });
+
+  it('disables deployment by type with assistant id', () => {
+    disableAssistantDeploymentByType({
+      assistantId: 'assistant-1',
+      deploymentType: 'api',
+      auth,
+    });
+
+    const request = (DisableAssistantApiDeployment as jest.Mock).mock
+      .calls[0][1];
+    const debuggerMetadata = (ConnectionConfig.WithDebugger as jest.Mock).mock
+      .results[0].value;
+
+    expect(request.getAssistantid()).toBe('assistant-1');
+    expect(DisableAssistantApiDeployment).toHaveBeenCalledWith(
       { endpoint: 'test-endpoint' },
       request,
       debuggerMetadata,

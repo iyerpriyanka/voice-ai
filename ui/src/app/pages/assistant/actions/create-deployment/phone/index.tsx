@@ -14,9 +14,7 @@ import { useParams } from 'react-router-dom';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import {
   AssistantPhoneDeployment,
-  CreateAssistantDeploymentRequest,
   DeploymentAudioProvider,
-  GetAssistantDeploymentRequest,
   Metadata,
 } from '@rapidaai/react';
 import { useCurrentCredential } from '@/hooks/use-credential';
@@ -149,10 +147,8 @@ const ConfigureAssistantCallDeployment: FC<{ assistantId: string }> = ({
     hasFetched.current = true;
 
     showLoader('block');
-    const request = new GetAssistantDeploymentRequest();
-    request.setAssistantid(assistantId);
     getAssistantDeploymentByType({
-      request,
+      assistantId,
       deploymentType: 'phone',
       auth: { projectId, token, userId: authId },
     })
@@ -334,8 +330,6 @@ const ConfigureAssistantCallDeployment: FC<{ assistantId: string }> = ({
       setErrorMessage(ttsError);
       return;
     }
-
-    const req = new CreateAssistantDeploymentRequest();
     const deployment = new AssistantPhoneDeployment();
     deployment.setAssistantid(assistantId);
     deployment.setGreetinginterruptible(
@@ -374,11 +368,8 @@ const ConfigureAssistantCallDeployment: FC<{ assistantId: string }> = ({
     outputAudio.setAudioprovider(audioOutputConfig.provider);
     outputAudio.setAudiooptionsList(audioOutputConfig.parameters);
     deployment.setOutputaudio(outputAudio);
-
-    req.setPhone(deployment);
-
     createAssistantDeploymentByType({
-      request: req,
+      deployment,
       deploymentType: 'phone',
       auth: { projectId, token, userId: authId },
     })

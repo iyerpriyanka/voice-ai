@@ -1,5 +1,8 @@
 import {
+  ConnectionConfig,
+  CreateEndpoint,
   CreateEndpointCacheConfiguration,
+  CreateEndpointProviderModel,
   CreateEndpointRetryConfiguration,
   CreateEndpointTag,
   GetAllEndpoint,
@@ -7,16 +10,21 @@ import {
   GetAllEndpointProviderModel,
   GetEndpoint,
   GetEndpointLog,
+  Invoke,
+  StringToAny,
   UpdateEndpointVersion,
   UpdateEndpointDetail,
 } from '@rapidaai/react';
 
 import {
+  createEndpoint,
   createEndpointCacheConfiguration,
+  createEndpointProviderModel,
   createEndpointRetryConfiguration,
   createEndpointTag,
   getEndpoint,
   getEndpointLogById,
+  invokeEndpoint,
   listEndpointLogs,
   listEndpointProviderModels,
   listEndpoints,
@@ -29,7 +37,12 @@ jest.mock('@/configs', () => ({
 }));
 
 jest.mock('@rapidaai/react', () => ({
+  ConnectionConfig: {
+    WithDebugger: jest.fn(auth => ({ debuggerAuth: auth })),
+  },
+  CreateEndpoint: jest.fn(),
   CreateEndpointCacheConfiguration: jest.fn(),
+  CreateEndpointProviderModel: jest.fn(),
   CreateEndpointRetryConfiguration: jest.fn(),
   CreateEndpointTag: jest.fn(),
   GetAllEndpoint: jest.fn(),
@@ -37,6 +50,37 @@ jest.mock('@rapidaai/react', () => ({
   GetAllEndpointProviderModel: jest.fn(),
   GetEndpoint: jest.fn(),
   GetEndpointLog: jest.fn(),
+  Invoke: jest.fn(),
+  InvokeRequest: class {
+    endpoint = null;
+    metadataMap = new Map();
+    argsMap = new Map();
+
+    setEndpoint(endpoint) {
+      this.endpoint = endpoint;
+    }
+
+    getMetadataMap() {
+      return this.metadataMap;
+    }
+
+    getArgsMap() {
+      return this.argsMap;
+    }
+  },
+  EndpointDefinition: class {
+    endpointId = '';
+    version = '';
+
+    setEndpointid(endpointId) {
+      this.endpointId = endpointId;
+    }
+
+    setVersion(version) {
+      this.version = version;
+    }
+  },
+  StringToAny: jest.fn(value => ({ stringValue: value })),
   UpdateEndpointVersion: jest.fn(),
   UpdateEndpointDetail: jest.fn(),
 }));
@@ -56,6 +100,12 @@ const metadata = {
 describe('endpoint client', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    (ConnectionConfig.WithDebugger as jest.Mock).mockImplementation(auth => ({
+      debuggerAuth: auth,
+    }));
+    (StringToAny as jest.Mock).mockImplementation(value => ({
+      stringValue: value,
+    }));
   });
 
   it('lists endpoints with pagination, criteria, and metadata', () => {
@@ -95,6 +145,77 @@ describe('endpoint client', () => {
       'endpoint-1',
       'model-1',
       metadata,
+      callback,
+    );
+  });
+
+  it('creates an endpoint with debugger metadata', () => {
+    const callback = jest.fn();
+    const endpointProviderModel = { model: 'provider' } as any;
+    const endpoint = { name: 'endpoint' } as any;
+    const retryConfig = { retry: 'fixed' } as any;
+    const cacheConfig = { cache: 'semantic' } as any;
+
+    createEndpoint({
+      endpointProviderModel,
+      endpoint,
+      tags: ['production'],
+      auth,
+      callback,
+      retryConfig,
+      cacheConfig,
+    });
+
+    expect(ConnectionConfig.WithDebugger).toHaveBeenCalledWith({
+      authorization: 'token-1',
+      projectId: 'project-1',
+      userId: 'user-1',
+    });
+    expect(CreateEndpoint).toHaveBeenCalledWith(
+      { endpoint: 'test-endpoint' },
+      endpointProviderModel,
+      endpoint,
+      ['production'],
+      {
+        debuggerAuth: {
+          authorization: 'token-1',
+          projectId: 'project-1',
+          userId: 'user-1',
+        },
+      },
+      callback,
+      retryConfig,
+      cacheConfig,
+    );
+  });
+
+  it('creates an endpoint provider model with debugger metadata', () => {
+    const callback = jest.fn();
+    const endpointProviderModel = { model: 'provider' } as any;
+
+    createEndpointProviderModel({
+      endpointId: 'endpoint-1',
+      endpointProviderModel,
+      auth,
+      callback,
+    });
+
+    expect(ConnectionConfig.WithDebugger).toHaveBeenCalledWith({
+      authorization: 'token-1',
+      projectId: 'project-1',
+      userId: 'user-1',
+    });
+    expect(CreateEndpointProviderModel).toHaveBeenCalledWith(
+      { endpoint: 'test-endpoint' },
+      'endpoint-1',
+      endpointProviderModel,
+      {
+        debuggerAuth: {
+          authorization: 'token-1',
+          projectId: 'project-1',
+          userId: 'user-1',
+        },
+      },
       callback,
     );
   });
@@ -230,6 +351,52 @@ describe('endpoint client', () => {
       metadata,
       callback,
     );
+  });
+
+  it('invokes an endpoint with request metadata and arguments', async () => {
+    const invokeResponse = { success: true };
+    const arg = StringToAny('Ada');
+    (Invoke as jest.Mock).mockResolvedValue(invokeResponse);
+
+    await expect(
+      invokeEndpoint({
+        endpointId: 'endpoint-1',
+        endpointProviderModelId: 'model-1',
+        args: new Map([['name', arg]]),
+        auth,
+      }),
+    ).resolves.toBe(invokeResponse);
+
+    expect(ConnectionConfig.WithDebugger).toHaveBeenCalledWith({
+      authorization: 'token-1',
+      projectId: 'project-1',
+      userId: 'user-1',
+    });
+    expect(Invoke).toHaveBeenCalledWith(
+      { endpoint: 'test-endpoint' },
+      expect.objectContaining({
+        endpoint: expect.objectContaining({
+          endpointId: 'endpoint-1',
+          version: 'model-1',
+        }),
+      }),
+      {
+        debuggerAuth: {
+          authorization: 'token-1',
+          projectId: 'project-1',
+          userId: 'user-1',
+        },
+      },
+    );
+
+    const request = (Invoke as jest.Mock).mock.calls[0][1];
+    expect(request.metadataMap.get('source')).toEqual({
+      stringValue: 'web-app',
+    });
+    expect(request.metadataMap.get('experiemental')).toEqual({
+      stringValue: 'true',
+    });
+    expect(request.argsMap.get('name')).toBe(arg);
   });
 
   it('lists endpoint logs with metadata', () => {

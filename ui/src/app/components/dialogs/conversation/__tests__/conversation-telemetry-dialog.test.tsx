@@ -3,55 +3,10 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { ConversationTelemetryDialog } from '../conversation-telemetry-modal';
 
-const mockGetAllTelemetry = jest.fn();
+const mockListTelemetry = jest.fn();
 
-jest.mock('@rapidaai/react', () => {
-  class Criteria {
-    private key = '';
-    private value = '';
-
-    setKey(key: string) {
-      this.key = key;
-    }
-
-    getKey() {
-      return this.key;
-    }
-
-    setValue(value: string) {
-      this.value = value;
-    }
-
-    getValue() {
-      return this.value;
-    }
-
-    setLogic() {}
-  }
-
-  class GetAllTelemetryRequest {
-    setPaginate() {}
-    setCriteriasList() {}
-  }
-
-  class Paginate {
-    setPage() {}
-    setPagesize() {}
-  }
-
-  return {
-    ConnectionConfig: {
-      WithDebugger: jest.fn(headers => headers),
-    },
-    Criteria,
-    GetAllTelemetry: (...args: unknown[]) => mockGetAllTelemetry(...args),
-    GetAllTelemetryRequest,
-    Paginate,
-  };
-});
-
-jest.mock('@/configs', () => ({
-  connectionConfig: {},
+jest.mock('@/clients', () => ({
+  listTelemetry: (...args: unknown[]) => mockListTelemetry(...args),
 }));
 
 jest.mock('@/hooks/use-credential', () => ({
@@ -214,8 +169,8 @@ const createTelemetryResponse = (records: any[]) => ({
 
 describe('ConversationTelemetryDialog', () => {
   beforeEach(() => {
-    mockGetAllTelemetry.mockReset();
-    mockGetAllTelemetry.mockResolvedValue({
+    mockListTelemetry.mockReset();
+    mockListTelemetry.mockResolvedValue({
       getDataList: () => [],
       getPaginated: () => ({ getTotalitem: () => 0 }),
     });
@@ -235,7 +190,7 @@ describe('ConversationTelemetryDialog', () => {
     expect(
       screen.queryByRole('heading', { name: 'Telemetry Events' }),
     ).not.toBeInTheDocument();
-    expect(mockGetAllTelemetry).not.toHaveBeenCalled();
+    expect(mockListTelemetry).not.toHaveBeenCalled();
   });
 
   it('fetches telemetry when opened and closes through modal actions', async () => {
@@ -253,7 +208,7 @@ describe('ConversationTelemetryDialog', () => {
       screen.getByRole('heading', { name: 'Telemetry Events' }),
     ).toBeInTheDocument();
 
-    await waitFor(() => expect(mockGetAllTelemetry).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(mockListTelemetry).toHaveBeenCalledTimes(1));
     await waitFor(() =>
       expect(screen.getByText('No events found')).toBeInTheDocument(),
     );
@@ -266,7 +221,7 @@ describe('ConversationTelemetryDialog', () => {
   });
 
   it('renders fetched event and metric rows across tabs', async () => {
-    mockGetAllTelemetry.mockResolvedValue(
+    mockListTelemetry.mockResolvedValue(
       createTelemetryResponse([
         {
           getEvent: () => createEventRecord(),
@@ -294,12 +249,12 @@ describe('ConversationTelemetryDialog', () => {
     expect(screen.getByText(/"traceId": "trace-1"/)).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Metrics' }));
-    expect(mockGetAllTelemetry).toHaveBeenCalledTimes(1);
+    expect(mockListTelemetry).toHaveBeenCalledTimes(1);
     expect(await screen.findByText('metric·message')).toBeInTheDocument();
     expect(screen.getByText(/stt.latency_ms/)).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Latency' }));
-    await waitFor(() => expect(mockGetAllTelemetry).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(mockListTelemetry).toHaveBeenCalledTimes(2));
     await waitFor(() =>
       expect(screen.getByTestId('latency-chart')).toHaveAttribute(
         'data-loading',

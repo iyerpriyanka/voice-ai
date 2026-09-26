@@ -15,7 +15,6 @@ import {
 import { ArrowUpRight, Information } from '@carbon/icons-react';
 import { TabForm } from '@/app/components/ui/composites';
 import {
-  ConnectionConfig,
   CreateEndpointResponse,
   EndpointAttribute,
   EndpointProviderModelAttribute,
@@ -37,14 +36,12 @@ import { Input } from '@/app/components/ui/primitives';
 import { TagInput } from '@/app/components/ui/composites';
 import { EndpointTag } from '@/app/components/domain/tags/endpoint-tags';
 import { Textarea } from '@/app/components/ui/primitives';
-import { CreateEndpoint } from '@rapidaai/react';
 import { ServiceError } from '@rapidaai/react';
 import { ChatCompletePrompt } from '@/utils/prompt';
-import { connectionConfig } from '@/configs';
-import { YellowNoticeBlock } from '@/app/components/layout/container/message/notice-block';
 import { InputHelper } from '@/app/components/ui/primitives';
 import { ConfigureEndpointPromptDialog } from '@/app/components/dialogs/endpoint';
 import { CornerBorderOverlay } from '@/app/components/ui/primitives';
+import { createEndpoint as createEndpointRequest } from '@/clients';
 
 export function CreateEndpointPage() {
   const { authId, token, projectId } = useCurrentCredential();
@@ -181,18 +178,17 @@ export function CreateEndpointPage() {
       endpointattr.setDescription(description);
     }
 
-    CreateEndpoint(
-      connectionConfig,
-      endpointProviderModelAttr,
-      endpointattr,
+    createEndpointRequest({
+      endpointProviderModel: endpointProviderModelAttr,
+      endpoint: endpointattr,
       tags,
-      ConnectionConfig.WithDebugger({
+      auth: {
         userId: authId,
-        authorization: token,
-        projectId: projectId,
-      }),
-      afterCreateEndpoint,
-    );
+        token,
+        projectId,
+      },
+      callback: afterCreateEndpoint,
+    });
   };
 
   const [isShow, setIsShow] = useState(false);

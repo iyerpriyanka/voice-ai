@@ -1,10 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import {
-  GetAssistantConfigurationRequest,
-  Metadata,
-  UpdateAssistantConfigurationRequest,
-} from '@rapidaai/react';
+import { Metadata } from '@rapidaai/react';
 import { useGlobalNavigation } from '@/hooks/use-global-navigator';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import { useRapidaStore } from '@/stores/app';
@@ -26,8 +22,8 @@ import {
 import { InputGroup } from '@/app/components/ui/primitives';
 import { Notification } from '@/app/components/ui/feedback';
 import {
-  getAssistantConfigurationByRequest,
-  updateAssistantConfigurationFromRequest,
+  getAssistantConfigurationById,
+  updateAssistantConfigurationById,
 } from '@/clients/assistant.client';
 
 const storageConfigurationType = 'storage';
@@ -50,13 +46,10 @@ export const UpdateAssistantStorage: FC<{ assistantId: string }> = ({
   useEffect(() => {
     if (!storageId) return;
 
-    const request = new GetAssistantConfigurationRequest();
-    request.setAssistantid(assistantId);
-    request.setId(storageId);
-
     showLoader();
-    getAssistantConfigurationByRequest({
-      request,
+    getAssistantConfigurationById({
+      assistantId,
+      configurationId: storageId,
       auth: { projectId, token, userId: authId },
     })
       .then(response => {
@@ -116,17 +109,14 @@ export const UpdateAssistantStorage: FC<{ assistantId: string }> = ({
       return;
     }
 
-    const request = new UpdateAssistantConfigurationRequest();
-    request.setId(storageId);
-    request.setAssistantid(assistantId);
-    request.setConfigurationtype(storageConfigurationType);
-    request.setProvider(provider);
-    request.setEnabled(true);
-    request.setOptionsList(upsertStorageFilesOption(parameters, selectedFiles));
-
     showLoader();
-    updateAssistantConfigurationFromRequest({
-      request,
+    updateAssistantConfigurationById({
+      assistantId,
+      configurationId: storageId,
+      configurationType: storageConfigurationType,
+      provider,
+      enabled: true,
+      options: upsertStorageFilesOption(parameters, selectedFiles),
       auth: { projectId, token, userId: authId },
     })
       .then(response => {

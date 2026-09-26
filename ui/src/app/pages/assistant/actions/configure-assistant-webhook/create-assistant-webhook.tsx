@@ -15,14 +15,14 @@ import {
 import { Information } from '@carbon/icons-react';
 import { Slider } from '@/app/components/ui/primitives';
 import { APiHeader } from '@/app/components/domain/external-api/api-header';
-import { CreateAssistantConfigurationRequest, Metadata } from '@rapidaai/react';
+import { Metadata } from '@rapidaai/react';
 import { useCurrentCredential } from '@/hooks/use-credential';
 import toast from 'react-hot-toast/headless';
 import { useRapidaStore } from '@/stores/app';
 import { TabForm } from '@/app/components/ui/composites';
 import { WebhookEventSelector } from './webhook-event-selector';
 import { WebhookEventGroup, webhookEvents } from './webhook-events';
-import { createAssistantConfigurationFromRequest } from '@/clients/assistant.client';
+import { createAssistantConfigurationForAssistant } from '@/clients/assistant.client';
 
 const renderLabelWithTooltip = (label: string, tooltip: string) => (
   <span className="inline-flex items-center gap-1">
@@ -181,28 +181,25 @@ export const CreateAssistantWebhook: FC<{ assistantId: string }> = ({
       return;
     }
     showLoader();
-    const request = new CreateAssistantConfigurationRequest();
-    request.setAssistantid(assistantId);
-    request.setConfigurationtype(webhookConfigurationType);
-    request.setProvider('http');
-    request.setEnabled(true);
-    request.setOptionsList(
-      buildWebhookOptions({
-        method,
-        endpoint,
-        headers,
-        retryOnStatus,
-        maxRetries,
-        requestTimeout,
-        priority,
-        events,
-        description,
-      }),
-    );
+    const options = buildWebhookOptions({
+      method,
+      endpoint,
+      headers,
+      retryOnStatus,
+      maxRetries,
+      requestTimeout,
+      priority,
+      events,
+      description,
+    });
 
     try {
-      const response = await createAssistantConfigurationFromRequest({
-        request,
+      const response = await createAssistantConfigurationForAssistant({
+        assistantId,
+        configurationType: webhookConfigurationType,
+        provider: 'http',
+        enabled: true,
+        options,
         auth: { projectId, token, userId: authId },
       });
 

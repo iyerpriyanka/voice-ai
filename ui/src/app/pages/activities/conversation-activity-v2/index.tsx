@@ -23,22 +23,14 @@ import {
   YAxis,
 } from 'recharts';
 import { Activity, Close, Renew, WarningAlt } from '@carbon/icons-react';
-import {
-  ConnectionConfig,
-  Criteria,
-  GetAllTelemetry,
-  GetAllTelemetryRequest,
-  Ordering,
-  Paginate,
-} from '@rapidaai/react';
 import toast from 'react-hot-toast/headless';
 import { Helmet } from '@/app/components/app-shell/helmet';
 import { EmptyState } from '@/app/components/ui/feedback';
 import { Pagination } from '@/app/components/ui/primitives';
 import { ScrollableTableSection } from '@/app/components/layout/sections/table-section';
 import { CopyButton } from '@/app/components/ui/primitives';
-import { connectionConfig } from '@/configs';
 import { useCurrentCredential } from '@/hooks/use-credential';
+import { listTelemetry, TelemetryCriteriaInput } from '@/clients';
 import {
   EventInspectorContent,
   EventMainTableSummary,
@@ -153,20 +145,15 @@ const createRequestCriteria = (
   key: string,
   value: string | number | undefined,
   logic = '=',
-): Criteria | null => {
+): TelemetryCriteriaInput | null => {
   const requestValue = String(value ?? '').trim();
   if (!requestValue) return null;
-
-  const criteria = new Criteria();
-  criteria.setKey(key);
-  criteria.setValue(requestValue);
-  criteria.setLogic(logic);
-  return criteria;
+  return { key, value: requestValue, logic };
 };
 
 const getScopedInspectorCriteria = (
   document: TimelineDocument,
-): Array<Criteria | null> => {
+): Array<TelemetryCriteriaInput | null> => {
   const scope = String(document.scope || '').toLowerCase();
 
   if (scope === 'message') {
@@ -209,8 +196,10 @@ const getScopedInspectorCriteria = (
   ];
 };
 
-const getInspectorCriteria = (document: TimelineDocument): Criteria[] => {
-  const criteria: Array<Criteria | null> = [];
+const getInspectorCriteria = (
+  document: TimelineDocument,
+): TelemetryCriteriaInput[] => {
+  const criteria: Array<TelemetryCriteriaInput | null> = [];
 
   if (document.kind === 'metric') {
     criteria.push(
@@ -237,7 +226,9 @@ const getInspectorCriteria = (document: TimelineDocument): Criteria[] => {
     criteria.push(createRequestCriteria('contextId', document.contextId));
   }
 
-  return criteria.filter((item): item is Criteria => Boolean(item));
+  return criteria.filter((item): item is TelemetryCriteriaInput =>
+    Boolean(item),
+  );
 };
 
 const getFacetTraceFilters = (filters: TraceFilterState): TraceFilterToken[] =>
@@ -281,8 +272,8 @@ const getRequestCriteria = ({
   dateRange: TraceFilterState['dateRange'];
   filters: TraceFilterToken[];
   freeText: string;
-}): Criteria[] => {
-  const criteria: Array<Criteria | null> = [
+}): TelemetryCriteriaInput[] => {
+  const criteria: Array<TelemetryCriteriaInput | null> = [
     createRequestCriteria('search', freeText, 'match'),
     ...filters.map(filter =>
       createRequestCriteria(
@@ -302,7 +293,9 @@ const getRequestCriteria = ({
     );
   }
 
-  return criteria.filter((item): item is Criteria => Boolean(item));
+  return criteria.filter((item): item is TelemetryCriteriaInput =>
+    Boolean(item),
+  );
 };
 
 const getMetricValues = (document: TimelineDocument): MetricValue[] =>
@@ -1020,31 +1013,14 @@ export const ListingPage = () => {
     const fetchTelemetry = async () => {
       setIsLoading(true);
 
-      const createTelemetryRequest = () => {
-        const request = new GetAllTelemetryRequest();
-        const paginate = new Paginate();
-        paginate.setPage(page);
-        paginate.setPagesize(pageSize);
-        request.setPaginate(paginate);
-        request.setCriteriasList(requestCriteria);
-
-        const order = new Ordering();
-        order.setColumn('occurredAt');
-        order.setOrder('desc');
-        request.setOrder(order);
-        return request;
-      };
-
       try {
-        const response = await GetAllTelemetry(
-          connectionConfig,
-          createTelemetryRequest(),
-          ConnectionConfig.WithDebugger({
-            authorization: token,
-            userId: authId,
-            projectId,
-          }),
-        );
+        const response = await listTelemetry({
+          page,
+          pageSize,
+          criteria: requestCriteria,
+          order: { column: 'occurredAt', order: 'desc' },
+          auth: { token, userId: authId, projectId },
+        });
         if (!active) return;
 
         if (!response.getSuccess()) {
@@ -1150,28 +1126,14 @@ export const ListingPage = () => {
       setInspectorDocuments([]);
       setIsInspectorLoading(true);
 
-      const request = new GetAllTelemetryRequest();
-      const paginate = new Paginate();
-      paginate.setPage(1);
-      paginate.setPagesize(500);
-      request.setPaginate(paginate);
-      request.setCriteriasList(getInspectorCriteria(selectedDocument));
-
-      const order = new Ordering();
-      order.setColumn('occurredAt');
-      order.setOrder('asc');
-      request.setOrder(order);
-
       try {
-        const response = await GetAllTelemetry(
-          connectionConfig,
-          request,
-          ConnectionConfig.WithDebugger({
-            authorization: token,
-            userId: authId,
-            projectId,
-          }),
-        );
+        const response = await listTelemetry({
+          page: 1,
+          pageSize: 500,
+          criteria: getInspectorCriteria(selectedDocument),
+          order: { column: 'occurredAt', order: 'asc' },
+          auth: { token, userId: authId, projectId },
+        });
         if (!active) return;
 
         if (!response.getSuccess()) {

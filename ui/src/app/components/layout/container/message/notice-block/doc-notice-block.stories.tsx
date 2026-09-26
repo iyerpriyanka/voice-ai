@@ -27,7 +27,7 @@ export const Default: Story = {};
 
 export const ExplicitUrl: Story = {
   args: {
-    docUrl: 'https://docs.rapida.ai/assistants/create-new-version',
+    docUrl: 'https://docs.example.com/assistants/create-new-version',
     linkText: 'Open docs',
   },
 };
