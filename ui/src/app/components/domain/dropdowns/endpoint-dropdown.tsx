@@ -34,11 +34,15 @@ export function EndpointDropdownView({
 
   return (
     <div className={cn(className)}>
-      <div className="flex">
-        <div className="flex-1 [&_.cds--dropdown]:!rounded-none [&_.cds--list-box]:!rounded-none">
+      <div className="mb-1 text-xs leading-4 text-[var(--cds-text-secondary)]">
+        Endpoint
+      </div>
+      <div className="domain-connected-dropdown-row flex w-full items-stretch bg-[var(--cds-field)] border-b border-b-[var(--cds-border-strong)]">
+        <div className="min-w-0 flex-1">
           <Dropdown
             id="endpoint-dropdown"
             titleText="Endpoint"
+            hideLabel
             label="Select endpoint"
             items={endpoints}
             selectedItem={selectedItem}
@@ -61,7 +65,7 @@ export function EndpointDropdownView({
           size="md"
           disabled={isLoading}
           onClick={onRefresh}
-          className="!rounded-none !border !border-l-0 !border-gray-200 dark:!border-gray-700"
+          className="domain-connected-dropdown-action shrink-0"
         />
         <Button
           hasIconOnly
@@ -70,7 +74,7 @@ export function EndpointDropdownView({
           kind="ghost"
           size="md"
           onClick={onCreateEndpoint}
-          className="!rounded-none !border !border-l-0 !border-gray-200 dark:!border-gray-700"
+          className="domain-connected-dropdown-action shrink-0"
         />
       </div>
     </div>

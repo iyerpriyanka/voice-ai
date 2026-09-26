@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import toast from 'react-hot-toast/headless';
 import {
@@ -146,6 +146,7 @@ jest.mock('@carbon/react', () => ({
   ),
   Dropdown: ({
     disabled,
+    hideLabel,
     id,
     items,
     itemToString,
@@ -158,7 +159,7 @@ jest.mock('@carbon/react', () => ({
 
     return (
       <label>
-        <span>{titleText}</span>
+        {!hideLabel && <span>{titleText}</span>}
         <select
           aria-label={label}
           data-testid={id}
@@ -247,6 +248,66 @@ describe('domain dropdowns', () => {
     });
 
     expect(onChangeCredential).toHaveBeenCalledWith(openAiCred);
+  });
+
+  it('renders action dropdowns as a single connected Carbon field', () => {
+    const credential = makeCredential('c1', 'Primary', 'openai');
+
+    render(
+      <>
+        <CredentialDropdownView
+          credentials={[credential] as any}
+          currentCredential="c1"
+          getProviderName={() => 'OpenAI'}
+          onChangeCredential={jest.fn() as any}
+          onReloadCredentials={jest.fn()}
+          onCreateCredential={jest.fn()}
+        />
+        <EndpointDropdownView
+          endpoints={mockEndpoints as any}
+          currentEndpoint="e1"
+          onChangeEndpoint={jest.fn() as any}
+          onRefresh={jest.fn()}
+          onCreateEndpoint={jest.fn()}
+        />
+        <KnowledgeDropdownView
+          knowledgeBases={mockKnowledgeBases as any}
+          currentKnowledge="k1"
+          onChangeKnowledge={jest.fn()}
+          onRefresh={jest.fn()}
+          onCreateKnowledge={jest.fn()}
+        />
+      </>,
+    );
+
+    const credentialRow = screen
+      .getByTestId('credential-dropdown')
+      .closest('.domain-connected-dropdown-row');
+    const endpointRow = screen
+      .getByTestId('endpoint-dropdown')
+      .closest('.domain-connected-dropdown-row');
+    const knowledgeRow = screen
+      .getByTestId('knowledge-dropdown')
+      .closest('.domain-connected-dropdown-row');
+
+    expect(credentialRow).toHaveClass('bg-[var(--cds-field)]', 'border-b');
+    expect(endpointRow).toHaveClass('bg-[var(--cds-field)]', 'border-b');
+    expect(knowledgeRow).toHaveClass('bg-[var(--cds-field)]', 'border-b');
+    expect(
+      within(credentialRow as HTMLElement).getByRole('button', {
+        name: 'Refresh credentials',
+      }),
+    ).toHaveClass('domain-connected-dropdown-action');
+    expect(
+      within(endpointRow as HTMLElement).getByRole('button', {
+        name: 'Create endpoint',
+      }),
+    ).toHaveClass('domain-connected-dropdown-action');
+    expect(
+      within(knowledgeRow as HTMLElement).getByRole('button', {
+        name: 'Create knowledge',
+      }),
+    ).toHaveClass('domain-connected-dropdown-action');
   });
 
   it('supports credential fallback labels, empty changes, refresh, and create', () => {

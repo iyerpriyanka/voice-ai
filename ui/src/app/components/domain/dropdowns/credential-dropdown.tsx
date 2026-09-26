@@ -54,23 +54,23 @@ export function CredentialDropdownView({
 
   return (
     <div className={cn(className)}>
-      <div className="flex items-end">
-        <div className="min-w-0 flex-1 [&_.cds--dropdown]:!rounded-none [&_.cds--list-box]:!rounded-none">
+      <div className="mb-1 inline-flex items-center gap-1 text-xs leading-4 text-[var(--cds-text-secondary)]">
+        Credential
+        <Toggletip align="right">
+          <ToggletipButton label="Show credential information">
+            <Information size={14} />
+          </ToggletipButton>
+          <ToggletipContent>
+            Select the saved provider credential used for model access.
+          </ToggletipContent>
+        </Toggletip>
+      </div>
+      <div className="domain-connected-dropdown-row flex w-full items-stretch bg-[var(--cds-field)] border-b border-b-[var(--cds-border-strong)]">
+        <div className="min-w-0 flex-1">
           <Dropdown
             id="credential-dropdown"
-            titleText={
-              <span className="inline-flex items-center gap-1">
-                Credential
-                <Toggletip align="right">
-                  <ToggletipButton label="Show credential information">
-                    <Information size={14} />
-                  </ToggletipButton>
-                  <ToggletipContent>
-                    Select the saved provider credential used for model access.
-                  </ToggletipContent>
-                </Toggletip>
-              </span>
-            }
+            titleText="Credential"
+            hideLabel
             label="Select credential"
             items={credentials}
             selectedItem={selectedItem}
@@ -89,7 +89,7 @@ export function CredentialDropdownView({
           kind="ghost"
           size="md"
           onClick={onReloadCredentials}
-          className="!rounded-none !border !border-l-0 !border-gray-200 dark:!border-gray-700"
+          className="domain-connected-dropdown-action shrink-0"
         />
         <Button
           hasIconOnly
@@ -98,7 +98,7 @@ export function CredentialDropdownView({
           kind="ghost"
           size="md"
           onClick={onCreateCredential}
-          className="!rounded-none !border !border-l-0 !border-gray-200 dark:!border-gray-700"
+          className="domain-connected-dropdown-action shrink-0"
         />
       </div>
     </div>

@@ -136,7 +136,6 @@ export function EmbeddingProvider({
       )}
       {provider && (
         <CredentialDropdown
-          className="bg-white"
           onChangeCredential={(c: VaultCredential) => {
             updateParameter('rapida.credential_id', c.getId());
           }}
