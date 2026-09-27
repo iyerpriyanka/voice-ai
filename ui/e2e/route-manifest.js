@@ -46,6 +46,7 @@ const routeJourneys = [
     path: '/auth/signin',
     auth: false,
     expectText: 'Signin',
+    readyText: 'Sign in with GitHub',
     checks: ['smoke', 'a11y', 'screenshot'],
   },
   {
@@ -53,21 +54,27 @@ const routeJourneys = [
     path: '/auth/signup',
     auth: false,
     expectText: 'Signup',
-    checks: ['smoke'],
+    checks: ['smoke', 'a11y'],
+    screenshotDeferredReason:
+      'The sign-in journey is the reviewed visual baseline for the shared authentication layout.',
   },
   {
     id: 'auth.forgotPassword',
     path: '/auth/forgot-password',
     auth: false,
     expectText: 'Forgot Password',
-    checks: ['smoke'],
+    checks: ['smoke', 'a11y'],
+    screenshotDeferredReason:
+      'The sign-in journey is the reviewed visual baseline for the shared authentication layout.',
   },
   {
     id: 'auth.changePassword',
     path: '/auth/change-password/token-1',
     auth: false,
     expectText: 'Change Password',
-    checks: ['smoke'],
+    checks: ['smoke', 'a11y'],
+    screenshotDeferredReason:
+      'The sign-in journey is the reviewed visual baseline for the shared authentication layout.',
   },
   {
     id: 'static.privacy',
@@ -81,7 +88,9 @@ const routeJourneys = [
     path: '/static/terms-conditions',
     auth: false,
     expectText: 'Terms of Service',
-    checks: ['smoke'],
+    checks: ['smoke', 'a11y'],
+    screenshotDeferredReason:
+      'The privacy journey is the reviewed visual baseline for the shared static-page layout.',
   },
   {
     id: 'dashboard.home',
@@ -102,7 +111,7 @@ const routeJourneys = [
     path: '/deployment/endpoint',
     auth: true,
     expectText: 'Hosted Endpoints',
-    checks: ['smoke', 'screenshot'],
+    checks: ['smoke', 'a11y', 'screenshot'],
   },
   {
     id: 'deployment.createAssistant',
@@ -110,6 +119,10 @@ const routeJourneys = [
     auth: true,
     expectText: 'Select a usecase template',
     checks: ['smoke'],
+    a11yDeferredReason:
+      'The template selector has uncapped button-name and contrast debt that needs component fixes before enforcement.',
+    screenshotDeferredReason:
+      'Template content needs a dedicated deterministic fixture before it becomes a visual baseline.',
   },
   {
     id: 'integration.models',
@@ -123,7 +136,9 @@ const routeJourneys = [
     path: '/integration/personal-credential',
     auth: true,
     expectText: 'Personal Tokens',
-    checks: ['smoke'],
+    checks: ['smoke', 'a11y'],
+    screenshotDeferredReason:
+      'The models journey is the reviewed visual baseline for the integration shell.',
   },
   {
     id: 'logs.request',
@@ -137,21 +152,27 @@ const routeJourneys = [
     path: '/logs/tool',
     auth: true,
     expectText: 'Tool Logs',
-    checks: ['smoke'],
+    checks: ['smoke', 'a11y'],
+    screenshotDeferredReason:
+      'The request journey is the reviewed visual baseline for the logs shell.',
   },
   {
     id: 'logs.conversation',
     path: '/logs/conversation',
     auth: true,
     expectText: 'Conversation Logs',
-    checks: ['smoke'],
+    checks: ['smoke', 'a11y'],
+    screenshotDeferredReason:
+      'The request journey is the reviewed visual baseline for the logs shell.',
   },
   {
     id: 'logs.traces',
     path: '/logs/traces',
     auth: true,
     expectText: 'No traces found',
-    checks: ['smoke'],
+    checks: ['smoke', 'a11y'],
+    screenshotDeferredReason:
+      'The request journey is the reviewed visual baseline for the logs shell.',
   },
   {
     id: 'organization.overview',
@@ -165,21 +186,27 @@ const routeJourneys = [
     path: '/organization/users',
     auth: true,
     expectText: 'Users',
-    checks: ['smoke'],
+    checks: ['smoke', 'a11y'],
+    screenshotDeferredReason:
+      'The overview journey is the reviewed visual baseline for the organization shell.',
   },
   {
     id: 'organization.projects',
     path: '/organization/projects',
     auth: true,
     expectText: 'Projects',
-    checks: ['smoke'],
+    checks: ['smoke', 'a11y'],
+    screenshotDeferredReason:
+      'The overview journey is the reviewed visual baseline for the organization shell.',
   },
   {
     id: 'organization.security',
     path: '/organization/security',
     auth: true,
     expectText: 'Organization Security',
-    checks: ['smoke'],
+    checks: ['smoke', 'a11y'],
+    screenshotDeferredReason:
+      'The overview journey is the reviewed visual baseline for the organization shell.',
   },
   {
     id: 'account.settings',
@@ -193,14 +220,18 @@ const routeJourneys = [
     path: '/onboarding/organization',
     auth: true,
     expectText: 'Set up your organization',
-    checks: ['smoke'],
+    checks: ['smoke', 'a11y'],
+    screenshotDeferredReason:
+      'Organization setup needs an isolated staged-state fixture before it becomes a visual baseline.',
   },
   {
     id: 'onboarding.project',
     path: '/onboarding/project',
     auth: true,
     expectText: 'Create your first project',
-    checks: ['smoke'],
+    checks: ['smoke', 'a11y'],
+    screenshotDeferredReason:
+      'Project setup needs an isolated staged-state fixture before it becomes a visual baseline.',
   },
 ];
 

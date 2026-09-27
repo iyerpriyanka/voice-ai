@@ -1,6 +1,8 @@
 const path = require('path');
 const { test: base, expect } = require('@playwright/test');
-const { isKnownA11yViolation } = require('./a11y-baseline');
+const { evaluateA11yViolations } = require('./a11y-baseline');
+
+const COLOR_MODES = ['light', 'dark'];
 
 const dashboardDesign = {
   welcome: {
@@ -147,9 +149,18 @@ async function gotoJourney(page, journey) {
   await page.goto(journey.path);
   await page.waitForLoadState('domcontentloaded');
   await expect(page.locator('body')).toContainText(journey.expectText);
+  if (journey.readyText) {
+    await expect(page.locator('body')).toContainText(journey.readyText);
+  }
   await expect(page.locator('body')).not.toContainText(
     "Sorry we couldn't find this page.",
   );
+}
+
+async function setColorMode(page, colorMode) {
+  await page.addInitScript(mode => {
+    window.localStorage.setItem('ui-theme-mode', mode);
+  }, colorMode);
 }
 
 async function checkA11y(page, journey) {
@@ -158,31 +169,30 @@ async function checkA11y(page, journey) {
     window.axe.run(document, {
       runOnly: {
         type: 'tag',
-        values: ['wcag2a', 'wcag2aa'],
+        values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'],
       },
     }),
   );
-  const violations = results.violations
-    .filter(violation => ['critical', 'serious'].includes(violation.impact))
-    .filter(violation => !isKnownA11yViolation(journey.id, violation));
+  const violations = results.violations.filter(violation =>
+    ['critical', 'serious'].includes(violation.impact),
+  );
+  const assessment = evaluateA11yViolations(journey.id, violations);
 
-  expect(
-    violations.map(violation => ({
-      id: violation.id,
-      impact: violation.impact,
-      help: violation.help,
-      nodes: violation.nodes.map(node => node.target),
-    })),
-  ).toEqual([]);
+  expect(assessment).toEqual({ unapprovedViolations: [], overages: [] });
 }
 
-function screenshotPath(journey) {
+function screenshotPath(journey, colorMode) {
   const fileName = journey.id.replace(/[^a-z0-9]+/gi, '-').toLowerCase();
-  return path.join('e2e-artifacts', 'screenshots', `${fileName}.png`);
+  return path.join(
+    'e2e-artifacts',
+    'screenshots',
+    `${fileName}-${colorMode}.png`,
+  );
 }
 
-function screenshotName(journey) {
-  return `${journey.id.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}.png`;
+function screenshotName(journey, colorMode) {
+  const fileName = journey.id.replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+  return `${fileName}${colorMode === 'dark' ? '-dark' : ''}.png`;
 }
 
 const test = base.extend({
@@ -195,8 +205,10 @@ const test = base.extend({
 module.exports = {
   test,
   expect,
+  COLOR_MODES,
   checkA11y,
   gotoJourney,
+  setColorMode,
   screenshotName,
   screenshotPath,
 };

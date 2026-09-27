@@ -15,6 +15,11 @@ test('route manifest covers enabled app route roots', () => {
   expect(result.unmappedEnabledRoots).toEqual([]);
   expect(result.misroutedRootJourneys).toEqual([]);
   expect(result.journeysWithoutAssertions).toEqual([]);
+  expect(result.journeysWithoutSmoke).toEqual([]);
+  expect(result.journeysWithoutA11yDecision).toEqual([]);
+  expect(result.journeysWithoutScreenshotDecision).toEqual([]);
+  expect(result.journeysWithUnknownChecks).toEqual([]);
+  expect(result.journeysWithConflictingDecisions).toEqual([]);
   expect(result.missingSourceRoutes).toEqual([]);
   expect(result.unknownSourceRoutes).toEqual([]);
   expect(result.sourceRouteCountMismatches).toEqual([]);

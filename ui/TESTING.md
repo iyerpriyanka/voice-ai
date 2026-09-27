@@ -1,122 +1,136 @@
 # UI Testing
 
+The UI uses Jest and Testing Library for component behavior, Playwright for browser behavior, axe for
+accessibility, and Storybook for isolated component development. See `DEVELOPMENT.md` for the test
+selection and implementation workflow.
+
+## Setup and development
+
+Install the locked dependencies and generate the CSS bundle:
+
+```bash
+yarn install --frozen-lockfile
+yarn build:css
+```
+
+Start the application or Storybook:
+
+```bash
+yarn start:dev
+yarn storybook
+```
+
+Install the Playwright browser once:
+
+```bash
+yarn e2e:install
+```
+
+## Verification
+
+Run the UI gate without browser tests:
+
+```bash
+yarn verify:ui
+```
+
+Run the complete gate, including Playwright:
+
+```bash
+yarn verify:ui:e2e
+```
+
+The verifier runs every stage and reports all failures at the end. It does not modify source files
+or apply automatic fixes.
+
 ## Jest
 
-Use the repository `just` recipes from the repository root for the standard UI
-workflow:
+Run all Jest tests:
 
 ```bash
-just ui
+yarn test --watchAll=false --passWithNoTests
 ```
 
-This installs UI dependencies, prepares generated CSS, generates Allure and
-coverage reports, and builds Storybook static docs. After it completes, use:
+Run the nearest suite while developing:
 
 ```bash
-just ui-storybook
-just ui-report-open
+yarn test --watchAll=false src/path/to/changed.test.tsx
 ```
 
-Run the full UI test suite with:
+Run Jest with coverage:
 
 ```bash
-just ui-test
+yarn test:coverage
 ```
 
-Run coverage with:
+Coverage is written to `coverage/lcov-report/index.html`.
+
+## Allure reports
+
+Allure is optional and requires Java. Generate fresh results, coverage, and the HTML report with:
 
 ```bash
-just ui-test-coverage
+yarn allure:report
 ```
 
-## Allure Report
-
-Allure is opt-in for local report generation. Normal Jest commands do not write
-Allure artifacts.
-
-The Allure CLI requires Java at runtime.
-
-Generate fresh Allure results, build the HTML report, and write Jest coverage
-with:
+Open or serve an existing report with:
 
 ```bash
-just ui-report
+yarn allure:open
+yarn allure:serve
 ```
 
-The full report command writes:
+Generated output is written to `allure-results/` and `allure-report/` and is ignored by Git.
 
-- Allure test report: `ui/allure-report/index.html`
-- Jest coverage report: `ui/coverage/lcov-report/index.html`
+## Playwright
 
-Open an existing generated report with:
+Playwright covers route inventory, browser smoke tests, accessibility, and screenshot comparison.
+The default run builds the current source and starts a fresh production server. It does not attach to
+an existing local server. Set `PLAYWRIGHT_SKIP_WEB_SERVER=1` with `PLAYWRIGHT_BASE_URL` only when an
+external server is intentionally under test.
+
+Run individual lanes:
 
 ```bash
-just ui-report-open
+yarn check:e2e-routes
+yarn e2e:smoke
+yarn e2e:a11y
+yarn e2e:screenshots
 ```
 
-Serve a temporary report directly from test results with:
+Run the complete browser suite:
 
 ```bash
-just ui-report-serve
+yarn e2e
 ```
 
-Run a focused component report by passing the Jest path:
+The route inventory lives in `e2e/route-manifest.js`. Every enabled route must have an explicit
+smoke, accessibility, and screenshot decision. A route can defer a check only with a concrete reason.
+
+Accessibility checks cover WCAG 2.1 A and AA in light and dark modes for every journey that is not
+explicitly deferred. Existing debt is recorded in `e2e/a11y-baseline.js` with a maximum node count
+for each journey, rule, and selector. A new finding or an increase above that limit fails the suite.
+
+Playwright writes failure output to `test-results/e2e/` and its HTML report to `playwright-report/`.
+Screenshot artifacts are written to `e2e-artifacts/screenshots/`. Reviewed visual baselines live
+beside `e2e/screenshot-journey.spec.js`.
+
+Update visual baselines only after reviewing the rendered change:
 
 ```bash
-just ui-report src/app/components/app-shell
+yarn e2e:screenshots --update-snapshots
 ```
 
-Focused reports write Allure results for the selected path. They do not run
-global coverage because repository coverage thresholds are intended for the full
-UI suite.
+## Documentation and tooling checks
 
-Allure writes generated files to `ui/allure-results` and `ui/allure-report`.
-Coverage writes generated files to `ui/coverage`. These folders are ignored by
-git.
-
-## Playwright E2E
-
-Playwright covers browser-level route smoke, accessibility, and screenshot
-journeys. Install browsers once after dependencies are installed:
+The UI documentation checker validates documented Yarn scripts and referenced UI paths:
 
 ```bash
-just ui-e2e-install
+yarn check:docs
 ```
 
-Run the route coverage tripwire without starting a browser:
+The checker and verification runner have focused Node tests under `scripts/*.test.mjs`:
 
 ```bash
-just ui-e2e-routes
+yarn test:tooling
 ```
-
-Run focused browser lanes:
-
-```bash
-just ui-e2e-smoke
-just ui-e2e-a11y
-just ui-e2e-screenshots
-```
-
-Run the complete Playwright lane:
-
-```bash
-just ui-e2e
-```
-
-The route manifest lives in `ui/e2e/route-manifest.js`. Every top-level app
-route in `ui/src/app/index.tsx` must be represented there as a journey, an
-explicit deferred route, or a disabled feature route. Every nested route path
-literal in `ui/src/app/routes/*.tsx` must also have an explicit source-route
-decision in the manifest.
-
-Screenshot artifacts are written under `ui/e2e-artifacts/screenshots` and are
-ignored by git. Visual regression baselines are kept beside the screenshot spec
-in Playwright's snapshot folder and should be updated intentionally with:
-
-```bash
-cd ui && yarn playwright test e2e/screenshot-journey.spec.js --update-snapshots
-```
-
-Known serious or critical accessibility findings are scoped in
-`ui/e2e/a11y-baseline.js`. Remove an entry when the underlying UI issue is
-fixed. New unlisted serious or critical findings fail `just ui-e2e-a11y`.

@@ -50,9 +50,10 @@
     "test:public-assets": "node --test scripts/check-public-assets.test.mjs",
     "check:bundle-size": "node scripts/check-bundle-size.mjs",
     "test:bundle-size": "node --test scripts/check-bundle-size.test.mjs",
+    "check:docs": "node scripts/check-ui-docs.mjs",
     "check:e2e-routes": "node scripts/check-e2e-route-coverage.cjs",
     "e2e:install": "playwright install chromium",
-    "e2e:server": "yarn build:css && cross-env BROWSER=none FAST_REFRESH=false craco start",
+    "e2e:server": "cross-env CI=false DISABLE_ESLINT_PLUGIN=true yarn build && serve -s build --no-clipboard --no-port-switching",
     "e2e": "playwright test --config=playwright.config.js",
     "test:e2e": "playwright test e2e/sign-in.spec.ts --config=playwright.config.ts",
     "test:e2e:update": "playwright test e2e/sign-in.spec.ts --config=playwright.config.ts --update-snapshots",
@@ -65,12 +66,15 @@
     "checkTs:raw": "tsc --noEmit",
     "checkTs:update-baseline": "node scripts/check-typescript.mjs --update",
     "test:typescript-check": "node --test scripts/check-typescript.test.mjs",
+    "test:tooling": "node --test scripts/*.test.mjs",
     "eslint": "eslint --ext js,ts,tsx",
     "lint": "yarn eslint src",
     "lint:fix": "yarn eslint --fix src",
     "lint:css": "stylelint src/**/*.css",
     "prettify": "prettier --write",
-    "test:coverage": "yarn test --watchAll=false --coverage"
+    "test:coverage": "yarn test --watchAll=false --coverage",
+    "verify:ui": "node scripts/verify-ui.mjs",
+    "verify:ui:e2e": "node scripts/verify-ui.mjs --e2e"
   },
   "jest": {
     "collectCoverageFrom": [

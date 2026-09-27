@@ -31,8 +31,8 @@ module.exports = defineConfig({
     : {
         command: 'yarn e2e:server',
         url: baseURL,
-        reuseExistingServer: !process.env.CI,
-        timeout: 120_000,
+        reuseExistingServer: false,
+        timeout: 180_000,
         env: {
           HOST: serverURL.hostname,
           PORT: serverURL.port || defaultPort,

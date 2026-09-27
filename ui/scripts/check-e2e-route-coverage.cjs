@@ -90,6 +90,50 @@ function inventoryEntries() {
   return entries;
 }
 
+const allowedJourneyChecks = new Set(['smoke', 'a11y', 'screenshot']);
+
+function checkJourneyDecisions(journeys) {
+  const checksFor = journey =>
+    Array.isArray(journey.checks) ? journey.checks : [];
+
+  return {
+    journeysWithoutSmoke: journeys
+      .filter(journey => !checksFor(journey).includes('smoke'))
+      .map(journey => journey.id),
+    journeysWithoutA11yDecision: journeys
+      .filter(
+        journey =>
+          !checksFor(journey).includes('a11y') && !journey.a11yDeferredReason,
+      )
+      .map(journey => journey.id),
+    journeysWithoutScreenshotDecision: journeys
+      .filter(
+        journey =>
+          !checksFor(journey).includes('screenshot') &&
+          !journey.screenshotDeferredReason,
+      )
+      .map(journey => journey.id),
+    journeysWithUnknownChecks: journeys.flatMap(journey =>
+      checksFor(journey)
+        .filter(check => !allowedJourneyChecks.has(check))
+        .map(check => `${journey.id}:${check}`),
+    ),
+    journeysWithConflictingDecisions: journeys.flatMap(journey => {
+      const conflicts = [];
+      if (checksFor(journey).includes('a11y') && journey.a11yDeferredReason) {
+        conflicts.push(`${journey.id}:a11y`);
+      }
+      if (
+        checksFor(journey).includes('screenshot') &&
+        journey.screenshotDeferredReason
+      ) {
+        conflicts.push(`${journey.id}:screenshot`);
+      }
+      return conflicts;
+    }),
+  };
+}
+
 function checkRouteCoverage() {
   const appRoots = readAppRouteRoots();
   const config = readJSON(devConfigFile);
@@ -140,6 +184,7 @@ function checkRouteCoverage() {
         journey.checks.length === 0,
     )
     .map(journey => journey.id);
+  const journeyDecisionIssues = checkJourneyDecisions(routeJourneys);
   const discoveredRouteSources = readRouteSourceEntries();
   const inventory = inventoryEntries();
   const inventorySourceKeys = new Map(
@@ -188,6 +233,7 @@ function checkRouteCoverage() {
     unmappedEnabledRoots,
     misroutedRootJourneys,
     journeysWithoutAssertions,
+    ...journeyDecisionIssues,
     missingSourceRoutes,
     unknownSourceRoutes,
     sourceRouteCountMismatches,
@@ -209,6 +255,11 @@ if (require.main === module) {
     result.unmappedEnabledRoots.length > 0 ||
     result.misroutedRootJourneys.length > 0 ||
     result.journeysWithoutAssertions.length > 0 ||
+    result.journeysWithoutSmoke.length > 0 ||
+    result.journeysWithoutA11yDecision.length > 0 ||
+    result.journeysWithoutScreenshotDecision.length > 0 ||
+    result.journeysWithUnknownChecks.length > 0 ||
+    result.journeysWithConflictingDecisions.length > 0 ||
     result.missingSourceRoutes.length > 0 ||
     result.unknownSourceRoutes.length > 0 ||
     result.sourceRouteCountMismatches.length > 0 ||
@@ -221,6 +272,7 @@ if (require.main === module) {
 }
 
 module.exports = {
+  checkJourneyDecisions,
   checkRouteCoverage,
   readAppRouteRoots,
 };
