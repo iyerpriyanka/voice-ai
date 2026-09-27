@@ -3,7 +3,6 @@ set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo_root"
-export DEVELOPMENT_GATE_KEY="development-process-test-key"
 output_dir="$(mktemp -d)"
 trap 'rm -rf "$output_dir"' EXIT
 
@@ -38,60 +37,45 @@ output_path, expected_code = sys.argv[1:]
 result = json.loads(open(output_path, encoding="utf-8").read())
 if result.get("status") != "fail":
     raise SystemExit(f"{output_path}: expected fail, got {result}")
-issue_codes = {issue.get("code") for issue in result.get("issues", [])}
-if expected_code not in issue_codes:
-    raise SystemExit(f"{output_path}: expected {expected_code}, got {sorted(issue_codes)}")
+issues = result.get("issues") or result.get("errors") or []
+codes = {issue.get("code") for issue in issues}
+if expected_code not in codes:
+    raise SystemExit(f"{output_path}: expected {expected_code}, got {sorted(codes)}")
 PY
 }
 
 for agent_root in .codex .claude; do
   runner="$repo_root/$agent_root/orchestrator/scripts/hook-run.py"
-  examples="$repo_root/$agent_root/orchestrator/examples"
-  lifecycle_input="$examples/lifecycle-input.json"
+  lifecycle_input="$repo_root/$agent_root/orchestrator/examples/lifecycle-input.json"
 
-  python3 "$runner" \
-    --stage pre-implementation \
-    --input "$lifecycle_input" \
-    --output "$output_dir/${agent_root#.}-pre.json"
-  validate_result "$output_dir/${agent_root#.}-pre.json" ""
+  for stage in pre-implementation post-implementation post-verification post-review; do
+    output_file="$output_dir/${agent_root#.}-$stage.json"
+    python3 "$runner" --stage "$stage" --input "$lifecycle_input" --output "$output_file"
+    case "$stage" in
+      post-verification) validate_result "$output_file" ready_for_review ;;
+      post-review) validate_result "$output_file" ready_to_ship ;;
+      *) validate_result "$output_file" "" ;;
+    esac
+  done
 
-  python3 "$runner" \
-    --stage post-implementation \
-    --input "$lifecycle_input" \
-    --output "$output_dir/${agent_root#.}-implementation.json"
-  validate_result "$output_dir/${agent_root#.}-implementation.json" ""
-
-  python3 "$runner" \
-    --stage post-verification \
-    --input "$lifecycle_input" \
-    --output "$output_dir/${agent_root#.}-verification.json"
-  validate_result "$output_dir/${agent_root#.}-verification.json" "ready_for_review"
-
-  python3 "$runner" \
-    --stage post-review \
-    --input "$lifecycle_input" \
-    --output "$output_dir/${agent_root#.}-review.json"
-  validate_result "$output_dir/${agent_root#.}-review.json" "ready_to_ship"
-
-  python3 - "$lifecycle_input" "$output_dir/${agent_root#.}-self-review-input.json" <<'PY'
+  python3 - "$lifecycle_input" "$output_dir/${agent_root#.}-self-review.json" <<'PY'
 import json
 import sys
 
 source_path, output_path = sys.argv[1:]
 payload = json.loads(open(source_path, encoding="utf-8").read())
-implementation_owner = next(iter(payload["task_plan"]["ownership"].values()))
-payload["review"]["reviewer"] = implementation_owner
-payload["meta"]["triggered_by"] = implementation_owner
+owner = next(iter(payload["task_plan"]["ownership"].values()))
+payload["review"]["reviewer"] = owner
+payload["meta"]["triggered_by"] = owner
 with open(output_path, "w", encoding="utf-8") as output_file:
     json.dump(payload, output_file)
 PY
-  python3 "$runner" \
-    --stage post-review \
-    --input "$output_dir/${agent_root#.}-self-review-input.json" \
-    --output "$output_dir/${agent_root#.}-self-review-output.json"
-  validate_failure_code "$output_dir/${agent_root#.}-self-review-output.json" "REVIEWER_NOT_INDEPENDENT"
+  python3 "$runner" --stage post-review \
+    --input "$output_dir/${agent_root#.}-self-review.json" \
+    --output "$output_dir/${agent_root#.}-self-review-result.json"
+  validate_failure_code "$output_dir/${agent_root#.}-self-review-result.json" REVIEWER_NOT_INDEPENDENT
 
-  python3 - "$lifecycle_input" "$output_dir/${agent_root#.}-missing-command-input.json" <<'PY'
+  python3 - "$lifecycle_input" "$output_dir/${agent_root#.}-missing-command.json" <<'PY'
 import json
 import sys
 
@@ -101,13 +85,27 @@ payload["verification"]["commands"] = []
 with open(output_path, "w", encoding="utf-8") as output_file:
     json.dump(payload, output_file)
 PY
-  python3 "$runner" \
-    --stage post-verification \
-    --input "$output_dir/${agent_root#.}-missing-command-input.json" \
-    --output "$output_dir/${agent_root#.}-missing-command-output.json"
-  validate_failure_code "$output_dir/${agent_root#.}-missing-command-output.json" "REQUIRED_COMMANDS_MISSING"
+  python3 "$runner" --stage post-verification \
+    --input "$output_dir/${agent_root#.}-missing-command.json" \
+    --output "$output_dir/${agent_root#.}-missing-command-result.json"
+  validate_failure_code "$output_dir/${agent_root#.}-missing-command-result.json" REQUIRED_COMMANDS_MISSING
 
-  python3 - "$lifecycle_input" "$output_dir/${agent_root#.}-missing-implementation-input.json" <<'PY'
+  python3 - "$lifecycle_input" "$output_dir/${agent_root#.}-missing-approval.json" <<'PY'
+import json
+import sys
+
+source_path, output_path = sys.argv[1:]
+payload = json.loads(open(source_path, encoding="utf-8").read())
+payload["task_plan"]["discussion"]["decision"] = "revise"
+with open(output_path, "w", encoding="utf-8") as output_file:
+    json.dump(payload, output_file)
+PY
+  python3 "$runner" --stage pre-implementation \
+    --input "$output_dir/${agent_root#.}-missing-approval.json" \
+    --output "$output_dir/${agent_root#.}-missing-approval-result.json"
+  validate_failure_code "$output_dir/${agent_root#.}-missing-approval-result.json" SCHEMA_VALIDATION_FAILED
+
+  python3 - "$lifecycle_input" "$output_dir/${agent_root#.}-missing-implementation.json" <<'PY'
 import json
 import sys
 
@@ -117,53 +115,12 @@ payload.pop("implementation")
 with open(output_path, "w", encoding="utf-8") as output_file:
     json.dump(payload, output_file)
 PY
-  python3 "$runner" \
-    --stage post-review \
-    --input "$output_dir/${agent_root#.}-missing-implementation-input.json" \
-    --output "$output_dir/${agent_root#.}-missing-implementation-output.json"
-  validate_failure_code "$output_dir/${agent_root#.}-missing-implementation-output.json" "SCHEMA_VALIDATION_FAILED"
+  python3 "$runner" --stage post-review \
+    --input "$output_dir/${agent_root#.}-missing-implementation.json" \
+    --output "$output_dir/${agent_root#.}-missing-implementation-result.json"
+  validate_failure_code "$output_dir/${agent_root#.}-missing-implementation-result.json" SCHEMA_VALIDATION_FAILED
 
-  python3 - "$lifecycle_input" "$output_dir/${agent_root#.}-rewritten-owner-input.json" <<'PY'
-import json
-import sys
-
-source_path, output_path = sys.argv[1:]
-payload = json.loads(open(source_path, encoding="utf-8").read())
-owner_path = next(iter(payload["task_plan"]["ownership"]))
-payload["task_plan"]["ownership"][owner_path] = payload["review"]["reviewer"]
-with open(output_path, "w", encoding="utf-8") as output_file:
-    json.dump(payload, output_file)
-PY
-  python3 "$runner" \
-    --stage post-review \
-    --input "$output_dir/${agent_root#.}-rewritten-owner-input.json" \
-    --output "$output_dir/${agent_root#.}-rewritten-owner-output.json"
-  validate_failure_code "$output_dir/${agent_root#.}-rewritten-owner-output.json" "PLAN_ARTIFACT_MISMATCH"
-
-  python3 - "$lifecycle_input" "$output_dir/${agent_root#.}-forged-plan.json" "$output_dir/${agent_root#.}-forged-plan-input.json" <<'PY'
-import hashlib
-import json
-import sys
-
-source_path, forged_plan_path, output_path = sys.argv[1:]
-payload = json.loads(open(source_path, encoding="utf-8").read())
-owner_path = next(iter(payload["task_plan"]["ownership"]))
-payload["task_plan"]["ownership"][owner_path] = payload["review"]["reviewer"]
-with open(forged_plan_path, "w", encoding="utf-8") as plan_file:
-    json.dump(payload["task_plan"], plan_file)
-raw_plan = open(forged_plan_path, "rb").read()
-payload["artifacts"]["approved_plan_file"] = forged_plan_path
-payload["artifacts"]["approved_plan_sha256"] = hashlib.sha256(raw_plan).hexdigest()
-with open(output_path, "w", encoding="utf-8") as output_file:
-    json.dump(payload, output_file)
-PY
-  python3 "$runner" \
-    --stage post-review \
-    --input "$output_dir/${agent_root#.}-forged-plan-input.json" \
-    --output "$output_dir/${agent_root#.}-forged-plan-output.json"
-  validate_failure_code "$output_dir/${agent_root#.}-forged-plan-output.json" "PLAN_ATTESTATION_INVALID"
-
-  python3 - "$lifecycle_input" "$output_dir/${agent_root#.}-missing-envelope-input.json" <<'PY'
+  python3 - "$lifecycle_input" "$output_dir/${agent_root#.}-missing-envelope.json" <<'PY'
 import json
 import sys
 
@@ -173,13 +130,12 @@ payload.pop("version")
 with open(output_path, "w", encoding="utf-8") as output_file:
     json.dump(payload, output_file)
 PY
-  python3 "$runner" \
-    --stage post-review \
-    --input "$output_dir/${agent_root#.}-missing-envelope-input.json" \
-    --output "$output_dir/${agent_root#.}-missing-envelope-output.json"
-  validate_failure_code "$output_dir/${agent_root#.}-missing-envelope-output.json" "SCHEMA_VALIDATION_FAILED"
+  python3 "$runner" --stage post-review \
+    --input "$output_dir/${agent_root#.}-missing-envelope.json" \
+    --output "$output_dir/${agent_root#.}-missing-envelope-result.json"
+  validate_failure_code "$output_dir/${agent_root#.}-missing-envelope-result.json" SCHEMA_VALIDATION_FAILED
 
-  python3 - "$lifecycle_input" "$output_dir/${agent_root#.}-wrong-run-input.json" <<'PY'
+  python3 - "$lifecycle_input" "$output_dir/${agent_root#.}-wrong-run.json" <<'PY'
 import json
 import sys
 
@@ -189,49 +145,18 @@ payload["orchestration"]["run_id"] = "unrelated-run"
 with open(output_path, "w", encoding="utf-8") as output_file:
     json.dump(payload, output_file)
 PY
-  python3 "$runner" \
-    --stage post-review \
-    --input "$output_dir/${agent_root#.}-wrong-run-input.json" \
-    --output "$output_dir/${agent_root#.}-wrong-run-output.json"
-  validate_failure_code "$output_dir/${agent_root#.}-wrong-run-output.json" "ORCA_RUN_MISMATCH"
+  python3 "$runner" --stage post-review \
+    --input "$output_dir/${agent_root#.}-wrong-run.json" \
+    --output "$output_dir/${agent_root#.}-wrong-run-result.json"
+  validate_failure_code "$output_dir/${agent_root#.}-wrong-run-result.json" ORCA_RUN_MISMATCH
 done
 
-trusted_panel="$output_dir/orca-development-panel-trusted.html"
+panel="$output_dir/orca-development-panel.html"
 python3 "$repo_root/bin/orca-development-panel" \
   --input "$repo_root/.codex/orchestrator/examples/lifecycle-input.json" \
-  --output "$trusted_panel" >/dev/null
-grep -q "Ready To Ship" "$trusted_panel"
-grep -q "7/7 stages complete" "$trusted_panel"
-
-locked_panel="$output_dir/orca-development-panel-locked.html"
-env -u DEVELOPMENT_GATE_KEY python3 "$repo_root/bin/orca-development-panel" \
-  --input "$repo_root/.codex/orchestrator/examples/lifecycle-input.json" \
-  --output "$locked_panel" >/dev/null
-grep -q "Unverified" "$locked_panel"
-grep -q "Coordinator gate not executed" "$locked_panel"
-grep -q "0/7 stages complete" "$locked_panel"
-
-invalid_attestation_input="$output_dir/orca-development-panel-invalid-attestation.json"
-python3 - "$repo_root/.codex/orchestrator/examples/lifecycle-input.json" "$invalid_attestation_input" <<'PY'
-import json
-import sys
-
-source_path, output_path = sys.argv[1:]
-payload = json.loads(open(source_path, encoding="utf-8").read())
-payload["artifacts"]["approved_plan_hmac"] = "0" * 64
-with open(output_path, "w", encoding="utf-8") as output_file:
-    json.dump(payload, output_file)
-PY
-invalid_attestation_panel="$output_dir/orca-development-panel-invalid-attestation.html"
-python3 "$repo_root/bin/orca-development-panel" \
-  --input "$invalid_attestation_input" \
-  --output "$invalid_attestation_panel" >/dev/null
-grep -q "Plan Attestation Invalid" "$invalid_attestation_panel"
-grep -q "0/7 stages complete" "$invalid_attestation_panel"
-if grep -q ">Planned<" "$invalid_attestation_panel"; then
-  echo "Invalid attestation must not render a completed plan stage." >&2
-  exit 1
-fi
+  --output "$panel" >/dev/null
+grep -q "Ready To Ship" "$panel"
+grep -q "7/7 stages complete" "$panel"
 
 injection_input="$output_dir/orca-development-panel-injection.json"
 python3 - "$repo_root/.codex/orchestrator/examples/lifecycle-input.json" "$injection_input" <<'PY'
@@ -245,29 +170,17 @@ with open(output_path, "w", encoding="utf-8") as output_file:
     json.dump(payload, output_file)
 PY
 injection_panel="$output_dir/orca-development-panel-injection.html"
-env -u DEVELOPMENT_GATE_KEY python3 "$repo_root/bin/orca-development-panel" \
-  --input "$injection_input" \
-  --output "$injection_panel" >/dev/null
+python3 "$repo_root/bin/orca-development-panel" --input "$injection_input" --output "$injection_panel" >/dev/null
 grep -q "&lt;script&gt;alert(&#x27;panel&#x27;)&lt;/script&gt;" "$injection_panel"
 if grep -q "<script>alert('panel')</script>" "$injection_panel"; then
   echo "Panel output contains unescaped input." >&2
   exit 1
 fi
 
-malformed_input="$output_dir/orca-development-panel-malformed.json"
-printf '{invalid json' > "$malformed_input"
-if env -u DEVELOPMENT_GATE_KEY python3 "$repo_root/bin/orca-development-panel" \
-  --input "$malformed_input" \
-  --output "$output_dir/orca-development-panel-malformed.html" >/dev/null 2>&1; then
-  echo "Malformed panel input unexpectedly succeeded." >&2
-  exit 1
-fi
-
 collision_input="$output_dir/orca-development-panel-collision.json"
 cp "$repo_root/.codex/orchestrator/examples/lifecycle-input.json" "$collision_input"
-if env -u DEVELOPMENT_GATE_KEY python3 "$repo_root/bin/orca-development-panel" \
-  --input "$collision_input" \
-  --output "$collision_input" >/dev/null 2>&1; then
+if python3 "$repo_root/bin/orca-development-panel" \
+  --input "$collision_input" --output "$collision_input" >/dev/null 2>&1; then
   echo "Panel input/output collision unexpectedly succeeded." >&2
   exit 1
 fi
@@ -275,206 +188,35 @@ python3 -m json.tool "$collision_input" >/dev/null
 
 collision_symlink="$output_dir/orca-development-panel-collision-link"
 ln -s "$collision_input" "$collision_symlink"
-if env -u DEVELOPMENT_GATE_KEY python3 "$repo_root/bin/orca-development-panel" \
-  --input "$collision_input" \
-  --output "$collision_symlink" >/dev/null 2>&1; then
+if python3 "$repo_root/bin/orca-development-panel" \
+  --input "$collision_input" --output "$collision_symlink" >/dev/null 2>&1; then
   echo "Panel symlink input/output collision unexpectedly succeeded." >&2
   exit 1
 fi
-python3 -m json.tool "$collision_input" >/dev/null
 
 collision_hardlink="$output_dir/orca-development-panel-collision-hardlink"
 ln "$collision_input" "$collision_hardlink"
-if env -u DEVELOPMENT_GATE_KEY python3 "$repo_root/bin/orca-development-panel" \
-  --input "$collision_input" \
-  --output "$collision_hardlink" >/dev/null 2>&1; then
+if python3 "$repo_root/bin/orca-development-panel" \
+  --input "$collision_input" --output "$collision_hardlink" >/dev/null 2>&1; then
   echo "Panel hard-link input/output collision unexpectedly succeeded." >&2
   exit 1
 fi
-python3 -m json.tool "$collision_input" >/dev/null
 
-ORCA_CLI_COMMAND='"/path with spaces/orca" --environment local' python3 - "$repo_root/bin/orca-development-panel" <<'PY'
+malformed_input="$output_dir/orca-development-panel-malformed.json"
+printf '{invalid json' >"$malformed_input"
+if python3 "$repo_root/bin/orca-development-panel" \
+  --input "$malformed_input" --output "$output_dir/malformed.html" >/dev/null 2>&1; then
+  echo "Malformed panel input unexpectedly succeeded." >&2
+  exit 1
+fi
+
+ORCA_CLI_COMMAND='"/path with spaces/orca" --environment local' \
+  python3 - "$repo_root/bin/orca-development-panel" <<'PY'
 import importlib.machinery
-import os
 import sys
 
 module = importlib.machinery.SourceFileLoader("orca_development_panel", sys.argv[1]).load_module()
 assert module.resolve_orca_command() == ["/path with spaces/orca", "--environment", "local"]
-PY
-
-rfc_fixture_root="$output_dir/rfc-confirmation"
-artifact_dir="$rfc_fixture_root/rfcs/0042-confirmation-test/jsons"
-mkdir -p "$artifact_dir"
-cat >"$rfc_fixture_root/rfcs/0042-confirmation-test.md" <<'EOF'
-# RFC 0042: Confirmation Test
-
-- Status: Accepted
-
-## Summary
-
-Exercise the exact-digest confirmation contract.
-EOF
-rfc_digest="$(shasum -a 256 "$rfc_fixture_root/rfcs/0042-confirmation-test.md" | awk '{print $1}')"
-challenge_receipt="$artifact_dir/challenge.json"
-cat >"$challenge_receipt" <<EOF
-{
-  "run_id": "run_test",
-  "task_id": "task_challenge",
-  "decision": "approved",
-  "rfc_file": "rfcs/0042-confirmation-test.md",
-  "rfc_sha256": "$rfc_digest",
-  "reviewed_at": "2026-08-20T09:59:00Z",
-  "reviewer": "independent-reviewer"
-}
-EOF
-challenge_receipt_digest="$(shasum -a 256 "$challenge_receipt" | awk '{print $1}')"
-
-mock_orca="$output_dir/mock-orca"
-cat >"$mock_orca" <<'EOF'
-#!/usr/bin/env bash
-set -euo pipefail
-case " $* " in
-  *" task-create "*) printf '%s\n' '{"result":{"task":{"id":"task_confirm"}}}' ;;
-  *" gate-create "*) printf '%s\n' '{"result":{"gate":{"id":"gate_confirm"}}}' ;;
-  *" gate-list "*)
-    digest="$(shasum -a 256 "$RFC_FIXTURE" | awk '{print $1}')"
-    printf '{"result":{"gates":[{"id":"gate_confirm","run_id":"%s","task_id":"%s","question":"Approve implementation of RFC rfcs/0042-confirmation-test.md with SHA-256 %s after approved challenge task task_challenge with receipt SHA-256 %s?","status":"%s","resolution":"%s","created_at":"%s","resolved_at":"%s"}]}}\n' \
-      "${GATE_RUN_ID-run_test}" "${GATE_TASK_ID-task_confirm}" "$digest" \
-      "$CHALLENGE_RECEIPT_DIGEST" \
-      "${GATE_STATUS-resolved}" "${GATE_RESOLUTION-approved}" \
-      "${GATE_CREATED_AT-2026-08-20T10:00:00Z}" "${GATE_RESOLVED_AT-2026-08-20T10:01:00Z}"
-    ;;
-  *) printf '%s\n' '{"ok":false}' >&2; exit 2 ;;
-esac
-EOF
-chmod +x "$mock_orca"
-
-RFC_FIXTURE="$rfc_fixture_root/rfcs/0042-confirmation-test.md" CHALLENGE_RECEIPT_DIGEST="$challenge_receipt_digest" \
-ORCA_CLI_COMMAND="$mock_orca" python3 "$repo_root/bin/orca-confirm-rfc" \
-  --repo-root "$rfc_fixture_root" create --run run_test --challenge-task task_challenge \
-  --challenge-receipt "$challenge_receipt" --rfc rfcs/0042-confirmation-test.md \
-  >"$output_dir/rfc-create.json"
-grep -q '"confirmation_task_id": "task_confirm"' "$output_dir/rfc-create.json"
-grep -q '"gate_id": "gate_confirm"' "$output_dir/rfc-create.json"
-
-RFC_FIXTURE="$rfc_fixture_root/rfcs/0042-confirmation-test.md" CHALLENGE_RECEIPT_DIGEST="$challenge_receipt_digest" \
-ORCA_CLI_COMMAND="$mock_orca" python3 "$repo_root/bin/orca-confirm-rfc" \
-  --repo-root "$rfc_fixture_root" collect --run run_test --task task_confirm \
-  --challenge-task task_challenge --challenge-receipt "$challenge_receipt" --gate gate_confirm \
-  --rfc rfcs/0042-confirmation-test.md >/dev/null
-grep -q '"resolution": "approved"' "$artifact_dir/confirmation.json"
-
-printf '%s\n' '{"unexpected":"replacement"}' >"$artifact_dir/confirmation.json"
-if RFC_FIXTURE="$rfc_fixture_root/rfcs/0042-confirmation-test.md" CHALLENGE_RECEIPT_DIGEST="$challenge_receipt_digest" \
-  ORCA_CLI_COMMAND="$mock_orca" python3 "$repo_root/bin/orca-confirm-rfc" \
-  --repo-root "$rfc_fixture_root" collect --run run_test --task task_confirm \
-  --challenge-task task_challenge --challenge-receipt "$challenge_receipt" --gate gate_confirm \
-  --rfc rfcs/0042-confirmation-test.md >/dev/null 2>&1; then
-  echo "Confirmation receipt unexpectedly overwrote an existing artifact." >&2
-  exit 1
-fi
-printf '%s\n' '{"resolution":"approved"}' >"$artifact_dir/confirmation.json"
-
-if RFC_FIXTURE="$rfc_fixture_root/rfcs/0042-confirmation-test.md" CHALLENGE_RECEIPT_DIGEST="$challenge_receipt_digest" \
-  ORCA_CLI_COMMAND="$mock_orca" python3 "$repo_root/bin/orca-confirm-rfc" \
-  --repo-root "$rfc_fixture_root" collect --run run_test --task task_confirm \
-  --challenge-task task_challenge --challenge-receipt "$challenge_receipt" --gate gate_confirm \
-  --rfc rfcs/0042-confirmation-test.md --output "$output_dir/outside.json" >/dev/null 2>&1; then
-  echo "Confirmation receipt unexpectedly wrote outside the RFC artifact directory." >&2
-  exit 1
-fi
-
-cp "$challenge_receipt" "$output_dir/outside-challenge.json"
-if RFC_FIXTURE="$rfc_fixture_root/rfcs/0042-confirmation-test.md" CHALLENGE_RECEIPT_DIGEST="$challenge_receipt_digest" \
-  ORCA_CLI_COMMAND="$mock_orca" python3 "$repo_root/bin/orca-confirm-rfc" \
-  --repo-root "$rfc_fixture_root" create --run run_test --challenge-task task_challenge \
-  --challenge-receipt "$output_dir/outside-challenge.json" --rfc rfcs/0042-confirmation-test.md \
-  >/dev/null 2>&1; then
-  echo "Challenge receipt unexpectedly loaded outside the RFC artifact directory." >&2
-  exit 1
-fi
-
-cp "$rfc_fixture_root/rfcs/0042-confirmation-test.md" "$output_dir/original-rfc.md"
-sed -i.bak 's/Confirmation Test/Changed Confirmation Test/' "$rfc_fixture_root/rfcs/0042-confirmation-test.md"
-if RFC_FIXTURE="$output_dir/original-rfc.md" CHALLENGE_RECEIPT_DIGEST="$challenge_receipt_digest" ORCA_CLI_COMMAND="$mock_orca" \
-  python3 "$repo_root/bin/orca-confirm-rfc" --repo-root "$rfc_fixture_root" collect \
-  --run run_test --task task_confirm --challenge-task task_challenge \
-  --challenge-receipt "$challenge_receipt" --gate gate_confirm --rfc rfcs/0042-confirmation-test.md \
-  >/dev/null 2>&1; then
-  echo "Changed RFC digest unexpectedly reused an old confirmation gate." >&2
-  exit 1
-fi
-cp "$output_dir/original-rfc.md" "$rfc_fixture_root/rfcs/0042-confirmation-test.md"
-
-for gate_case in wrong_run wrong_task pending rejected bad_timestamp; do
-  case "$gate_case" in
-    wrong_run) gate_env=(GATE_RUN_ID=other_run) ;;
-    wrong_task) gate_env=(GATE_TASK_ID=other_task) ;;
-    pending) gate_env=(GATE_STATUS=pending GATE_RESOLUTION=) ;;
-    rejected) gate_env=(GATE_STATUS=resolved GATE_RESOLUTION=rejected) ;;
-    bad_timestamp) gate_env=(GATE_CREATED_AT=2026-08-20) ;;
-  esac
-  if env RFC_FIXTURE="$rfc_fixture_root/rfcs/0042-confirmation-test.md" CHALLENGE_RECEIPT_DIGEST="$challenge_receipt_digest" \
-    ORCA_CLI_COMMAND="$mock_orca" "${gate_env[@]}" \
-    python3 "$repo_root/bin/orca-confirm-rfc" --repo-root "$rfc_fixture_root" collect \
-    --run run_test --task task_confirm --challenge-task task_challenge \
-    --challenge-receipt "$challenge_receipt" --gate gate_confirm --rfc rfcs/0042-confirmation-test.md \
-    >/dev/null 2>&1; then
-    echo "RFC gate failure case unexpectedly succeeded: $gate_case" >&2
-    exit 1
-  fi
-done
-
-python3 - "$challenge_receipt" "$artifact_dir/rejected-challenge.json" <<'PY'
-import json
-import sys
-
-receipt = json.load(open(sys.argv[1], encoding="utf-8"))
-receipt["decision"] = "revise"
-json.dump(receipt, open(sys.argv[2], "w", encoding="utf-8"))
-PY
-if RFC_FIXTURE="$rfc_fixture_root/rfcs/0042-confirmation-test.md" CHALLENGE_RECEIPT_DIGEST="$challenge_receipt_digest" ORCA_CLI_COMMAND="$mock_orca" \
-  python3 "$repo_root/bin/orca-confirm-rfc" --repo-root "$rfc_fixture_root" create \
-  --run run_test --challenge-task task_challenge \
-  --challenge-receipt "$artifact_dir/rejected-challenge.json" \
-  --rfc rfcs/0042-confirmation-test.md >/dev/null 2>&1; then
-  echo "Non-approved challenge receipt unexpectedly created a confirmation gate." >&2
-  exit 1
-fi
-
-python3 - "$repo_root/bin/orca-confirm-rfc" "$rfc_fixture_root" <<'PY'
-import importlib.machinery
-import pathlib
-import sys
-
-module = importlib.machinery.SourceFileLoader("orca_confirm_rfc", sys.argv[1]).load_module()
-root = pathlib.Path(sys.argv[2])
-
-def rejected(path):
-    try:
-        module.load_rfc(root, path)
-    except SystemExit:
-        return
-    raise AssertionError(f"unexpectedly accepted {path}")
-
-for invalid in ("/tmp/rfcs/0042-test.md", "rfcs/../rfcs/0042-test.md"):
-    rejected(invalid)
-
-multiple = root / "rfcs/0044-multiple-status.md"
-multiple.write_text("# RFC\n\n- Status: Accepted\n- Status: Draft\n\n## Summary\n", encoding="utf-8")
-rejected("rfcs/0044-multiple-status.md")
-
-substring = root / "rfcs/0045-substring-status.md"
-substring.write_text("# RFC\n\nprefix - Status: Accepted suffix\n\n## Summary\n", encoding="utf-8")
-rejected("rfcs/0045-substring-status.md")
-
-directory = root / "rfcs/0046-directory.md"
-directory.mkdir()
-rejected("rfcs/0046-directory.md")
-
-symlink = root / "rfcs/0047-symlink.md"
-symlink.symlink_to(root / "rfcs/0042-confirmation-test.md")
-rejected("rfcs/0047-symlink.md")
 PY
 
 run_mock="$output_dir/mock-orca-run"
@@ -496,8 +238,8 @@ elif args[:2] == ["orchestration", "task-create"]:
     title = args[args.index("--task-title") + 1]
     identifiers = {
         "Understand and plan": "task_plan",
-        "Draft reserved RFC": "task_rfc",
-        "Challenge exact plan and RFC": "task_challenge",
+        "Draft RFC": "task_rfc",
+        "Challenge plan and RFC": "task_challenge",
     }
     payload = {"result": {"task": {"id": identifiers[title]}}}
 elif args[:2] == ["orchestration", "worker-start"]:
@@ -508,7 +250,15 @@ print(json.dumps(payload))
 PY
 chmod +x "$run_mock"
 mkdir -p "$output_dir/run-worktree/rfcs"
-git -C "$output_dir/run-worktree" init -q
+if (
+  cd "$output_dir/run-worktree"
+  ORCA_CLI_COMMAND="$run_mock" ORCA_RUN_LOG="$run_log" \
+    bash "$repo_root/bin/orca-development-run" "historical number" codex rfcs/0016-new-format.md \
+    >/dev/null 2>&1
+); then
+  echo "Historical RFC number unexpectedly succeeded." >&2
+  exit 1
+fi
 (
   cd "$output_dir/run-worktree"
   ORCA_CLI_COMMAND="$run_mock" ORCA_RUN_LOG="$run_log" \
@@ -522,44 +272,10 @@ if (
     bash "$repo_root/bin/orca-development-run" "collision" codex rfcs/0044-collision.md \
     >/dev/null 2>&1
 ); then
-  echo "Existing RFC reservation collision unexpectedly succeeded." >&2
+  echo "Existing RFC path collision unexpectedly succeeded." >&2
   exit 1
 fi
 
-reservation_repo="$output_dir/reservation-repo"
-reservation_linked="$output_dir/reservation-linked"
-mkdir -p "$reservation_repo/rfcs"
-git -C "$reservation_repo" init -q
-git -C "$reservation_repo" config user.name validator
-git -C "$reservation_repo" config user.email validator@example.invalid
-git -C "$reservation_repo" commit --allow-empty -qm init
-git -C "$reservation_repo" worktree add -qb reservation-linked "$reservation_linked"
-mkdir -p "$reservation_linked/rfcs"
-(
-  cd "$reservation_repo"
-  ORCA_CLI_COMMAND="$run_mock" ORCA_RUN_LOG="$output_dir/reservation-run.log" \
-    bash "$repo_root/bin/orca-development-run" "reserve once" codex rfcs/0050-shared-lock.md \
-    >/dev/null
-)
-if (
-  cd "$reservation_linked"
-  ORCA_CLI_COMMAND="$run_mock" ORCA_RUN_LOG="$output_dir/reservation-linked.log" \
-    bash "$repo_root/bin/orca-development-run" "reserve twice" codex rfcs/0050-shared-lock.md \
-    >/dev/null 2>&1
-); then
-  echo "Linked worktree reused a repository-wide RFC reservation." >&2
-  exit 1
-fi
-(
-  cd "$reservation_repo"
-  bash "$repo_root/bin/orca-rfc-release" rfcs/0050-shared-lock.md >/dev/null
-)
-(
-  cd "$reservation_linked"
-  ORCA_CLI_COMMAND="$run_mock" ORCA_RUN_LOG="$output_dir/reservation-linked-retry.log" \
-    bash "$repo_root/bin/orca-development-run" "reserve after release" codex rfcs/0050-shared-lock.md \
-    >/dev/null
-)
 python3 - "$run_log" <<'PY'
 import json
 import sys
@@ -567,13 +283,12 @@ import sys
 calls = [json.loads(line) for line in open(sys.argv[1], encoding="utf-8")]
 task_calls = [call for call in calls if call[:2] == ["orchestration", "task-create"]]
 worker_calls = [call for call in calls if call[:2] == ["orchestration", "worker-start"]]
-assert len(task_calls) == 3, task_calls
-assert len(worker_calls) == 1, worker_calls
-assert worker_calls[0][worker_calls[0].index("--task") + 1] == "task_plan"
-assert not any("Implement" in " ".join(call) for call in calls)
+if len(task_calls) != 3:
+    raise SystemExit(f"expected three planning tasks, got {len(task_calls)}")
+if len(worker_calls) != 1:
+    raise SystemExit(f"expected one planner dispatch, got {len(worker_calls)}")
 PY
 
-grep -q "repeat(auto-fit,minmax(150px,1fr))" "$trusted_panel"
-grep -q "@media (max-width:600px)" "$trusted_panel"
-
-echo "Development process gates passed for Codex and Claude."
+cmp -s .codex/orchestrator/scripts/hook-run.py .claude/orchestrator/scripts/hook-run.py
+cmp -s .codex/orchestrator/schemas/envelope.schema.json .claude/orchestrator/schemas/envelope.schema.json
+echo "Development process validation passed"

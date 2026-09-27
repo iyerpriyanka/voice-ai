@@ -46,7 +46,7 @@ use one namespace while retaining provider-specific optional detail.
 
 ### Allowed Paths
 
-- `rfcs/0010-sip-call-address-authentication.md` and JSON artifacts
+- `rfcs/0010-sip-call-address-authentication.md`
 - `api/assistant-api/internal/type/telephony.go`
 - `api/assistant-api/internal/channel/telephony/**`
 - `api/assistant-api/sip/pipeline/runtime.go`
@@ -201,10 +201,6 @@ None.
 ## Challenge Resolution
 
 Pending independent challenge.
-
-## Artifact Index
-
-- `jsons/plan.json`: implementation plan, draft
 
 ## Decision Log
 

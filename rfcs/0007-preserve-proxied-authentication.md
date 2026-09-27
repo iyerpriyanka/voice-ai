@@ -57,7 +57,6 @@ the first service boundary.
 ### Allowed Paths
 
 - `rfcs/0007-preserve-proxied-authentication.md` - RFC owner
-- `rfcs/0007-preserve-proxied-authentication/jsons/**` - coordinator artifacts
 - `pkg/types/jwt.go` - signed delegated-actor claims
 - `pkg/types/jwt_test.go` - token contract tests
 - `pkg/types/service_scope_principle.go` - validated service and delegated identity model
@@ -304,37 +303,14 @@ found actorless synthetic project authentication in SIP route and registration p
 Amendment 5 classifies those operations as Assistant service-authenticated while retaining
 their organization and project scope.
 
-## Artifact Index
-
-- `jsons/plan.json` - Superseded Assistant-proxy plan.
-- `jsons/challenge-round-01.json` - Findings on the superseded proxy design.
-- `jsons/challenge.json` - Approval of the superseded proxy design.
-- `jsons/confirmation.json` - Approval of the superseded proxy design.
-- `jsons/amendment-01-plan.json` - Current all-service delegated-authentication plan.
-- `jsons/amendment-01-challenge.json` - Findings on the first amendment draft.
-- `jsons/amendment-02-plan.json` - Revised all-service delegated-authentication plan.
-- `jsons/amendment-02-challenge.json` - Findings on the second amendment draft.
-- `jsons/amendment-03-plan.json` - Final Go gRPC `WithAuth` delegated-authentication plan.
-- `jsons/amendment-03-challenge.json` - Approval of the third amendment draft.
-- `jsons/amendment-03-confirmation.json` - User approval of the third amendment draft.
-- `jsons/amendment-04-plan.json` - Revised all-token-path delegated-authentication plan.
-- `jsons/amendment-04-challenge.json` - Approval of the fourth amendment draft.
-- `jsons/amendment-04-confirmation.json` - User approval of the fourth amendment draft.
-- `jsons/amendment-04-implementation-review.json` - Blocking SIP compatibility finding.
-- `jsons/amendment-05-plan.json` - SIP service-actor compatibility correction plan.
-- `jsons/amendment-05-challenge.json` - Approval of the SIP compatibility plan.
-- `jsons/amendment-05-confirmation.json` - User approval of the SIP compatibility plan.
-- `jsons/amendment-05-implementation-review.json` - Test-scope inventory finding.
-- `jsons/amendment-06-plan.json` - Test-path inventory correction plan.
-
 ## Decision Log
 
 | Date | Decision | Owner | Evidence |
 | --- | --- | --- | --- |
-| 2026-08-23 | Preserve public actor identity through the Web API Assistant proxy | Platform and API teams | `jsons/plan.json` |
-| 2026-08-23 | Replace raw credential forwarding with actor-aware signed delegation across all services | Platform and API teams | `jsons/amendment-01-plan.json` |
-| 2026-08-23 | Limit propagation to all Go gRPC calls using `InternalClient.WithAuth`; exclude HTTP, platform, and Python Document paths | User | `jsons/amendment-03-plan.json` |
-| 2026-08-23 | Always emit delegated actor details, configure the service actor in YAML, and centralize authentication errors | User | `jsons/amendment-04-plan.json` |
-| 2026-08-23 | Treat SIP-originated downstream work as Assistant service-authenticated while retaining tenant scope | Implementation reviewer | `jsons/amendment-04-implementation-review.json` |
-| 2026-08-23 | Add the SIP package and registration fixture tests required by repository finalization | Implementation reviewer | `jsons/amendment-05-implementation-review.json` |
-| 2026-08-23 | Isolate delegation to gRPC `WithAuth` and separate caller from effective actor | Plan challenger | `jsons/amendment-01-challenge.json` |
+| 2026-08-23 | Preserve public actor identity through the Web API Assistant proxy | Platform and API teams | RFC review |
+| 2026-08-23 | Replace raw credential forwarding with actor-aware signed delegation across all services | Platform and API teams | RFC review |
+| 2026-08-23 | Limit propagation to all Go gRPC calls using `InternalClient.WithAuth`; exclude HTTP, platform, and Python Document paths | User | RFC amendment review |
+| 2026-08-23 | Always emit delegated actor details, configure the service actor in YAML, and centralize authentication errors | User | RFC amendment review |
+| 2026-08-23 | Treat SIP-originated downstream work as Assistant service-authenticated while retaining tenant scope | Implementation reviewer | Implementation review |
+| 2026-08-23 | Add the SIP package and registration fixture tests required by repository finalization | Implementation reviewer | Implementation review |
+| 2026-08-23 | Isolate delegation to gRPC `WithAuth` and separate caller from effective actor | Plan challenger | RFC challenge |

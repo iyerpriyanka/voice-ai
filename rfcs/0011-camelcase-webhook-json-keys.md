@@ -68,7 +68,6 @@ consistent outbound contract across all Rapida-owned Assistant API webhook paylo
   serialization coverage.
 - `api/assistant-api/internal/observability/collectors/webhook/collector_test.go`:
   end-to-end collector request-body assertions.
-- `rfcs/0011-camelcase-webhook-json-keys/`: governed workflow artifacts.
 - `rfcs/0011-camelcase-webhook-json-keys.md`: this RFC.
 
 ### Out-of-Scope Paths
@@ -251,16 +250,9 @@ outside webhook payload ownership. The first challenge identified that producer-
 verification omitted conversation and WebRTC producers. The verification command now
 explicitly covers `internal/adapters/internal` and `internal/channel/webrtc/...`.
 
-## Artifact Index
-
-- `jsons/plan.json`: approved planning artifact for this RFC.
-- `jsons/challenge.json`: challenge receipt for the exact RFC bytes in this file.
-- `jsons/confirmation.json`: exact-digest confirmation receipt required before
-  implementation.
-
 ## Decision Log
 
 | Date | Decision | Owner | Evidence |
 | --- | --- | --- | --- |
-| 2026-08-24 | Change only Rapida-owned webhook payload field names to lowerCamelCase before first release | Webhook contract owner | `jsons/plan.json` |
-| 2026-08-24 | Keep event names, enums, envelope fields, config keys, REST contracts, and provider payloads unchanged | Webhook contract owner | `jsons/plan.json` |
+| 2026-08-24 | Change only Rapida-owned webhook payload field names to lowerCamelCase before first release | Webhook contract owner | RFC review |
+| 2026-08-24 | Keep event names, enums, envelope fields, config keys, REST contracts, and provider payloads unchanged | Webhook contract owner | RFC review |

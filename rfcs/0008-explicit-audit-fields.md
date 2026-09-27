@@ -185,12 +185,6 @@ The user rejected hidden callbacks, hydration, and mutation helpers and required
 assignment of the four persisted actor columns at every create. Callback registration
 must be removed from every service binary. No unresolved design questions remain.
 
-## Artifact Index
-
-- `jsons/plan.json` - proposed implementation and verification plan.
-- `jsons/challenge.json` - approved design challenge.
-- `jsons/confirmation.json` - pending exact-digest confirmation.
-
 ## Decision Log
 
 | Date | Decision | Owner | Evidence |

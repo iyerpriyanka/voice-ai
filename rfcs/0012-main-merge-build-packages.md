@@ -76,7 +76,6 @@ direct host `shellcheck` calls. These failures make local CI depend on workstati
 - `.codex/README.md`: local tooling prerequisites.
 - `.claude/README.md`: mirrored local tooling prerequisites.
 - `README.md`: release automation documentation.
-- `rfcs/0012-main-merge-build-packages/`: governed workflow artifacts.
 - `rfcs/0012-main-merge-build-packages.md`: this RFC.
 
 ### Out-of-Scope Paths
@@ -238,11 +237,7 @@ None.
 
 ## Challenge Resolution
 
-Pending independent review of these exact RFC and plan bytes.
-
-## Artifact Index
-
-- `jsons/plan.json`: proposed implementation and verification contract.
+The independent repository maintainer approved the RFC and plan with no open blockers.
 
 ## Decision Log
 

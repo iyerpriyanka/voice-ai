@@ -1,35 +1,142 @@
 #!/usr/bin/env python3
-import json
+import re
 import sys
+from datetime import date
 from pathlib import Path
 
 
 REQUIRED_TEMPLATE_HEADINGS = (
-    "## Summary",
     "## Context",
-    "## Goals",
-    "## Non-Goals",
-    "## Scope and Ownership",
-    "## Proposed Design",
-    "## Contracts and Compatibility",
-    "## Failure and Recovery",
-    "## Security and Privacy",
-    "## Observability",
-    "## Data and Migration",
-    "## Rollout",
-    "## Rollback",
-    "## Alternatives Considered",
-    "## Testing and Verification",
-    "## Acceptance Criteria",
-    "## Open Questions",
-    "## Challenge Resolution",
-    "## Artifact Index",
-    "## Decision Log",
+    "## Decision",
+    "## Contracts and Ownership",
+    "## Alternatives Rejected",
+    "## Consequences and Risks",
+    "## Rollout and Rollback",
+    "## Verification",
+    "## Review and Approval",
 )
+
+REQUIRED_TEMPLATE_METADATA = (
+    "- Status: Draft",
+    "- Owner: Team or individual",
+    "- Approved by: Pending",
+    "- Date: YYYY-MM-DD",
+    "- Supersedes: N/A",
+)
+
+REQUIRED_RISK_AREAS = (
+    "Compatibility",
+    "Failure and recovery",
+    "Security and privacy",
+    "Data and migration",
+    "Concurrency and resources",
+    "Operations and observability",
+)
+
+REQUIRED_RFC_METADATA = ("Status", "Owner", "Approved by", "Date", "Supersedes")
+ACCEPTED_STATUSES = {"Accepted", "Implemented", "Superseded"}
+VALID_STATUSES = {"Draft", "Accepted", "Implemented", "Superseded", "Rejected"}
+LAYERED_RFC_START = 17
+RFC_NAME = re.compile(r"^(\d{4})-[a-z0-9]+(?:[a-z0-9-]*[a-z0-9])?\.md$")
+PLACEHOLDER_VALUES = {"", "pending", "tbd", "todo", "team or individual", "yyyy-mm-dd"}
+
+
+def metadata_values(text: str, label: str) -> list[str]:
+    return re.findall(rf"(?m)^- {re.escape(label)}:\s*(.*?)\s*$", text)
+
+
+def risk_value(text: str, area: str) -> str | None:
+    match = re.search(
+        rf"(?m)^\|\s*{re.escape(area)}\s*\|\s*(.*?)\s*\|\s*$", text
+    )
+    return match.group(1).strip() if match else None
+
+
+def is_placeholder(value: str) -> bool:
+    return value.strip().casefold() in PLACEHOLDER_VALUES
+
+
+def has_unexplained_n_a(value: str) -> bool:
+    return bool(re.fullmatch(r"(?:n/?a|none|not applicable)\s*[:.-]?", value, re.I))
+
+
+def validate_layered_rfc(path: Path, text: str) -> list[str]:
+    errors: list[str] = []
+
+    for label in REQUIRED_RFC_METADATA:
+        values = metadata_values(text, label)
+        if len(values) != 1 or not values[0]:
+            errors.append(f"{path.name} must contain one non-empty '{label}' metadata field")
+
+    for heading in REQUIRED_TEMPLATE_HEADINGS:
+        if text.splitlines().count(heading) != 1:
+            errors.append(f"{path.name} must contain one heading: {heading}")
+
+    status_values = metadata_values(text, "Status")
+    if len(status_values) != 1 or status_values[0] not in VALID_STATUSES:
+        errors.append(f"{path.name} has an invalid RFC status")
+        return errors
+
+    for area in REQUIRED_RISK_AREAS:
+        value = risk_value(text, area)
+        if value is None:
+            errors.append(f"{path.name} is missing risk area: {area}")
+        elif status_values[0] in ACCEPTED_STATUSES:
+            if is_placeholder(value):
+                errors.append(f"{path.name} has an incomplete accepted risk area: {area}")
+            elif has_unexplained_n_a(value):
+                errors.append(f"{path.name} must explain why risk area is N/A: {area}")
+
+    if status_values[0] in ACCEPTED_STATUSES:
+        owner = metadata_values(text, "Owner")
+        if len(owner) != 1 or is_placeholder(owner[0]):
+            errors.append(f"{path.name} must name its owner before acceptance")
+
+        approved_by = metadata_values(text, "Approved by")
+        if len(approved_by) != 1 or is_placeholder(approved_by[0]):
+            errors.append(f"{path.name} must name its approver before acceptance")
+
+        decision_date = metadata_values(text, "Date")
+        try:
+            if len(decision_date) != 1:
+                raise ValueError
+            date.fromisoformat(decision_date[0])
+        except ValueError:
+            errors.append(f"{path.name} must record a valid ISO decision date")
+
+        challenger = metadata_values(text, "Challenger")
+        if len(challenger) != 1 or is_placeholder(challenger[0]):
+            errors.append(f"{path.name} must name its challenger before acceptance")
+
+        outcome = metadata_values(text, "Outcome")
+        if outcome != ["Approved"]:
+            errors.append(f"{path.name} review outcome must be Approved before acceptance")
+
+        resolved_findings = metadata_values(text, "Resolved findings")
+        if len(resolved_findings) != 1 or is_placeholder(resolved_findings[0]):
+            errors.append(f"{path.name} must record resolved findings before acceptance")
+
+        open_questions = metadata_values(text, "Open questions")
+        if open_questions != ["None"]:
+            errors.append(f"{path.name} must resolve open questions before acceptance")
+
+        approval_reference = metadata_values(text, "Approval reference")
+        if len(approval_reference) != 1 or is_placeholder(approval_reference[0]):
+            errors.append(f"{path.name} must record an approval reference before acceptance")
+
+    return errors
 
 
 def main() -> int:
-    repository = Path(__file__).resolve().parent.parent
+    if len(sys.argv) > 2:
+        print(f"Usage: {sys.argv[0]} [repository-root]", file=sys.stderr)
+        return 2
+
+    repository = (
+        Path(sys.argv[1]).resolve()
+        if len(sys.argv) == 2
+        else Path(__file__).resolve().parent.parent
+    )
     rfc_root = repository / "rfcs"
     errors: list[str] = []
 
@@ -38,26 +145,29 @@ def main() -> int:
         errors.append("missing rfcs/TEMPLATE.md")
     else:
         text = template.read_text(encoding="utf-8")
+        for metadata in REQUIRED_TEMPLATE_METADATA:
+            if metadata not in text:
+                errors.append(f"RFC template is missing metadata: {metadata}")
         for heading in REQUIRED_TEMPLATE_HEADINGS:
             if heading not in text:
                 errors.append(f"RFC template is missing heading: {heading}")
+        for area in REQUIRED_RISK_AREAS:
+            if f"| {area} |" not in text:
+                errors.append(f"RFC template is missing risk area: {area}")
+
+    for rfc_file in sorted(rfc_root.glob("*.md")):
+        match = RFC_NAME.fullmatch(rfc_file.name)
+        if not match:
+            continue
+        text = rfc_file.read_text(encoding="utf-8")
+        uses_layered_format = int(match.group(1)) >= LAYERED_RFC_START or bool(
+            metadata_values(text, "Approved by")
+        )
+        if uses_layered_format:
+            errors.extend(validate_layered_rfc(rfc_file, text))
 
     for json_file in sorted(rfc_root.rglob("*.json")):
-        relative = json_file.relative_to(repository)
-        if json_file.is_symlink():
-            errors.append(f"RFC JSON must not be a symlink: {relative}")
-            continue
-        parts = relative.parts
-        if len(parts) != 4 or parts[0] != "rfcs" or parts[2] != "jsons":
-            errors.append(f"RFC JSON must match rfcs/<rfc-stem>/jsons/<name>.json: {relative}")
-            continue
-        rfc_file = rfc_root / f"{parts[1]}.md"
-        if not rfc_file.is_file():
-            errors.append(f"RFC JSON has no matching RFC document: {relative}")
-        try:
-            json.loads(json_file.read_text(encoding="utf-8"))
-        except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
-            errors.append(f"RFC JSON is invalid: {relative}: {exc}")
+        errors.append(f"RFC sidecar JSON is not allowed: {json_file.relative_to(repository)}")
 
     if errors:
         print("RFC layout validation failed:", file=sys.stderr)

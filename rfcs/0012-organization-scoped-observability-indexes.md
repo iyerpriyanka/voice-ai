@@ -57,7 +57,6 @@ Existing telemetry readers search `rapida-logs-*`, `rapida-events-*`, and
 - `api/assistant-api/internal/observability/collectors/timeline/collector_test.go` -
   implementation owner; timeline routing coverage.
 - `rfcs/0012-organization-scoped-observability-indexes.md` - RFC owner.
-- `rfcs/0012-organization-scoped-observability-indexes/jsons/` - governance artifact owner.
 
 ### Out-of-Scope Paths
 
@@ -243,23 +242,12 @@ cron. Challenge round 2 returned `revise` because the remaining cron, capacity, 
 requirements exceeded the requested application-only scope. The plan was blocked after two
 revision cycles, and RFC 0013 superseded this proposal with the smaller code-only contract.
 
-## Artifact Index
-
-- `rfcs/0012-organization-scoped-observability-indexes/jsons/plan.json` - blocked final plan.
-- `rfcs/0012-organization-scoped-observability-indexes/jsons/challenge.json` - challenge
-  round 1 receipt; decision `revise`.
-- `rfcs/0012-organization-scoped-observability-indexes/jsons/amendment-01-plan.json` - user
-  decision and reduced-scope amendment.
-- `rfcs/0012-organization-scoped-observability-indexes/jsons/amendment-01-challenge.json` -
-  challenge round 2 receipt; decision `revise`, implementation unauthorized.
-- No confirmation receipt exists because the RFC was blocked and superseded before approval.
-
 ## Decision Log
 
 | Date | Decision | Owner | Evidence |
 | --- | --- | --- | --- |
-| 2026-08-25 | Use organization-scoped UTC daily indexes for all OpenSearch observability writers | User | Conversation and `jsons/plan.json` |
-| 2026-08-25 | Use `global` when organization ID is unavailable | User | Conversation and `jsons/amendment-01-plan.json` |
-| 2026-08-25 | Keep implementation limited to adding organization to existing names | User | Conversation and `jsons/amendment-01-plan.json` |
-| 2026-08-25 | Keep archive lifecycle ownership in the external cron | User | Conversation and `jsons/plan.json` |
-| 2026-08-26 | Block this RFC after two revision cycles and supersede it with RFC 0013 | Coordinator | `jsons/plan.json` and RFC 0013 |
+| 2026-08-25 | Use organization-scoped UTC daily indexes for all OpenSearch observability writers | User | RFC review |
+| 2026-08-25 | Use `global` when organization ID is unavailable | User | RFC review |
+| 2026-08-25 | Keep implementation limited to adding organization to existing names | User | RFC review |
+| 2026-08-25 | Keep archive lifecycle ownership in the external cron | User | RFC review |
+| 2026-08-26 | Block this RFC after two revision cycles and supersede it with RFC 0013 | Coordinator | RFC 0013 |

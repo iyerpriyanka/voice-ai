@@ -3,8 +3,6 @@
 - Date: 2026-08-22
 - Reviewer: Hume (`01a0286c-9e81-7a32-89bc-7eacfcbf731e`)
 - Decision: APPROVED
-- RFC SHA-256: `52cbbb4c89632ec21d0d0130c59bcd469fc4bee1dfcb62ee8f6df0b61705ad3d`
-- Plan SHA-256: `ceb8521b670b0a564fa27da1b8c57c9cfd56cc2071b68afd8bf1c966c6bf3e4c`
 
 No critical or major findings remain.
 

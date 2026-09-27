@@ -15,7 +15,7 @@ jobs:
       COMPOSE_PROJECT_NAME: rapida-integration-${{ github.run_id }}-${{ github.run_attempt }}
       CI_STACK_AUTH_TOKEN: ci-integration-${{ github.run_id }}-${{ github.run_attempt }}
       CI_STACK_PROJECT_API_KEY: ci-integration-project-${{ github.run_id }}-${{ github.run_attempt }}
-      CI_STACK_CACHE_SCOPE: end-to-end-${{ github.run_id }}-${{ github.run_attempt }}
+      CI_STACK_CACHE_SCOPE: ci
       CI_STACK_DIAGNOSTICS_DIR: ${{ github.workspace }}/integration-diagnostics
       CI_STACK_REPORTS_DIR: ${{ github.workspace }}/integration-reports
     steps:
@@ -50,14 +50,13 @@ jobs:
 
   smoke:
     name: Smoke Tests
-    needs: all-service-integration
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     env:
       COMPOSE_PROJECT_NAME: rapida-smoke-${{ github.run_id }}-${{ github.run_attempt }}
       CI_STACK_AUTH_TOKEN: ci-smoke-${{ github.run_id }}-${{ github.run_attempt }}
       CI_STACK_PROJECT_API_KEY: ci-smoke-project-${{ github.run_id }}-${{ github.run_attempt }}
-      CI_STACK_CACHE_SCOPE: end-to-end-${{ github.run_id }}-${{ github.run_attempt }}
+      CI_STACK_CACHE_SCOPE: ci
       CI_STACK_DIAGNOSTICS_DIR: ${{ github.workspace }}/smoke-diagnostics
       CI_STACK_REPORTS_DIR: ${{ github.workspace }}/smoke-reports
     steps:
@@ -101,14 +100,13 @@ jobs:
 
   telephony-callbacks:
     name: Telephony Callback Integration
-    needs: smoke
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     env:
       COMPOSE_PROJECT_NAME: rapida-telephony-callbacks-${{ github.run_id }}-${{ github.run_attempt }}
       CI_STACK_AUTH_TOKEN: ci-telephony-callbacks-${{ github.run_id }}-${{ github.run_attempt }}
       CI_STACK_PROJECT_API_KEY: ci-telephony-callbacks-project-${{ github.run_id }}-${{ github.run_attempt }}
-      CI_STACK_CACHE_SCOPE: end-to-end-${{ github.run_id }}-${{ github.run_attempt }}
+      CI_STACK_CACHE_SCOPE: ci
       CI_STACK_DIAGNOSTICS_DIR: ${{ github.workspace }}/telephony-callback-diagnostics
       CI_STACK_REPORTS_DIR: ${{ github.workspace }}/telephony-callback-reports
     steps:
@@ -143,14 +141,13 @@ jobs:
 
   flows:
     name: User Flows
-    needs: smoke
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     env:
       COMPOSE_PROJECT_NAME: rapida-flows-${{ github.run_id }}-${{ github.run_attempt }}
       CI_STACK_AUTH_TOKEN: ci-flows-${{ github.run_id }}-${{ github.run_attempt }}
       CI_STACK_PROJECT_API_KEY: ci-flows-project-${{ github.run_id }}-${{ github.run_attempt }}
-      CI_STACK_CACHE_SCOPE: end-to-end-${{ github.run_id }}-${{ github.run_attempt }}
+      CI_STACK_CACHE_SCOPE: ci
       CI_STACK_DIAGNOSTICS_DIR: ${{ github.workspace }}/flow-diagnostics
       CI_STACK_REPORTS_DIR: ${{ github.workspace }}/flow-reports
     steps:

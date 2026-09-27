@@ -26,7 +26,7 @@ Previous-release upgrades, FreeSWITCH voice lifecycles, provider-failure injecti
 restart/drain behavior, OpenSearch, and generalized multi-service smoke orchestration
 remain required roadmap items, but they are not silently coupled to this first CI
 correction. They require follow-up RFCs with their own owners, runtime evidence, and
-confirmation gates.
+approvals.
 
 ## Motivation
 
@@ -405,7 +405,7 @@ turn a PostgreSQL readiness failure into a false pass.
 50. During stabilization, failures are visible and owned but non-required for no more
     than 14 calendar days from first merge. On day 14 the owner either promotes the
     lane because thresholds passed or removes the workflow invocation. Extending
-    stabilization requires revised accepted RFC bytes and a new confirmation gate.
+    stabilization requires a revised RFC and renewed approval.
 51. Graduation is independent per lane:
     - if both pass, both join `ci-success` and graduated `system-core` replaces the
       primary-CI invocation of `reusable-docker-ci.yml`;
@@ -908,7 +908,7 @@ feature flag is required by this RFC.
 
 ## Follow-Up RFCs
 
-After RFC 0002 is stable, the coordinator reserves separate RFCs for:
+After RFC 0002 is stable, the coordinator creates separate RFCs for:
 
 1. previous-release migration upgrades with deterministic stable-tag resolution;
 2. UI/web proxy paths through integration-api, endpoint-api, and assistant-api;
@@ -925,17 +925,13 @@ execution environment remains Linux CI.
 
 ## Challenge Resolution Record
 
-The first independent challenge blocked draft SHA-256
-`122bb964b884dc9d73f88a0569a9305a67fdf97367b162a8f06b0afa4e0bb46f`.
+The first independent challenge blocked the draft.
 
-The second independent challenge required revision of draft SHA-256
-`8d52fd65892bc49221ae31c3cfc3cd0086d61fbabec067bfd15158b3dc44eeca`.
+The second independent challenge required another revision.
 
-The third independent challenge required revision of draft SHA-256
-`818e4a26d64eff21b16acb22e7c52eefbb23ee6142334716face19b19fea35a0`.
+The third independent challenge required another revision.
 
-The fourth independent challenge required revision of draft SHA-256
-`d2a060f54b982e287e9d3254b492cfb898ad6c5a5284c0af1f4f7b10b461c5ac`.
+The fourth independent challenge required another revision.
 
 This revision addresses the challenge by:
 
@@ -998,10 +994,9 @@ This fifth revision additionally:
   pinning;
 - preserves the native lane, contract checks, deferred scope, stabilization policy,
   and system-test assertions while returning the RFC to Draft for renewed challenge
-  and confirmation.
+  and approval.
 
-The sixth independent challenge required revision of draft SHA-256
-`4ec808cd1f4d62f3183c8e3d43c24a0a2020ced7359c7c7191af68d3c34c7764`.
+The sixth independent challenge required another revision.
 
 This sixth revision additionally:
 
@@ -1021,8 +1016,7 @@ This sixth revision additionally:
 - makes service-image and shared root Compose/nginx changes independently
   revertible from the system lane.
 
-The seventh independent challenge required revision of draft SHA-256
-`3db276fea544f44b4ae2361b3458e7a2b89bc171516d5e19e31216c9a05710cd`.
+The seventh independent challenge required another revision.
 
 This seventh revision additionally:
 
@@ -1034,9 +1028,7 @@ This seventh revision additionally:
   existing Docker Buildx command and requiring no separately downloaded Buildx
   binary.
 
-The eighth revision returns accepted SHA-256
-`e4b13f009ba20085c08998e74bf54fe37ede82e6c9007d3796551b4353ac7391` to Draft and
-additionally:
+The eighth revision returns the accepted RFC to Draft and additionally:
 
 - matches the unchanged readiness payload's exact CI connector key,
   `data["PSQL psql://postgres:5432"]`, with positive and fail-closed negative tests
@@ -1044,9 +1036,7 @@ additionally:
 - retains pinned `buf breaking` compatibility while deferring unrelated protobuf
   source lint work to explicitly tracked follow-up debt.
 
-The ninth revision returns accepted SHA-256
-`6fb2cb9511c0908193be6f2e94e370dc34b6321f25ab5d7fcb221a3e4f20bbed` to Draft and
-additionally:
+The ninth revision returns the accepted RFC to Draft and additionally:
 
 - raises the `system-core` hard job timeout from 25 to 30 minutes while retaining the
   20-minute main deadline and up-to-five-minute diagnostics and cleanup reserve, with
@@ -1066,8 +1056,6 @@ target-base Go packages, and permits the pinned Newman lock's required patched
 
 ## RFC Lifecycle State
 
-An independent challenger reviews these exact Draft bytes. After a
-READY-FOR-ACCEPTANCE result, the RFC author changes only the sole status metadata line
-to `- Status: Accepted`; the same independent challenge role reviews those final
-exact bytes before the coordinator creates the exact SHA-256 confirmation gate.
-Implementation begins only after that gate resolves to `approved`.
+An independent challenger reviews the Draft. After a READY-FOR-ACCEPTANCE result, the
+reviewer or owner records approval and the RFC author changes the sole status metadata
+line to `- Status: Accepted`. Implementation begins only after that approval.

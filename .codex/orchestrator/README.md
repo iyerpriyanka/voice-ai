@@ -20,7 +20,7 @@ This folder provides the contract and runner for Governed-tier subagent gates ac
 ## CLI
 
 ```bash
-DEVELOPMENT_GATE_KEY="<coordinator-key>" python3 .codex/orchestrator/scripts/hook-run.py \
+python3 .codex/orchestrator/scripts/hook-run.py \
   --stage pre-implementation \
   --input .codex/orchestrator/examples/lifecycle-input.json \
   --output /tmp/hook-out.json
@@ -49,7 +49,8 @@ Exit codes:
 
 Each stage receives the same cumulative lifecycle envelope. Later stages re-run all earlier gates, so review cannot replace an approved plan, implementation report, or successful verification with a standalone boolean.
 
-The plan is loaded from `artifacts.approved_plan_file`, verified against `artifacts.approved_plan_sha256`, validated with the coordinator-held `DEVELOPMENT_GATE_KEY` and `artifacts.approved_plan_hmac`, and compared with `task_plan`. Workers must not receive the coordinator key.
+The approved plan is embedded as `task_plan`. The pre-implementation gate requires an
+independent challenger, an explicit approver, and no open blockers.
 
 Templates:
 
@@ -65,14 +66,8 @@ just orca-development-run "describe the desired outcome" \
 
 Use this only when a Governed trigger from `DEVELOPMENT_PROCESS.md` applies. It creates
 only the planner, RFC-author, and challenger tasks and starts the planner.
-After the exact challenged RFC bytes contain `- Status: Accepted`, use
-`just orca-confirm-rfc-create` to create a dedicated confirmation task and exact-digest gate. Use
-`just orca-confirm-rfc-collect` to verify the resolved gate and write its receipt before
-creating or starting implementation tasks.
-
-All RFC-related JSON inputs and outputs must be direct children of
-`rfcs/NNNN-short-name/jsons/`. The collect command writes `confirmation.json` there by
-default.
+After the challenge is resolved, record reviewer or owner approval and set the RFC status
+to `Accepted` before creating or starting implementation tasks.
 
 ## Notes
 

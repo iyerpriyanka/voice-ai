@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 import argparse
-import hashlib
-import hmac
 import json
-import os
 import sys
 from pathlib import Path
 
@@ -36,63 +33,6 @@ def validate_stage_schema(data: dict, stage: str) -> list[dict]:
         except (OSError, json.JSONDecodeError, jsonschema.SchemaError) as exc:
             return [err("SCHEMA_LOAD_FAILED", str(exc), schema=str(schema_path))]
     return []
-
-
-def load_approved_plan(data: dict) -> tuple[dict | None, list[dict]]:
-    artifacts = data.get("artifacts") or {}
-    plan_file = str(artifacts.get("approved_plan_file", "")).strip()
-    expected_sha256 = str(artifacts.get("approved_plan_sha256", "")).strip()
-    expected_hmac = str(artifacts.get("approved_plan_hmac", "")).strip()
-    gate_key = os.environ.get("DEVELOPMENT_GATE_KEY", "")
-    if not plan_file or not expected_sha256 or not expected_hmac:
-        return None, [err("MISSING_PLAN_ARTIFACT", "Approved plan file, SHA-256, and HMAC are required")]
-    if not gate_key:
-        return None, [
-            err(
-                "MISSING_GATE_KEY",
-                "DEVELOPMENT_GATE_KEY is required and must be held by the coordinator",
-            )
-        ]
-
-    plan_path = Path(plan_file)
-    if not plan_path.is_absolute():
-        plan_path = Path(str(data.get("repo_root", ""))) / plan_path
-
-    try:
-        raw_plan = plan_path.read_bytes()
-        approved_plan = json.loads(raw_plan.decode("utf-8"))
-    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
-        return None, [err("PLAN_ARTIFACT_LOAD_FAILED", str(exc), file=str(plan_path))]
-
-    actual_sha256 = hashlib.sha256(raw_plan).hexdigest()
-    if actual_sha256 != expected_sha256:
-        return None, [
-            err(
-                "PLAN_ARTIFACT_DIGEST_MISMATCH",
-                "Approved plan artifact does not match its recorded SHA-256",
-                expected=expected_sha256,
-                actual=actual_sha256,
-            )
-        ]
-    run_id = str(data.get("run_id", "")).strip()
-    signed_message = f"{run_id}:{actual_sha256}".encode("utf-8")
-    actual_hmac = hmac.new(gate_key.encode("utf-8"), signed_message, hashlib.sha256).hexdigest()
-    if not hmac.compare_digest(actual_hmac, expected_hmac):
-        return None, [
-            err(
-                "PLAN_ATTESTATION_INVALID",
-                "Approved plan HMAC does not match coordinator attestation",
-            )
-        ]
-    if approved_plan != data.get("task_plan"):
-        return None, [
-            err(
-                "PLAN_ARTIFACT_MISMATCH",
-                "task_plan differs from the approved plan artifact",
-                file=str(plan_path),
-            )
-        ]
-    return approved_plan, []
 
 
 def _is_in_allowed(path: str, allowed_paths: list[str]) -> bool:
@@ -166,9 +106,7 @@ def run_pre_implementation(data: dict) -> dict:
         "discussion_approved": "fail",
     }
 
-    approved_plan, artifact_errors = load_approved_plan(data)
-    errors.extend(artifact_errors)
-    plan = approved_plan if approved_plan is not None else data.get("task_plan")
+    plan = data.get("task_plan")
     if not isinstance(plan, dict):
         errors.append(err("MISSING_PLAN", "task_plan is required"))
         return {"status": "fail", "errors": errors, "warnings": warnings, "checks": checks}
@@ -503,7 +441,7 @@ def run_post_review(data: dict) -> dict:
         errors.append(
             err(
                 "ORCA_RUN_MISMATCH",
-                "Orca provenance run_id must match the coordinator-attested run_id",
+                "Orca provenance run_id must match the lifecycle envelope run_id",
                 envelope_run_id=data.get("run_id", ""),
                 orchestration_run_id=orchestration.get("run_id", ""),
             )

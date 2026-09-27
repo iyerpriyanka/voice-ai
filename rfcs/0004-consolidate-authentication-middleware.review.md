@@ -15,7 +15,7 @@ APPROVE. No critical or major findings remain.
 - Assistant, Web, Endpoint, and Integration wiring matches the accepted user, project, organization, service order for every supported transport.
 - Tests cover absent, successful, rejected, invalid-audit-actor, conflict, source-precedence, and log-redaction behavior.
 - Both callback reconstruction paths use a static log message and have malicious-metadata regression coverage.
-- The accepted RFC and plan digests match the approved confirmation receipt.
+- The implementation remained within the accepted RFC scope.
 
 ## Verification
 

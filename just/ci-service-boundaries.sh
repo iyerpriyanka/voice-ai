@@ -12,6 +12,7 @@ files=(
   .github/workflows/reusable-ui-ci.yml
   .github/workflows/tag-and-package-services.yml
   docker-compose.ci.yml
+  just/ci-github-actions.sh
   just/ci.just
   just/ci-stack.sh
   tests/flows

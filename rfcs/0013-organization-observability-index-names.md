@@ -39,7 +39,6 @@ The timeline collector currently writes `<prefix>-YYYYMMDD`. The telemetry expor
 - `api/assistant-api/internal/observability/collectors/timeline/collector.go` - timeline implementation owner.
 - `api/assistant-api/internal/observability/collectors/timeline/collector_test.go` - timeline test owner.
 - `rfcs/0013-organization-observability-index-names.md` - RFC owner.
-- `rfcs/0013-organization-observability-index-names/jsons/` - governance artifact owner.
 
 ### Out-of-Scope Paths
 
@@ -146,14 +145,8 @@ None.
 ## Challenge Resolution
 
 Challenge round 1 requested a complete Governed plan, explicit index-count risk, named cron
-compatibility evidence, and enumerated test cases. These requirements are included without
-expanding production code scope. Challenge round 2 is pending.
-
-## Artifact Index
-
-- `rfcs/0013-organization-observability-index-names/jsons/plan.json` - final plan.
-- `rfcs/0013-organization-observability-index-names/jsons/challenge.json` - pending challenge receipt.
-- `rfcs/0013-organization-observability-index-names/jsons/confirmation.json` - pending confirmation receipt.
+compatibility evidence, and enumerated test cases. These requirements were included without
+expanding production code scope, and the independent plan challenger approved the revision.
 
 ## Decision Log
 

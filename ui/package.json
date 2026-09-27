@@ -54,6 +54,8 @@
     "e2e:install": "playwright install chromium",
     "e2e:server": "yarn build:css && cross-env BROWSER=none FAST_REFRESH=false craco start",
     "e2e": "playwright test",
+    "test:e2e": "playwright test",
+    "test:e2e:update": "playwright test --update-snapshots",
     "e2e:smoke": "playwright test e2e/route-coverage.spec.js e2e/route-smoke.spec.js",
     "e2e:a11y": "playwright test e2e/a11y.spec.js",
     "e2e:screenshots": "playwright test e2e/screenshot-journey.spec.js",
@@ -190,6 +192,7 @@
     "zustand-utils": "2.1.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
     "@babel/plugin-proposal-private-property-in-object": "7.21.11",
     "@chromatic-com/storybook": "5.3.1",
     "@playwright/test": "1.63.0",

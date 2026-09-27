@@ -149,15 +149,6 @@ The webhook contract owner approved removal during development. The review confi
 `status` remains the sole public lifecycle field, internal telephony events and metric
 labels remain unchanged, and no compatibility bridge or version 2 payload is required.
 
-## Artifact Index
-
-- `jsons/plan.json`: approved implementation plan.
-- `jsons/challenge.json`: approved contract-owner challenge receipt.
-- `jsons/confirmation.json`: exact-digest implementation gate pending.
-- `jsons/amendment-01-plan.json`: source-removal amendment plan.
-- `jsons/amendment-01-challenge.json`: approved contract-owner amendment challenge.
-- `jsons/amendment-01-confirmation.json`: amendment exact-digest gate pending.
-
 ## Decision Log
 
 | Date | Decision | Owner | Evidence |

@@ -51,19 +51,11 @@ def result_state(result: dict, success_label: str, success_detail: str) -> dict:
     return status("blocked", code.replace("_", " ").title(), message)
 
 
-def stage_states(gate_results: dict[str, dict] | None) -> list[dict]:
-    if gate_results is None:
-        locked = status(
-            "locked",
-            "Unverified",
-            "Coordinator gate was not executed. Set DEVELOPMENT_GATE_KEY and regenerate.",
-        )
-        return [{"name": name, **locked} for name in ["Understand", "Plan", "Discuss", "Implement", "Verify", "Review", "Ship"]]
-
+def stage_states(gate_results: dict[str, dict]) -> list[dict]:
     pre_state = result_state(
         gate_results["pre-implementation"],
         "Approved",
-        "Task context, plan, challenge, ownership, and coordinator attestation passed.",
+        "Task context, plan, challenge, ownership, and approval passed.",
     )
     implementation_state = result_state(
         gate_results["post-implementation"],
@@ -96,9 +88,7 @@ def stage_states(gate_results: dict[str, dict] | None) -> list[dict]:
     ]
 
 
-def run_gates(repo_root: Path, input_path: Path, agent_root: str) -> dict[str, dict] | None:
-    if not os.environ.get("DEVELOPMENT_GATE_KEY"):
-        return None
+def run_gates(repo_root: Path, input_path: Path, agent_root: str) -> dict[str, dict]:
     runner = repo_root / agent_root / "orchestrator/scripts/hook-run.py"
     results = {}
     for stage in ["pre-implementation", "post-implementation", "post-verification", "post-review"]:
@@ -124,7 +114,7 @@ def run_gates(repo_root: Path, input_path: Path, agent_root: str) -> dict[str, d
     return results
 
 
-def render_panel(payload: dict, gate_results: dict[str, dict] | None, source_path: Path) -> str:
+def render_panel(payload: dict, gate_results: dict[str, dict], source_path: Path) -> str:
     task = payload.get("task") or {}
     plan = payload.get("task_plan") or {}
     implementation = payload.get("implementation") or {}
@@ -171,15 +161,12 @@ def render_panel(payload: dict, gate_results: dict[str, dict] | None, source_pat
         for key, value in principles.items()
     )
 
-    if gate_results is None:
-        gate_html = '<p class="empty">Coordinator gate not executed. Status is unverified.</p>'
-    else:
-        final_result = gate_results["post-review"]
-        gate_issues = final_result.get("issues") or final_result.get("errors") or []
-        gate_html = list_items(
-            [f"{issue.get('code', 'ISSUE')}: {issue.get('message', '')}" for issue in gate_issues],
-            "No gate issues",
-        )
+    final_result = gate_results["post-review"]
+    gate_issues = final_result.get("issues") or final_result.get("errors") or []
+    gate_html = list_items(
+        [f"{issue.get('code', 'ISSUE')}: {issue.get('message', '')}" for issue in gate_issues],
+        "No gate issues",
+    )
 
     return f"""<!doctype html>
 <html lang="en">

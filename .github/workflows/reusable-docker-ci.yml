@@ -8,26 +8,34 @@ permissions:
 
 jobs:
   build:
-    name: Docker Build Test
+    name: Build ${{ matrix.component }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
+      max-parallel: 6
       matrix:
-        service:
-          - web-api
-          - integration-api
-          - endpoint-api
-          - assistant-api
-          - ui
+        include:
+          - component: web-api
+            dockerfile: ./docker/web-api/Dockerfile
+          - component: integration-api
+            dockerfile: ./docker/integration-api/Dockerfile
+          - component: endpoint-api
+            dockerfile: ./docker/endpoint-api/Dockerfile
+          - component: assistant-api
+            dockerfile: ./docker/assistant-api/Dockerfile
+          - component: ui
+            dockerfile: ./docker/ui/Dockerfile
+          - component: test-runner
+            dockerfile: ./tests/smoke/Dockerfile
     steps:
       - name: Checkout code
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
-      - name: Build ${{ matrix.service }}
+      - name: Build ${{ matrix.component }}
         uses: ./.github/actions/docker-build
         with:
           context: .
-          dockerfile: ./docker/${{ matrix.service }}/Dockerfile
+          dockerfile: ${{ matrix.dockerfile }}
           push: "false"
-          tags: rapida/${{ matrix.service }}:test
-          cache-scope: ci-${{ matrix.service }}
+          tags: rapida/${{ matrix.component }}:test
+          cache-scope: ci-${{ matrix.component }}

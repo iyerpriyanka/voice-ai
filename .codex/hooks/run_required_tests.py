@@ -6,12 +6,21 @@ import subprocess
 import sys
 from pathlib import Path
 
-def _run(cmd: list[str], cwd: str | None = None) -> tuple[int, str]:
+
+UI_TEST_ENV = {"CI": "true"}
+
+
+def _run(
+    cmd: list[str], cwd: str | None = None, environment: dict[str, str] | None = None
+) -> tuple[int, str]:
     timeout_seconds = int(os.environ.get("AGENT_TEST_TIMEOUT_SECONDS", "300"))
+    process_environment = os.environ.copy()
+    process_environment.update(environment or {})
     try:
         out = subprocess.run(
             cmd,
             cwd=cwd,
+            env=process_environment,
             check=False,
             capture_output=True,
             text=True,
@@ -115,17 +124,60 @@ def _backend_dirs(changed: list[str]) -> list[str]:
     return sorted(dirs)
 
 
+def _is_ui_source(path: str) -> bool:
+    return path.startswith("ui/src/") and Path(path).suffix in {
+        ".css",
+        ".js",
+        ".json",
+        ".jsx",
+        ".less",
+        ".scss",
+        ".ts",
+        ".tsx",
+    }
+
+
+def _is_ui_test(path: str) -> bool:
+    if not _is_ui_source(path):
+        return False
+    name = Path(path).name
+    return ".test." in name or ".spec." in name or "/__tests__/" in f"/{path}"
+
+
+def _ui_test_command(changed: list[str]) -> list[str] | None:
+    tests = sorted(path.removeprefix("ui/") for path in changed if _is_ui_test(path))
+    if not tests:
+        return None
+    return ["yarn", "test", "--watch=false", "--runInBand", *tests]
+
+
 def main() -> int:
     raw = sys.stdin.read()
     changed = _changed_files(raw)
     results = []
 
-    ui_changed = any(f.startswith("ui/src/") for f in changed)
+    ui_changed = any(_is_ui_source(f) for f in changed)
     backend_dirs = _backend_dirs(changed)
 
     if ui_changed:
-        rc, output = _run(["yarn", "test", "providers"], cwd="ui")
-        results.append({"cmd": "cd ui && yarn test providers", "exit_code": rc, "output_tail": output[-2000:]})
+        command = _ui_test_command(changed)
+        if command is None:
+            results.append(
+                {
+                    "cmd": "focused UI tests",
+                    "exit_code": 2,
+                    "output_tail": "UI source changed but no changed UI test was provided",
+                }
+            )
+        else:
+            rc, output = _run(command, cwd="ui", environment=UI_TEST_ENV)
+            results.append(
+                {
+                    "cmd": "cd ui && CI=true " + " ".join(command),
+                    "exit_code": rc,
+                    "output_tail": output[-2000:],
+                }
+            )
 
     for d in backend_dirs:
         rc, output = _run(["go", "test", f"./{d}"])

@@ -9,11 +9,6 @@
     "provider": "acme_denoise",
     "service": "assistant-api"
   },
-  "artifacts": {
-    "approved_plan_file": ".claude/orchestrator/examples/approved-plan.json",
-    "approved_plan_sha256": "2b5d713a1225383e73709488d857f21d52056810c476bdda6b9ea7bdeaa337e8",
-    "approved_plan_hmac": "e361758ec1939148a07f9b0fe97545c70085693ec4777cfa3df01c9e1fdb5c43"
-  },
   "task_plan": {
     "acceptance_criteria": [
       "Provider can be selected through the existing factory",
@@ -108,9 +103,9 @@
   "review": {
     "reviewer": "code-reviewer-1",
     "evidence": {
-      "plan": "approved task plan artifact",
-      "implementation": "implementation report artifact",
-      "verification": "post-verification report artifact",
+      "plan": "approved task plan",
+      "implementation": "implementation summary",
+      "verification": "verification results",
       "diff": "reviewed commit or diff identifier"
     },
     "findings": [

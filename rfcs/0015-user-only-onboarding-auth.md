@@ -49,7 +49,6 @@ Existing endpoints commonly use `types.Authorize` and `Authentication.Scope(Auth
 - `api/web-api/api/organization.go` - authentication implementer
 - `api/web-api/api/organization_test.go` - authentication implementer
 - `rfcs/0015-user-only-onboarding-auth.md` - coordinator
-- `rfcs/0015-user-only-onboarding-auth/jsons/` - coordinator and reviewers
 
 ### Out-of-Scope Paths
 
@@ -134,7 +133,7 @@ Revert the web principal, middleware option, `cmd/web` opt-in, and organization 
 - Run `go test ./pkg/middlewares ./api/web-api/internal/service/user ./api/web-api/api ./cmd/web`.
 - Run `go test ./pkg/... ./api/web-api/...`.
 - Run `git diff --check`.
-- Run `just agent-finalize "api/web-api/internal/service/user/auth.type.go,api/web-api/internal/service/user/auth_type_test.go,pkg/middlewares/user_authentication.go,pkg/middlewares/authentication_grpc_middleware.go,pkg/middlewares/authentication_rpc_middleware.go,pkg/middlewares/authentication_middleware_test.go,cmd/web/web.go,cmd/web/authentication_middleware_test.go,api/web-api/api/organization.go,api/web-api/api/organization_test.go,rfcs/0015-user-only-onboarding-auth.md,rfcs/0015-user-only-onboarding-auth/jsons/plan.json,rfcs/0015-user-only-onboarding-auth/jsons/challenge.json,rfcs/0015-user-only-onboarding-auth/jsons/confirmation.json"`.
+- Run `just agent-finalize "api/web-api/internal/service/user/auth.type.go,api/web-api/internal/service/user/auth_type_test.go,pkg/middlewares/user_authentication.go,pkg/middlewares/authentication_grpc_middleware.go,pkg/middlewares/authentication_rpc_middleware.go,pkg/middlewares/authentication_middleware_test.go,cmd/web/web.go,cmd/web/authentication_middleware_test.go,api/web-api/api/organization.go,api/web-api/api/organization_test.go,rfcs/0015-user-only-onboarding-auth.md"`.
 
 ## Acceptance Criteria
 
@@ -150,22 +149,17 @@ Revert the web principal, middleware option, `cmd/web` opt-in, and organization 
 
 ## Open Questions
 
-- Exact-digest confirmation is pending.
+None.
 
 ## Challenge Resolution
 
 - The user challenged the first proposal because shared authentication semantics could affect other services.
 - The plan was revised to keep `pkg/types` unchanged, preserve the default shared middleware behavior, opt in only `cmd/web`, and keep the user-only authorization helper private to organization creation.
-
-## Artifact Index
-
-- `jsons/plan.json` - revised implementation plan, accepted by challenger
-- `jsons/challenge.json` - user challenge requiring minimal web-only impact, resolved
-- `jsons/confirmation.json` - pending
+- The user challenger approved the revised, web-only design.
 
 ## Decision Log
 
 | Date | Decision | Owner | Evidence |
 | --- | --- | --- | --- |
-| 2026-09-04 | Use an explicit user-only authorization boundary for first organization creation | coordinator | `jsons/plan.json` |
-| 2026-09-04 | Keep shared defaults and all `pkg/types` contracts unchanged | user challenger | `jsons/challenge.json` |
+| 2026-09-04 | Use an explicit user-only authorization boundary for first organization creation | coordinator | RFC review |
+| 2026-09-04 | Keep shared defaults and all `pkg/types` contracts unchanged | user challenger | RFC challenge |

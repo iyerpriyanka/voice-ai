@@ -163,14 +163,8 @@ None.
 The webhook contract owner approved the inline mappings and requested no mapping helpers
 or additional logic. The design preserves raw provider details outside the typed fields.
 
-## Artifact Index
-
-- `jsons/plan.json` - approved implementation plan.
-- `jsons/challenge.json` - webhook contract owner challenge decision.
-- `jsons/confirmation.json` - pending exact-digest confirmation receipt.
-
 ## Decision Log
 
 | Date | Decision | Owner | Evidence |
 | --- | --- | --- | --- |
-| 2026-08-23 | Use prefixed call webhook enums and inline assignments | Webhook contract owner | `jsons/challenge.json` |
+| 2026-08-23 | Use prefixed call webhook enums and inline assignments | Webhook contract owner | RFC review |

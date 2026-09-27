@@ -26,6 +26,7 @@ ci-check:
     go run github.com/rhysd/actionlint/cmd/actionlint@v1.7.12 -color
     bash -n just/*.sh scripts/contracts/*.sh
     bash just/shellcheck.sh
+    bash just/ci-github-actions.sh
     bash just/ci-service-boundaries.sh
     ./bin/check-go-version-consistency
     bash just/ci-python.sh openapi/scripts/generate_assistant_postman_collection.py --check

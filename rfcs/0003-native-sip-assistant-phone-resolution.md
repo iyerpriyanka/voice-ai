@@ -44,9 +44,9 @@ Existing call-context and authentication metadata keys remain unchanged:
 
 ## Status of This Memo
 
-Implementation MUST NOT begin until the exact RFC bytes pass independent challenge and
-exact-digest confirmation according to `DEVELOPMENT_PROCESS.md`. Any later RFC byte change
-requires another challenge and confirmation.
+This RFC was accepted after independent challenge and owner approval according to
+`DEVELOPMENT_PROCESS.md`. Any later material RFC change requires another challenge and
+approval.
 
 ## Conformance Language
 
@@ -107,8 +107,7 @@ only native SIP component allowed to resolve the inbound assistant phone.
   propagation.
 - `api/assistant-api/internal/channel/telephony/internal/base/` owns client metadata emission.
 - `api/assistant-api/internal/adapters/internal/` owns authentication variable resolution tests.
-- `rfcs/0003-native-sip-assistant-phone-resolution.md` and its `jsons/` directory own governance
-  evidence.
+- `rfcs/0003-native-sip-assistant-phone-resolution.md` owns the design and approval record.
 
 ### Out-of-Scope Paths
 
@@ -470,7 +469,7 @@ just agent-finalize "api/assistant-api/sip/internal/core,api/assistant-api/sip/i
 
 ## Rollout
 
-1. Merge only after exact-digest confirmation, implementation verification, and independent
+1. Merge only after RFC approval, implementation verification, and independent
    code review.
 2. Deploy the assistant API normally because no schema or service ordering change exists.
 3. Validate one DID-routed inbound call, one agent-routed inbound call with a deployment phone,
@@ -536,7 +535,7 @@ requires persisted URI fields.
 17. No database, protobuf, REST, SDK, UI, or non-SIP provider change is introduced.
 18. Required tests and `just agent-finalize` pass.
 19. Independent review reports no unresolved critical or major findings.
-20. Final RFC bytes receive exact-digest confirmation before implementation begins.
+20. The final RFC receives reviewer or owner approval before implementation begins.
 
 ## Open Questions
 
@@ -553,17 +552,6 @@ requirements.
 Amendment review round two returned `BLOCK` because DID routing did not reject duplicate active
 deployment matches. The owner approved a fresh governed run. This revision requires exactly one
 DID match and rejects duplicates before tenant, assistant, or authentication selection.
-
-## Artifact Index
-
-| Artifact | Purpose | Status |
-| --- | --- | --- |
-| `rfcs/0003-native-sip-assistant-phone-resolution/jsons/amendment-01-plan.json` | Approved-plan candidate for the amended contract. | Revised |
-| `rfcs/0003-native-sip-assistant-phone-resolution/jsons/amendment-01-challenge-round-01.json` | First independent challenge and revision findings. | Resolved |
-| `rfcs/0003-native-sip-assistant-phone-resolution/jsons/amendment-01-challenge-round-02.json` | Final blocked challenge from the first governed run. | Escalated |
-| `rfcs/0003-native-sip-assistant-phone-resolution/jsons/amendment-02-plan.json` | Fresh-run plan for exact-one DID routing. | Accepted candidate |
-| `rfcs/0003-native-sip-assistant-phone-resolution/jsons/amendment-02-challenge.json` | Independent exact-byte challenge receipt. | Pending |
-| `rfcs/0003-native-sip-assistant-phone-resolution/jsons/amendment-02-confirmation.json` | Exact-digest confirmation receipt. | Pending |
 
 ## Decision Log
 

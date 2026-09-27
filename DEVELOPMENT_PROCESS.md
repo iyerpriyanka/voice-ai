@@ -30,13 +30,45 @@ Use only for public API/protocol changes, authentication or authorization, schem
 migrations, cross-service contracts, irreversible operations, high-risk rollouts, or an
 explicitly requested RFC.
 
-`understand -> plan -> draft RFC -> challenge -> confirm -> implement -> verify -> review -> ship`
+`understand -> plan -> draft RFC -> challenge -> approve -> implement -> verify -> review -> ship`
 
 No agent may collapse planning, implementation, verification, and final code review into
 one self-approved action in the Governed tier.
 
 If classification is uncertain, use Standard and document the uncertainty. Escalate to
 Governed only when a listed trigger is discovered.
+
+## Skill Routing
+
+The lifecycle skills turn these tiers into repeatable working steps:
+
+1. `development-lifecycle` classifies the request and records the change contract.
+2. `change-analysis` establishes current behavior, ownership, consumers, and risk when those facts are not already proven.
+3. `designing-change` resolves material alternatives before implementation.
+4. `system-understanding` and a matching integration skill add voice-specific packet, factory, transport, and UI boundaries.
+5. `debugging` owns reproduction and root-cause evidence for unexplained failures.
+6. `developing-change` owns implementation discipline and the verification handoff.
+7. `writing-documentation` keeps behavior and developer guidance synchronized.
+8. `reviewing-change` owns fixed-boundary review and the finding ledger.
+9. `responding-to-review` verifies, dispositions, and resolves review feedback.
+10. `preparing-delivery` owns explicitly requested commit and pull-request preparation.
+
+Fast work may skip skills whose evidence is already obvious. Standard work records a concise
+contract before editing. Governed work preserves the existing role separation and gates.
+
+## Repository Policy Gates
+
+- `just agent-style-check` checks added prose, comments, and identifiers against repository style rules.
+- `just agent-manifest-check` verifies honest capability phase status and coverage contracts.
+- `just agent-drift-check` checks generated path rules and paired agent-tooling invariants.
+- `just test-agent-hooks` exercises accepted and rejected hook behavior.
+- `just agent-pr-ready <base>` runs the policy, drift, style, and scoped finalization checks for a branch.
+- `bin/agent-review --working-tree --risk standard` runs a configured independent reviewer; use `--risk high` for the two-family review panel.
+- `just ui-browser-test` runs the stable Chromium accessibility and screenshot contract.
+- The `Agent Policy / Agent Policy` pull request check validates the PR title, body, tooling, generated rules, and changed-line style. Configure it as a required status check with `05 CI Complete` in branch protection.
+
+These gates have no bypass flag. If a check cannot run, report the limitation and leave readiness
+unconfirmed.
 
 ## Roles
 
@@ -79,6 +111,9 @@ Governed only when a listed trigger is discovered.
 - Never fixes findings directly; the implementation owner makes corrections.
 - Reviews correctness, simplicity, ownership, contracts, compatibility, concurrency, resource lifecycle, failure behavior, security, observability, tests, and rollback safety.
 - Blocks shipping for unresolved critical or major findings.
+- Records the base, head or working-tree boundary, status, and changed files before reviewing.
+- Discards stale conclusions if the candidate changes during review.
+- Dispositions findings as valid, invalid, duplicate, or out-of-scope; invalid findings include refuting evidence.
 
 ## Governed Task Contract
 
@@ -93,35 +128,30 @@ Before implementation, the approved plan must contain:
 - Required test categories and exact verification commands.
 - Rollback, disablement, or migration strategy.
 - Plan challenge outcome and explicit approval.
-- Reserved RFC path and the exact accepted RFC SHA-256.
-- RFC confirmation gate receipt with Run, Task, Gate, question, resolution, and timestamps.
+- Accepted RFC path and its reviewer or owner approval.
 
-Create RFCs from `rfcs/TEMPLATE.md`. Keep the RFC Markdown at
-`rfcs/NNNN-short-name.md` and store every related JSON artifact under
-`rfcs/NNNN-short-name/jsons/`. The standard initial names are `plan.json`,
-`challenge.json`, and `confirmation.json`; use `amendment-NN-*.json` for later changes.
+Create RFCs from `rfcs/TEMPLATE.md` at an unused `rfcs/NNNN-short-name.md` path.
+The RFC is the concise, durable decision record. It captures context, the selected
+decision, contracts and ownership, rejected alternatives, consequences and risks,
+rollout and rollback, verification, challenge outcome, and approval. Every risk-table row
+requires an impact statement or reasoned `N/A`, and open questions must be resolved before
+acceptance. Keep file-level scope, task breakdown, verification results, and code-review
+evidence in the task or pull request.
 
-The RFC author drafts only the coordinator-reserved path. The challenger reviews the
-exact plan and RFC bytes. After all findings are resolved, the final challenged bytes
-must already contain the sole metadata line `- Status: Accepted`. The coordinator then
-creates a gate whose question includes the RFC path and SHA-256 without editing the RFC.
-Implementation may start only after that gate resolves to `approved`. Any
-subsequent RFC byte change requires a new challenge and confirmation.
+The RFC author drafts only the selected path. An independent challenger reviews the plan
+and RFC. After all findings are resolved, the reviewer or owner records approval and the
+RFC's sole metadata status line becomes `- Status: Accepted`. Implementation may then
+start. Do not rewrite an accepted decision. A material change requires a new RFC with a
+`Supersedes` reference and its own challenge and approval. Mark the prior RFC `Superseded`
+only after the replacement is accepted.
 
 Plan/RFC revision and implementation/review correction loops are limited to two rounds.
 After two unsuccessful rounds, mark the task blocked and escalate the unresolved decision
 to the user or technical owner. Do not silently create another worker attempt.
 
-The approved plan is stored as a separate JSON artifact. Its SHA-256 and a coordinator-generated HMAC are recorded in the cumulative lifecycle envelope, and every gate verifies that the envelope plan still matches that artifact. The HMAC signs `<run_id>:<plan_sha256>` using `DEVELOPMENT_GATE_KEY`. That key belongs only to the coordinator or CI gate runner and must not be exposed to implementation or review workers.
-
-After approving the plan, the coordinator creates the attestation:
-
-```bash
-DEVELOPMENT_GATE_KEY="..." just sign-approved-plan \
-  "<orca-run-id>" "rfcs/NNNN-short-name/jsons/plan.json"
-```
-
-Workers produce evidence envelopes; the coordinator or CI gate runner executes lifecycle hooks with the key.
+Workers produce cumulative lifecycle envelopes from the approved plan recorded in the
+task. Lifecycle hooks validate the embedded evidence and role separation without a
+separate signature or receipt.
 
 Use `.codex/orchestrator/templates/task-plan.md` or the equivalent `.claude` template.
 
@@ -137,30 +167,12 @@ just orca-development-run "describe the desired outcome" \
   "rfcs/NNNN-short-name.md" codex
 ```
 
-If a Run is abandoned before its confirmation gate is created, release its reservation:
-
-```bash
-just orca-rfc-release "rfcs/NNNN-short-name.md"
-```
-
 The command creates the Orca Run and dependent planning, RFC-authoring, and challenge
 tasks, then starts only the planner. It intentionally does not create or start an
 implementation task.
 
-After challenge approval, the coordinator creates the exact-digest gate on a dedicated
-confirmation task. No implementation task is created yet:
-
-```bash
-just orca-confirm-rfc-create "<run>" "<challenge-task>" \
-  "rfcs/NNNN-short-name/jsons/challenge.json" "rfcs/NNNN-short-name.md"
-```
-
-After the gate resolves, collect the authoritative receipt before starting a worker:
-
-```bash
-just orca-confirm-rfc-collect "<run>" "<confirmation-task>" "<challenge-task>" \
-  "rfcs/NNNN-short-name/jsons/challenge.json" "<gate>" "rfcs/NNNN-short-name.md"
-```
+After challenge findings are resolved, record reviewer or owner approval, mark the RFC
+`Accepted`, and create the implementation tasks.
 
 Generate the development panel from a lifecycle envelope:
 
@@ -174,26 +186,24 @@ Open it as a browser tab in the active Orca worktree:
 just orca-panel-open "path/to/lifecycle-input.json"
 ```
 
-The panel displays stage readiness, principle decisions, ownership, exact verification commands, review findings, final-gate issues, and Orca Run/Task/Dispatch provenance. With `DEVELOPMENT_GATE_KEY` available to the coordinator, it also executes the final gate and shows trusted ship readiness.
+The panel displays stage readiness, principle decisions, ownership, exact verification commands, review findings, final-gate issues, and Orca Run/Task/Dispatch provenance.
 
 1. Create one Orca Run for the objective.
-2. Reserve the RFC number and create planning, RFC-authoring, and challenge tasks.
+2. Select an unused RFC path and create planning, RFC-authoring, and challenge tasks.
 3. Dispatch planner, RFC author, and challenger in dependency order.
-4. Resolve challenge findings before marking the RFC `Accepted`.
-5. Create an exact-digest confirmation gate on a dedicated confirmation task.
-6. Collect the approved receipt and preserve the accepted RFC baseline.
-7. Start implementation tasks with disjoint file ownership.
-8. Dispatch verification after implementation settles.
-9. Dispatch the code reviewer only after verification passes.
-10. Route findings to the original implementation owner and re-verify fixes.
-11. Ship only after the final review decision is `approved`.
+4. Resolve challenge findings and record approval before marking the RFC `Accepted`.
+5. Start implementation tasks with disjoint file ownership.
+6. Dispatch verification after implementation settles.
+7. Dispatch the code reviewer only after verification passes.
+8. Route findings to the original implementation owner and re-verify fixes.
+9. Ship only after the final review decision is `approved`.
 
 For coordinator waits, process the complete delivery, acknowledge its delivery ID, and
 release or deliberately reuse each settled worker before waiting again. Never retry a task
 because a wait window timed out; inspect worker state first. Do not exceed two failed
 attempts or correction rounds without escalating.
 
-The final review envelope must include the Orca Run, review Task, and review Dispatch identifiers. Reviewer identity comes from the execution metadata, while implementation ownership comes from the coordinator-attested approved-plan artifact.
+The final review envelope must include the Orca Run, review Task, and review Dispatch identifiers. Reviewer identity comes from the execution metadata, while implementation ownership comes from the approved task plan.
 
 Use Orca worktree comments to record decisions and keep each implementation task isolated in its own worktree. Parallel implementation is allowed only when write sets do not overlap.
 
@@ -204,14 +214,19 @@ Use Orca worktree comments to record decisions and keep each implementation task
 - Minor: maintainability or clarity issue that does not invalidate behavior. May become a tracked follow-up.
 - Note: optional improvement or question. Does not block shipping.
 
-## Required Evidence
+Every finding names `file:line`, the violated contract or invariant, a concrete consequence,
+supporting evidence, and the smallest safe remedy. Critical and major findings are challenged
+against the code and tests before they remain in the final ledger.
+
+## Governed Required Evidence
 
 A completed change retains:
 
 - Approved plan and challenge decision.
-- Accepted RFC and exact-digest confirmation receipt.
+- Accepted RFC and recorded reviewer or owner approval.
 - Implementation summary and changed-file list.
 - Verification commands with results.
 - Independent code-review report.
 - Resolution for every critical and major finding.
+- Reviewed base and head or working-tree boundary plus final finding dispositions.
 - PR summary, operational impact, and rollback notes.

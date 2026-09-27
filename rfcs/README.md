@@ -8,13 +8,14 @@ public contracts, persistent data, security boundaries, or operational behavior.
 RFCs use the following statuses:
 
 - `Draft`: under discussion; implementation must not begin.
-- `Accepted`: final design bytes are ready for exact-digest confirmation; status alone does not authorize implementation.
+- `Accepted`: the required reviewer or owner approved the design; implementation may begin.
 - `Implemented`: the accepted design has shipped.
 - `Superseded`: replaced by another RFC.
 - `Rejected`: considered but not selected.
 
-Material design changes discovered during implementation require the RFC to return to
-`Draft` or be superseded by a follow-up RFC.
+An accepted RFC is a stable decision record. After acceptance, change only its status or
+reference links. A material decision change requires a new RFC whose `Supersedes` field
+points to the previous RFC.
 
 ## Naming
 
@@ -24,45 +25,34 @@ RFC files use a four-digit sequence followed by a short descriptive name:
 0001-actor-aware-audit-identity.md
 ```
 
-The coordinator reserves the next unused path before creating an Orca development Run.
-Reservation is single-owner for that Run; a colliding or pre-existing path must be rejected.
-The RFC author may edit only that reserved file. The RFC index is updated separately after
-the RFC is accepted. Reservations use an atomic directory under Git metadata and remain
-until the exact-digest confirmation task is created; abandoned reservations require
-coordinator cleanup.
+Choose the next unused path before drafting. A colliding or pre-existing path must be
+rejected. The RFC author may edit only that selected file. Update the RFC index after the
+RFC is accepted.
 
-Start new RFCs from [`TEMPLATE.md`](TEMPLATE.md). The required metadata and sections make
-scope, contracts, risks, verification, rollout, and decisions reviewable without inventing
-a new structure for each proposal.
+Start new RFCs from [`TEMPLATE.md`](TEMPLATE.md). The format records context, decision,
+contracts and ownership, rejected alternatives, consequences and risks, rollout and
+rollback, verification, and approval. Its risk table requires an impact statement or a
+reasoned `N/A` for compatibility, failure recovery, security, data, concurrency, and
+operations. Keep file-level scope, task breakdown, and execution evidence in the plan or
+pull request.
 
-## Artifact Layout
+The layered format is enforced for RFC 0017 and later. Earlier RFCs retain their accepted
+structure and are not rewritten solely to match the current template.
 
-Keep the RFC document at `rfcs/NNNN-short-name.md`. Store every JSON artifact associated
-with that RFC under a matching directory using the full RFC stem:
+## Approval Record
 
-```text
-rfcs/
-├── 0004-example-change.md
-└── 0004-example-change/
-    └── jsons/
-        ├── plan.json
-        ├── confirmation.json
-        ├── amendment-01-plan.json
-        ├── amendment-01-confirmation.json
-        └── operational-readiness.json
-```
+Keep each RFC as one Markdown decision record at `rfcs/NNNN-short-name.md`. Record the
+challenger, outcome, approver, and approval reference in that file. Keep implementation,
+verification, and code-review evidence in the task or pull request. Do not create RFC
+sidecar receipts or approval digests.
 
-This includes plans, amendments, challenge receipts, approval/confirmation receipts,
-inventories, and operational-readiness records. Do not add new JSON artifacts directly
-under `rfcs/`. The full RFC stem is required because RFC numbers are not currently unique.
+A layered RFC cannot become `Accepted` while a risk-table row is blank, an open question
+remains, or approval is unrecorded. The independent challenge checks both the decision and
+the completeness of those fields.
 
-Historical JSON artifacts moved into this layout retain their original embedded path values
-so existing hashes and approvals remain auditable. New artifacts must record the current
-`rfcs/<rfc-stem>/jsons/<name>.json` path and must not overwrite an existing receipt; use a
-new amendment-specific filename instead.
-
-An `Accepted` RFC is confirmed by exact SHA-256 through the Orca decision gate. Any byte
-change after confirmation requires another challenge and confirmation before implementation.
+Before acceptance, revise the draft to resolve challenge findings. After acceptance, do
+not rewrite the decision. Create and approve a new RFC for a material change, set its
+`Supersedes` field, then mark the old RFC `Superseded` with a link to its replacement.
 
 ## Index
 

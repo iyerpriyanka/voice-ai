@@ -310,14 +310,8 @@ Focused UI tests must include:
 - Resolved minor finding: `BrandedLogo` is now required for tenant-visible
   brand rendering in shell, onboarding, and preview surfaces.
 
-## Artifact Index
-
-- `jsons/plan.json` - Initial UI-only implementation plan. Accepted candidate.
-- `jsons/challenge.json` - Round 1 independent challenge. Resolved.
-- `jsons/challenge-02.json` - Round 2 independent challenge. Approved.
-
 ## Decision Log
 
 | Date | Decision | Owner | Evidence |
 | --- | --- | --- | --- |
-| 2026-08-31 | Initial UI-only RFC draft | UI Platform | `jsons/plan.json` |
+| 2026-08-31 | Initial UI-only RFC draft | UI Platform | RFC review |

@@ -64,7 +64,8 @@ The reviewed migration inventory contains:
 
 The reviewed inventory contains 62 legacy-audited tables plus Integration API's
 `external_audits` and `external_audit_metadata`, which receive actor identity without
-legacy conversion. The 64-table inventory artifact is authoritative for the rollout.
+legacy conversion. The 64-table inventory enforced by `bin/verify-phase3-migrations.sh` is
+authoritative for the rollout.
 
 ### Authentication
 
@@ -520,11 +521,11 @@ version is supported only until the announced Phase 3 maintenance boundary.
 - Identify the owning service, table, response message, and current audit behavior.
 - Add golden compatibility tests before changing contracts.
 
-The accepted inventory is `rfcs/0001-actor-aware-audit-identity/jsons/phase-3-audit-contract-inventory.json`. It records
-83 administrative public mutation edges, six Assistant runtime persistence handlers, one
-Integration lifecycle persistence handler, their canonical
-writers and derived writes, the 64 actor-audited tables, six canonical protobuf sources, five
-SDK delivery roots, known UI references, and the document/indexer contract-test boundary.
+The Phase 0 review identified 83 administrative public mutation edges, six Assistant runtime
+persistence handlers, one Integration lifecycle persistence handler, their canonical writers
+and derived writes, six canonical protobuf sources, five SDK delivery roots, known UI references,
+and the document/indexer contract-test boundary. `bin/verify-phase3-migrations.sh` remains the
+executable source of truth for audited-table coverage.
 
 ### Phase 1: Authentication Foundation
 
@@ -742,7 +743,7 @@ post-migration verification.
 
 ## Acceptance Criteria
 
-This RFC may move to `Accepted` when:
+This RFC was accepted after:
 
 - Actor taxonomy and identifier format are approved.
 - Project, organization, service, and system identity ownership is defined.
@@ -754,7 +755,7 @@ This RFC may move to `Accepted` when:
 The externally exposed mutation inventory remains a mandatory Phase 0 deliverable before
 the actor-only cutover begins; it does not block the authentication foundation.
 
-Implementation must not begin while this RFC remains `Draft`.
+Implementation began only after the RFC was accepted.
 
 ## Decision Log
 

@@ -2,110 +2,58 @@
 
 - Status: Draft
 - Owner: Team or individual
-- Created: YYYY-MM-DD
-- Updated: YYYY-MM-DD
-- Reviewers: Names or roles
-
-## Summary
-
-Describe the decision and intended outcome in a few sentences.
+- Approved by: Pending
+- Date: YYYY-MM-DD
+- Supersedes: N/A
 
 ## Context
 
-Explain the current behavior, verified evidence, constraints, and why a change is needed.
-Link to relevant code, incidents, issues, metrics, or prior RFCs.
+State the verified problem, constraints, and reason a durable decision is needed. Link to
+the relevant issue, code, incident, metric, or prior RFC.
 
-## Goals
+## Decision
 
-- State measurable outcomes this RFC must achieve.
+State the selected direction and the essential design. Keep implementation steps, file
+lists, and task breakdowns in the plan or pull request.
 
-## Non-Goals
+## Contracts and Ownership
 
-- State adjacent work that is explicitly excluded.
+- Name the owner of each changed behavior, state, resource, or boundary.
+- State public and internal contract changes, compatibility guarantees, and intentional breaks.
+- Write `None` only when the decision changes no contract or ownership boundary.
 
-## Scope and Ownership
+## Alternatives Rejected
 
-### Allowed Paths
+- Name each credible alternative and the concrete reason it was not selected.
 
-- `path/owned/by-this-change/` — owner
+## Consequences and Risks
 
-### Out-of-Scope Paths
+- Record the important benefits, costs, and tradeoffs.
+- Complete every row. Use `N/A` only with a brief reason.
 
-- `path/not/owned/`
+| Area | Impact or reason for N/A |
+| --- | --- |
+| Compatibility | |
+| Failure and recovery | |
+| Security and privacy | |
+| Data and migration | |
+| Concurrency and resources | |
+| Operations and observability | |
 
-## Proposed Design
+## Rollout and Rollback
 
-Describe the smallest complete design, its state transitions, data flow, and ownership.
+- State deployment order, compatibility window, stop conditions, and operator ownership.
+- State disablement or rollback steps and any irreversible effects.
 
-## Contracts and Compatibility
+## Verification
 
-- Public API, protocol, schema, configuration, and dependency contracts.
-- Backward/forward compatibility guarantees and intentional breaking changes.
+- State observable acceptance criteria and exact verification commands.
+- Include success, failure, compatibility, and migration checks when relevant.
 
-## Failure and Recovery
+## Review and Approval
 
-- Invalid input, timeout, cancellation, partial failure, retries, cleanup, and idempotency.
-- Conditions that block rollout or require operator action.
-
-## Security and Privacy
-
-- Authentication, authorization, tenant isolation, secrets, sensitive data, and least privilege.
-
-## Observability
-
-- Logs, metrics, traces, alerts, and operator diagnostics needed for the changed behavior.
-
-## Data and Migration
-
-- Schema/data changes, ordering, backfill, resumability, rollback limits, and ownership.
-- Write `None` when no persistent-data change exists.
-
-## Rollout
-
-- Deployment order, feature flags, compatibility window, validation, and stop conditions.
-
-## Rollback
-
-- Exact rollback or disablement steps and any irreversible effects.
-
-## Alternatives Considered
-
-- Describe simpler alternatives and why they were rejected.
-
-## Testing and Verification
-
-- Required test categories.
-- Exact commands and expected evidence.
-- Environmental limitations or manual checks.
-
-## Acceptance Criteria
-
-- [ ] Each criterion is observable and independently verifiable.
-
-## Open Questions
-
-- Record unresolved decisions and their owner. Write `None` before acceptance.
-
-## Challenge Resolution
-
-- Summarize blocking findings and how each was resolved.
-- Limit revision cycles to two; unresolved issues after that return the RFC to `Draft` or `Rejected`.
-
-## Artifact Index
-
-Store every JSON plan, amendment, challenge, confirmation, review, and operational-readiness
-artifact under `rfcs/NNNN-short-name/jsons/`. Use stable descriptive names such as:
-
-- `jsons/plan.json`
-- `jsons/confirmation.json`
-- `jsons/amendment-01-plan.json`
-- `jsons/amendment-01-confirmation.json`
-- `jsons/operational-readiness.json`
-
-List the artifacts used for this RFC here with their purpose and status.
-
-## Decision Log
-
-| Date | Decision | Owner | Evidence |
-| --- | --- | --- | --- |
-| YYYY-MM-DD | Initial proposal | Owner | `jsons/plan.json` |
+- Challenger:
+- Outcome: Pending (must be `Approved` before acceptance)
+- Resolved findings:
+- Open questions: Pending (must be `None` before acceptance)
+- Approval reference:

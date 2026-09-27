@@ -41,7 +41,7 @@ For Integration tables, which never had `created_by` or `updated_by`, historical
 - Keep final constraint validation, creation-actor immutability triggers, legacy-column cleanup, and rollback behavior unchanged.
 - Do not add batching, dynamic SQL, progress tables, or resumability infrastructure.
 
-Repository inspection on 2026-08-22 confirms the affected migration files are absent from `origin/main` and were introduced only by commit `e7765145` on `rfc/actor-aware-audit-identity`. Repository history cannot prove deployment state. Exact-digest approval of this RFC therefore also records the data owner's attestation that:
+Repository inspection on 2026-08-22 confirms the affected migration files are absent from `origin/main` and were introduced only by commit `e7765145` on `rfc/actor-aware-audit-identity`. Repository history cannot prove deployment state. Approval of this RFC therefore also records the data owner's attestation that:
 
 - populated legacy audit IDs are user IDs in every affected environment;
 - all legacy creation IDs are non-null and positive;
@@ -85,7 +85,7 @@ In scope:
 
 - Phase 3 convert, run, and finalize migration files for Assistant, Endpoint, Integration, and Web.
 - Phase 3 PostgreSQL migration verification script and verification documentation.
-- A deployment operational-readiness receipt template.
+- A deployment operational-readiness checklist in the release pull request.
 - Removal of all Go tests located in the four service migration directories.
 - Removal of the call-context migration SQL-text test.
 - RFC index and lifecycle evidence for this change.
@@ -99,7 +99,7 @@ Out of scope:
 
 ## Risks and Mitigations
 
-- Direct updates can hold locks longer than batched updates. Deployment therefore runs with writes fenced in the existing Phase 3 maintenance window after the release owner records per-table row counts, the production-sized rehearsal duration, the approved maximum duration, backup identity, and rollback owner in `rfcs/0003-simplify-audit-backfill/jsons/operational-readiness.json`. A pending or absent receipt blocks deployment, not implementation or commit.
+- Direct updates can hold locks longer than batched updates. Deployment therefore runs with writes fenced in the existing Phase 3 maintenance window after the release owner records per-table row counts, the production-sized rehearsal duration, the approved maximum duration, backup identity, and rollback owner in the release pull request. Missing approval blocks deployment, not implementation or commit.
 - Rewriting an already-applied migration would be unsafe. Implementation is conditional on these migration versions remaining unshipped.
 - Invalid legacy IDs now stop migration before updates begin instead of becoming `unknown`. This is intentional fail-closed behavior and the validator includes a rejection case.
 - Integration history cannot be attributed to a user because no legacy user identity exists; retaining `unknown` avoids fabricating identity.
@@ -116,5 +116,5 @@ Rollback remains the same-point four-database backup restoration documented for 
 - All migration-package Go tests and the call-context migration SQL-text test are removed.
 - The PostgreSQL migration and rollback validators pass with exhaustive table and removed-contract coverage.
 - Relevant Go tests and formatting checks pass.
-- Exact-digest approval attests the legacy-ID mapping and that no affected migration version has been deployed.
-- Deployment remains blocked until the operational-readiness receipt is approved by the release owner.
+- RFC approval attests the legacy-ID mapping and that no affected migration version has been deployed.
+- Deployment remains blocked until the release owner approves operational readiness in the release pull request.

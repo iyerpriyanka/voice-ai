@@ -39,7 +39,7 @@ RPC is observable but not durably replayed by this change.
 
 ### Allowed Paths
 
-- `rfcs/0014-direct-product-usages.md` and its JSON artifacts.
+- `rfcs/0014-direct-product-usages.md`.
 - `protos/artifacts/billing-api.proto`, `protos/billing-api.pb.go`, and
   `protos/billing-api_grpc.pb.go`.
 - `api/web-api/migrations/000013_create_product_usages.*.sql`.
@@ -217,19 +217,6 @@ None.
 - One shared registry defines valid usage type and unit pairs and supplies future quota units.
 - Amendment 02 replaced batch idempotency with singular creation and server-assigned IDs.
 - The product usage smoke directly invokes and verifies ingestion under PAT and project keys.
-
-## Artifact Index
-
-- `jsons/plan.json` - governed implementation plan, updated to the approved contract.
-- `jsons/challenge.json` - initial independent challenge, superseded by approved amendments.
-- `jsons/amendment-01-plan.json` - first amendment.
-- `jsons/amendment-01-challenge.json` - approved first amendment challenge.
-- `jsons/amendment-02-plan.json` - confirmed singular-create contract amendment.
-- `jsons/amendment-02-challenge.json` - approved singular-create contract challenge.
-- `jsons/amendment-02-review.json` - approved implementation review for the singular contract.
-- `jsons/confirmation.json` - technical owner confirmation linked to Amendment 02.
-- `jsons/inventory.json` - implementation and verification artifact inventory.
-- `jsons/operational.json` - delivery, timeout, and rollback decisions.
 
 ## Decision Log
 

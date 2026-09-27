@@ -14,15 +14,12 @@
 - Ownership:
 - Rollback or disablement:
 
-## RFC Confirmation
+## RFC
 
 <!-- Required only for Governed changes. Use N/A for Fast or Standard changes. -->
 
 - Accepted RFC:
-- RFC artifact directory: `rfcs/NNNN-short-name/jsons/`
-- Approved plan: `rfcs/NNNN-short-name/jsons/plan.json`
-- Confirmed SHA-256:
-- Orca confirmation gate / receipt:
+- Approval:
 
 ## Principles
 
@@ -54,12 +51,11 @@
 ## Checklist
 
 - [ ] The selected workflow tier matches `DEVELOPMENT_PROCESS.md`.
-- [ ] For Governed work, the exact plan and RFC were challenged before implementation.
-- [ ] For Governed work, RFC JSON artifacts are stored under the RFC's `jsons/` directory.
-- [ ] For Governed work, the accepted RFC digest was explicitly confirmed before implementation started.
+- [ ] For Governed work, the plan and RFC were challenged and approved before implementation.
 - [ ] I kept the change focused.
 - [ ] I updated tests or docs where needed.
 - [ ] Required validation commands passed.
+- [ ] `just agent-pr-ready <base>` passed for the committed branch.
 - [ ] An independent code reviewer approved the complete diff.
 - [ ] Critical and major review findings are resolved.
 - [ ] Rollback, migration, and operational impact are documented where relevant.

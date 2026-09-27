@@ -1,24 +1,16 @@
 # RFC 0001 Phase 3 Verification
 
 - Date: 2026-08-22
-- RFC SHA-256: `eaee50a5e72962c16c0bd46cb972415299704c1adabf80fcf544a795fa15eba7`
 - Implementation status: Verified; delivery gates pending
 - Independent code review: Approved after RFC 0002 re-review
-- RFC 0002 SHA-256: `52cbbb4c89632ec21d0d0130c59bcd469fc4bee1dfcb62ee8f6df0b61705ad3d`
-- RFC 0002 plan SHA-256: `ceb8521b670b0a564fa27da1b8c57c9cfd56cc2071b68afd8bf1c966c6bf3e4c`
-- RFC 0003 SHA-256: `d43a6b1b4f040ab16aa3dde1f018e6b56757768a523e1ae0d203fc2696cfbe7f`
-- RFC 0003 plan SHA-256: `86b038ad119258843fa8896c49bfbc09503a92e3ba27f66212183223ca824547`
 
 ## Source and Contract Checks
 
-- `python3 -m json.tool rfcs/0001-actor-aware-audit-identity/jsons/phase-3-complete-bigint-actor-rollout.plan.json`: passed.
 - Production-source scan for `created_by`, `updated_by`, `CreatedBy`, and `UpdatedBy`, excluding migrations, tests, and generated protobuf files: passed with zero matches.
 - Protobuf declaration scan for `createdBy`, `updatedBy`, `createdUser`, and `updatedUser`: passed with zero active declarations.
 - `go test ./protos/... -run TestAuditActorContract`: passed.
 - `bash bin/artifacts-generate.sh`: passed. The plan's literal `bin/generate` path does not exist in this checkout; `bin/artifacts-generate.sh` is the repository generation entrypoint.
 - `git diff --check`: passed.
-- Approved-byte SHA-256 checks passed for the RFC (`eaee50a5e72962c16c0bd46cb972415299704c1adabf80fcf544a795fa15eba7`), amendment (`08f4a301102bea13e3f418e706276c78abdab04fc276f58efa3dab1f8eacb5b6`), and inventory (`1b49a4fcd8734376d84ebdfcec231ad8243fe3108fc84d348f2049c4679eb435`).
-- RFC 0002 and its plan retained their approved SHA-256 digests after implementation.
 - Production-source scans found no registry RPC, registry verifier, Ed25519 service-key environment variable, service key ID, or system-actor environment reference.
 - Generated root, Document API, and SDK Web API contracts contain no service/system identity validation RPC while retaining actor-aware scoped-authentication fields.
 
@@ -74,11 +66,11 @@ Independent reviewer Hume approved the complete JWT-only implementation diff on 
 
 Generated protobuf and SDK changes are committed in their nested repositories and recorded by the root Phase 3 commit.
 
-Deployment of the simplified direct backfill remains gated on the release-owner approval recorded in `rfcs/0003-simplify-audit-backfill/jsons/operational-readiness.json`.
+Deployment of the simplified direct backfill remains gated on release-owner approval recorded in the release pull request.
 
 ## RFC 0003 Simplified Audit Backfill
 
 - Persisted migration metrics, stored backfill procedures, batch loops, and interruption-resume logic are removed.
 - Assistant, Endpoint, and Web legacy audit IDs map directly to `user` actor pairs; Integration history remains `unknown` because it has no legacy actor ID.
 - Go tests that parsed migration SQL, including the call-context migration-file test, are removed. Their contracts are covered by executable PostgreSQL validation.
-- RFC 0003 was independently challenged and approved before implementation; deployment remains blocked while its operational-readiness receipt is `pending`.
+- RFC 0003 was independently challenged and approved before implementation; deployment remains blocked until operational readiness is approved.
