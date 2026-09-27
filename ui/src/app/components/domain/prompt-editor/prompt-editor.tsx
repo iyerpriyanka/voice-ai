@@ -188,7 +188,8 @@ class PlaceholderContentWidget {
     if (!this.domNode) {
       this.domNode = document.createElement('div');
       this.domNode.innerText = this.placeholder;
-      this.domNode.className = 'dark:text-gray-700 text-gray-400 relative!';
+      this.domNode.className = 'relative!';
+      this.domNode.style.color = 'var(--cds-text-secondary)';
       this.domNode.style.pointerEvents = 'auto';
       this.domNode.style.cursor = 'text';
       this.domNode.onclick = () => {

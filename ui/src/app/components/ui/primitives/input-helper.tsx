@@ -12,7 +12,7 @@ export function InputHelper(props: InputHelperProp) {
       className={cn(
         // Carbon helper-text-01
         'text-xs leading-4 tracking-[0.02em]',
-        'text-gray-500 dark:text-gray-500',
+        'text-[var(--cds-text-secondary)]',
         props.className,
       )}
     >

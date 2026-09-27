@@ -201,7 +201,7 @@ export function CreateWebsocket() {
                   <a
                     target="_blank"
                     href={assistantDocsUrl}
-                    className="h-7 flex items-center font-medium hover:underline ml-auto text-yellow-600"
+                    className="h-7 flex items-center font-medium hover:underline ml-auto text-[var(--cds-link-primary)]"
                     rel="noreferrer"
                   >
                     Read documentation
@@ -357,7 +357,7 @@ export function CreateWebsocket() {
                   <a
                     target="_blank"
                     href={assistantDocsUrl}
-                    className="h-7 flex items-center font-medium hover:underline ml-auto text-yellow-600"
+                    className="h-7 flex items-center font-medium hover:underline ml-auto text-[var(--cds-link-primary)]"
                     rel="noreferrer"
                   >
                     Read documentation

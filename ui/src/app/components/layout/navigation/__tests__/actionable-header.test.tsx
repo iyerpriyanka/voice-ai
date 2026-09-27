@@ -99,6 +99,7 @@ jest.mock('@carbon/react', () => ({
     />
   ),
   Dropdown: ({
+    'aria-label': ariaLabel,
     id,
     label,
     items,
@@ -114,7 +115,7 @@ jest.mock('@carbon/react', () => ({
     return (
       <select
         id={id}
-        aria-label={label}
+        aria-label={ariaLabel ?? label}
         data-testid={id}
         data-loading={String(Boolean(isLoading))}
         value={String(selectedIndex)}
@@ -182,7 +183,7 @@ describe('Actionable header project switcher', () => {
       '/dashboard/assistant/list',
     );
 
-    const projectSelector = screen.getByLabelText('Select a Project');
+    const projectSelector = screen.getByLabelText('Select project');
     expect(projectSelector).toBeInTheDocument();
     expect(screen.getByRole('option', { name: 'Alpha' })).toBeInTheDocument();
     expect(screen.getByRole('option', { name: 'Beta' })).toBeInTheDocument();
@@ -226,7 +227,7 @@ describe('Actionable header project switcher', () => {
       </AuthContext.Provider>,
     );
 
-    expect(screen.queryByLabelText('Select a Project')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Select project')).not.toBeInTheDocument();
   });
 
   it('does not render project dropdown when it is disabled', () => {
@@ -242,7 +243,7 @@ describe('Actionable header project switcher', () => {
       </AuthContext.Provider>,
     );
 
-    expect(screen.queryByLabelText('Select a Project')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Select project')).not.toBeInTheDocument();
   });
 
   it('ignores an empty project selection from the dropdown', () => {
@@ -260,7 +261,7 @@ describe('Actionable header project switcher', () => {
       </AuthContext.Provider>,
     );
 
-    fireEvent.change(screen.getByLabelText('Select a Project'), {
+    fireEvent.change(screen.getByLabelText('Select project'), {
       target: { value: '-1' },
     });
 

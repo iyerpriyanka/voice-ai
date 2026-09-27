@@ -51,6 +51,9 @@ describe('sidebar navigation items', () => {
       'href',
       '/dashboard',
     );
+    expect(
+      screen.getByRole('link', { name: /Dashboard/i }).closest('li'),
+    ).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Assistants/i })).toHaveAttribute(
       'href',
       '/deployment/assistant',

@@ -77,8 +77,8 @@ export function CartesiaModelInformationPage() {
         }}
       />
       <Helmet title="Provider information" />
-      <PageHeaderBlock>
-        <div className="flex items-center gap-3 py-4">
+      <PageHeaderBlock className="h-20">
+        <div className="flex items-center gap-3">
           <div className="rounded-[2px] flex items-center justify-center shrink-0 h-16 w-16 dark:bg-gray-600 border dark:border-gray-700">
             <img
               src={provider?.image}

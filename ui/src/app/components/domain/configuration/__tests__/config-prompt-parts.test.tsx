@@ -66,8 +66,13 @@ jest.mock('@carbon/react', () => ({
 }));
 
 jest.mock('@/app/components/ui/primitives', () => ({
-  GhostButton: ({ children, onClick, tabIndex }: any) => (
-    <button type="button" tabIndex={tabIndex} onClick={onClick}>
+  GhostButton: ({ children, iconDescription, onClick, tabIndex }: any) => (
+    <button
+      type="button"
+      aria-label={iconDescription}
+      tabIndex={tabIndex}
+      onClick={onClick}
+    >
       {children}
     </button>
   ),
@@ -261,8 +266,7 @@ describe('configuration prompt subcomponents', () => {
     });
     expect(onChange).toHaveBeenCalledWith('Updated prompt');
 
-    const iconButtons = screen.getAllByRole('button');
-    fireEvent.click(iconButtons[1]);
+    fireEvent.click(screen.getByRole('button', { name: 'Copy prompt' }));
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
       'Initial prompt',
     );
@@ -272,10 +276,15 @@ describe('configuration prompt subcomponents', () => {
     });
     expect(screen.getByTestId('copy-icon')).toBeInTheDocument();
 
-    fireEvent.click(iconButtons[0]);
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Delete prompt message' }),
+    );
     expect(onDelete).toHaveBeenCalledTimes(1);
 
-    fireEvent.click(iconButtons[2]);
+    fireEvent.click(screen.getByRole('button', { name: 'Expand prompt' }));
     expect(screen.getByTestId('minimize-icon')).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Collapse prompt' }),
+    ).toBeInTheDocument();
   });
 });

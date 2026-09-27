@@ -26,6 +26,7 @@ import { FieldSet } from '@/app/components/ui/primitives';
 import { FormLabel } from '@/app/components/ui/primitives';
 import { CopyButton } from '@/app/components/ui/primitives';
 import { GhostButton } from '@/app/components/ui/primitives';
+import { IconOnlyButton } from '@/app/components/ui/primitives';
 import { BaseCard } from '@/app/components/ui/primitives';
 import {
   createProjectPublishableCredential,
@@ -136,13 +137,18 @@ export function ProjectCredentialPage() {
           Project Developer Keys
         </PageTitleWithCount>
         <div className="flex items-stretch h-12 border-l border-gray-200 dark:border-gray-800">
-          <GhostButton size="md" onClick={shouldReload} className="h-full">
-            <Renew size={16} />
-          </GhostButton>
+          <IconOnlyButton
+            kind="ghost"
+            size="md"
+            renderIcon={Renew}
+            iconDescription="Refresh credentials"
+            onClick={shouldReload}
+            className="h-full"
+          />
           <button
             type="button"
             onClick={onCreateProjectCredential}
-            className="flex items-center gap-2 px-4 text-sm text-white bg-primary hover:bg-primary/90 transition-colors whitespace-nowrap"
+            className="flex items-center gap-2 px-4 text-sm text-[var(--brand-on-primary)] bg-primary hover:bg-primary/90 transition-colors whitespace-nowrap"
           >
             Create credential
             <Add size={16} />

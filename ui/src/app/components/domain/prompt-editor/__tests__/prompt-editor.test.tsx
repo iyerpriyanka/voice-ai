@@ -231,6 +231,7 @@ describe('PromptEditor', () => {
 
     const domNode = widget.getDomNode();
     expect(domNode.innerText).toBe('Write a prompt');
+    expect(domNode).toHaveStyle({ color: 'var(--cds-text-secondary)' });
     expect(widget.getDomNode()).toBe(domNode);
 
     domNode.click();

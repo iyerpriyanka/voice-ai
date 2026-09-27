@@ -56,9 +56,9 @@ export function ChangePasswordPage() {
 
   return (
     <Stack gap={6}>
-      <Helmet title="Change your password" />
+      <Helmet title="Set a new password" />
       <Stack gap={2}>
-        <h1 className="m-0 text-[1.8rem] leading-tight">Change Password</h1>
+        <h1 className="m-0 text-[1.8rem] leading-tight">Set a new password</h1>
         <p className="mt-1.5 text-sm leading-[1.4286] text-(--cds-text-secondary)">
           You've requested to change your password. Please enter your new
           password below to secure your account.
@@ -94,7 +94,7 @@ export function ChangePasswordPage() {
             isLoading={loading}
             className="!w-full !max-w-none !justify-between"
           >
-            Change Password
+            Save new password
           </PrimaryButton>
         </Stack>
       </form>

@@ -75,12 +75,12 @@ export function SignInPage() {
     <Stack gap={6}>
       <Helmet title="Sign in to your account" />
       <Stack gap={2}>
-        <h1 className="m-0 text-[1.8rem] leading-tight">Signin</h1>
+        <h1 className="m-0 text-[1.8rem] leading-tight">Sign in</h1>
         {workspace.authentication.signUp.enable && (
           <p className="mt-1.5 text-sm leading-[1.4286] text-(--cds-text-secondary)">
             Don't have an account? &nbsp;
             <Link href="/auth/signup" className="text-sm !underline">
-              Sign-up
+              Sign up
             </Link>
           </p>
         )}

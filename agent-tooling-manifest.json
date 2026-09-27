@@ -108,9 +108,11 @@
     {
       "id": "ui-browser-quality",
       "state": "implemented",
-      "owner": "ui/playwright.config.ts",
+      "owner": "ui/playwright.config.js",
       "evidence": [
-        "ui/e2e/sign-in.spec.ts",
+        "ui/e2e/route-manifest.js",
+        "ui/e2e/a11y.spec.js",
+        "ui/e2e/screenshot-journey.spec.js",
         ".github/workflows/reusable-ui-ci.yml"
       ],
       "verification": ["just ui-browser-test"],
@@ -140,7 +142,7 @@
     },
     {
       "id": "ui-browser",
-      "paths": ["ui/e2e/**/*.ts", "ui/playwright.config.ts"],
+      "paths": ["ui/e2e/**/*.js", "ui/playwright.config.js"],
       "contract": "Stable critical browser checks retain accessibility and reviewed screenshot evidence.",
       "checks": ["just ui-browser-test"]
     },

@@ -10,7 +10,13 @@ import { useUserPageStore } from '@/stores/user';
 import { SingleUser } from '@/app/pages/workspace/user/single-user';
 import { PrimaryButton } from '@/app/components/ui/primitives';
 import { Pagination } from '@/app/components/ui/primitives';
-import { Add, Renew, TrashCan, UserAdmin } from '@carbon/icons-react';
+import {
+  Add,
+  Renew,
+  TrashCan,
+  UserAdmin,
+  UserMultiple,
+} from '@carbon/icons-react';
 import {
   Table,
   TableHead,
@@ -29,6 +35,7 @@ import { PageTitleWithCount } from '@/app/components/layout/blocks/page-title-wi
 import { TableSection } from '@/app/components/layout/sections/table-section';
 import { ConfirmDeleteDialog } from '@/app/components/dialogs/shared';
 import { deleteOrganizationUser, updateOrganizationUserRole } from '@/clients';
+import { EmptyState } from '@/app/components/ui/feedback';
 
 const headers = [
   { key: 'id', header: 'ID' },
@@ -215,45 +222,56 @@ export function UserPage() {
           </PrimaryButton>
         </TableToolbarContent>
       </TableToolbar>
-      <TableSection>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableHeader className="!w-12" />
-              {headers.map(h => (
-                <TableHeader key={h.key}>{h.header}</TableHeader>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {userActions.users.map((usr, idx) => (
-              <SingleUser
-                key={idx}
-                user={usr}
-                selected={selectedUserId === usr.getId()}
-                onSelect={() =>
-                  setSelectedUserId(
-                    selectedUserId === usr.getId() ? null : usr.getId(),
-                  )
-                }
-              />
-            ))}
-          </TableBody>
-        </Table>
-        <Pagination
-          totalItems={userActions.totalCount}
-          page={userActions.page}
-          pageSize={userActions.pageSize}
-          pageSizes={[10, 20, 50]}
-          onChange={({ page, pageSize }) => {
-            if (pageSize !== userActions.pageSize) {
-              userActions.setPageSize(pageSize);
-            } else {
-              userActions.setPage(page);
-            }
-          }}
+      {!loading && userActions.users.length === 0 ? (
+        <EmptyState
+          icon={UserMultiple}
+          title="No organization users"
+          subtitle="Invite teammates to collaborate on projects and manage organization access."
+          action="Invite user"
+          actionIcon={Add}
+          onAction={() => setInviteOrganizationModalOpen(true)}
         />
-      </TableSection>
+      ) : (
+        <TableSection>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableHeader className="!w-12" />
+                {headers.map(h => (
+                  <TableHeader key={h.key}>{h.header}</TableHeader>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {userActions.users.map((usr, idx) => (
+                <SingleUser
+                  key={idx}
+                  user={usr}
+                  selected={selectedUserId === usr.getId()}
+                  onSelect={() =>
+                    setSelectedUserId(
+                      selectedUserId === usr.getId() ? null : usr.getId(),
+                    )
+                  }
+                />
+              ))}
+            </TableBody>
+          </Table>
+          <Pagination
+            totalItems={userActions.totalCount}
+            page={userActions.page}
+            pageSize={userActions.pageSize}
+            pageSizes={[10, 20, 50]}
+            onChange={({ page, pageSize }) => {
+              if (pageSize !== userActions.pageSize) {
+                userActions.setPageSize(pageSize);
+              } else {
+                userActions.setPage(page);
+              }
+            }}
+          />
+        </TableSection>
+      )}
       <InviteOrganizationUserDialog
         modalOpen={inviteOrganizationModalOpen}
         setModalOpen={setInviteOrganizationModalOpen}

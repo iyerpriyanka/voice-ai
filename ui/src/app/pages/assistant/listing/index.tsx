@@ -142,7 +142,7 @@ export function AssistantPage() {
       <PageHeaderBlock>
         <div className="flex items-center gap-3">
           <PageTitleBlock>Assistants</PageTitleBlock>
-          <span className="text-xs text-gray-500 dark:text-gray-400 tabular-nums">
+          <span className="text-xs text-[var(--cds-text-secondary)] tabular-nums">
             {assistantAction.assistants.length}/{assistantAction.totalCount}
           </span>
         </div>

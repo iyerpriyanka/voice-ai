@@ -104,22 +104,32 @@ Run the complete browser suite:
 yarn e2e
 ```
 
+`yarn test:e2e` runs the same canonical suite and is used by CI and `just ui-browser-test`.
+
 The route inventory lives in `e2e/route-manifest.js`. Every enabled route must have an explicit
 smoke, accessibility, and screenshot decision. A route can defer a check only with a concrete reason.
+
+Keep route-wide contract specs at the `e2e/` root. Put page interaction journeys in
+`e2e/journeys/<route-area>/` and reusable client doubles in `e2e/mocks/clients/`, with one module per
+client domain. Shared gRPC-Web framing stays in `e2e/mocks/grpc-web.js`. Install default client
+behavior through `e2e/fixtures.js`, then override only the operation needed for an error or edge-path
+assertion. Route-wide smoke, accessibility, and screenshot coverage stays manifest-driven.
 
 Accessibility checks cover WCAG 2.1 A and AA in light and dark modes for every journey that is not
 explicitly deferred. Existing debt is recorded in `e2e/a11y-baseline.js` with a maximum node count
 for each journey, rule, and selector. A new finding or an increase above that limit fails the suite.
 
-Playwright writes failure output to `test-results/e2e/` and its HTML report to `playwright-report/`.
-Screenshot artifacts are written to `e2e-artifacts/screenshots/`. Reviewed visual baselines live
-beside `e2e/screenshot-journey.spec.js`.
+Playwright writes failure screenshots, diffs, traces, and videos to `test-results/e2e/`. Its HTML
+report is generated under `e2e/reports/` in the `playwright` subdirectory. Reviewed visual baselines use the
+`e2e/screenshots/<route-area>/<journey>-<theme>.png` structure.
 
 Update visual baselines only after reviewing the rendered change:
 
 ```bash
 yarn e2e:screenshots --update-snapshots
 ```
+
+`yarn test:e2e:update` is an alias for the same reviewed screenshot update.
 
 ## Documentation and tooling checks
 

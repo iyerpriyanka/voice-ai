@@ -28,7 +28,9 @@ jest.mock(
 );
 
 jest.mock('@/app/components/layout/blocks/page-header-block', () => ({
-  PageHeaderBlock: ({ children }: any) => <header>{children}</header>,
+  PageHeaderBlock: ({ children, className }: any) => (
+    <header className={className}>{children}</header>
+  ),
 }));
 
 jest.mock('@/app/components/layout/blocks/page-title-block', () => ({
@@ -146,6 +148,7 @@ describe('CartesiaModelInformationPage', () => {
   it('renders provider status and add credential actions', async () => {
     renderPage();
 
+    expect(screen.getByRole('banner')).toHaveClass('h-20');
     expect(screen.getByRole('button', { name: /add new credential/i }));
     expect(screen.getByTestId('add-icon')).toHaveClass('ml-1.5');
     expect(screen.getByTestId('add-icon')).not.toHaveAttribute(

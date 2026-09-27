@@ -45,7 +45,7 @@ const routeJourneys = [
     id: 'auth.signin',
     path: '/auth/signin',
     auth: false,
-    expectText: 'Signin',
+    expectText: 'Sign in',
     readyText: 'Sign in with GitHub',
     checks: ['smoke', 'a11y', 'screenshot'],
   },
@@ -53,28 +53,22 @@ const routeJourneys = [
     id: 'auth.signup',
     path: '/auth/signup',
     auth: false,
-    expectText: 'Signup',
-    checks: ['smoke', 'a11y'],
-    screenshotDeferredReason:
-      'The sign-in journey is the reviewed visual baseline for the shared authentication layout.',
+    expectText: 'Create account',
+    checks: ['smoke', 'a11y', 'screenshot'],
   },
   {
     id: 'auth.forgotPassword',
     path: '/auth/forgot-password',
     auth: false,
-    expectText: 'Forgot Password',
-    checks: ['smoke', 'a11y'],
-    screenshotDeferredReason:
-      'The sign-in journey is the reviewed visual baseline for the shared authentication layout.',
+    expectText: 'Reset your password',
+    checks: ['smoke', 'a11y', 'screenshot'],
   },
   {
     id: 'auth.changePassword',
     path: '/auth/change-password/token-1',
     auth: false,
-    expectText: 'Change Password',
-    checks: ['smoke', 'a11y'],
-    screenshotDeferredReason:
-      'The sign-in journey is the reviewed visual baseline for the shared authentication layout.',
+    expectText: 'Set a new password',
+    checks: ['smoke', 'a11y', 'screenshot'],
   },
   {
     id: 'static.privacy',
@@ -88,9 +82,7 @@ const routeJourneys = [
     path: '/static/terms-conditions',
     auth: false,
     expectText: 'Terms of Service',
-    checks: ['smoke', 'a11y'],
-    screenshotDeferredReason:
-      'The privacy journey is the reviewed visual baseline for the shared static-page layout.',
+    checks: ['smoke', 'a11y', 'screenshot'],
   },
   {
     id: 'dashboard.home',
@@ -118,11 +110,35 @@ const routeJourneys = [
     path: '/deployment/assistant/create-assistant',
     auth: true,
     expectText: 'Select a usecase template',
-    checks: ['smoke'],
-    a11yDeferredReason:
-      'The template selector has uncapped button-name and contrast debt that needs component fixes before enforcement.',
-    screenshotDeferredReason:
-      'Template content needs a dedicated deterministic fixture before it becomes a visual baseline.',
+    checks: ['smoke', 'a11y', 'screenshot'],
+  },
+  {
+    id: 'deployment.createEndpoint',
+    path: '/deployment/endpoint/create-endpoint',
+    auth: true,
+    expectText: 'Complete all steps to create a new endpoint.',
+    checks: ['smoke', 'a11y', 'screenshot'],
+  },
+  {
+    id: 'deployment.connectWebsocket',
+    path: '/deployment/assistant/connect-websocket',
+    auth: true,
+    expectText: 'Complete all steps to connect with a websocket',
+    checks: ['smoke', 'a11y', 'screenshot'],
+  },
+  {
+    id: 'deployment.connectAgentkit',
+    path: '/deployment/assistant/connect-agentkit',
+    auth: true,
+    expectText: 'Complete all steps to connect a new AgentKit.',
+    checks: ['smoke', 'a11y', 'screenshot'],
+  },
+  {
+    id: 'deployment.createAgentflow',
+    path: '/deployment/assistant/create-agentflow',
+    auth: true,
+    expectText: 'Quick start',
+    checks: ['smoke', 'a11y', 'screenshot'],
   },
   {
     id: 'integration.models',
@@ -132,13 +148,32 @@ const routeJourneys = [
     checks: ['smoke', 'a11y', 'screenshot'],
   },
   {
+    id: 'integration.providerModel',
+    path: '/integration/models/deepgram',
+    auth: true,
+    expectText: 'Deepgram',
+    checks: ['smoke', 'a11y', 'screenshot'],
+  },
+  {
+    id: 'integration.projectCredential',
+    path: '/integration/project-credential',
+    auth: true,
+    expectText: 'Project Developer Keys',
+    checks: ['smoke', 'a11y', 'screenshot'],
+  },
+  {
     id: 'integration.personalCredential',
     path: '/integration/personal-credential',
     auth: true,
     expectText: 'Personal Tokens',
-    checks: ['smoke', 'a11y'],
-    screenshotDeferredReason:
-      'The models journey is the reviewed visual baseline for the integration shell.',
+    checks: ['smoke', 'a11y', 'screenshot'],
+  },
+  {
+    id: 'logs.llm',
+    path: '/logs',
+    auth: true,
+    expectText: 'LLM Logs',
+    checks: ['smoke', 'a11y', 'screenshot'],
   },
   {
     id: 'logs.request',
@@ -152,27 +187,21 @@ const routeJourneys = [
     path: '/logs/tool',
     auth: true,
     expectText: 'Tool Logs',
-    checks: ['smoke', 'a11y'],
-    screenshotDeferredReason:
-      'The request journey is the reviewed visual baseline for the logs shell.',
+    checks: ['smoke', 'a11y', 'screenshot'],
   },
   {
     id: 'logs.conversation',
     path: '/logs/conversation',
     auth: true,
     expectText: 'Conversation Logs',
-    checks: ['smoke', 'a11y'],
-    screenshotDeferredReason:
-      'The request journey is the reviewed visual baseline for the logs shell.',
+    checks: ['smoke', 'a11y', 'screenshot'],
   },
   {
     id: 'logs.traces',
     path: '/logs/traces',
     auth: true,
     expectText: 'No traces found',
-    checks: ['smoke', 'a11y'],
-    screenshotDeferredReason:
-      'The request journey is the reviewed visual baseline for the logs shell.',
+    checks: ['smoke', 'a11y', 'screenshot'],
   },
   {
     id: 'organization.overview',
@@ -186,27 +215,23 @@ const routeJourneys = [
     path: '/organization/users',
     auth: true,
     expectText: 'Users',
-    checks: ['smoke', 'a11y'],
-    screenshotDeferredReason:
-      'The overview journey is the reviewed visual baseline for the organization shell.',
+    readyText: 'No organization users',
+    checks: ['smoke', 'a11y', 'screenshot'],
   },
   {
     id: 'organization.projects',
     path: '/organization/projects',
     auth: true,
     expectText: 'Projects',
-    checks: ['smoke', 'a11y'],
-    screenshotDeferredReason:
-      'The overview journey is the reviewed visual baseline for the organization shell.',
+    readyText: 'No projects',
+    checks: ['smoke', 'a11y', 'screenshot'],
   },
   {
     id: 'organization.security',
     path: '/organization/security',
     auth: true,
     expectText: 'Organization Security',
-    checks: ['smoke', 'a11y'],
-    screenshotDeferredReason:
-      'The overview journey is the reviewed visual baseline for the organization shell.',
+    checks: ['smoke', 'a11y', 'screenshot'],
   },
   {
     id: 'account.settings',
@@ -220,18 +245,14 @@ const routeJourneys = [
     path: '/onboarding/organization',
     auth: true,
     expectText: 'Set up your organization',
-    checks: ['smoke', 'a11y'],
-    screenshotDeferredReason:
-      'Organization setup needs an isolated staged-state fixture before it becomes a visual baseline.',
+    checks: ['smoke', 'a11y', 'screenshot'],
   },
   {
     id: 'onboarding.project',
     path: '/onboarding/project',
     auth: true,
     expectText: 'Create your first project',
-    checks: ['smoke', 'a11y'],
-    screenshotDeferredReason:
-      'Project setup needs an isolated staged-state fixture before it becomes a visual baseline.',
+    checks: ['smoke', 'a11y', 'screenshot'],
   },
 ];
 
@@ -298,11 +319,11 @@ const sourceRouteInventory = {
     { path: 'endpoint', journey: 'deployment.endpoint' },
     {
       path: 'endpoint/create-endpoint',
-      deferredReason: 'Endpoint creation flow needs form fixtures.',
+      journey: 'deployment.createEndpoint',
     },
     {
       path: 'endpoint/configure-endpoint',
-      deferredReason: 'Endpoint configuration flow needs form fixtures.',
+      journey: 'deployment.createEndpoint',
     },
     {
       path: 'endpoint/configure-endpoint/:endpointId',
@@ -472,15 +493,15 @@ const sourceRouteInventory = {
     },
     {
       path: 'assistant/connect-websocket',
-      deferredReason: 'WebSocket assistant creation needs provider fixtures.',
+      journey: 'deployment.connectWebsocket',
     },
     {
       path: 'assistant/connect-agentkit',
-      deferredReason: 'AgentKit assistant creation needs provider fixtures.',
+      journey: 'deployment.connectAgentkit',
     },
     {
       path: 'assistant/create-agentflow',
-      deferredReason: 'Agentflow creation needs graph fixtures.',
+      journey: 'deployment.createAgentflow',
     },
   ],
   'integration.tsx': [
@@ -489,13 +510,11 @@ const sourceRouteInventory = {
     { path: 'models', journey: 'integration.models' },
     {
       path: 'models/:provider',
-      deferredReason:
-        'Provider detail route needs provider-specific assertions.',
+      journey: 'integration.providerModel',
     },
     {
       path: 'project-credential',
-      deferredReason:
-        'Project credential route currently renders an empty browser shell.',
+      journey: 'integration.projectCredential',
     },
     { path: 'personal-credential', journey: 'integration.personalCredential' },
   ],
@@ -519,8 +538,7 @@ const sourceRouteInventory = {
     {
       path: '/',
       count: 2,
-      deferredReason:
-        'Default LLM logs route currently renders an empty shell.',
+      journey: 'logs.llm',
     },
     { path: '/request', journey: 'logs.request' },
     { path: '/knowledge', disabledFeature: 'workspace.features.knowledge' },

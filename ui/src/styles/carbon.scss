@@ -174,10 +174,14 @@
   --cds-button-primary: var(--brand-primary);
   --cds-button-primary-hover: var(--brand-primary-hover);
   --cds-button-primary-active: var(--brand-primary-active);
-  --cds-text-on-color: var(--brand-on-primary);
+  --cds-text-on-color: #ffffff;
   --cds-button-tertiary: var(--brand-primary);
   --cds-button-tertiary-hover: var(--brand-primary-hover);
   --cds-button-tertiary-active: var(--brand-primary-active);
+}
+
+.cds--btn--primary {
+  color: var(--brand-on-primary);
 }
 
 // ─── Scoped inverse theme zone ───────────────────────────────────────────────

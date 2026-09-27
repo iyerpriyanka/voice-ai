@@ -8,9 +8,16 @@ jest.mock('@/app/components/ui/primitives/button', () => ({
       {children}
     </button>
   ),
-  TertiaryButton: ({ children, ...props }: React.ComponentProps<'button'>) => (
-    <button type="button" aria-label="Toggle preview" {...props}>
-      {children}
+  IconOnlyButton: ({
+    iconDescription,
+    renderIcon: Icon,
+    ...props
+  }: React.ComponentProps<'button'> & {
+    iconDescription: string;
+    renderIcon: React.ComponentType;
+  }) => (
+    <button type="button" aria-label={iconDescription} {...props}>
+      <Icon />
     </button>
   ),
 }));
@@ -69,13 +76,16 @@ describe('VoiceCard', () => {
 
     renderVoiceCard('https://example.com/voice.mp3');
 
-    const toggleButton = screen.getByRole('button', { name: 'Toggle preview' });
+    const toggleButton = screen.getByRole('button', {
+      name: 'Preview Sarah',
+    });
     expect(screen.getByTestId('play-icon')).toBeInTheDocument();
 
     fireEvent.click(toggleButton);
 
     expect(play).toHaveBeenCalledTimes(1);
     expect(screen.getByTestId('pause-icon')).toBeInTheDocument();
+    expect(toggleButton).toHaveAccessibleName('Pause Sarah');
 
     fireEvent.click(toggleButton);
 
@@ -97,7 +107,7 @@ describe('VoiceCard', () => {
     renderVoiceCard();
 
     expect(
-      screen.queryByRole('button', { name: 'Toggle preview' }),
+      screen.queryByRole('button', { name: 'Preview Sarah' }),
     ).not.toBeInTheDocument();
     expect(screen.getByText('voice-1')).toBeInTheDocument();
     expect(screen.getByTestId('copy-icon')).toBeInTheDocument();

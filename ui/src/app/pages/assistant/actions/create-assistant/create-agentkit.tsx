@@ -361,7 +361,7 @@ export function CreateAgentKit() {
                   <button
                     type="button"
                     onClick={() => setShowAdvanced(!showAdvanced)}
-                    className="flex items-center gap-1.5 text-xs font-medium text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
+                    className="flex items-center gap-1.5 text-xs font-medium text-[var(--cds-text-secondary)] hover:text-[var(--cds-text-primary)] transition-colors"
                   >
                     <ChevronDown
                       size={16}

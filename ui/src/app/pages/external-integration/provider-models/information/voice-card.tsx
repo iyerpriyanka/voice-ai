@@ -1,4 +1,4 @@
-import { TertiaryButton, GhostButton } from '@/app/components/ui/primitives';
+import { GhostButton, IconOnlyButton } from '@/app/components/ui/primitives';
 import { Checkmark, Copy, Pause, Play } from '@carbon/icons-react';
 import { FC, useRef, useState } from 'react';
 
@@ -47,21 +47,18 @@ export const VoiceCard: FC<{
         </div>
         {previewUrl && <audio ref={audioRef} src={previewUrl} />}
         {previewUrl && (
-          <TertiaryButton
+          <IconOnlyButton
+            kind="tertiary"
             size="md"
             onClick={togglePlayback}
+            renderIcon={isPlaying ? Pause : Play}
+            iconDescription={isPlaying ? `Pause ${title}` : `Preview ${title}`}
             className="p-1 px-2.5 bg-blue-600/10 dark:bg-blue-600/10"
-          >
-            {isPlaying ? (
-              <Pause className="w-4 h-4 shrink-0" />
-            ) : (
-              <Play className="w-4 h-4 shrink-0" />
-            )}
-          </TertiaryButton>
+          />
         )}
       </div>
       <div className="py-2 px-4 flex justify-between">
-        <p className="text-sm/6 font-medium dark:text-gray-600 text-gray-500">
+        <p className="text-sm/6 font-medium text-[var(--cds-text-secondary)]">
           Languages
         </p>
         <div className="flex space-x-2">
@@ -76,7 +73,7 @@ export const VoiceCard: FC<{
       </div>
       <div className="border-t dark:border-gray-900">
         <div className="py-2 px-4 flex justify-between">
-          <p className="text-sm/6 font-medium dark:text-gray-600 text-gray-500">
+          <p className="text-sm/6 font-medium text-[var(--cds-text-secondary)]">
             Persona
           </p>
           <div className="flex space-x-2">
@@ -91,14 +88,14 @@ export const VoiceCard: FC<{
         </div>
 
         <div className="border-t py-2 dark:border-gray-900">
-          <p className="text-sm/6 px-4 line-clamp-2 dark:text-gray-600 text-gray-400">
+          <p className="text-sm/6 px-4 line-clamp-2 text-[var(--cds-text-secondary)]">
             {description ? description : 'Not available'}
           </p>
         </div>
       </div>
       <div className="border-t dark:border-gray-900">
         <div className="py-2 pl-4">
-          <p className="text-sm/6 font-medium dark:text-gray-600 text-gray-500">
+          <p className="text-sm/6 font-medium text-[var(--cds-text-secondary)]">
             Features and usecase
           </p>
         </div>
@@ -109,7 +106,7 @@ export const VoiceCard: FC<{
               return (
                 <div
                   key={idx}
-                  className="flex items-center gap-2 border rounded-full px-3 py-1 bg-yellow-600/5 text-yellow-600 border-yellow-600/20"
+                  className="flex items-center gap-2 border rounded-full px-3 py-1 bg-[var(--cds-layer-accent-01)] text-[var(--cds-text-primary)] border-[var(--cds-border-subtle-01)]"
                 >
                   <span className=" font-medium text-xs/6 capitalize">{x}</span>
                 </div>
@@ -119,7 +116,7 @@ export const VoiceCard: FC<{
       </div>
       <div className="flex items-center justify-between rounded-b-[2px] border-t dark:border-gray-900">
         <div className="py-2 pl-4">
-          <p className="text-sm/6 font-medium dark:text-gray-600 text-gray-500">
+          <p className="text-sm/6 font-medium text-[var(--cds-text-secondary)]">
             Voice ID
           </p>
           <p className="text-xs/6 font-mono">{voiceId}</p>

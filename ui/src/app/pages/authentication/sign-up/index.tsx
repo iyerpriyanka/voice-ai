@@ -72,11 +72,11 @@ export function SignUpPage() {
         <div className="max-w-md">
           <h1 className="text-3xl font-light tracking-tight">403</h1>
           <p className="text-2xl font-light tracking-tight mt-4">
-            Sign-up not enabled
+            Account creation unavailable
           </p>
           <p className="mb-8 mt-2 text-sm text-gray-500 dark:text-gray-400">
-            Sign-up is currently disabled for this workspace. Please contact
-            your administrator for assistance.
+            Account creation is disabled for this workspace. Contact your
+            administrator for assistance.
           </p>
           <PrimaryButton
             size="lg"
@@ -84,7 +84,7 @@ export function SignUpPage() {
             onClick={() => navigator.goTo('/')}
             className="!w-full !max-w-none !justify-between"
           >
-            Go to signin
+            Go to sign in
           </PrimaryButton>
         </div>
       </div>
@@ -93,14 +93,14 @@ export function SignUpPage() {
 
   return (
     <>
-      <Helmet title="Sign up to your account" />
+      <Helmet title="Create your account" />
       <Stack gap={6}>
         <Stack gap={2}>
-          <h1 className="m-0 text-[1.8rem] leading-tight">Signup</h1>
+          <h1 className="m-0 text-[1.8rem] leading-tight">Create account</h1>
           <p className="mt-1.5 text-sm leading-[1.4286] text-(--cds-text-secondary)">
             Already have an account? &nbsp;
             <Link href="/auth/signin" className="text-sm !underline">
-              Sign-in
+              Sign in
             </Link>
           </p>
           <div
@@ -146,7 +146,7 @@ export function SignUpPage() {
               type="submit"
               className="!w-full !max-w-none !justify-between"
             >
-              Continue
+              Create account
             </PrimaryButton>
           </Stack>
           <div
@@ -167,7 +167,10 @@ export function SignUpPage() {
             .
           </p>
         </Stack>
-        <SocialButtonGroup {...workspace.authentication.signIn.providers} />
+        <SocialButtonGroup
+          {...workspace.authentication.signUp.providers}
+          actionLabel="Sign up"
+        />
       </Stack>
     </>
   );

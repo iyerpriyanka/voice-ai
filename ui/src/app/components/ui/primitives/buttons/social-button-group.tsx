@@ -35,7 +35,9 @@ export function SocialButtonGroup(props: {
   linkedin: boolean;
   github: boolean;
   password: boolean;
+  actionLabel?: 'Sign in' | 'Sign up';
 }) {
+  const actionLabel = props.actionLabel || 'Sign in';
   const linkedinClick = () => {
     window.location.assign(CONFIG.connection.web + '/oauth/linkedin');
   };
@@ -56,7 +58,7 @@ export function SocialButtonGroup(props: {
           onClick={googleClick}
           className="!w-full !max-w-none !justify-start"
         >
-          Sign in with Google
+          {actionLabel} with Google
         </Button>
       )}
       {props.linkedin && (
@@ -67,7 +69,7 @@ export function SocialButtonGroup(props: {
           onClick={linkedinClick}
           className="!w-full !max-w-none !justify-start"
         >
-          Sign in with LinkedIn
+          {actionLabel} with LinkedIn
         </Button>
       )}
       {props.github && (
@@ -78,7 +80,7 @@ export function SocialButtonGroup(props: {
           onClick={githubClick}
           className="!w-full !max-w-none !justify-start"
         >
-          Sign in with GitHub
+          {actionLabel} with GitHub
         </Button>
       )}
     </div>

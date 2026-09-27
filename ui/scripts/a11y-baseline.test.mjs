@@ -6,40 +6,40 @@ const require = createRequire(import.meta.url);
 const { evaluateA11yViolations } = require('../e2e/a11y-baseline');
 
 const violation = target => ({
-  id: 'button-name',
-  impact: 'critical',
-  help: 'Buttons must have discernible text',
+  id: 'color-contrast',
+  impact: 'serious',
+  help: 'Elements must meet minimum color contrast ratio thresholds',
   nodes: [{ target: [target] }],
 });
 
 test('accepts accessibility debt within its journey and node limit', () => {
-  const result = evaluateA11yViolations('dashboard.home', [
-    violation('#downshift-1-toggle-button'),
+  const result = evaluateA11yViolations('static.terms', [
+    violation('.text-blue-500'),
   ]);
 
   assert.deepEqual(result, { unapprovedViolations: [], overages: [] });
 });
 
 test('reports new findings and accessibility debt above its node limit', () => {
-  const result = evaluateA11yViolations('dashboard.home', [
+  const result = evaluateA11yViolations('static.terms', [
     {
-      ...violation('#downshift-1-toggle-button'),
+      ...violation('.text-blue-500'),
       nodes: [
-        { target: ['#downshift-1-toggle-button'] },
-        { target: ['#downshift-2-toggle-button'] },
+        { target: ['.text-blue-500'] },
+        { target: ['.text-blue-500'] },
       ],
     },
-    violation('#new-unnamed-button'),
+    violation('#new-low-contrast-text'),
   ]);
 
   assert.equal(result.unapprovedViolations.length, 1);
   assert.deepEqual(result.overages, [
     {
-      id: 'button-name',
-      target: '/#downshift-.*-toggle-button/',
+      id: 'color-contrast',
+      target: '.text-blue-500',
       maxNodes: 1,
       actualNodes: 2,
-      reason: 'The shell theme selector renders an unnamed Downshift toggle.',
+      reason: 'Terms links use the current low-contrast link color.',
     },
   ]);
 });
