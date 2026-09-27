@@ -73,12 +73,14 @@ jest.mock('@/app/components/ui/primitives', () => ({
   ),
   Select: ({
     'aria-label': ariaLabel,
+    id,
     onChange,
     options,
     placeholder,
     value,
   }: any) => (
     <select
+      id={id}
       aria-label={ariaLabel ?? placeholder}
       value={value}
       onChange={onChange}
@@ -173,13 +175,20 @@ describe('configuration prompt subcomponents', () => {
 
     render(
       <TypeOfVariable
+        id="argument-type-topic"
+        aria-label="Type for topic"
+        hideLabel
+        labelText="Type for topic"
         type={InputVarType.textInput}
         allType={[InputVarType.textInput, InputVarType.number]}
         onChange={onChange}
       />,
     );
 
-    fireEvent.change(screen.getByLabelText('Variable type'), {
+    const selector = screen.getByLabelText('Type for topic');
+
+    expect(selector).toHaveAttribute('id', 'argument-type-topic');
+    fireEvent.change(selector, {
       target: { value: InputVarType.number },
     });
 

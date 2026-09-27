@@ -1,13 +1,15 @@
 import { Select } from '@/app/components/ui/primitives';
 import { cn } from '@/utils';
 import { InputVarType } from '@/models/common';
-import type { SelectHTMLAttributes } from 'react';
 import { memo } from 'react';
 
-type TypeOfVariableProps = SelectHTMLAttributes<HTMLSelectElement> & {
+type TypeOfVariableProps = {
   type: string;
   onChange: (type: string) => void;
   allType: InputVarType[];
+  className?: string;
+  id?: string;
+  'aria-label'?: string;
   hideLabel?: boolean;
   labelText?: string;
 };
