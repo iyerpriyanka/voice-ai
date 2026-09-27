@@ -15,6 +15,7 @@ jest.mock('@carbon/react', () => ({
     </button>
   ),
   Dropdown: ({
+    className,
     id,
     items,
     itemToString,
@@ -25,6 +26,7 @@ jest.mock('@carbon/react', () => ({
     <label htmlFor={id}>
       {label}
       <select
+        className={className}
         id={id}
         value={selectedItem?.value || ''}
         onChange={event =>
@@ -44,19 +46,25 @@ jest.mock('@carbon/react', () => ({
       </select>
     </label>
   ),
-  Table: ({ children }: any) => <table>{children}</table>,
-  TableBody: ({ children }: any) => <tbody>{children}</tbody>,
-  TableCell: ({ children, colSpan }: any) => (
-    <td colSpan={colSpan}>{children}</td>
+  Table: ({ children, className }: any) => (
+    <table className={className}>{children}</table>
   ),
-  TableContainer: ({ children, title }: any) => (
-    <section>
+  TableBody: ({ children }: any) => <tbody>{children}</tbody>,
+  TableCell: ({ children, className, colSpan }: any) => (
+    <td className={className} colSpan={colSpan}>
+      {children}
+    </td>
+  ),
+  TableContainer: ({ children, className, title }: any) => (
+    <section className={className}>
       {title ? <h2>{title}</h2> : null}
       {children}
     </section>
   ),
   TableHead: ({ children }: any) => <thead>{children}</thead>,
-  TableHeader: ({ children }: any) => <th>{children}</th>,
+  TableHeader: ({ children, className }: any) => (
+    <th className={className}>{children}</th>
+  ),
   TableRow: ({ children }: any) => <tr>{children}</tr>,
 }));
 
@@ -131,6 +139,36 @@ describe('ProjectRoleTable', () => {
     expect(onChange).toHaveBeenLastCalledWith([
       { projectId: 'project-1', projectRole: 'reader' },
     ]);
+  });
+
+  it('renders dropdown rows as a full-cell table form', () => {
+    render(
+      <ProjectRoleTable
+        rows={[{ projectId: 'project-1', projectRole: 'admin' }]}
+        onChange={jest.fn()}
+        projectOptions={projectOptions}
+        roleOptions={roleOptions}
+      />,
+    );
+
+    expect(screen.getByRole('table').parentElement).toHaveClass(
+      '![padding-block-start:0]',
+      'border-border-subtle',
+    );
+    expect(screen.getByLabelText('Select project')).toHaveClass('w-full');
+    expect(screen.getByLabelText('Select project').closest('td')).toHaveClass(
+      '!p-0',
+    );
+    expect(screen.getByLabelText('Select role').closest('td')).toHaveClass(
+      '!p-0',
+    );
+    expect(screen.getByRole('columnheader', { name: 'Actions' })).toHaveClass(
+      '!w-10',
+      '!text-center',
+    );
+    expect(
+      screen.getByRole('button', { name: 'Remove project role' }).closest('td'),
+    ).toHaveClass('!w-10', '!p-0', '!text-center');
   });
 
   it('removes rows when the remove column is visible', () => {

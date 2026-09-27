@@ -15,24 +15,49 @@ jest.mock('@carbon/react', () => {
     Button: ({
       children,
       className: _className,
+      disabled,
       hasIconOnly: _hasIconOnly,
-      iconDescription: _iconDescription,
+      iconDescription,
       kind,
       renderIcon: Icon,
       size: _size,
+      tooltipPosition: _tooltipPosition,
       ...props
     }: any) => (
-      <button type="button" data-design-system-button-kind={kind} {...props}>
+      <button
+        type="button"
+        aria-label={iconDescription}
+        data-design-system-button-kind={kind}
+        disabled={disabled}
+        {...props}
+      >
         {children}
         {Icon ? <Icon /> : null}
       </button>
     ),
+    ComposedModal: ({ children, open }: any) =>
+      open ? <div role="dialog">{children}</div> : null,
+    ModalBody: ({ children }: any) => <section>{children}</section>,
+    ModalFooter: ({ children }: any) => <footer>{children}</footer>,
+    ModalHeader: ({ buttonOnClick, label, title }: any) => (
+      <header>
+        {label ? <p>{label}</p> : null}
+        <h2>{title}</h2>
+        <button type="button" aria-label="Close" onClick={buttonOnClick}>
+          Close
+        </button>
+      </header>
+    ),
     Table: ({ children }: any) => <table>{children}</table>,
     TableBody: ({ children }: any) => <tbody>{children}</tbody>,
-    TableCell: ({ children, colSpan }: any) => (
-      <td colSpan={colSpan}>{children}</td>
+    TableCell: ({ children, className, colSpan }: any) => (
+      <td className={className} colSpan={colSpan}>
+        {children}
+      </td>
     ),
-    TableContainer: ({ children }: any) => <section>{children}</section>,
+    TableContainer: ({ children, className }: any) => (
+      <section className={className}>{children}</section>
+    ),
     TableHead: ({ children }: any) => <thead>{children}</thead>,
     TableHeader: ({ children }: any) => <th>{children}</th>,
     TableRow: ({ children }: any) => <tr>{children}</tr>,
@@ -100,9 +125,16 @@ jest.mock(
 jest.mock(
   '@/app/components/domain/configuration/config-prompt/type-of-variable',
   () => ({
-    TypeOfVariable: ({ allType, onChange, type }: any) => (
+    TypeOfVariable: ({
+      allType,
+      'aria-label': ariaLabel = 'Variable type',
+      id,
+      onChange,
+      type,
+    }: any) => (
       <select
-        aria-label="Variable type"
+        aria-label={ariaLabel}
+        id={id}
         value={type}
         onChange={event => onChange(event.target.value)}
       >
@@ -134,6 +166,16 @@ describe('ConfigPrompt', () => {
     expect(
       screen.getByRole('button', { name: /Reserved Variables/i }),
     ).toHaveAttribute('data-design-system-button-kind', 'ghost');
+
+    const reservedButton = screen.getByRole('button', {
+      name: /Reserved Variables/i,
+    });
+    expect(reservedButton.firstElementChild).toHaveClass('flex-col');
+    expect(
+      screen.getByText(/These variables are preserved and replaced at runtime/i)
+        .parentElement,
+    ).toBe(reservedButton.firstElementChild);
+
     expect(
       screen.getByText(
         /These variables are preserved and replaced at runtime/i,
@@ -466,7 +508,7 @@ describe('ConfigPrompt', () => {
     });
   });
 
-  it('updates argument type and default value', () => {
+  it('edits argument type and default value inline from its table row action', () => {
     const onChange = jest.fn();
 
     render(
@@ -482,30 +524,82 @@ describe('ConfigPrompt', () => {
       />,
     );
 
-    fireEvent.change(screen.getAllByLabelText('Variable type')[0], {
+    expect(screen.getByText('Variable')).toBeInTheDocument();
+    expect(screen.getByText('Type')).toBeInTheDocument();
+    expect(screen.getByText('Default value')).toBeInTheDocument();
+    expect(screen.getByText('Action')).toBeInTheDocument();
+    expect(screen.getByRole('table').parentElement).toHaveClass(
+      '![padding-block-start:0]',
+      'border-border-subtle',
+    );
+
+    const editButton = screen.getByRole('button', {
+      name: 'Edit customer_name',
+    });
+    expect(editButton.closest('td')).toHaveClass('!text-center');
+
+    fireEvent.click(editButton);
+
+    const variableInput = screen.getByLabelText('Variable customer_name');
+    expect(variableInput).toHaveValue('customer_name');
+    expect(variableInput).toBeDisabled();
+    expect(variableInput.closest('td')).toHaveClass('!p-0');
+
+    const typeSelect = screen.getByLabelText('Type for customer_name');
+    expect(typeSelect).toHaveAttribute('id', 'argument-type-customer_name');
+    expect(typeSelect.closest('td')).toHaveClass('!p-0');
+
+    fireEvent.change(typeSelect, {
       target: { value: 'number' },
     });
-    expect(onChange).toHaveBeenLastCalledWith({
-      prompt: [{ role: 'system', content: 'Hello {{customer_name}}' }],
-      variables: [
-        { name: 'customer_name', type: 'number', defaultvalue: 'Priyanka' },
-        { name: 'account_id', type: 'text', defaultvalue: '123' },
-      ],
-    });
 
-    fireEvent.change(
-      screen.getByPlaceholderText("Default value for 'customer_name'"),
-      {
-        target: { value: '42' },
-      },
-    );
+    const defaultInput = screen.getByPlaceholderText('Optional default value');
+    expect(defaultInput.closest('td')).toHaveClass('!p-0');
+    fireEvent.change(defaultInput, { target: { value: '42' } });
+    expect(onChange).not.toHaveBeenCalled();
+
+    const saveButton = screen.getByRole('button', {
+      name: 'Save customer_name',
+    });
+    expect(saveButton.parentElement).toHaveClass('justify-center');
+
+    fireEvent.click(saveButton);
+
     expect(onChange).toHaveBeenLastCalledWith({
       prompt: [{ role: 'system', content: 'Hello {{customer_name}}' }],
       variables: [
-        { name: 'customer_name', type: 'text', defaultvalue: '42' },
+        { name: 'customer_name', type: 'number', defaultvalue: '42' },
         { name: 'account_id', type: 'text', defaultvalue: '123' },
       ],
     });
+  });
+
+  it('cancels inline argument edits without changing the prompt', () => {
+    const onChange = jest.fn();
+
+    render(
+      <ConfigPrompt
+        existingPrompt={{
+          prompt: [{ role: 'system', content: 'Hello {{customer_name}}' }],
+          variables: [
+            { name: 'customer_name', type: 'text', defaultvalue: 'Priyanka' },
+          ],
+        }}
+        onChange={onChange}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Edit customer_name' }));
+    fireEvent.change(screen.getByPlaceholderText('Optional default value'), {
+      target: { value: 'Changed' },
+    });
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Cancel customer_name' }),
+    );
+
+    expect(onChange).not.toHaveBeenCalled();
+    expect(screen.queryByPlaceholderText('Optional default value')).toBeNull();
+    expect(screen.getByText('Priyanka')).toBeInTheDocument();
   });
 
   it('uses the standard add icon for adding a prompt message', () => {

@@ -28,6 +28,12 @@ import { INTEGRATION_PROVIDER } from '@/providers';
 import type { RapidaProvider } from '@/providers';
 import { createPortal } from 'react-dom';
 import { createProviderCredential } from '@/clients';
+import {
+  TableForm,
+  TableFormCell,
+  TableFormHeaderCell,
+  TableFormRow,
+} from '@/app/components/ui/table';
 
 interface CreateProviderCredentialDialogProps extends ModalProps {
   currentProvider?: string | null;
@@ -364,33 +370,26 @@ export function CredentialKeyValueField({
       <p className="text-[10px] font-semibold tracking-[0.12em] uppercase text-muted">
         {label} ({entries.length})
       </p>
-      <table className="w-full border-collapse border border-border-subtle text-sm [&_input]:!border-none [&_.cds--text-input]:!border-none [&_.cds--text-input]:!outline-none [&_.cds--form-item]:!m-0">
+      <TableForm>
         <thead>
           <tr className="bg-[var(--cds-layer-accent-01)]">
-            <th className="text-left text-xs font-medium text-muted px-3 py-2 border-b border-r border-border-subtle w-1/2">
-              Key
-            </th>
-            <th className="text-left text-xs font-medium text-muted px-3 py-2 border-b border-r border-border-subtle w-1/2">
-              Value
-            </th>
-            <th className="border-b border-border-subtle w-8" />
+            <TableFormHeaderCell className="w-1/2">Key</TableFormHeaderCell>
+            <TableFormHeaderCell className="w-1/2">Value</TableFormHeaderCell>
+            <TableFormHeaderCell className="w-10" divider={false} />
           </tr>
         </thead>
         <tbody>
           {entries.length === 0 && (
-            <tr>
+            <TableFormRow>
               <td colSpan={3} className="px-4 py-3 text-xs text-muted">
                 No entries yet. Click <strong>Add {label.toLowerCase()}</strong>{' '}
                 below to add key-value pairs.
               </td>
-            </tr>
+            </TableFormRow>
           )}
           {entries.map((entry, index) => (
-            <tr
-              key={index}
-              className="border-b border-border-subtle last:border-b-0"
-            >
-              <td className="border-r border-border-subtle p-0">
+            <TableFormRow key={index}>
+              <TableFormCell>
                 <TextInput
                   id={`kv-key-${name}-${index}`}
                   labelText=""
@@ -400,8 +399,8 @@ export function CredentialKeyValueField({
                   placeholder="Key"
                   size="md"
                 />
-              </td>
-              <td className="border-r border-border-subtle p-0">
+              </TableFormCell>
+              <TableFormCell>
                 <TextInput
                   id={`kv-val-${name}-${index}`}
                   labelText=""
@@ -411,8 +410,8 @@ export function CredentialKeyValueField({
                   placeholder="Value"
                   size="md"
                 />
-              </td>
-              <td className="p-0 text-center">
+              </TableFormCell>
+              <TableFormCell className="w-10 text-center" divider={false}>
                 <Button
                   hasIconOnly
                   renderIcon={TrashCan}
@@ -421,11 +420,11 @@ export function CredentialKeyValueField({
                   size="sm"
                   onClick={() => removeEntry(index)}
                 />
-              </td>
-            </tr>
+              </TableFormCell>
+            </TableFormRow>
           ))}
         </tbody>
-      </table>
+      </TableForm>
       <TertiaryButton
         size="md"
         renderIcon={Add}

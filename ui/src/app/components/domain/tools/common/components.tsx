@@ -15,6 +15,12 @@ import {
   CLIENT_KEY_OPTIONS,
 } from './types';
 import { parseJsonParameters, stringifyParameters } from './hooks';
+import {
+  TableForm,
+  TableFormCell,
+  TableFormHeaderCell,
+  TableFormRow,
+} from '@/app/components/ui/table';
 
 // ============================================================================
 // Documentation Notice Block
@@ -306,35 +312,27 @@ export const AssistantMappingTable = <
       <p className="text-xs font-medium mb-2">
         {title} ({parameters.length})
       </p>
-      <table className="w-full border-collapse border border-gray-200 dark:border-gray-700 text-sm [&_input]:!border-none [&_.cds--text-input]:!border-none [&_.cds--text-input]:!outline-none [&_.cds--select-input]:!border-none [&_.cds--form-item]:!m-0">
+      <TableForm>
         <thead>
-          <tr className="bg-gray-50 dark:bg-gray-900">
-            <th className="text-left text-xs font-medium text-gray-500 dark:text-gray-400 px-3 py-2 border-b border-r border-gray-200 dark:border-gray-700 w-1/4">
-              Type
-            </th>
-            <th className="text-left text-xs font-medium text-gray-500 dark:text-gray-400 px-3 py-2 border-b border-r border-gray-200 dark:border-gray-700 w-1/4">
-              Key
-            </th>
-            <th className="border-b border-r border-gray-200 dark:border-gray-700 w-8" />
-            <th className="text-left text-xs font-medium text-gray-500 dark:text-gray-400 px-3 py-2 border-b border-r border-gray-200 dark:border-gray-700 w-1/4">
-              Value
-            </th>
-            <th className="border-b border-gray-200 dark:border-gray-700 w-8" />
+          <tr className="bg-[var(--cds-layer-accent-01)]">
+            <TableFormHeaderCell className="w-1/4">Type</TableFormHeaderCell>
+            <TableFormHeaderCell className="w-1/4">Key</TableFormHeaderCell>
+            <TableFormHeaderCell className="w-8" />
+            <TableFormHeaderCell className="w-1/4">Value</TableFormHeaderCell>
+            <TableFormHeaderCell className="w-10" divider={false} />
           </tr>
         </thead>
         <tbody>
           {parameters.map(({ type, key, value: val }, index) => {
             return (
-              <tr
-                key={index}
-                className="border-b border-gray-200 dark:border-gray-700 last:border-b-0"
-              >
-                <td className="border-r border-gray-200 dark:border-gray-700 p-0">
+              <TableFormRow key={index}>
+                <TableFormCell>
                   <Select
                     id={`param-type-${index}`}
                     labelText=""
                     hideLabel
                     value={type}
+                    className="w-full"
                     onChange={e =>
                       handleTypeChange(index, e.target.value as TType)
                     }
@@ -348,8 +346,8 @@ export const AssistantMappingTable = <
                       />
                     ))}
                   </Select>
-                </td>
-                <td className="border-r border-gray-200 dark:border-gray-700 p-0">
+                </TableFormCell>
+                <TableFormCell>
                   <TypeKeySelector
                     id={`param-key-${index}`}
                     type={type}
@@ -357,12 +355,13 @@ export const AssistantMappingTable = <
                     onChange={newKey => handleKeyChange(index, newKey)}
                     keyOptionsByType={keyOptionsByType}
                     includeEmptyKeyOption={includeEmptyKeyOption}
+                    inputClass="w-full"
                   />
-                </td>
-                <td className="border-r border-gray-200 dark:border-gray-700 p-0 text-center text-gray-400">
+                </TableFormCell>
+                <TableFormCell className="w-8 text-center text-muted">
                   <ArrowRight size={16} className="mx-auto" />
-                </td>
-                <td className="border-r border-gray-200 dark:border-gray-700 p-0">
+                </TableFormCell>
+                <TableFormCell>
                   <TextInput
                     id={`param-val-${index}`}
                     labelText=""
@@ -372,8 +371,8 @@ export const AssistantMappingTable = <
                     placeholder={valuePlaceholder}
                     size="md"
                   />
-                </td>
-                <td className="p-0 text-center">
+                </TableFormCell>
+                <TableFormCell className="w-10 text-center" divider={false}>
                   <Button
                     hasIconOnly
                     renderIcon={TrashCan}
@@ -382,13 +381,13 @@ export const AssistantMappingTable = <
                     size="sm"
                     onClick={() => handleRemove(index)}
                   />
-                </td>
-              </tr>
+                </TableFormCell>
+              </TableFormRow>
             );
           })}
         </tbody>
-      </table>
-      <div className="pt-4">
+      </TableForm>
+      <div className="pt-2">
         <TertiaryButton
           size="md"
           renderIcon={Add}

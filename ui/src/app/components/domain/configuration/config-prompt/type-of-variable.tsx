@@ -8,6 +8,8 @@ type TypeOfVariableProps = SelectHTMLAttributes<HTMLSelectElement> & {
   type: string;
   onChange: (type: string) => void;
   allType: InputVarType[];
+  hideLabel?: boolean;
+  labelText?: string;
 };
 
 function TypeOfVariableComponent({
@@ -15,10 +17,12 @@ function TypeOfVariableComponent({
   onChange,
   allType,
   className,
+  ...props
 }: TypeOfVariableProps) {
   return (
     <Select
       aria-label="Variable type"
+      {...props}
       value={type}
       placeholder="Select type of variable"
       options={allType.map(x => {

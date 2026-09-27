@@ -1,5 +1,4 @@
 import { Endpoint } from '@rapidaai/react';
-import { cn } from '@/utils';
 import { EndpointDropdown } from '@/app/components/domain/dropdowns/endpoint-dropdown';
 import { InputGroup } from '@/app/components/ui/primitives';
 import {
@@ -41,7 +40,7 @@ export function ConfigureEndpoint({
       <InputGroup title="Action Definition">
         <Stack gap={7}>
           <EndpointDropdown
-            className={cn('bg-light-background', inputClass)}
+            className={inputClass}
             currentEndpoint={getParamValue('tool.endpoint_id')}
             onChangeEndpoint={(endpoint: Endpoint) => {
               if (endpoint) {

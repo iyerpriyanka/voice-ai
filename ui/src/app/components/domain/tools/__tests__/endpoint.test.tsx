@@ -60,9 +60,10 @@ jest.mock('@carbon/react', () => ({
 }));
 
 jest.mock('@/app/components/domain/dropdowns/endpoint-dropdown', () => ({
-  EndpointDropdown: ({ onChangeEndpoint }: any) => (
+  EndpointDropdown: ({ className, onChangeEndpoint }: any) => (
     <button
       type="button"
+      className={className}
       onClick={() =>
         onChangeEndpoint({
           getId: () => 'endpoint-1',
@@ -122,5 +123,25 @@ describe('ConfigureEndpoint', () => {
 
     expect(endpointIdCalls).toContain('endpoint-1');
     expect(parameterCalls).toContain('{"tool.argument":"customer_id"}');
+  });
+
+  it('does not force a light wrapper around the endpoint dropdown', () => {
+    render(
+      <ConfigureEndpoint
+        parameters={[
+          createMetadata('tool.endpoint_id', ''),
+          createMetadata('tool.parameters', '{}'),
+        ]}
+        onParameterChange={jest.fn()}
+        inputClass="domain-input"
+      />,
+    );
+
+    expect(screen.getByRole('button', { name: 'Pick endpoint' })).toHaveClass(
+      'domain-input',
+    );
+    expect(
+      screen.getByRole('button', { name: 'Pick endpoint' }),
+    ).not.toHaveClass('bg-light-background');
   });
 });

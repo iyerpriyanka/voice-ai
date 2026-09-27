@@ -516,4 +516,28 @@ describe('CredentialKeyValueField', () => {
       ]),
     ).toBe('{"X-Test":"yes"}');
   });
+
+  it('renders credential entries as a table form', () => {
+    render(
+      <CredentialKeyValueField
+        name="headers"
+        label="Headers"
+        value='{"X-Trace":"trace-1"}'
+        onChange={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByRole('table')).toHaveClass('border-border-subtle');
+    expect(screen.getByLabelText('Key').closest('td')).toHaveClass(
+      'border-r',
+      'p-0',
+    );
+    expect(screen.getByLabelText('Value').closest('td')).toHaveClass(
+      'border-r',
+      'p-0',
+    );
+    expect(
+      screen.getByRole('button', { name: 'Remove' }).closest('td'),
+    ).toHaveClass('w-10', 'p-0', 'text-center');
+  });
 });

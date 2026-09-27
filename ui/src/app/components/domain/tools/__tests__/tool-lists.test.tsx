@@ -73,7 +73,15 @@ jest.mock('@/app/components/ui/editor/code-editor', () => {
 jest.mock('@carbon/react', () => {
   const React = require('react');
   return {
-    Select: ({ id, value, onChange, children, hideLabel, labelText }: any) =>
+    Select: ({
+      children,
+      className,
+      hideLabel,
+      id,
+      labelText,
+      onChange,
+      value,
+    }: any) =>
       React.createElement(
         'div',
         null,
@@ -82,7 +90,7 @@ jest.mock('@carbon/react', () => {
           : null,
         React.createElement(
           'select',
-          { id, 'data-testid': id, value, onChange },
+          { id, 'data-testid': id, className, value, onChange },
           children,
         ),
       ),
@@ -171,13 +179,17 @@ describe('Tool list editors', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Add parameter' }));
     expect(screen.getByText('Mapping (1)')).toBeInTheDocument();
+    expect(screen.getByRole('table')).toHaveClass('border-border-subtle');
 
     fireEvent.change(screen.getByTestId('param-type-0'), {
       target: { value: 'tool' },
     });
+    expect(screen.getByTestId('param-type-0')).toHaveClass('w-full');
+    expect(screen.getByTestId('param-type-0').closest('td')).toHaveClass('p-0');
     fireEvent.change(screen.getByTestId('param-key-0'), {
       target: { value: 'name' },
     });
+    expect(screen.getByTestId('param-key-0')).toHaveClass('w-full');
     fireEvent.change(screen.getByTestId('param-val-0'), {
       target: { value: 'customer_profile' },
     });

@@ -282,9 +282,14 @@ jest.mock('@carbon/react', () => {
       children,
       hasIconOnly: _,
       renderIcon: _r,
-      iconDescription: _d,
+      iconDescription,
       ...props
-    }: any) => React.createElement('button', props, children),
+    }: any) =>
+      React.createElement(
+        'button',
+        { ...props, 'aria-label': iconDescription || children || 'button' },
+        children,
+      ),
     Toggletip: ({ children }: any) =>
       React.createElement('span', null, children),
     ToggletipButton: ({ children, label }: any) =>
@@ -891,6 +896,41 @@ describe('ConfigRenderer', () => {
       );
       expect(thinking?.getValue()).toBe('{"budget_tokens":250}');
       expect(responseFormat?.getValue()).toBe('{"type":"json_object"}');
+    });
+  });
+
+  describe('key-value fields', () => {
+    it('renders key-value rows as a table form', () => {
+      render(
+        <ConfigRenderer
+          provider="test"
+          category="text"
+          config={{
+            parameters: [
+              {
+                key: 'headers',
+                label: 'Headers',
+                type: 'key_value',
+                required: false,
+              },
+            ],
+          }}
+          parameters={[createMetadata('headers', '{"Authorization":"token"}')]}
+          onParameterChange={mockOnChange}
+        />,
+      );
+
+      expect(screen.getByRole('table')).toHaveClass('border-border-subtle');
+      expect(
+        screen.getByDisplayValue('Authorization').closest('td'),
+      ).toHaveClass('border-r', 'p-0');
+      expect(screen.getByDisplayValue('token').closest('td')).toHaveClass(
+        'border-r',
+        'p-0',
+      );
+      expect(
+        screen.getByRole('button', { name: 'Remove' }).closest('td'),
+      ).toHaveClass('w-10', 'p-0', 'text-center');
     });
   });
 

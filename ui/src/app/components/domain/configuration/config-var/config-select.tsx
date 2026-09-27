@@ -4,6 +4,11 @@ import { TextInput } from '@/app/components/ui/primitives';
 import { TertiaryButton } from '@/app/components/ui/primitives';
 import { Add, TrashCan, Draggable } from '@carbon/icons-react';
 import { Button } from '@carbon/react';
+import {
+  TableForm,
+  TableFormCell,
+  TableFormRow,
+} from '@/app/components/ui/table';
 
 export type Options = string[];
 export type IConfigSelectProps = {
@@ -29,7 +34,7 @@ function ConfigSelect({
   return (
     <div>
       {options.length > 0 && (
-        <table className="w-full border-collapse border border-gray-200 dark:border-gray-700 text-sm [&_input]:!border-none [&_.cds--text-input]:!border-none [&_.cds--text-input]:!outline-none [&_.cds--form-item]:!m-0">
+        <TableForm>
           <ReactSortable
             tag="tbody"
             list={optionList}
@@ -39,16 +44,13 @@ function ConfigSelect({
             animation={150}
           >
             {options.map((option, index) => (
-              <tr
-                key={optionList[index].id}
-                className="border-b border-gray-200 dark:border-gray-700 last:border-b-0"
-              >
-                <td className="w-8 p-0 text-center border-r border-gray-200 dark:border-gray-700">
+              <TableFormRow key={optionList[index].id}>
+                <TableFormCell className="w-8 text-center">
                   <span className="handle cursor-grab inline-flex items-center justify-center p-2 text-gray-400">
                     <Draggable size={16} />
                   </span>
-                </td>
-                <td className="p-0 border-r border-gray-200 dark:border-gray-700">
+                </TableFormCell>
+                <TableFormCell>
                   <TextInput
                     id={`suggestion-${index}`}
                     labelText=""
@@ -64,8 +66,8 @@ function ConfigSelect({
                       );
                     }}
                   />
-                </td>
-                <td className="w-10 p-0 text-center">
+                </TableFormCell>
+                <TableFormCell className="w-10 text-center" divider={false}>
                   <Button
                     hasIconOnly
                     renderIcon={TrashCan}
@@ -76,11 +78,11 @@ function ConfigSelect({
                       onChange(options.filter((_, i) => i !== index))
                     }
                   />
-                </td>
-              </tr>
+                </TableFormCell>
+              </TableFormRow>
             ))}
           </ReactSortable>
-        </table>
+        </TableForm>
       )}
       <div className="pt-2">
         <TertiaryButton

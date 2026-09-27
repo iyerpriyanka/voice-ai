@@ -11,6 +11,7 @@ import {
   TableRow,
 } from '@carbon/react';
 import { TertiaryButton } from '@/app/components/ui/primitives';
+import { tableFormContainerClassName } from '@/app/components/ui/table';
 
 export type ProjectRoleRow = {
   projectId: string;
@@ -49,13 +50,18 @@ export function ProjectRoleTable(props: ProjectRoleTableProps) {
     <div>
       <TableContainer
         title={props.title ? `${props.title} (${props.rows.length})` : ''}
+        className={tableFormContainerClassName}
       >
         <Table size="sm" useZebraStyles={false}>
           <TableHead>
             <TableRow>
               <TableHeader>Project</TableHeader>
               <TableHeader>Role</TableHeader>
-              {showRemoveColumn && <TableHeader>Actions</TableHeader>}
+              {showRemoveColumn && (
+                <TableHeader className="!w-10 !text-center">
+                  Actions
+                </TableHeader>
+              )}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -69,7 +75,7 @@ export function ProjectRoleTable(props: ProjectRoleTableProps) {
             )}
             {props.rows.map((row, index) => (
               <TableRow key={index}>
-                <TableCell>
+                <TableCell className="!p-0">
                   <Dropdown
                     id={`project-role-project-${index}`}
                     titleText=""
@@ -93,9 +99,10 @@ export function ProjectRoleTable(props: ProjectRoleTableProps) {
                     }}
                     size="md"
                     direction="top"
+                    className="w-full"
                   />
                 </TableCell>
-                <TableCell>
+                <TableCell className="!p-0">
                   <Dropdown
                     id={`project-role-role-${index}`}
                     titleText=""
@@ -117,10 +124,11 @@ export function ProjectRoleTable(props: ProjectRoleTableProps) {
                     }}
                     size="md"
                     direction="top"
+                    className="w-full"
                   />
                 </TableCell>
                 {showRemoveColumn && (
-                  <TableCell>
+                  <TableCell className="!w-10 !p-0 !text-center">
                     <Button
                       hasIconOnly
                       renderIcon={TrashCan}

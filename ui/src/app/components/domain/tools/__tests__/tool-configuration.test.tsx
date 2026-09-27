@@ -129,8 +129,11 @@ jest.mock('@/app/components/domain/external-api/api-header', () => {
 jest.mock('@/app/components/domain/dropdowns/knowledge-dropdown', () => {
   const R = require('react');
   return {
-    KnowledgeDropdown: () =>
-      R.createElement('div', { 'data-testid': 'knowledge-dropdown' }),
+    KnowledgeDropdown: ({ className }: any) =>
+      R.createElement('div', {
+        className,
+        'data-testid': 'knowledge-dropdown',
+      }),
   };
 });
 
@@ -434,6 +437,22 @@ describe('ConfigureKnowledgeRetrieval', () => {
       <ConfigureKnowledgeRetrieval {...defaultProps} />,
     );
     expect(container.querySelector('fieldset')).toBeNull();
+  });
+
+  it('does not force a light wrapper around the knowledge dropdown', () => {
+    render(
+      <ConfigureKnowledgeRetrieval
+        {...defaultProps}
+        inputClass="domain-input"
+      />,
+    );
+
+    expect(screen.getByTestId('knowledge-dropdown')).toHaveClass(
+      'domain-input',
+    );
+    expect(screen.getByTestId('knowledge-dropdown')).not.toHaveClass(
+      'bg-light-background',
+    );
   });
 
   it('renders ToolDefinitionForm when toolDefinition is provided', () => {

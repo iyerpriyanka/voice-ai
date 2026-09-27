@@ -8,10 +8,10 @@ import {
 import { TertiaryButton } from '@/app/components/ui/primitives';
 import { FormLabel } from '@/app/components/ui/primitives';
 import { FieldSet } from '@/app/components/ui/primitives';
-import { ScalableTextarea } from '@/app/components/ui/primitives';
 import { getNewVar, getVars } from '@/utils/var';
 import { TypeOfVariable } from '@/app/components/domain/configuration/config-prompt/type-of-variable';
 import { InputHelper } from '@/app/components/ui/primitives';
+import { Input } from '@/app/components/ui/primitives';
 import {
   RAPIDA_RESERVED_RUNTIME_VARIABLE_KEYS,
   RAPIDA_RESERVED_RUNTIME_VARIABLES,
@@ -29,7 +29,15 @@ import {
   ToggletipButton,
   ToggletipContent,
 } from '@carbon/react';
-import { Add, ChevronDown, Information } from '@carbon/icons-react';
+import {
+  Add,
+  Checkmark,
+  ChevronDown,
+  Close,
+  Edit,
+  Information,
+} from '@carbon/icons-react';
+import { tableFormContainerClassName } from '@/app/components/ui/table';
 
 const isRapidaReservedRuntimeVariable = (variableName: string): boolean =>
   RAPIDA_RESERVED_RUNTIME_VARIABLE_KEYS.has(variableName) ||
@@ -49,6 +57,8 @@ export type IPromptProps = {
   }) => void;
 };
 
+type PromptVariable = IPromptProps['existingPrompt']['variables'][number];
+
 export function ConfigPrompt({
   existingPrompt,
   onChange,
@@ -58,6 +68,12 @@ export function ConfigPrompt({
   enableReservedVariableSuggestions = false,
 }: IPromptProps) {
   const [showReservedVariables, setShowReservedVariables] = useState(false);
+  const [editingVariableName, setEditingVariableName] = useState<string | null>(
+    null,
+  );
+  const [draftVariable, setDraftVariable] = useState<PromptVariable | null>(
+    null,
+  );
 
   const handlePromptChange = useCallback(
     (newPrompt: typeof existingPrompt.prompt) => {
@@ -131,16 +147,36 @@ export function ConfigPrompt({
     [handlePromptChange, existingPrompt.prompt],
   );
 
-  const handleVariableChange = useCallback(
-    (name: string, type: string, defaultValue: string) => {
-      handleVariablesChange(
-        existingPrompt.variables.map(v =>
-          v.name === name ? { ...v, type, defaultvalue: defaultValue } : v,
-        ),
+  const editArgument = useCallback((variable: PromptVariable) => {
+    setEditingVariableName(variable.name);
+    setDraftVariable(variable);
+  }, []);
+
+  const cancelArgumentEdit = useCallback(() => {
+    setEditingVariableName(null);
+    setDraftVariable(null);
+  }, []);
+
+  const handleDraftVariableChange = useCallback(
+    (type: string, defaultValue: string) => {
+      setDraftVariable(current =>
+        current ? { ...current, type, defaultvalue: defaultValue } : current,
       );
     },
-    [handleVariablesChange, existingPrompt.variables],
+    [],
   );
+
+  const saveArgument = useCallback(() => {
+    if (!draftVariable) return;
+
+    handleVariablesChange(
+      existingPrompt.variables.map(variable =>
+        variable.name === draftVariable.name ? draftVariable : variable,
+      ),
+    );
+    setEditingVariableName(null);
+    setDraftVariable(null);
+  }, [draftVariable, existingPrompt.variables, handleVariablesChange]);
 
   return (
     <>
@@ -166,17 +202,19 @@ export function ConfigPrompt({
               aria-expanded={showReservedVariables}
               onClick={() => setShowReservedVariables(v => !v)}
             >
-              <div className="w-full flex items-center justify-between gap-2 text-left">
-                <span className="text-[11px] font-semibold tracking-[0.08em] uppercase text-gray-500 dark:text-gray-400">
-                  Reserved Variables
+              <span className="flex w-full min-w-0 flex-col items-stretch gap-1 text-left">
+                <span className="flex w-full min-w-0 items-center justify-between gap-2">
+                  <span className="text-[11px] font-semibold tracking-[0.08em] uppercase text-gray-500 dark:text-gray-400">
+                    Reserved Variables
+                  </span>
+                  <ChevronDown
+                    className={`h-4 w-4 shrink-0 text-gray-500 transition-transform ${showReservedVariables ? 'rotate-180' : ''}`}
+                  />
                 </span>
-                <ChevronDown
-                  className={`h-4 w-4 text-gray-500 transition-transform ${showReservedVariables ? 'rotate-180' : ''}`}
-                />
-              </div>
-              <InputHelper className="mt-1">
-                These variables are preserved and replaced at runtime.
-              </InputHelper>
+                <InputHelper>
+                  These variables are preserved and replaced at runtime.
+                </InputHelper>
+              </span>
             </Button>
 
             {showReservedVariables && (
@@ -239,70 +277,164 @@ export function ConfigPrompt({
 
       {(showRuntimeReplacementHint || existingPrompt.variables.length > 0) && (
         <FieldSet>
-          <div className="flex items-center gap-2">
-            <FormLabel>Arguments</FormLabel>
-            <span className="text-xs tabular-nums text-gray-400 dark:text-gray-600">
-              {existingPrompt.variables.length}
-            </span>
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <div className="flex items-center gap-1">
+                <FormLabel>Arguments</FormLabel>
+                {showRuntimeReplacementHint && !hideArgumentRuntimeHint && (
+                  <Toggletip align="right">
+                    <ToggletipButton label="Show argument information">
+                      <Information size={14} />
+                    </ToggletipButton>
+                    <ToggletipContent>
+                      Add only your template-specific variables here. Reserved
+                      variables are preserved and replaced at runtime.
+                    </ToggletipContent>
+                  </Toggletip>
+                )}
+                <span className="text-xs tabular-nums text-gray-400 dark:text-gray-600">
+                  {existingPrompt.variables.length}
+                </span>
+              </div>
+            </div>
           </div>
-          {showRuntimeReplacementHint && !hideArgumentRuntimeHint && (
-            <InputHelper className="mb-2">
-              Add only your template-specific variables here. Reserved variables
-              are preserved and replaced at runtime.
-            </InputHelper>
-          )}
-          <TableContainer>
+          <TableContainer className={tableFormContainerClassName}>
             <Table size="sm" useZebraStyles={false}>
               <TableHead>
                 <TableRow>
                   <TableHeader>Variable</TableHeader>
                   <TableHeader>Type</TableHeader>
                   <TableHeader>Default value</TableHeader>
+                  <TableHeader className="w-20 text-center">Action</TableHeader>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {existingPrompt.variables.map(v => (
-                  <TableRow key={v.name}>
-                    <TableCell>
-                      <span className="flex items-center gap-2 font-medium text-gray-800 dark:text-gray-200">
-                        {v.name}
-                        {showRuntimeReplacementHint &&
-                          isRapidaReservedRuntimeVariable(v.name) && (
-                            <span className="px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-blue-700 dark:text-blue-300 border border-blue-300/70 dark:border-blue-700/70">
-                              Reserved
-                            </span>
-                          )}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <TypeOfVariable
-                        allType={SUPPORTED_PROMPT_VARIABLE_TYPE()}
-                        className="h-full border-0"
-                        type={v.type}
-                        onChange={t =>
-                          handleVariableChange(v.name, t, v.defaultvalue)
-                        }
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <ScalableTextarea
-                        wrapperClassName="border-0 bg-transparent h-full"
-                        placeholder={`Default value for '${v.name}'`}
-                        value={v.defaultvalue}
-                        row={1}
-                        onChange={e =>
-                          handleVariableChange(v.name, v.type, e.target.value)
-                        }
-                      />
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {existingPrompt.variables.map(v => {
+                  const isReservedVariable =
+                    showRuntimeReplacementHint &&
+                    isRapidaReservedRuntimeVariable(v.name);
+
+                  const isEditing = editingVariableName === v.name;
+                  const variable =
+                    isEditing && draftVariable ? draftVariable : v;
+
+                  return (
+                    <TableRow key={v.name}>
+                      <TableCell className={isEditing ? '!p-0' : undefined}>
+                        {isEditing ? (
+                          <Input
+                            id={`argument-name-${v.name}`}
+                            aria-label={`Variable ${v.name}`}
+                            labelText={`Variable ${v.name}`}
+                            value={variable.name}
+                            disabled
+                            className="!m-0 w-full"
+                          />
+                        ) : (
+                          <span className="flex min-w-0 items-center gap-2">
+                            <code className="truncate font-mono text-xs font-semibold text-gray-800 dark:text-gray-200">
+                              {v.name}
+                            </code>
+                            {isReservedVariable && (
+                              <span className="shrink-0 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-blue-700 dark:text-blue-300 border border-blue-300/70 dark:border-blue-700/70">
+                                Reserved
+                              </span>
+                            )}
+                          </span>
+                        )}
+                      </TableCell>
+                      <TableCell className={isEditing ? '!p-0' : 'capitalize'}>
+                        {isEditing ? (
+                          <TypeOfVariable
+                            id={`argument-type-${v.name}`}
+                            aria-label={`Type for ${v.name}`}
+                            labelText={`Type for ${v.name}`}
+                            allType={SUPPORTED_PROMPT_VARIABLE_TYPE()}
+                            className="!m-0 w-full [&_.cds--select-input]:capitalize"
+                            type={variable.type}
+                            onChange={type =>
+                              handleDraftVariableChange(
+                                type,
+                                variable.defaultvalue,
+                              )
+                            }
+                          />
+                        ) : (
+                          v.type
+                        )}
+                      </TableCell>
+                      <TableCell className={isEditing ? '!p-0' : undefined}>
+                        {isEditing ? (
+                          <Input
+                            id={`argument-default-${v.name}`}
+                            aria-label={`Default value for ${v.name}`}
+                            labelText={`Default value for ${v.name}`}
+                            placeholder="Optional default value"
+                            value={variable.defaultvalue}
+                            className="!m-0 w-full"
+                            onChange={event =>
+                              handleDraftVariableChange(
+                                variable.type,
+                                event.target.value,
+                              )
+                            }
+                          />
+                        ) : (
+                          <span className="text-gray-600 dark:text-gray-400">
+                            {v.defaultvalue || 'No default value'}
+                          </span>
+                        )}
+                      </TableCell>
+                      <TableCell
+                        className={isEditing ? '!p-0' : '!text-center'}
+                      >
+                        {isEditing ? (
+                          <span className="flex h-full items-stretch justify-center">
+                            <Button
+                              type="button"
+                              kind="ghost"
+                              size="sm"
+                              hasIconOnly
+                              renderIcon={Checkmark}
+                              iconDescription={`Save ${v.name}`}
+                              tooltipPosition="left"
+                              onClick={saveArgument}
+                            />
+                            <Button
+                              type="button"
+                              kind="ghost"
+                              size="sm"
+                              hasIconOnly
+                              renderIcon={Close}
+                              iconDescription={`Cancel ${v.name}`}
+                              tooltipPosition="left"
+                              onClick={cancelArgumentEdit}
+                            />
+                          </span>
+                        ) : (
+                          <Button
+                            type="button"
+                            kind="ghost"
+                            size="sm"
+                            hasIconOnly
+                            renderIcon={Edit}
+                            iconDescription={`Edit ${v.name}`}
+                            tooltipPosition="left"
+                            onClick={() => editArgument(v)}
+                          />
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
                 {existingPrompt.variables.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={3}>
-                      No template-specific variables yet. Add placeholders like{' '}
-                      <code>{'{{customer_name}}'}</code> in instruction messages
-                      to populate this list.
+                    <TableCell colSpan={4}>
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        No template-specific variables yet. Add placeholders
+                        like <code>{'{{customer_name}}'}</code> in instruction
+                        messages to populate this list.
+                      </span>
                     </TableCell>
                   </TableRow>
                 )}

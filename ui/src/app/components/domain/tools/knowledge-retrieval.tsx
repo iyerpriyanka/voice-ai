@@ -73,7 +73,7 @@ export function ConfigureKnowledgeRetrieval({
       <InputGroup title="Action Definition">
         <Stack gap={7}>
           <KnowledgeDropdown
-            className={cn('bg-light-background', inputClass)}
+            className={inputClass}
             currentKnowledge={getParamValue('tool.knowledge_id')}
             onChangeKnowledge={(knowledge: Knowledge) => {
               if (knowledge) {

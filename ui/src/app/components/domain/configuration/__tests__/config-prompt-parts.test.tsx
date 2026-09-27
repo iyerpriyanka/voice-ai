@@ -35,6 +35,7 @@ jest.mock('@carbon/react', () => ({
     </button>
   ),
   Dropdown: ({
+    className,
     id,
     itemToString,
     items = [],
@@ -44,6 +45,7 @@ jest.mock('@carbon/react', () => ({
   }: any) => (
     <select
       aria-label={label}
+      className={className}
       id={id}
       value={selectedItem ?? ''}
       onChange={event => {
@@ -157,6 +159,7 @@ describe('configuration prompt subcomponents', () => {
       name: 'Select a role',
     });
     expect(selector).toHaveValue(PromptRole.user);
+    expect(selector).toHaveClass('w-full');
 
     fireEvent.change(selector, { target: { value: PromptRole.assistant } });
     fireEvent.change(selector, { target: { value: '' } });
@@ -196,6 +199,8 @@ describe('configuration prompt subcomponents', () => {
       />,
     );
 
+    expect(screen.getByRole('table')).toHaveClass('border-border-subtle');
+
     fireEvent.change(screen.getByLabelText('suggestion-0'), {
       target: { value: 'First' },
     });
@@ -227,6 +232,14 @@ describe('configuration prompt subcomponents', () => {
         onTypeChange={onTypeChange}
         onDelete={onDelete}
       />,
+    );
+
+    const roleSelector = screen.getByLabelText('Select a role');
+    expect(roleSelector.parentElement).toHaveClass('flex-1', 'min-w-0');
+    expect(roleSelector.parentElement?.nextElementSibling).toHaveClass(
+      'flex',
+      'shrink-0',
+      'items-stretch',
     );
 
     fireEvent.change(screen.getByLabelText('Select a role'), {

@@ -10,6 +10,7 @@ import {
   TableRow,
 } from '@carbon/react';
 import { TextInput } from '@/app/components/ui/primitives/form';
+import { tableFormContainerClassName } from '@/app/components/ui/table';
 
 export interface KeyValueRow {
   key: string;
@@ -47,13 +48,13 @@ export function KeyValueTable({
 
   return (
     <>
-      <TableContainer>
+      <TableContainer className={tableFormContainerClassName}>
         <Table size="sm" useZebraStyles={false}>
           <TableHead>
             <TableRow>
               <TableHeader>Key</TableHeader>
               <TableHeader>Value</TableHeader>
-              <TableHeader>Actions</TableHeader>
+              <TableHeader className="!w-10 !text-center">Actions</TableHeader>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -67,7 +68,7 @@ export function KeyValueTable({
             )}
             {rows.map((row, index) => (
               <TableRow key={`${row.key}-${index}`}>
-                <TableCell>
+                <TableCell className="!p-0">
                   <TextInput
                     id={`${keyInputPrefix}-${index}`}
                     data-testid={`${keyInputPrefix}-${index}`}
@@ -81,7 +82,7 @@ export function KeyValueTable({
                     size="md"
                   />
                 </TableCell>
-                <TableCell>
+                <TableCell className="!p-0">
                   <TextInput
                     id={`${valueInputPrefix}-${index}`}
                     data-testid={`${valueInputPrefix}-${index}`}
@@ -95,7 +96,7 @@ export function KeyValueTable({
                     size="md"
                   />
                 </TableCell>
-                <TableCell>
+                <TableCell className="!w-10 !p-0 !text-center">
                   <Button
                     hasIconOnly
                     renderIcon={TrashCan}

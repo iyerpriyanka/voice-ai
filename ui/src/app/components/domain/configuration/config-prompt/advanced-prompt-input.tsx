@@ -77,45 +77,49 @@ function AdvancedPromptInput({
       >
         <div
           className={cn(
-            'flex justify-between items-center',
+            'flex items-stretch',
             'border-b border-gray-300 dark:border-gray-700',
           )}
         >
-          <MessageTypeSelector value={type} onChange={onTypeChange} />
-          {canDelete && (
+          <div className="min-w-0 flex-1">
+            <MessageTypeSelector value={type} onChange={onTypeChange} />
+          </div>
+          <div className="flex shrink-0 items-stretch">
+            {canDelete && (
+              <GhostButton
+                size="md"
+                onClick={onDelete}
+                tabIndex={-1}
+                className="hover:border-red-600  dark:hover:border-red-600 transition-colors border border-transparent border-l-gray-300 dark:border-l-gray-700"
+              >
+                <TrashCan size={16} className="text-red-600" />
+              </GhostButton>
+            )}
             <GhostButton
               size="md"
-              onClick={onDelete}
               tabIndex={-1}
-              className="hover:border-red-600  dark:hover:border-red-600 transition-colors border border-transparent border-l-gray-300 dark:border-l-gray-700"
+              onClick={() => {
+                copyItem(value);
+              }}
+              className="hover:border-blue-600  dark:hover:border-blue-600  transition-colors border border-transparent border-l-gray-300 dark:border-l-gray-700"
             >
-              <TrashCan size={16} className="text-red-600" />
+              {isChecked ? (
+                <Checkmark size={16} className="text-green-600" />
+              ) : (
+                <Copy size={16} />
+              )}
             </GhostButton>
-          )}
-          <GhostButton
-            size="md"
-            tabIndex={-1}
-            onClick={() => {
-              copyItem(value);
-            }}
-            className="hover:border-blue-600  dark:hover:border-blue-600  transition-colors border border-transparent border-l-gray-300 dark:border-l-gray-700"
-          >
-            {isChecked ? (
-              <Checkmark size={16} className="text-green-600" />
-            ) : (
-              <Copy size={16} />
-            )}
-          </GhostButton>
-          <GhostButton
-            size="md"
-            tabIndex={-1}
-            onClick={() => {
-              setIsExpand(!isExpand);
-            }}
-            className="hover:border-blue-600 dark:hover:border-blue-600  transition-colors border border-transparent border-l-gray-300 dark:border-l-gray-700"
-          >
-            {isExpand ? <Minimize size={16} /> : <Maximize size={16} />}
-          </GhostButton>
+            <GhostButton
+              size="md"
+              tabIndex={-1}
+              onClick={() => {
+                setIsExpand(!isExpand);
+              }}
+              className="hover:border-blue-600 dark:hover:border-blue-600  transition-colors border border-transparent border-l-gray-300 dark:border-l-gray-700"
+            >
+              {isExpand ? <Minimize size={16} /> : <Maximize size={16} />}
+            </GhostButton>
+          </div>
         </div>
 
         <PromptEditor

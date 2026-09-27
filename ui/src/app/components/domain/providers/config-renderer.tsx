@@ -31,6 +31,12 @@ import { JsonEditor } from '@/app/components/ui/editor/json-editor';
 import { WebsocketDslEditor } from '@/app/components/domain/providers/websocket-dsl-editor';
 import { HelpToggletip } from '@/app/components/domain/providers/help-label';
 import { FormLabel } from '@/app/components/ui/primitives';
+import {
+  TableForm,
+  TableFormCell,
+  TableFormHeaderCell,
+  TableFormRow,
+} from '@/app/components/ui/table';
 
 type ProviderDataItem = Record<string, unknown> & {
   name?: string;
@@ -679,25 +685,18 @@ function KeyValueField({
         </p>
         <HelpToggletip label={param.label} helpText={param.helpText} />
       </div>
-      <table className="w-full border-collapse border border-gray-200 dark:border-gray-700 text-sm [&_input]:!border-none [&_.cds--text-input]:!border-none [&_.cds--text-input]:!outline-none [&_.cds--form-item]:!m-0">
+      <TableForm>
         <thead>
-          <tr className="bg-gray-50 dark:bg-gray-900">
-            <th className="text-left text-xs font-medium text-gray-500 dark:text-gray-400 px-3 py-2 border-b border-r border-gray-200 dark:border-gray-700 w-1/2">
-              Key
-            </th>
-            <th className="text-left text-xs font-medium text-gray-500 dark:text-gray-400 px-3 py-2 border-b border-r border-gray-200 dark:border-gray-700 w-1/2">
-              Value
-            </th>
-            <th className="border-b border-gray-200 dark:border-gray-700 w-8" />
+          <tr className="bg-[var(--cds-layer-accent-01)]">
+            <TableFormHeaderCell className="w-1/2">Key</TableFormHeaderCell>
+            <TableFormHeaderCell className="w-1/2">Value</TableFormHeaderCell>
+            <TableFormHeaderCell className="w-10" divider={false} />
           </tr>
         </thead>
         <tbody>
           {entries.map((entry, index) => (
-            <tr
-              key={index}
-              className="border-b border-gray-200 dark:border-gray-700 last:border-b-0"
-            >
-              <td className="border-r border-gray-200 dark:border-gray-700 p-0">
+            <TableFormRow key={index}>
+              <TableFormCell>
                 <TextInput
                   id={`kv-key-${param.key}-${index}`}
                   labelText=""
@@ -707,8 +706,8 @@ function KeyValueField({
                   placeholder="Key"
                   size="md"
                 />
-              </td>
-              <td className="border-r border-gray-200 dark:border-gray-700 p-0">
+              </TableFormCell>
+              <TableFormCell>
                 <TextInput
                   id={`kv-val-${param.key}-${index}`}
                   labelText=""
@@ -718,8 +717,8 @@ function KeyValueField({
                   placeholder="Value"
                   size="md"
                 />
-              </td>
-              <td className="p-0 text-center">
+              </TableFormCell>
+              <TableFormCell className="w-10 text-center" divider={false}>
                 <Button
                   hasIconOnly
                   renderIcon={TrashCan}
@@ -728,11 +727,11 @@ function KeyValueField({
                   size="sm"
                   onClick={() => removeEntry(index)}
                 />
-              </td>
-            </tr>
+              </TableFormCell>
+            </TableFormRow>
           ))}
         </tbody>
-      </table>
+      </TableForm>
       <TertiaryButton
         size="md"
         renderIcon={Add}

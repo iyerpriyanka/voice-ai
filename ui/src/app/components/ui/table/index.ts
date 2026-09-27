@@ -3,6 +3,7 @@ export * from './label-cell';
 export * from './table';
 export * from './table-body';
 export * from './table-cell';
+export * from './table-form';
 export * from './table-head';
 export * from './table-link';
 export * from './table-pagination';

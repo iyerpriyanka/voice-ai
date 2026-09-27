@@ -12,6 +12,7 @@ import {
   TableRow,
   Tooltip,
 } from '@carbon/react';
+import { tableFormContainerClassName } from '@/app/components/ui/table';
 
 export interface ConditionOption {
   label: string;
@@ -87,7 +88,7 @@ export function SourceConditionRule<TCondition extends SourceCondition>({
           <Information size={14} />
         </Tooltip>
       </div>
-      <TableContainer>
+      <TableContainer className={tableFormContainerClassName}>
         <Table size="sm" useZebraStyles={false}>
           <TableHead>
             <TableRow>
@@ -121,13 +122,13 @@ export function SourceConditionRule<TCondition extends SourceCondition>({
                   </Tooltip>
                 </span>
               </TableHeader>
-              <TableHeader>Actions</TableHeader>
+              <TableHeader className="!w-10 !text-center">Actions</TableHeader>
             </TableRow>
           </TableHead>
           <TableBody>
             {rows.map((row, index) => (
               <TableRow key={`${row.key}-${index}`}>
-                <TableCell>
+                <TableCell className="!p-0">
                   <Select
                     id={
                       index === 0
@@ -147,6 +148,7 @@ export function SourceConditionRule<TCondition extends SourceCondition>({
                       } as TCondition);
                     }}
                     size="md"
+                    className="w-full"
                   >
                     {keyOptions.map(option => (
                       <SelectItem
@@ -157,7 +159,7 @@ export function SourceConditionRule<TCondition extends SourceCondition>({
                     ))}
                   </Select>
                 </TableCell>
-                <TableCell>
+                <TableCell className="!p-0">
                   <Select
                     id={
                       index === 0
@@ -174,6 +176,7 @@ export function SourceConditionRule<TCondition extends SourceCondition>({
                       } as TCondition)
                     }
                     size="md"
+                    className="w-full"
                   >
                     {conditionOptions.map(option => (
                       <SelectItem
@@ -184,7 +187,7 @@ export function SourceConditionRule<TCondition extends SourceCondition>({
                     ))}
                   </Select>
                 </TableCell>
-                <TableCell>
+                <TableCell className="!p-0">
                   <Select
                     id={
                       index === 0
@@ -201,6 +204,7 @@ export function SourceConditionRule<TCondition extends SourceCondition>({
                       } as TCondition)
                     }
                     size="md"
+                    className="w-full"
                   >
                     {getValueOptions(row.key).map(option => (
                       <SelectItem
@@ -211,7 +215,7 @@ export function SourceConditionRule<TCondition extends SourceCondition>({
                     ))}
                   </Select>
                 </TableCell>
-                <TableCell>
+                <TableCell className="!w-10 !p-0 !text-center">
                   <Button
                     hasIconOnly
                     renderIcon={TrashCan}

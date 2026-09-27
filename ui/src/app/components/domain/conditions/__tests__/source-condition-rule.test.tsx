@@ -57,23 +57,37 @@ jest.mock('@carbon/react', () => ({
       {children}
     </button>
   ),
-  Select: ({ children, id, labelText, onChange, value }: any) => (
+  Select: ({ children, className, id, labelText, onChange, value }: any) => (
     <label htmlFor={id}>
       {labelText}
-      <select id={id} data-testid={id} value={value} onChange={onChange}>
+      <select
+        className={className}
+        id={id}
+        data-testid={id}
+        value={value}
+        onChange={onChange}
+      >
         {children}
       </select>
     </label>
   ),
   SelectItem: ({ text, value }: any) => <option value={value}>{text}</option>,
-  Table: ({ children }: any) => <table>{children}</table>,
-  TableBody: ({ children }: any) => <tbody>{children}</tbody>,
-  TableCell: ({ children, colSpan }: any) => (
-    <td colSpan={colSpan}>{children}</td>
+  Table: ({ children, className }: any) => (
+    <table className={className}>{children}</table>
   ),
-  TableContainer: ({ children }: any) => <section>{children}</section>,
+  TableBody: ({ children }: any) => <tbody>{children}</tbody>,
+  TableCell: ({ children, className, colSpan }: any) => (
+    <td className={className} colSpan={colSpan}>
+      {children}
+    </td>
+  ),
+  TableContainer: ({ children, className }: any) => (
+    <section className={className}>{children}</section>
+  ),
   TableHead: ({ children }: any) => <thead>{children}</thead>,
-  TableHeader: ({ children }: any) => <th>{children}</th>,
+  TableHeader: ({ children, className }: any) => (
+    <th className={className}>{children}</th>
+  ),
   TableRow: ({ children }: any) => <tr>{children}</tr>,
   Tooltip: ({ children, label }: any) => (
     <span title={typeof label === 'string' ? label : undefined}>
@@ -145,6 +159,39 @@ describe('SourceConditionRule', () => {
     expect(onChangeConditions).toHaveBeenLastCalledWith([
       { key: 'source', condition: '=', value: 'web' },
     ]);
+  });
+
+  it('renders condition controls as a full-cell table form', () => {
+    render(
+      <SourceConditionRule
+        conditions={[{ key: 'source', condition: '=', value: 'phone' }]}
+        onChangeConditions={jest.fn()}
+        conditionOptions={conditionOptions}
+        sourceOptions={sourceOptions}
+      />,
+    );
+
+    expect(screen.getByRole('table').parentElement).toHaveClass(
+      '![padding-block-start:0]',
+      'border-border-subtle',
+    );
+    expect(screen.getByTestId('tool-condition-key')).toHaveClass('w-full');
+    expect(screen.getByTestId('tool-condition-key').closest('td')).toHaveClass(
+      '!p-0',
+    );
+    expect(screen.getByTestId('tool-condition-op').closest('td')).toHaveClass(
+      '!p-0',
+    );
+    expect(
+      screen.getByTestId('tool-condition-source-value').closest('td'),
+    ).toHaveClass('!p-0');
+    expect(screen.getByRole('columnheader', { name: 'Actions' })).toHaveClass(
+      '!w-10',
+      '!text-center',
+    );
+    expect(
+      screen.getByRole('button', { name: 'Remove' }).closest('td'),
+    ).toHaveClass('!w-10', '!p-0', '!text-center');
   });
 
   it('removes rows only when more than one row is present', () => {
