@@ -189,7 +189,7 @@ export function EndpointArgumentList(props: {
           <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
             No arguments defined
           </p>
-          <p className="mt-1 max-w-sm text-sm text-gray-500 dark:text-gray-400">
+          <p className="mt-1 max-w-sm text-sm text-[var(--cds-text-secondary)]">
             This endpoint does not expose prompt variables.
           </p>
         </div>

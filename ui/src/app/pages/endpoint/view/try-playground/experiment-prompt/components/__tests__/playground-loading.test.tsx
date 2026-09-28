@@ -20,6 +20,20 @@ jest.mock('@carbon/react', () => ({
       data-with-overlay={String(withOverlay)}
     />
   ),
+  InlineLoading: ({ description, iconDescription, status }: any) => (
+    <span
+      data-testid="carbon-inline-loading"
+      data-description={description}
+      data-icon-description={iconDescription}
+      data-status={status}
+    />
+  ),
+  InlineNotification: ({ kind, title, subtitle }: any) => (
+    <div data-kind={kind}>
+      <strong>{title}</strong>
+      <span>{subtitle}</span>
+    </div>
+  ),
   Tag: ({ children }: any) => <span>{children}</span>,
 }));
 
@@ -28,18 +42,31 @@ jest.mock('@carbon/icons-react', () => ({
 }));
 
 describe('endpoint playground loading states', () => {
-  it('uses Carbon Loading while endpoint execution is running', () => {
+  it('uses Carbon InlineLoading while endpoint execution is running', () => {
     render(<ExecuteMessage loading metrics={[]} />);
 
-    expect(screen.getByTestId('carbon-loading')).toHaveAttribute(
-      'data-description',
+    expect(screen.getByTestId('carbon-inline-loading')).toHaveAttribute(
+      'data-icon-description',
       'Executing endpoint',
     );
-    expect(screen.getByTestId('carbon-loading')).toHaveAttribute(
-      'data-with-overlay',
-      'false',
+    expect(screen.getByTestId('carbon-inline-loading')).toHaveAttribute(
+      'data-status',
+      'active',
     );
-    expect(screen.getByText('Executing your endpoint.')).toBeInTheDocument();
+    expect(screen.getByTestId('carbon-inline-loading')).toHaveAttribute(
+      'data-description',
+      'Executing your endpoint.',
+    );
+  });
+
+  it('uses Carbon notifications for execution errors', () => {
+    render(<ExecuteMessage apiError="Request timed out" metrics={[]} />);
+
+    expect(screen.getByText('Endpoint execution failed')).toBeInTheDocument();
+    expect(screen.getByText('Request timed out').parentElement).toHaveAttribute(
+      'data-kind',
+      'error',
+    );
   });
 
   it('uses Carbon Loading inside the execute button', () => {

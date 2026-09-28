@@ -1,13 +1,13 @@
 function encodeVarint(value) {
   const bytes = [];
-  let remaining = value;
+  let remaining = BigInt(value);
 
   do {
-    let byte = remaining & 0x7f;
-    remaining >>>= 7;
-    if (remaining > 0) byte |= 0x80;
+    let byte = Number(remaining & 0x7fn);
+    remaining >>= 7n;
+    if (remaining > 0n) byte |= 0x80;
     bytes.push(byte);
-  } while (remaining > 0);
+  } while (remaining > 0n);
 
   return Buffer.from(bytes);
 }

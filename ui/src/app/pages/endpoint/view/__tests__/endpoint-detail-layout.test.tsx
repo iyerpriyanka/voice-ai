@@ -2,7 +2,6 @@ import React from 'react';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import { EndpointSideNav } from '@/app/pages/endpoint/view/endpoint-side-nav';
 import { ViewEndpointPage } from '@/app/pages/endpoint/view';
 import { EndpointViewLayout } from '@/app/pages/endpoint/view/endpoint-view.layout';
 import { useEndpointPageStore } from '@/stores/endpoint';
@@ -69,6 +68,19 @@ jest.mock('@carbon/react', () => ({
       {children}
     </button>
   ),
+  Tabs: ({ children, selectedIndex }: any) => (
+    <div data-testid="endpoint-tabs" data-selected-index={selectedIndex}>
+      {children}
+    </div>
+  ),
+  TabList: ({ children, 'aria-label': ariaLabel }: any) => (
+    <div role="tablist" aria-label={ariaLabel}>
+      {children}
+    </div>
+  ),
+  Tab: ({ children }: any) => <button role="tab">{children}</button>,
+  TabPanels: ({ children }: any) => <div>{children}</div>,
+  TabPanel: ({ children }: any) => <div role="tabpanel">{children}</div>,
   SideNav: ({ children, expanded, isRail, className, ...props }: any) => (
     <aside
       className={className}
@@ -109,6 +121,10 @@ jest.mock('@carbon/react', () => ({
 
 jest.mock('@/app/pages/endpoint/view/try-playground', () => ({
   Playground: () => <section>Endpoint playground</section>,
+}));
+
+jest.mock('@/app/pages/endpoint/view/pages/overview-page', () => ({
+  EndpointOverviewPage: () => <section>Endpoint summary</section>,
 }));
 
 jest.mock('@/app/pages/endpoint/view/traces', () => ({
@@ -215,72 +231,21 @@ describe('Endpoint detail layout', () => {
     );
   });
 
-  it('matches assistant side nav behavior for collapse and loading states', () => {
-    const onToggle = jest.fn();
-    const { rerender, container } = render(
-      <MemoryRouter
-        initialEntries={['/deployment/endpoint/endpoint-1/overview']}
-      >
-        <EndpointSideNav
-          endpointId="endpoint-1"
-          endpoint={makeEndpoint()}
-          expanded
-          onToggle={onToggle}
-        />
-      </MemoryRouter>,
-    );
-
-    expect(screen.getByLabelText('Endpoint actions')).toHaveAttribute(
-      'data-expanded',
-      'true',
-    );
-    expect(container.firstElementChild).toHaveClass('w-56');
-    expect(screen.getByText('Logs')).toHaveAttribute(
-      'href',
-      '/deployment/endpoint/endpoint-1/logs',
-    );
-    expect(screen.getByText('source-control')).toHaveAttribute(
-      'data-icon-size',
-      '16',
-    );
-    expect(screen.getByText('Overview')).toHaveAttribute('data-active', 'true');
-
-    rerender(
-      <MemoryRouter initialEntries={['/deployment/endpoint/endpoint-1/logs']}>
-        <EndpointSideNav
-          endpointId="endpoint-1"
-          endpoint={makeEndpoint()}
-          expanded={false}
-          onToggle={onToggle}
-        />
-      </MemoryRouter>,
-    );
-    expect(container.firstElementChild).toHaveClass('w-12');
-
-    rerender(
-      <MemoryRouter
-        initialEntries={['/deployment/endpoint/endpoint-1/overview']}
-      >
-        <EndpointSideNav
-          endpointId="endpoint-1"
-          endpoint={null}
-          expanded
-          onToggle={onToggle}
-        />
-      </MemoryRouter>,
-    );
-    expect(screen.getAllByText('Loading nav item').length).toBeGreaterThan(0);
-  });
-
-  it('keeps endpoint header and side nav visible on overview and logs URLs', () => {
+  it('uses Carbon tabs for overview, playground, versions, and logs', () => {
     const overviewRender = renderEndpointDetailRoute(
       '/deployment/endpoint/endpoint-1/overview',
     );
     expect(screen.getByText('Production endpoint')).toBeInTheDocument();
-    expect(screen.getByText('Endpoint playground')).toBeInTheDocument();
-    expect(screen.getByText('Logs')).toHaveAttribute(
-      'href',
-      '/deployment/endpoint/endpoint-1/logs',
+    expect(screen.getByText('Endpoint summary')).toBeInTheDocument();
+    expect(
+      screen.getByRole('tablist', { name: 'Endpoint sections' }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Overview' })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Playground' })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Logs' })).toBeInTheDocument();
+    expect(screen.getByTestId('endpoint-tabs')).toHaveAttribute(
+      'data-selected-index',
+      '0',
     );
 
     overviewRender.unmount();
@@ -291,16 +256,19 @@ describe('Endpoint detail layout', () => {
     expect(screen.queryByText('Endpoint playground')).not.toBeInTheDocument();
   });
 
-  it('keeps endpoint side nav visible on create version URL', () => {
+  it('keeps endpoint tabs visible and marks versions on the create version URL', () => {
     renderEndpointDetailRoute(
       '/deployment/endpoint/endpoint-1/create-endpoint-version',
     );
 
-    expect(screen.getByLabelText('Endpoint actions')).toBeInTheDocument();
+    expect(
+      screen.getByRole('tablist', { name: 'Endpoint sections' }),
+    ).toBeInTheDocument();
     expect(screen.getByText('Create endpoint version')).toBeInTheDocument();
-    expect(screen.getByText('Add new version')).toHaveAttribute(
-      'href',
-      '/deployment/endpoint/endpoint-1/create-endpoint-version',
+    expect(screen.getByRole('tab', { name: 'Versions' })).toBeInTheDocument();
+    expect(screen.getByTestId('endpoint-tabs')).toHaveAttribute(
+      'data-selected-index',
+      '2',
     );
   });
 

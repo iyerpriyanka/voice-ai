@@ -4,7 +4,6 @@ import { EndpointInstructionDialog } from '@/app/components/dialogs/endpoint';
 import { CreateTagDialog } from '@/app/components/dialogs/shared/create-tag-modal';
 import { UpdateDescriptionDialog } from '@/app/components/dialogs/shared';
 import { EndpointTag } from '@/app/components/domain/tags/endpoint-tags';
-import { EndpointSideNav } from '@/app/pages/endpoint/view/endpoint-side-nav';
 import { useRapidaStore } from '@/stores/app';
 import { useEndpointPageStore } from '@/stores/endpoint';
 import { useCredential } from '@/hooks/use-credential';
@@ -21,19 +20,31 @@ import {
   BreadcrumbItem,
   HeaderGlobalAction,
   HeaderGlobalBar,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
 } from '@carbon/react';
 import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast/headless';
-import { Outlet, useNavigate, useParams } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 
 const ENDPOINT_HEADER_ACTION_ICON_SIZE = 16;
+
+const endpointTabs = [
+  { label: 'Overview', path: 'overview' },
+  { label: 'Playground', path: 'playground' },
+  { label: 'Versions', path: 'versions' },
+  { label: 'Logs', path: 'logs' },
+];
 
 export function EndpointViewLayout() {
   const [userId, token, projectId] = useCredential();
   const { showLoader, hideLoader } = useRapidaStore();
-  const [navExpanded, setNavExpanded] = useState(true);
   const [endpointIdCopied, setEndpointIdCopied] = useState(false);
   const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   const {
     currentEndpoint,
@@ -97,6 +108,18 @@ export function EndpointViewLayout() {
 
   const goToCreateVersion = () =>
     navigate(`/deployment/endpoint/${endpointId}/create-endpoint-version`);
+
+  const selectedTabIndex = Math.max(
+    0,
+    endpointTabs.findIndex(tab => {
+      const href = `/deployment/endpoint/${endpointId}/${tab.path}`;
+      return (
+        pathname === href ||
+        (tab.path === 'versions' &&
+          pathname.endsWith('/create-endpoint-version'))
+      );
+    }),
+  );
 
   const copyEndpointId = () => {
     const id = currentEndpoint?.getId();
@@ -177,13 +200,6 @@ export function EndpointViewLayout() {
 
       <Helmet title="Hosted endpoints" />
 
-      <EndpointSideNav
-        endpointId={endpointId}
-        endpoint={currentEndpoint}
-        expanded={navExpanded}
-        onToggle={() => setNavExpanded(!navExpanded)}
-      />
-
       <div className="flex flex-col flex-1 overflow-auto">
         {currentEndpoint && (
           <header className="flex h-12 shrink-0 items-center justify-between bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
@@ -242,9 +258,48 @@ export function EndpointViewLayout() {
             </HeaderGlobalBar>
           </header>
         )}
-        <div className="flex flex-col flex-1 min-h-0">
-          <Outlet context={{ onReload }} />
-        </div>
+        {currentEndpoint && endpointId ? (
+          <div className="flex min-h-0 flex-1 flex-col">
+            <Tabs
+              selectedIndex={selectedTabIndex}
+              onChange={({ selectedIndex }) => {
+                const tab = endpointTabs[selectedIndex];
+                if (tab) {
+                  navigate(`/deployment/endpoint/${endpointId}/${tab.path}`);
+                }
+              }}
+            >
+              <TabList
+                aria-label="Endpoint sections"
+                contained
+                fullWidth
+                className="shrink-0"
+              >
+                {endpointTabs.map(tab => (
+                  <Tab key={tab.path}>{tab.label}</Tab>
+                ))}
+              </TabList>
+              <div className="flex min-h-0 flex-1 overflow-hidden">
+                <TabPanels>
+                  {endpointTabs.map((tab, index) => (
+                    <TabPanel
+                      key={tab.path}
+                      className="flex min-h-0 flex-1 overflow-hidden !p-0"
+                    >
+                      {index === selectedTabIndex ? (
+                        <Outlet context={{ onReload }} />
+                      ) : null}
+                    </TabPanel>
+                  ))}
+                </TabPanels>
+              </div>
+            </Tabs>
+          </div>
+        ) : (
+          <div className="flex min-h-0 flex-1 flex-col">
+            <Outlet context={{ onReload }} />
+          </div>
+        )}
       </div>
     </div>
   );

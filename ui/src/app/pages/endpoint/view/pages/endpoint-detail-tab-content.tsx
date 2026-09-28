@@ -2,8 +2,14 @@ import { Endpoint, EndpointProviderModel } from '@rapidaai/react';
 import { EndpointLogsPage } from '@/app/pages/endpoint/view/pages/logs-page';
 import { EndpointOverviewPage } from '@/app/pages/endpoint/view/pages/overview-page';
 import { EndpointVersionsPage } from '@/app/pages/endpoint/view/pages/versions-page';
+import { Playground } from '@/app/pages/endpoint/view/try-playground';
 
-export type EndpointDetailTabKey = 'overview' | 'logs' | 'Traces' | 'versions';
+export type EndpointDetailTabKey =
+  | 'overview'
+  | 'playground'
+  | 'logs'
+  | 'Traces'
+  | 'versions';
 
 export function EndpointDetailTabContent(props: {
   activeTab: string;
@@ -20,6 +26,13 @@ export function EndpointDetailTabContent(props: {
     case 'overview':
       return (
         <EndpointOverviewPage
+          currentEndpoint={currentEndpoint}
+          currentEndpointProviderModel={currentEndpointProviderModel}
+        />
+      );
+    case 'playground':
+      return (
+        <Playground
           currentEndpoint={currentEndpoint}
           currentEndpointProviderModel={currentEndpointProviderModel}
         />

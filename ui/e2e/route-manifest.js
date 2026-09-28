@@ -148,10 +148,52 @@ const routeJourneys = [
     checks: ['smoke', 'a11y', 'screenshot'],
   },
   {
-    id: 'integration.providerModel',
+    id: 'integration.deepgram',
     path: '/integration/models/deepgram',
     auth: true,
     expectText: 'Deepgram',
+    checks: ['smoke', 'a11y', 'screenshot'],
+  },
+  {
+    id: 'integration.googleSpeechService',
+    path: '/integration/models/google-speech-service',
+    auth: true,
+    expectText: 'Google Speech Service',
+    checks: ['smoke', 'a11y', 'screenshot'],
+  },
+  {
+    id: 'integration.azureSpeechService',
+    path: '/integration/models/azure-speech-service',
+    auth: true,
+    expectText: 'Azure Cognitive Services',
+    checks: ['smoke', 'a11y', 'screenshot'],
+  },
+  {
+    id: 'integration.cartesia',
+    path: '/integration/models/cartesia',
+    auth: true,
+    expectText: 'Cartesia',
+    checks: ['smoke', 'a11y', 'screenshot'],
+  },
+  {
+    id: 'integration.elevenLabs',
+    path: '/integration/models/elevenlabs',
+    auth: true,
+    expectText: 'ElevenLabs',
+    checks: ['smoke', 'a11y', 'screenshot'],
+  },
+  {
+    id: 'deployment.endpointOverview',
+    path: '/deployment/endpoint/2301664620831571968/overview',
+    auth: true,
+    expectText: 'Endpoint details',
+    checks: ['smoke', 'a11y', 'screenshot'],
+  },
+  {
+    id: 'deployment.endpointPlayground',
+    path: '/deployment/endpoint/2301664620831571968/playground',
+    auth: true,
+    expectText: 'Playground',
     checks: ['smoke', 'a11y', 'screenshot'],
   },
   {
@@ -331,7 +373,7 @@ const sourceRouteInventory = {
     },
     {
       path: 'endpoint/:endpointId',
-      deferredReason: 'Endpoint detail fixtures are not available yet.',
+      journey: 'deployment.endpointOverview',
     },
     {
       path: 'create-endpoint-version',
@@ -341,7 +383,7 @@ const sourceRouteInventory = {
       path: ':tab',
       count: 2,
       deferredReason:
-        'Assistant and endpoint detail tabs need entity fixtures.',
+        'Assistant detail tabs still need entity fixtures; endpoint tabs use the endpoint detail journeys.',
     },
     { path: 'assistant', journey: 'deployment.assistant' },
     {
@@ -510,7 +552,7 @@ const sourceRouteInventory = {
     { path: 'models', journey: 'integration.models' },
     {
       path: 'models/:provider',
-      journey: 'integration.providerModel',
+      journey: 'integration.deepgram',
     },
     {
       path: 'project-credential',

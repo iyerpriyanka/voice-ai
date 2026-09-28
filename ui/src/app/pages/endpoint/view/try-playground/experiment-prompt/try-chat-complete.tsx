@@ -15,6 +15,7 @@ import {
 import { OutputMessage } from '@/app/pages/endpoint/view/try-playground/experiment-prompt/components/output-message';
 import { PlaygroundHeader } from '@/app/pages/endpoint/view/try-playground/experiment-prompt/components/playground-header';
 import { invokeEndpoint } from '@/clients';
+import { cn } from '@/utils';
 
 export function TryChatComplete(props: {
   currentEndpoint: Endpoint;
@@ -124,11 +125,18 @@ export function TryChatComplete(props: {
         variableCount={variables.length}
         unsupportedCount={unsupportedVariables.length}
       />
-      <div className="flex-1 overflow-hidden bg-gray-50 dark:bg-gray-950">
-        <div className="grid h-full grid-rows-[minmax(0,1fr)_minmax(18rem,42%)] overflow-hidden">
+      <div className="flex-1 overflow-hidden bg-[var(--cds-background)]">
+        <div
+          className={cn(
+            'grid h-full overflow-hidden',
+            variables.length === 0
+              ? 'grid-rows-[14rem_minmax(0,1fr)]'
+              : 'grid-rows-[minmax(0,1fr)_minmax(18rem,42%)]',
+          )}
+        >
           <div className="overflow-y-auto border-b border-gray-200 dark:border-gray-800">
             <div className="border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-900">
-              <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              <p className="text-xs font-semibold uppercase tracking-wider text-[var(--cds-text-secondary)]">
                 Arguments
               </p>
             </div>

@@ -4,10 +4,22 @@ import '@testing-library/jest-dom';
 
 import { EndpointDetailTabContent } from '@/app/pages/endpoint/view/pages';
 
+jest.mock('@/app/pages/endpoint/view/pages/overview-page', () => ({
+  EndpointOverviewPage: ({
+    currentEndpoint,
+    currentEndpointProviderModel,
+  }: any) => (
+    <section>
+      Overview summary {currentEndpoint.getName()}{' '}
+      {currentEndpointProviderModel.getId()}
+    </section>
+  ),
+}));
+
 jest.mock('@/app/pages/endpoint/view/try-playground', () => ({
   Playground: ({ currentEndpoint, currentEndpointProviderModel }: any) => (
     <section>
-      Overview page {currentEndpoint.getName()}{' '}
+      Playground page {currentEndpoint.getName()}{' '}
       {currentEndpointProviderModel.getId()}
     </section>
   ),
@@ -53,7 +65,22 @@ describe('EndpointDetailTabContent', () => {
     );
 
     expect(
-      screen.getByText('Overview page Production endpoint epm-1'),
+      screen.getByText('Overview summary Production endpoint epm-1'),
+    ).toBeInTheDocument();
+  });
+
+  it('renders the playground only for the playground tab', () => {
+    render(
+      <EndpointDetailTabContent
+        activeTab="playground"
+        currentEndpoint={makeEndpoint()}
+        currentEndpointProviderModel={makeEndpointProviderModel()}
+        onReload={jest.fn()}
+      />,
+    );
+
+    expect(
+      screen.getByText('Playground page Production endpoint epm-1'),
     ).toBeInTheDocument();
   });
 
@@ -112,7 +139,7 @@ describe('EndpointDetailTabContent', () => {
     );
 
     expect(
-      screen.getByText('Overview page Production endpoint epm-1'),
+      screen.getByText('Overview summary Production endpoint epm-1'),
     ).toBeInTheDocument();
   });
 });

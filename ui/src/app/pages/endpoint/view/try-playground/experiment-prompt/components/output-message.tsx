@@ -59,7 +59,7 @@ export const OutputMessage: FC<{
   return (
     <div className="flex min-h-0 flex-col bg-white dark:bg-gray-900">
       <div className="border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-900">
-        <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+        <p className="text-xs font-semibold uppercase tracking-wider text-[var(--cds-text-secondary)]">
           Response
         </p>
       </div>
@@ -84,7 +84,7 @@ export const OutputMessage: FC<{
                       return <MarkdownViewer text={out.content} key={i} />;
                     })
                   ) : (
-                    <div className="w-full p-4 text-sm text-gray-500 dark:text-gray-400">
+                    <div className="w-full p-4 text-sm text-[var(--cds-text-secondary)]">
                       Output will appear after execution.
                     </div>
                   )}
@@ -102,7 +102,7 @@ export const OutputMessage: FC<{
                     code={JSON.stringify(callerResponse.getMeta(), null, 2)}
                   />
                 ) : (
-                  <div className="w-full p-4 text-sm text-gray-500 dark:text-gray-400">
+                  <div className="w-full p-4 text-sm text-[var(--cds-text-secondary)]">
                     Metadata will appear after execution.
                   </div>
                 )}
@@ -123,7 +123,7 @@ export const OutputMessage: FC<{
                     )}
                   />
                 ) : (
-                  <div className="w-full p-4 text-sm text-gray-500 dark:text-gray-400">
+                  <div className="w-full p-4 text-sm text-[var(--cds-text-secondary)]">
                     Metrics will appear after execution.
                   </div>
                 )}

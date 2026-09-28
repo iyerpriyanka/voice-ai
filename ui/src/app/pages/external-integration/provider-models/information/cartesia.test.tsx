@@ -46,45 +46,30 @@ jest.mock('@/app/components/layout/wrapper/blured-wrapper', () => ({
 }));
 
 jest.mock('@/app/components/ui/primitives/button', () => ({
-  GhostButton: ({ children, ...props }: React.ComponentProps<'button'>) => (
+  GhostButton: ({ children, renderIcon: Icon, ...props }: any) => (
     <button type="button" {...props}>
       {children}
+      {Icon ? <Icon /> : null}
     </button>
   ),
-  PrimaryButton: ({ children, ...props }: React.ComponentProps<'button'>) => (
+  PrimaryButton: ({ children, renderIcon: Icon, ...props }: any) => (
     <button type="button" {...props}>
       {children}
+      {Icon ? <Icon /> : null}
     </button>
-  ),
-}));
-
-jest.mock('@/app/components/ui/composites/icon-input', () => ({
-  SearchIconInput: ({ onChange }: any) => (
-    <input
-      aria-label="Search"
-      onChange={event => onChange(event)}
-      type="search"
-    />
-  ),
-}));
-
-jest.mock('@/app/components/ui/primitives/tooltip', () => ({
-  Tooltip: ({ children, icon }: any) => (
-    <span>
-      {icon}
-      {children}
-    </span>
   ),
 }));
 
 jest.mock(
-  '@/app/pages/external-integration/provider-models/information/voice-card',
+  '@/app/pages/external-integration/provider-models/information/voice-catalog',
   () => ({
-    VoiceCard: ({ title, voiceId }: any) => (
-      <article>
-        <h2>{title}</h2>
-        <span>{voiceId}</span>
-      </article>
+    VoiceCatalog: ({ voices, actions }: any) => (
+      <section>
+        {voices.map((voice: any) => (
+          <div key={voice.voiceId}>{voice.title}</div>
+        ))}
+        {actions}
+      </section>
     ),
   }),
 );
@@ -128,13 +113,6 @@ jest.mock('@carbon/icons-react', () => ({
       data-testid="add-icon"
     />
   ),
-  Checkmark: ({ className, strokeWidth }: any) => (
-    <svg
-      className={className}
-      data-stroke-width={strokeWidth}
-      data-testid="status-icon"
-    />
-  ),
 }));
 
 const renderPage = (path = '/providers/cartesia') =>
@@ -148,26 +126,23 @@ describe('CartesiaModelInformationPage', () => {
   it('renders provider status and add credential actions', async () => {
     renderPage();
 
-    expect(screen.getByRole('banner')).toHaveClass('h-20');
+    expect(screen.getByRole('banner')).toHaveClass('min-h-20');
     expect(screen.getByRole('button', { name: /add new credential/i }));
-    expect(screen.getByTestId('add-icon')).toHaveClass('ml-1.5');
+    expect(screen.getByTestId('add-icon')).toBeInTheDocument();
     expect(screen.getByTestId('add-icon')).not.toHaveAttribute(
       'data-stroke-width',
     );
 
     await waitFor(() =>
-      expect(screen.getByTestId('status-icon')).toHaveClass('bg-blue-500'),
-    );
-    expect(screen.getByTestId('status-icon')).not.toHaveAttribute(
-      'data-stroke-width',
+      expect(screen.getByText('Connected')).toBeInTheDocument(),
     );
   });
 
-  it('filters voices from the query string while keeping page actions visible', () => {
-    renderPage('/providers/cartesia?query=beta');
+  it('maps provider voices while keeping page actions visible', () => {
+    renderPage('/providers/cartesia');
 
     expect(screen.getByText('Beta')).toBeInTheDocument();
-    expect(screen.queryByText('Alpha')).not.toBeInTheDocument();
+    expect(screen.getByText('Alpha')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /add new credential/i }));
   });
 });
