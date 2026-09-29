@@ -42,6 +42,12 @@ jest.mock('@/app/pages/endpoint/view/version-list', () => ({
   ),
 }));
 
+jest.mock('@/app/pages/endpoint/view/pages/settings-page', () => ({
+  EndpointSettingsPage: ({ currentEndpoint }: any) => (
+    <section>Settings page {currentEndpoint.getName()}</section>
+  ),
+}));
+
 const makeEndpoint = () =>
   ({
     getId: () => 'endpoint-1',
@@ -113,6 +119,21 @@ describe('EndpointDetailTabContent', () => {
       screen.getByText(/Versions page Production endpoint/),
     ).toBeInTheDocument();
     expect(onReload).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders endpoint settings from the settings route key', () => {
+    render(
+      <EndpointDetailTabContent
+        activeTab="settings"
+        currentEndpoint={makeEndpoint()}
+        currentEndpointProviderModel={makeEndpointProviderModel()}
+        onReload={jest.fn()}
+      />,
+    );
+
+    expect(
+      screen.getByText('Settings page Production endpoint'),
+    ).toBeInTheDocument();
   });
 
   it('renders nothing until endpoint data is ready', () => {

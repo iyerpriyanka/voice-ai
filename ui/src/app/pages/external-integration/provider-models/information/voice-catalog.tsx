@@ -9,6 +9,9 @@ import {
   TableBody,
   TableCell,
   TableContainer,
+  TableExpandedRow,
+  TableExpandHeader,
+  TableExpandRow,
   TableHead,
   TableHeader,
   TableRow,
@@ -27,7 +30,8 @@ import {
 } from 'react';
 import { useLocation } from 'react-router-dom';
 
-const DEFAULT_PAGE_SIZE = 12;
+const DEFAULT_PAGE_SIZE = 10;
+const PAGE_SIZES = [10, 20, 50, 100];
 const VOICE_TABLE_HEADERS = [
   { key: 'name', header: 'Voice' },
   { key: 'languages', header: 'Languages' },
@@ -35,6 +39,15 @@ const VOICE_TABLE_HEADERS = [
   { key: 'features', header: 'Use cases' },
   { key: 'voiceId', header: 'Voice ID' },
   { key: 'preview', header: 'Preview' },
+];
+const VOICE_TABLE_COLUMN_WIDTHS = [
+  '5%',
+  '18%',
+  '11%',
+  '14%',
+  '20%',
+  '23%',
+  '9%',
 ];
 
 export interface VoiceCatalogItem {
@@ -47,32 +60,24 @@ export interface VoiceCatalogItem {
   features: Array<string | undefined>;
 }
 
+function availableValues(values: Array<string | undefined>) {
+  return values.filter((value): value is string => Boolean(value));
+}
+
 function MetadataTags({ values }: { values: Array<string | undefined> }) {
-  const visibleValues = values.filter((value): value is string =>
-    Boolean(value),
-  );
+  const visibleValues = availableValues(values);
 
   if (visibleValues.length === 0) {
-    return (
-      <span className="text-sm text-[var(--cds-text-secondary)]">Not set</span>
-    );
+    return <span className="text-sm text-[var(--cds-text-secondary)]">—</span>;
   }
-
-  const displayedValues = visibleValues.slice(0, 2);
-  const remainingCount = visibleValues.length - displayedValues.length;
 
   return (
     <div className="flex flex-wrap gap-1">
-      {displayedValues.map(value => (
+      {visibleValues.map(value => (
         <Tag key={value} size="sm" type="gray">
           {value}
         </Tag>
       ))}
-      {remainingCount > 0 && (
-        <Tag size="sm" type="outline">
-          +{remainingCount}
-        </Tag>
-      )}
     </div>
   );
 }
@@ -81,7 +86,7 @@ export function VoiceCatalog(props: {
   voices: VoiceCatalogItem[];
   actions?: ReactNode;
 }) {
-  const { voices, actions } = props;
+  const { actions, voices } = props;
   const location = useLocation();
   const queryFromUrl = useMemo(
     () => new URLSearchParams(location.search).get('query') ?? '',
@@ -177,19 +182,22 @@ export function VoiceCatalog(props: {
     stopPreview();
   };
 
-  const resultLabel = `${filteredVoices.length} ${
-    filteredVoices.length === 1 ? 'voice' : 'voices'
-  }`;
-
   return (
-    <section aria-label="Voice catalogue" className="flex flex-1 flex-col">
+    <section
+      aria-label="Voice catalog"
+      className="flex min-h-0 flex-1 flex-col overflow-hidden"
+    >
       <DataTable rows={tableRows} headers={VOICE_TABLE_HEADERS}>
-        {({ rows, headers, getHeaderProps, getRowProps, getTableProps }) => (
-          <TableContainer
-            title="Available voices"
-            description={resultLabel}
-            className="flex flex-1 flex-col"
-          >
+        {({
+          rows,
+          headers,
+          getExpandHeaderProps,
+          getExpandedRowProps,
+          getHeaderProps,
+          getRowProps,
+          getTableProps,
+        }) => (
+          <TableContainer className="flex min-h-0 flex-1 flex-col">
             <TableToolbar>
               <TableToolbarContent>
                 <TableToolbarSearch
@@ -205,15 +213,25 @@ export function VoiceCatalog(props: {
             </TableToolbar>
 
             {rows.length > 0 ? (
-              <div className="overflow-x-auto">
+              <div className="min-h-0 flex-1 overflow-auto">
                 <Table
                   {...getTableProps()}
+                  aria-label="Provider voices"
+                  className="w-full min-w-[64rem] table-fixed"
                   data-testid="voice-catalog-table"
-                  size="lg"
-                  useZebraStyles
+                  size="md"
                 >
+                  <colgroup>
+                    {VOICE_TABLE_COLUMN_WIDTHS.map((width, index) => (
+                      <col key={index} style={{ width }} />
+                    ))}
+                  </colgroup>
                   <TableHead>
                     <TableRow>
+                      <TableExpandHeader
+                        {...getExpandHeaderProps()}
+                        aria-label="Expand all voice details"
+                      />
                       {headers.map(header => (
                         <TableHeader
                           {...getHeaderProps({ header })}
@@ -229,95 +247,120 @@ export function VoiceCatalog(props: {
                       const voice = voiceByRowId.get(row.id);
                       if (!voice) return null;
 
-                      return (
-                        <TableRow {...getRowProps({ row })} key={row.id}>
+                      return [
+                        <TableExpandRow
+                          {...getRowProps({ row })}
+                          aria-label={`Expand ${voice.title} details`}
+                          key={row.id}
+                        >
                           {row.cells.map(cell => {
-                            let content: ReactNode = cell.value;
-
                             if (cell.info.header === 'name') {
-                              content = (
-                                <div className="min-w-44 max-w-80">
-                                  <p className="font-semibold capitalize text-[var(--cds-text-primary)]">
+                              return (
+                                <TableCell key={cell.id}>
+                                  <span className="font-semibold text-[var(--cds-text-primary)]">
                                     {voice.title}
-                                  </p>
-                                  {voice.description && (
-                                    <p className="mt-1 line-clamp-2 text-xs leading-4 text-[var(--cds-text-secondary)]">
-                                      {voice.description}
-                                    </p>
-                                  )}
-                                </div>
+                                  </span>
+                                </TableCell>
                               );
                             }
 
                             if (cell.info.header === 'languages') {
-                              content = (
-                                <MetadataTags values={voice.languages} />
+                              return (
+                                <TableCell key={cell.id}>
+                                  <MetadataTags values={voice.languages} />
+                                </TableCell>
                               );
                             }
 
                             if (cell.info.header === 'persona') {
-                              content = <MetadataTags values={voice.persona} />;
+                              return (
+                                <TableCell key={cell.id}>
+                                  <MetadataTags values={voice.persona} />
+                                </TableCell>
+                              );
                             }
 
                             if (cell.info.header === 'features') {
-                              content = (
-                                <MetadataTags values={voice.features} />
+                              return (
+                                <TableCell key={cell.id}>
+                                  <MetadataTags values={voice.features} />
+                                </TableCell>
                               );
                             }
 
                             if (cell.info.header === 'voiceId') {
-                              content = (
-                                <div className="flex min-w-52 items-center justify-between gap-2">
-                                  <code className="truncate text-xs text-[var(--cds-text-primary)]">
-                                    {voice.voiceId}
-                                  </code>
-                                  <CopyButton
-                                    align="left"
-                                    size="sm"
-                                    feedback="Copied"
-                                    iconDescription={`Copy ${voice.title} voice ID`}
-                                    onClick={() =>
-                                      navigator.clipboard?.writeText(
-                                        voice.voiceId,
-                                      )
-                                    }
-                                  />
-                                </div>
-                              );
-                            }
-
-                            if (cell.info.header === 'preview') {
-                              content = voice.previewUrl ? (
-                                <Button
-                                  hasIconOnly
-                                  kind="ghost"
-                                  size="sm"
-                                  renderIcon={
-                                    playingVoiceId === voice.voiceId
-                                      ? Pause
-                                      : Play
-                                  }
-                                  iconDescription={
-                                    playingVoiceId === voice.voiceId
-                                      ? `Pause ${voice.title}`
-                                      : `Preview ${voice.title}`
-                                  }
-                                  tooltipPosition="left"
-                                  onClick={() => togglePreview(voice)}
-                                />
-                              ) : (
-                                <span className="text-sm text-[var(--cds-text-secondary)]">
-                                  Not available
-                                </span>
+                              return (
+                                <TableCell key={cell.id}>
+                                  <div className="flex min-w-0 items-center justify-between gap-2">
+                                    <code className="min-w-0 truncate text-xs text-[var(--cds-text-primary)]">
+                                      {voice.voiceId}
+                                    </code>
+                                    <CopyButton
+                                      align="left"
+                                      size="sm"
+                                      feedback="Copied"
+                                      iconDescription={`Copy ${voice.title} voice ID`}
+                                      onClick={() =>
+                                        navigator.clipboard?.writeText(
+                                          voice.voiceId,
+                                        )
+                                      }
+                                    />
+                                  </div>
+                                </TableCell>
                               );
                             }
 
                             return (
-                              <TableCell key={cell.id}>{content}</TableCell>
+                              <TableCell key={cell.id}>
+                                {voice.previewUrl ? (
+                                  <Button
+                                    hasIconOnly
+                                    kind="ghost"
+                                    size="sm"
+                                    renderIcon={
+                                      playingVoiceId === voice.voiceId
+                                        ? Pause
+                                        : Play
+                                    }
+                                    iconDescription={
+                                      playingVoiceId === voice.voiceId
+                                        ? `Pause ${voice.title}`
+                                        : `Preview ${voice.title}`
+                                    }
+                                    tooltipPosition="left"
+                                    onClick={() => togglePreview(voice)}
+                                  />
+                                ) : (
+                                  <span
+                                    aria-label="Preview unavailable"
+                                    className="text-[var(--cds-text-secondary)]"
+                                  >
+                                    —
+                                  </span>
+                                )}
+                              </TableCell>
                             );
                           })}
-                        </TableRow>
-                      );
+                        </TableExpandRow>,
+                        row.isExpanded ? (
+                          <TableExpandedRow
+                            {...getExpandedRowProps({ row })}
+                            colSpan={headers.length + 1}
+                            key={`${row.id}-details`}
+                          >
+                            <div className="px-4 py-5">
+                              <p className="text-xs font-semibold text-[var(--cds-text-secondary)]">
+                                Description
+                              </p>
+                              <p className="mt-2 max-w-4xl text-sm leading-5 text-[var(--cds-text-primary)]">
+                                {voice.description ||
+                                  'No description provided.'}
+                              </p>
+                            </div>
+                          </TableExpandedRow>
+                        ) : null,
+                      ];
                     })}
                   </TableBody>
                 </Table>
@@ -330,14 +373,14 @@ export function VoiceCatalog(props: {
               />
             )}
 
-            {filteredVoices.length > pageSize && (
+            {filteredVoices.length > 0 && (
               <Pagination
-                className="mt-auto border-t border-[var(--cds-border-subtle-01)]"
+                className="mt-auto shrink-0 border-t border-[var(--cds-border-subtle-01)]"
                 id="voice-catalog-pagination"
                 totalItems={filteredVoices.length}
                 page={page}
                 pageSize={pageSize}
-                pageSizes={[12, 24, 48]}
+                pageSizes={PAGE_SIZES}
                 onChange={next => {
                   setPage(next.page);
                   setPageSize(next.pageSize);

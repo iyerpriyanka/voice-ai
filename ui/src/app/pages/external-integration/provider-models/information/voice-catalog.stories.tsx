@@ -1,4 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-webpack5';
+import { Add } from '@carbon/icons-react';
+import { Button } from '@carbon/react';
 import { MemoryRouter } from 'react-router-dom';
 import { VoiceCatalog } from './voice-catalog';
 
@@ -35,7 +37,14 @@ const meta = {
       </MemoryRouter>
     ),
   ],
-  args: { voices },
+  args: {
+    voices,
+    actions: (
+      <Button renderIcon={Add} size="lg">
+        Add credential
+      </Button>
+    ),
+  },
 } satisfies Meta<typeof VoiceCatalog>;
 
 export default meta;

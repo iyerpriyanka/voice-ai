@@ -186,7 +186,7 @@ const routeJourneys = [
     id: 'deployment.endpointOverview',
     path: '/deployment/endpoint/2301664620831571968/overview',
     auth: true,
-    expectText: 'Endpoint details',
+    expectText: 'Endpoint activity',
     checks: ['smoke', 'a11y', 'screenshot'],
   },
   {
@@ -194,6 +194,13 @@ const routeJourneys = [
     path: '/deployment/endpoint/2301664620831571968/playground',
     auth: true,
     expectText: 'Playground',
+    checks: ['smoke', 'a11y', 'screenshot'],
+  },
+  {
+    id: 'deployment.endpointSettings',
+    path: '/deployment/endpoint/2301664620831571968/settings',
+    auth: true,
+    expectText: 'General Settings',
     checks: ['smoke', 'a11y', 'screenshot'],
   },
   {

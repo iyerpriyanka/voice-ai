@@ -10,7 +10,7 @@ import {
 } from '@/app/pages/external-integration/provider-models/information/voice-catalog';
 import { useAllProviderCredentials } from '@/hooks/use-model';
 import { RapidaProvider } from '@/providers';
-import { Add } from '@carbon/icons-react';
+import { Add, ModelAlt } from '@carbon/icons-react';
 import { Tag } from '@carbon/react';
 import { useMemo, useState } from 'react';
 
@@ -22,6 +22,7 @@ export function ProviderVoicePage(props: {
   const { providerCredentials } = useAllProviderCredentials();
   const [createProviderModalOpen, setCreateProviderModalOpen] = useState(false);
   const [viewProviderModalOpen, setViewProviderModalOpen] = useState(false);
+  const [imageFailed, setImageFailed] = useState(false);
   const connected = useMemo(
     () =>
       providerCredentials.some(
@@ -33,7 +34,7 @@ export function ProviderVoicePage(props: {
   if (!provider) return null;
 
   return (
-    <div className="flex flex-1 flex-col overflow-auto">
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
       <CreateProviderCredentialDialog
         modalOpen={createProviderModalOpen}
         setModalOpen={setCreateProviderModalOpen}
@@ -49,23 +50,32 @@ export function ProviderVoicePage(props: {
         }}
       />
       <Helmet title={`${provider.name} voices`} />
-      <PageHeaderBlock className="min-h-20">
+      <PageHeaderBlock className="min-h-24 shrink-0">
         <div className="flex min-w-0 items-center gap-3">
-          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[2px] border border-[var(--cds-border-subtle-01)] bg-[var(--cds-layer-01)]">
-            <img
-              src={provider.image}
-              alt=""
-              className="max-h-14 max-w-14 rounded-[2px]"
-            />
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center border border-[var(--cds-border-subtle-01)] bg-[var(--cds-layer-01)]">
+            {provider.image && !imageFailed ? (
+              <img
+                src={provider.image}
+                alt={`${provider.name} logo`}
+                className="max-h-10 max-w-10 object-contain"
+                onError={() => setImageFailed(true)}
+              />
+            ) : (
+              <ModelAlt
+                aria-label={`${provider.name} logo unavailable`}
+                data-testid="provider-logo-fallback"
+                size={24}
+              />
+            )}
           </div>
-          <PageTitleBlock>
+          <PageTitleBlock className="min-w-0">
             <div className="flex items-center gap-2">
-              <span className="capitalize">{provider.name}</span>
+              <span>{provider.name}</span>
               <Tag type={connected ? 'green' : 'gray'} size="sm">
-                {connected ? 'Connected' : 'Not connected'}
+                {connected ? 'Connected' : 'Setup required'}
               </Tag>
             </div>
-            <p className="line-clamp-2 text-sm text-[var(--cds-text-secondary)]">
+            <p className="mt-1 line-clamp-2 max-w-3xl text-sm text-[var(--cds-text-secondary)]">
               {provider.description}
             </p>
           </PageTitleBlock>
@@ -74,15 +84,19 @@ export function ProviderVoicePage(props: {
       <VoiceCatalog
         voices={voices}
         actions={
-          <div className="flex shrink-0 items-center">
-            <GhostButton
-              size="md"
-              onClick={() => setViewProviderModalOpen(true)}
-            >
-              View credential
-            </GhostButton>
+          <div className="flex h-full shrink-0 items-stretch">
+            {connected && (
+              <GhostButton
+                className="h-full!"
+                size="lg"
+                onClick={() => setViewProviderModalOpen(true)}
+              >
+                Manage credentials
+              </GhostButton>
+            )}
             <PrimaryButton
-              size="md"
+              className="h-full!"
+              size="lg"
               renderIcon={Add}
               onClick={() => setCreateProviderModalOpen(true)}
             >

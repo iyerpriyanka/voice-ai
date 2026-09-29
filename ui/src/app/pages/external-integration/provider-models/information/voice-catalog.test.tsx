@@ -6,9 +6,11 @@ import { MemoryRouter } from 'react-router-dom';
 import { VoiceCatalog, VoiceCatalogItem } from './voice-catalog';
 
 jest.mock('@/app/components/ui/primitives/pagination', () => ({
-  Pagination: ({ onChange, page, pageSize, totalItems }: any) => (
+  Pagination: ({ onChange, page, pageSize, pageSizes, totalItems }: any) => (
     <button
       type="button"
+      data-page-size={pageSize}
+      data-page-sizes={pageSizes.join(',')}
       onClick={() => onChange({ page: page + 1, pageSize })}
     >
       Next page ({totalItems})
@@ -67,7 +69,7 @@ describe('VoiceCatalog', () => {
     jest.clearAllMocks();
   });
 
-  it('shows a bounded Carbon table and lets users reach remaining voices', () => {
+  it('uses the platform page size and lets users reach remaining voices', () => {
     render(
       <MemoryRouter>
         <VoiceCatalog voices={voices} />
@@ -75,27 +77,111 @@ describe('VoiceCatalog', () => {
     );
 
     expect(screen.getByTestId('voice-catalog-table')).toBeInTheDocument();
-    expect(screen.getAllByRole('row')).toHaveLength(13);
-    expect(screen.getByText('15 voices')).toBeInTheDocument();
+    expect(screen.getAllByRole('row')).toHaveLength(11);
     expect(screen.queryByText('Voice 15')).not.toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Next page (15)' }));
+    const pagination = screen.getByRole('button', { name: 'Next page (15)' });
+    expect(pagination).toHaveAttribute('data-page-size', '10');
+    expect(pagination).toHaveAttribute('data-page-sizes', '10,20,50,100');
 
-    expect(screen.getAllByRole('row')).toHaveLength(4);
+    fireEvent.click(pagination);
+
+    expect(screen.getAllByRole('row')).toHaveLength(6);
     expect(screen.getByText('Voice 15')).toBeInTheDocument();
   });
 
-  it('uses the Carbon auto-expanding toolbar search pattern', () => {
+  it('keeps every voice field visible and expands the description', () => {
     render(
       <MemoryRouter>
-        <VoiceCatalog voices={voices} />
+        <VoiceCatalog
+          voices={[
+            {
+              ...voices[0],
+              description: 'A clear voice for support conversations.',
+              persona: ['Warm'],
+              features: ['Support'],
+            },
+          ]}
+        />
+      </MemoryRouter>,
+    );
+
+    expect(
+      screen.queryByText('A clear voice for support conversations.'),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('columnheader', { name: 'Voice' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('columnheader', { name: 'Languages' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('columnheader', { name: 'Persona' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('columnheader', { name: 'Use cases' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('columnheader', { name: 'Voice ID' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('columnheader', { name: 'Preview' }),
+    ).toBeInTheDocument();
+    expect(screen.getByText('Warm')).toBeInTheDocument();
+    expect(screen.getByText('Support')).toBeInTheDocument();
+    expect(screen.getByText('voice-1')).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Copy Voice 1 voice ID' }),
+    ).toBeInTheDocument();
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Expand Voice 1 details' }),
+    );
+
+    expect(
+      screen.getByText('A clear voice for support conversations.'),
+    ).toBeInTheDocument();
+  });
+
+  it('keeps the preview column visible when previews are unavailable', () => {
+    render(
+      <MemoryRouter>
+        <VoiceCatalog
+          voices={voices.slice(0, 2).map(voice => ({
+            ...voice,
+            previewUrl: undefined,
+          }))}
+        />
+      </MemoryRouter>,
+    );
+
+    expect(
+      screen.getByRole('columnheader', { name: 'Preview' }),
+    ).toBeInTheDocument();
+    expect(screen.getAllByLabelText('Preview unavailable')).toHaveLength(2);
+  });
+
+  it('uses one Carbon toolbar for expandable search and page actions', () => {
+    render(
+      <MemoryRouter>
+        <VoiceCatalog
+          voices={voices}
+          actions={<button type="button">Add new credential</button>}
+        />
       </MemoryRouter>,
     );
 
     const search = screen.getByRole('searchbox', { name: 'Search voices' });
+    const action = screen.getByRole('button', { name: 'Add new credential' });
     const searchContainer = search.closest(
       '.cds--toolbar-search-container-expandable',
     );
+    expect(search.closest('.cds--table-toolbar')).toBe(
+      action.closest('.cds--table-toolbar'),
+    );
+    expect(
+      screen.queryByRole('heading', { name: 'Voice catalogue' }),
+    ).not.toBeInTheDocument();
 
     expect(searchContainer).toHaveClass(
       'cds--toolbar-search-container-expandable',
@@ -122,7 +208,6 @@ describe('VoiceCatalog', () => {
 
     expect(screen.getByText('Voice 15')).toBeInTheDocument();
     expect(screen.queryByText('Voice 1')).not.toBeInTheDocument();
-    expect(screen.getByText('1 voice')).toBeInTheDocument();
 
     fireEvent.change(screen.getByRole('searchbox', { name: 'Search voices' }), {
       target: { value: 'not-found' },

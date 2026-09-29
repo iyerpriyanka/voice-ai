@@ -12,6 +12,7 @@ jest.mock('@carbon/react', () => ({
       {Icon && <Icon />}
     </button>
   ),
+  HeaderGlobalBar: ({ children }: any) => <div>{children}</div>,
   Loading: ({ description, small, withOverlay }: any) => (
     <span
       data-testid="carbon-loading"
@@ -72,6 +73,13 @@ describe('endpoint playground loading states', () => {
   it('uses Carbon Loading inside the execute button', () => {
     render(<PlaygroundHeader isValid={false} loading />);
 
+    expect(
+      screen.getByRole('heading', { name: 'Playground' }),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId('endpoint-page-header')).toContainElement(
+      screen.getByRole('heading', { name: 'Playground' }),
+    );
+    expect(screen.queryByText('Hosted endpoint')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Running/i })).toBeDisabled();
     expect(screen.getByTestId('carbon-loading')).toHaveAttribute(
       'data-small',
@@ -81,18 +89,10 @@ describe('endpoint playground loading states', () => {
   });
 
   it('disables execution when unsupported endpoint variables exist', () => {
-    render(
-      <PlaygroundHeader
-        isValid
-        loading={false}
-        disabled
-        variableCount={2}
-        unsupportedCount={1}
-      />,
-    );
+    render(<PlaygroundHeader isValid loading={false} disabled />);
 
     expect(screen.getByRole('button', { name: /Run/i })).toBeDisabled();
-    expect(screen.getByText('2 arguments')).toBeInTheDocument();
-    expect(screen.getByText('1 unsupported')).toBeInTheDocument();
+    expect(screen.queryByText('2 arguments')).not.toBeInTheDocument();
+    expect(screen.queryByText('1 unsupported')).not.toBeInTheDocument();
   });
 });

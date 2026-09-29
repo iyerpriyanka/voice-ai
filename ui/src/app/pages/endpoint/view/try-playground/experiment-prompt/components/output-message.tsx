@@ -27,7 +27,8 @@ export const OutputMessage: FC<{
   loading: boolean;
   isValid: boolean;
   errors: any;
-}> = ({ callerResponse, error, isValid, errors, loading }) => {
+  className?: string;
+}> = ({ callerResponse, error, isValid, errors, loading, className }) => {
   // State to manage the outputs extracted from the callerResponse
   const [outputs, setOutputs] = useState<
     | {
@@ -57,14 +58,19 @@ export const OutputMessage: FC<{
   }, [callerResponse]);
 
   return (
-    <div className="flex min-h-0 flex-col bg-white dark:bg-gray-900">
-      <div className="border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-900">
+    <div
+      className={cn(
+        'flex min-h-0 flex-col bg-[var(--cds-layer-01)]',
+        className,
+      )}
+    >
+      <div className="border-b border-[var(--cds-border-subtle-01)] bg-[var(--cds-layer-01)] px-4 py-3">
         <p className="text-xs font-semibold uppercase tracking-wider text-[var(--cds-text-secondary)]">
           Response
         </p>
       </div>
       <ExecuteMessage
-        className="dark:border-gray-800  border-gray-200"
+        className="border-[var(--cds-border-subtle-01)]"
         apiError={error}
         loading={loading}
         metrics={endpointMetrics}
@@ -72,12 +78,12 @@ export const OutputMessage: FC<{
       />
       <Tab
         active="output"
-        className={cn('min-h-0 text-sm/6 bg-white dark:bg-gray-900')}
+        className={cn('min-h-0 flex-1 bg-[var(--cds-layer-01)] text-sm/6')}
         tabs={[
           {
             label: 'output',
             element: (
-              <div className="flex-1 bg-white dark:bg-gray-900">
+              <div className="flex-1 bg-[var(--cds-layer-01)]">
                 <div className="flex min-h-[16rem] flex-col items-start justify-start overflow-auto">
                   {outputs ? (
                     outputs.map((out, i) => {
@@ -95,7 +101,7 @@ export const OutputMessage: FC<{
           {
             label: 'metadata',
             element: (
-              <div className="flex-1 bg-white dark:bg-gray-900">
+              <div className="flex-1 bg-[var(--cds-layer-01)]">
                 {callerResponse ? (
                   <CodeHighlighting
                     className="max-w-full h-full"
@@ -112,7 +118,7 @@ export const OutputMessage: FC<{
           {
             label: 'metrics',
             element: (
-              <div className="flex-1 bg-white dark:bg-gray-900">
+              <div className="flex-1 bg-[var(--cds-layer-01)]">
                 {callerResponse ? (
                   <CodeHighlighting
                     className="max-w-full h-full"

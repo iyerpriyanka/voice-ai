@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter } from 'react-router-dom';
 
@@ -63,12 +63,12 @@ jest.mock('@/app/components/ui/primitives/button', () => ({
 jest.mock(
   '@/app/pages/external-integration/provider-models/information/voice-catalog',
   () => ({
-    VoiceCatalog: ({ voices, actions }: any) => (
-      <section>
+    VoiceCatalog: ({ actions, voices }: any) => (
+      <section aria-label="Voice catalogue">
+        <div data-testid="voice-catalog-actions">{actions}</div>
         {voices.map((voice: any) => (
           <div key={voice.voiceId}>{voice.title}</div>
         ))}
-        {actions}
       </section>
     ),
   }),
@@ -113,6 +113,7 @@ jest.mock('@carbon/icons-react', () => ({
       data-testid="add-icon"
     />
   ),
+  ModelAlt: (props: any) => <svg {...props} />,
 }));
 
 const renderPage = (path = '/providers/cartesia') =>
@@ -126,8 +127,14 @@ describe('CartesiaModelInformationPage', () => {
   it('renders provider status and add credential actions', async () => {
     renderPage();
 
-    expect(screen.getByRole('banner')).toHaveClass('min-h-20');
-    expect(screen.getByRole('button', { name: /add new credential/i }));
+    const providerHeader = screen.getByRole('banner');
+    expect(providerHeader).toHaveClass('min-h-24');
+    expect(providerHeader).not.toContainElement(
+      screen.getByRole('button', { name: /add new credential/i }),
+    );
+    expect(screen.getByTestId('voice-catalog-actions')).toContainElement(
+      screen.getByRole('button', { name: /add new credential/i }),
+    );
     expect(screen.getByTestId('add-icon')).toBeInTheDocument();
     expect(screen.getByTestId('add-icon')).not.toHaveAttribute(
       'data-stroke-width',
@@ -144,5 +151,14 @@ describe('CartesiaModelInformationPage', () => {
     expect(screen.getByText('Beta')).toBeInTheDocument();
     expect(screen.getByText('Alpha')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /add new credential/i }));
+  });
+
+  it('shows a deterministic fallback when the provider logo fails', () => {
+    renderPage();
+
+    const logo = screen.getByRole('img', { name: 'Cartesia logo' });
+    fireEvent.error(logo);
+
+    expect(screen.getByTestId('provider-logo-fallback')).toBeInTheDocument();
   });
 });
