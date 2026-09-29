@@ -16,7 +16,7 @@ In scope:
 - `api/assistant-api/internal/end_of_speech/end_of_speech.go` (factory registration)
 - `api/assistant-api/internal/type/executor.go` and packet compatibility only if required
 - EOS config in `ui/src/providers/<provider>/eos.json` (plus optional `model-options.json`)
-- EOS UI rendering under `ui/src/app/components/providers/end-of-speech/`
+- EOS UI rendering under `ui/src/app/components/domain/providers/end-of-speech/`
 
 Out of scope:
 - `api/assistant-api/internal/vad/internal/...` implementation changes

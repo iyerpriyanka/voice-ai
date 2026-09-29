@@ -16,7 +16,7 @@
 
 - Registries: `ui/src/providers/provider.development.json`, `ui/src/providers/provider.production.json`
 - Loader: `ui/src/providers/config-loader.ts`
-- Feature components: `ui/src/app/components/providers/`
+- Feature components: `ui/src/app/components/domain/providers/`
 
 ## Typical voice runtime path
 

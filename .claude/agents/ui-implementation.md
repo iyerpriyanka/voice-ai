@@ -24,7 +24,7 @@ Requirements:
 - Do not edit backend files.
 
 Scope examples:
-- `ui/src/app/components/providers/**`
+- `ui/src/app/components/domain/providers/**`
 - `ui/src/providers/**`
 - `ui/src/app/pages/**` (only if requested)
 
@@ -41,9 +41,9 @@ Reference implementation + test anchors:
   - `ui/src/providers/provider.development.json`
   - `ui/src/providers/provider.production.json`
 - Runtime parity tests:
-  - `ui/src/app/components/providers/speech-to-text/__tests__/provider-runtime-parity.test.ts`
-  - `ui/src/app/components/providers/text-to-speech/__tests__/provider-runtime-parity.test.ts`
-  - `ui/src/app/components/providers/__tests__/audio-input-advanced-defaults-parity.test.ts`
+  - `ui/src/app/components/domain/providers/__tests__/speech-to-text-provider-runtime.test.ts`
+  - `ui/src/app/components/domain/providers/__tests__/text-to-speech-provider-runtime.test.ts`
+  - `ui/src/app/components/domain/providers/__tests__/audio-input-advanced-defaults-parity.test.ts`
 
 Validation commands:
 - `cd ui && yarn test providers`

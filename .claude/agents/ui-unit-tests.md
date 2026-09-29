@@ -28,15 +28,15 @@ Reference test patterns (copy style from these):
 - STT/TTS provider parity:
   - `ui/src/providers/__tests__/provider-stt-comparison.test.ts`
   - `ui/src/providers/__tests__/provider-tts-comparison.test.ts`
-  - `ui/src/app/components/providers/speech-to-text/__tests__/provider-runtime-parity.test.ts`
-  - `ui/src/app/components/providers/text-to-speech/__tests__/provider-runtime-parity.test.ts`
-- Text provider normalization/parity:
-  - `ui/src/app/components/providers/text/__tests__/provider-runtime-parity.test.ts`
-  - `ui/src/app/components/providers/text/__tests__/model-normalization.test.ts`
+  - `ui/src/app/components/domain/providers/__tests__/speech-to-text-provider-runtime.test.ts`
+  - `ui/src/app/components/domain/providers/__tests__/text-to-speech-provider-runtime.test.ts`
+- Text provider mapping/parity:
+  - `ui/src/app/components/domain/providers/__tests__/text-provider-runtime.test.ts`
+  - `ui/src/app/components/domain/providers/__tests__/text-provider.test.tsx`
 - VAD/EOS/noise defaulting behavior:
-  - `ui/src/app/components/providers/__tests__/audio-input-advanced-defaults-parity.test.ts`
+  - `ui/src/app/components/domain/providers/__tests__/audio-input-advanced-defaults-parity.test.ts`
 - Config rendering behavior:
-  - `ui/src/app/components/providers/__tests__/config-renderer.test.tsx`
+  - `ui/src/app/components/domain/providers/__tests__/config-renderer.test.tsx`
 - Page-level audio input behavior:
   - `ui/src/app/pages/assistant/actions/create-deployment/commons/__tests__/configure-audio-input.design.test.tsx`
 
