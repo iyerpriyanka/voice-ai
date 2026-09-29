@@ -9,15 +9,17 @@ export function Dashboard({ isLoading }: { isLoading?: boolean }) {
   const { pathname } = location;
   const currentPath = '/dashboard';
   return (
-    <SidebarSimpleListItem
-      navigate={currentPath}
-      active={pathname.includes(currentPath)}
-      loading={isLoading}
-    >
-      <SidebarIconWrapper>
-        <DashboardIcon size={20} />
-      </SidebarIconWrapper>
-      <SidebarLabel isLoading={isLoading}>Dashboard</SidebarLabel>
-    </SidebarSimpleListItem>
+    <li>
+      <SidebarSimpleListItem
+        navigate={currentPath}
+        active={pathname.includes(currentPath)}
+        loading={isLoading}
+      >
+        <SidebarIconWrapper>
+          <DashboardIcon size={20} />
+        </SidebarIconWrapper>
+        <SidebarLabel isLoading={isLoading}>Dashboard</SidebarLabel>
+      </SidebarSimpleListItem>
+    </li>
   );
 }

@@ -4,10 +4,22 @@ import '@testing-library/jest-dom';
 
 import { EndpointDetailTabContent } from '@/app/pages/endpoint/view/pages';
 
+jest.mock('@/app/pages/endpoint/view/pages/overview-page', () => ({
+  EndpointOverviewPage: ({
+    currentEndpoint,
+    currentEndpointProviderModel,
+  }: any) => (
+    <section>
+      Overview summary {currentEndpoint.getName()}{' '}
+      {currentEndpointProviderModel.getId()}
+    </section>
+  ),
+}));
+
 jest.mock('@/app/pages/endpoint/view/try-playground', () => ({
   Playground: ({ currentEndpoint, currentEndpointProviderModel }: any) => (
     <section>
-      Overview page {currentEndpoint.getName()}{' '}
+      Playground page {currentEndpoint.getName()}{' '}
       {currentEndpointProviderModel.getId()}
     </section>
   ),
@@ -27,6 +39,12 @@ jest.mock('@/app/pages/endpoint/view/version-list', () => ({
         Reload versions
       </button>
     </section>
+  ),
+}));
+
+jest.mock('@/app/pages/endpoint/view/pages/settings-page', () => ({
+  EndpointSettingsPage: ({ currentEndpoint }: any) => (
+    <section>Settings page {currentEndpoint.getName()}</section>
   ),
 }));
 
@@ -53,7 +71,22 @@ describe('EndpointDetailTabContent', () => {
     );
 
     expect(
-      screen.getByText('Overview page Production endpoint epm-1'),
+      screen.getByText('Overview summary Production endpoint epm-1'),
+    ).toBeInTheDocument();
+  });
+
+  it('renders the playground only for the playground tab', () => {
+    render(
+      <EndpointDetailTabContent
+        activeTab="playground"
+        currentEndpoint={makeEndpoint()}
+        currentEndpointProviderModel={makeEndpointProviderModel()}
+        onReload={jest.fn()}
+      />,
+    );
+
+    expect(
+      screen.getByText('Playground page Production endpoint epm-1'),
     ).toBeInTheDocument();
   });
 
@@ -88,6 +121,21 @@ describe('EndpointDetailTabContent', () => {
     expect(onReload).toHaveBeenCalledTimes(1);
   });
 
+  it('renders endpoint settings from the settings route key', () => {
+    render(
+      <EndpointDetailTabContent
+        activeTab="settings"
+        currentEndpoint={makeEndpoint()}
+        currentEndpointProviderModel={makeEndpointProviderModel()}
+        onReload={jest.fn()}
+      />,
+    );
+
+    expect(
+      screen.getByText('Settings page Production endpoint'),
+    ).toBeInTheDocument();
+  });
+
   it('renders nothing until endpoint data is ready', () => {
     const { container } = render(
       <EndpointDetailTabContent
@@ -112,7 +160,7 @@ describe('EndpointDetailTabContent', () => {
     );
 
     expect(
-      screen.getByText('Overview page Production endpoint epm-1'),
+      screen.getByText('Overview summary Production endpoint epm-1'),
     ).toBeInTheDocument();
   });
 });

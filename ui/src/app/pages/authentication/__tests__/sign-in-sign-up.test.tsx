@@ -101,7 +101,22 @@ jest.mock('@/app/components/app-shell/helmet', () => ({
 }));
 
 jest.mock('@/app/components/ui/primitives/buttons/social-button-group', () => ({
-  SocialButtonGroup: () => <div data-testid="social-buttons" />,
+  SocialButtonGroup: ({
+    actionLabel,
+    google,
+    linkedin,
+  }: {
+    actionLabel?: string;
+    google: boolean;
+    linkedin: boolean;
+  }) => (
+    <div
+      data-action-label={actionLabel}
+      data-google={google}
+      data-linkedin={linkedin}
+      data-testid="social-buttons"
+    />
+  ),
 }));
 
 jest.mock('@/app/components/ui/primitives/form', () => ({
@@ -177,8 +192,8 @@ describe('Authentication pages', () => {
           enable: true,
           providers: {
             password: true,
-            google: true,
-            linkedin: false,
+            google: false,
+            linkedin: true,
             github: false,
           },
         },
@@ -221,9 +236,9 @@ describe('Authentication pages', () => {
     renderWithAuth(<SignInPage />);
 
     expect(
-      screen.getByRole('heading', { level: 1, name: 'Signin' }),
+      screen.getByRole('heading', { level: 1, name: 'Sign in' }),
     ).toBeInTheDocument();
-    const signUpLink = screen.getByRole('link', { name: 'Sign-up' });
+    const signUpLink = screen.getByRole('link', { name: 'Sign up' });
     expect(signUpLink).toHaveAttribute('href', '/auth/signup');
     expect(signUpLink).toHaveClass('!underline');
     expect(
@@ -238,7 +253,7 @@ describe('Authentication pages', () => {
     renderWithAuth(<SignInPage />);
 
     expect(
-      screen.queryByRole('link', { name: 'Sign-up' }),
+      screen.queryByRole('link', { name: 'Sign up' }),
     ).not.toBeInTheDocument();
   });
 
@@ -260,9 +275,11 @@ describe('Authentication pages', () => {
     renderWithAuth(<SignUpPage />);
 
     expect(screen.getByText('403')).toBeInTheDocument();
-    expect(screen.getByText('Sign-up not enabled')).toBeInTheDocument();
+    expect(
+      screen.getByText('Account creation unavailable'),
+    ).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Go to signin' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Go to sign in' }));
     expect(mockGoTo).toHaveBeenCalledWith('/');
   });
 
@@ -296,7 +313,7 @@ describe('Authentication pages', () => {
       target: { value: 'secret' },
     });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Create account' }));
 
     await waitFor(() => {
       expect(RegisterUser).toHaveBeenCalled();
@@ -312,9 +329,9 @@ describe('Authentication pages', () => {
     renderWithAuth(<SignUpPage />);
 
     expect(
-      screen.getByRole('heading', { level: 1, name: 'Signup' }),
+      screen.getByRole('heading', { level: 1, name: 'Create account' }),
     ).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Sign-in' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Sign in' })).toHaveAttribute(
       'href',
       '/auth/signin',
     );
@@ -324,6 +341,18 @@ describe('Authentication pages', () => {
     expect(
       screen.getByRole('link', { name: 'Privacy Policy' }),
     ).toHaveAttribute('href', mockTheme.links.privacy);
+    expect(screen.getByTestId('social-buttons')).toHaveAttribute(
+      'data-action-label',
+      'Sign up',
+    );
+    expect(screen.getByTestId('social-buttons')).toHaveAttribute(
+      'data-google',
+      'false',
+    );
+    expect(screen.getByTestId('social-buttons')).toHaveAttribute(
+      'data-linkedin',
+      'true',
+    );
   });
 
   it('sign-up shows API human error message on register failure', async () => {
@@ -348,7 +377,7 @@ describe('Authentication pages', () => {
       target: { value: 'secret' },
     });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Create account' }));
 
     expect(await screen.findByText('Email already exists')).toBeInTheDocument();
   });

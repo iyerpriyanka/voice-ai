@@ -1,12 +1,9 @@
-const fs = require('fs');
-const path = require('path');
 const {
   COLOR_MODES,
   expect,
   gotoJourney,
   setColorMode,
-  screenshotName,
-  screenshotPath,
+  screenshotBaselinePath,
   test,
 } = require('./fixtures');
 const { journeysWithCheck } = require('./route-manifest');
@@ -23,15 +20,13 @@ for (const journey of journeysWithCheck('screenshot')) {
         colorMode,
       );
 
-      const targetPath = screenshotPath(journey, colorMode);
-      fs.mkdirSync(path.dirname(targetPath), { recursive: true });
-      await page.screenshot({ path: targetPath, fullPage: true });
-
-      expect(fs.existsSync(targetPath)).toBe(true);
-      await expect(page).toHaveScreenshot(screenshotName(journey, colorMode), {
-        fullPage: true,
-        maxDiffPixelRatio: 0.01,
-      });
+      await expect(page).toHaveScreenshot(
+        screenshotBaselinePath(journey, colorMode),
+        {
+          fullPage: true,
+          maxDiffPixelRatio: 0.01,
+        },
+      );
     });
   }
 }

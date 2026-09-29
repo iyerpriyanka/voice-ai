@@ -175,15 +175,26 @@ export const useAssistantPageStore = create<AssistantType>((set, get) => ({
   },
 
   setCriterias: (v: { k: string; v: string; logic: string }[]) => {
-    set({
-      page: 1,
-      criteria: v
-        .filter(c => c.v)
-        .map(c => ({
-          key: c.k,
-          logic: c.logic,
-          value: c.v,
-        })),
+    const criteria = v
+      .filter(c => c.v)
+      .map(c => ({
+        key: c.k,
+        logic: c.logic,
+        value: c.v,
+      }));
+
+    set(state => {
+      const isUnchanged =
+        state.page === 1 &&
+        state.criteria.length === criteria.length &&
+        state.criteria.every(
+          (current, index) =>
+            current.key === criteria[index].key &&
+            current.logic === criteria[index].logic &&
+            current.value === criteria[index].value,
+        );
+
+      return isUnchanged ? state : { page: 1, criteria };
     });
   },
 

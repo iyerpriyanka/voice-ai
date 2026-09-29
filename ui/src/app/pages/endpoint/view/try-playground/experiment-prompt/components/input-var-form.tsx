@@ -129,7 +129,7 @@ export function EndpointArgumentField(props: {
   return (
     <div
       className={cn(
-        'border-b border-gray-200 bg-white px-4 py-4 dark:border-gray-800 dark:bg-gray-900',
+        'border-b border-[var(--cds-border-subtle-01)] bg-[var(--cds-layer-01)] px-4 py-4',
         'last:border-b-0',
       )}
     >
@@ -139,13 +139,13 @@ export function EndpointArgumentField(props: {
       >
         <span className="min-w-0">
           <span
-            className="block truncate font-mono text-sm font-semibold text-gray-900 dark:text-gray-100"
+            className="block truncate font-mono text-sm font-semibold text-[var(--cds-text-primary)]"
             title={variable.getName()}
           >
             {`{{${variable.getName()}}}`}
           </span>
           {variable.getDefaultvalue() && (
-            <span className="mt-1 block text-xs text-gray-500 dark:text-gray-400">
+            <span className="mt-1 block text-xs text-[var(--cds-text-secondary)]">
               Default value loaded
             </span>
           )}
@@ -184,12 +184,12 @@ export function EndpointArgumentList(props: {
 
   if (variables.length === 0) {
     return (
-      <div className="flex min-h-[14rem] items-center justify-center border-b border-gray-200 bg-white px-6 text-center dark:border-gray-800 dark:bg-gray-900">
+      <div className="flex min-h-[14rem] items-center justify-center bg-[var(--cds-layer-01)] px-6 text-center">
         <div>
-          <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+          <p className="text-sm font-semibold text-[var(--cds-text-primary)]">
             No arguments defined
           </p>
-          <p className="mt-1 max-w-sm text-sm text-gray-500 dark:text-gray-400">
+          <p className="mt-1 max-w-sm text-sm text-[var(--cds-text-secondary)]">
             This endpoint does not expose prompt variables.
           </p>
         </div>
@@ -198,7 +198,7 @@ export function EndpointArgumentList(props: {
   }
 
   return (
-    <div className="divide-y divide-gray-200 dark:divide-gray-800">
+    <div className="divide-y divide-[var(--cds-border-subtle-01)]">
       {variables.map(variable => {
         const editable = isEndpointVariableEditable(variable.getType());
         return (

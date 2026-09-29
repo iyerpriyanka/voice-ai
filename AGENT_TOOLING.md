@@ -23,7 +23,7 @@ verification, and its remaining limitation.
 | External content | `bin/agent-egress` | Allowlisted paths, sensitive-path refusal, and secret-looking line redaction. |
 | Git lifecycle | `githooks/` and `.pre-commit-config.yaml` | Versioned pre-commit, commit-message, and pre-push gates. |
 | Independent review | `bin/agent-review` | Run configured read-only reviewers and aggregate a validated Standard or high-risk panel. |
-| Browser quality | `ui/playwright.config.ts` | Run Chromium accessibility checks and a reviewed screenshot contract for a stable critical route. |
+| Browser quality | `ui/playwright.config.js` | Run the canonical Chromium route, accessibility, and reviewed screenshot suite. |
 | Capability status | `agent-tooling-manifest.json` | Declare built, partial, and designed controls with executable evidence. |
 
 ## Commands
@@ -70,8 +70,10 @@ combined JSON and Markdown panel under the ignored `.agent-reviews/` directory b
 ## Browser Quality
 
 `just ui-browser-test` starts the UI when `PLAYWRIGHT_BASE_URL` is absent and runs Chromium checks.
-The initial contract covers the sign-in route for serious accessibility violations and a stable
-authentication-card screenshot. Update a screenshot only after reviewing the rendered difference:
+The route manifest records smoke, accessibility, and screenshot decisions for enabled UI routes.
+Accessibility checks cover serious and critical violations in light and dark modes, and selected
+stable journeys retain reviewed full-page screenshots. Update screenshots only after reviewing the
+rendered differences:
 
 ```bash
 cd ui

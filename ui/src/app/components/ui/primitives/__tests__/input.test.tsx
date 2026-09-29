@@ -3,6 +3,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import { Input } from '../input';
+import { InputHelper } from '../input-helper';
 
 jest.mock('@carbon/react', () => {
   const React = require('react');
@@ -94,5 +95,15 @@ describe('Input', () => {
     expect(input.id).toMatch(/^input-/);
     expect(input).toBeDisabled();
     expect(input).toHaveValue('doc-1');
+  });
+});
+
+describe('InputHelper', () => {
+  it('uses the Carbon secondary text token for readable helper copy', () => {
+    render(<InputHelper>Helpful context</InputHelper>);
+
+    expect(screen.getByText('Helpful context')).toHaveClass(
+      'text-[var(--cds-text-secondary)]',
+    );
   });
 });

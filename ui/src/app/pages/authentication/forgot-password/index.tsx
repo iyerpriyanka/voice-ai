@@ -51,7 +51,10 @@ export function ForgotPasswordPage() {
     <Stack gap={6}>
       <Helmet title="Forgot your password" />
       <Stack gap={2}>
-        <h1 className="m-0 text-[1.8rem] leading-tight">Forgot Password</h1>
+        <h1 className="m-0 text-[1.8rem] leading-tight">Reset your password</h1>
+        <p className="mt-1.5 text-sm leading-[1.4286] text-(--cds-text-secondary)">
+          Enter your email and we will send you a reset link.
+        </p>
         <div
           aria-hidden="true"
           className={`h-px bg-gray-300 dark:bg-gray-900 mt-3`}
@@ -86,7 +89,7 @@ export function ForgotPasswordPage() {
             isLoading={loading}
             className="!w-full !max-w-none !justify-between"
           >
-            Send Email
+            Send reset link
           </PrimaryButton>
         </Stack>
         <div
@@ -98,7 +101,7 @@ export function ForgotPasswordPage() {
       <Stack gap={2}>
         <p className="text-center">
           <Link href="/auth/signin" className="text-sm !underline">
-            Back to sign in?
+            Back to sign in
           </Link>
         </p>
       </Stack>

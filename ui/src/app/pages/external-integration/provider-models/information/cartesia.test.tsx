@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter } from 'react-router-dom';
 
@@ -28,7 +28,9 @@ jest.mock(
 );
 
 jest.mock('@/app/components/layout/blocks/page-header-block', () => ({
-  PageHeaderBlock: ({ children }: any) => <header>{children}</header>,
+  PageHeaderBlock: ({ children, className }: any) => (
+    <header className={className}>{children}</header>
+  ),
 }));
 
 jest.mock('@/app/components/layout/blocks/page-title-block', () => ({
@@ -44,45 +46,30 @@ jest.mock('@/app/components/layout/wrapper/blured-wrapper', () => ({
 }));
 
 jest.mock('@/app/components/ui/primitives/button', () => ({
-  GhostButton: ({ children, ...props }: React.ComponentProps<'button'>) => (
+  GhostButton: ({ children, renderIcon: Icon, ...props }: any) => (
     <button type="button" {...props}>
       {children}
+      {Icon ? <Icon /> : null}
     </button>
   ),
-  PrimaryButton: ({ children, ...props }: React.ComponentProps<'button'>) => (
+  PrimaryButton: ({ children, renderIcon: Icon, ...props }: any) => (
     <button type="button" {...props}>
       {children}
+      {Icon ? <Icon /> : null}
     </button>
-  ),
-}));
-
-jest.mock('@/app/components/ui/composites/icon-input', () => ({
-  SearchIconInput: ({ onChange }: any) => (
-    <input
-      aria-label="Search"
-      onChange={event => onChange(event)}
-      type="search"
-    />
-  ),
-}));
-
-jest.mock('@/app/components/ui/primitives/tooltip', () => ({
-  Tooltip: ({ children, icon }: any) => (
-    <span>
-      {icon}
-      {children}
-    </span>
   ),
 }));
 
 jest.mock(
-  '@/app/pages/external-integration/provider-models/information/voice-card',
+  '@/app/pages/external-integration/provider-models/information/voice-catalog',
   () => ({
-    VoiceCard: ({ title, voiceId }: any) => (
-      <article>
-        <h2>{title}</h2>
-        <span>{voiceId}</span>
-      </article>
+    VoiceCatalog: ({ actions, voices }: any) => (
+      <section aria-label="Voice catalogue">
+        <div data-testid="voice-catalog-actions">{actions}</div>
+        {voices.map((voice: any) => (
+          <div key={voice.voiceId}>{voice.title}</div>
+        ))}
+      </section>
     ),
   }),
 );
@@ -126,13 +113,7 @@ jest.mock('@carbon/icons-react', () => ({
       data-testid="add-icon"
     />
   ),
-  Checkmark: ({ className, strokeWidth }: any) => (
-    <svg
-      className={className}
-      data-stroke-width={strokeWidth}
-      data-testid="status-icon"
-    />
-  ),
+  ModelAlt: (props: any) => <svg {...props} />,
 }));
 
 const renderPage = (path = '/providers/cartesia') =>
@@ -146,25 +127,38 @@ describe('CartesiaModelInformationPage', () => {
   it('renders provider status and add credential actions', async () => {
     renderPage();
 
-    expect(screen.getByRole('button', { name: /add new credential/i }));
-    expect(screen.getByTestId('add-icon')).toHaveClass('ml-1.5');
+    const providerHeader = screen.getByRole('banner');
+    expect(providerHeader).toHaveClass('min-h-24');
+    expect(providerHeader).not.toContainElement(
+      screen.getByRole('button', { name: /add new credential/i }),
+    );
+    expect(screen.getByTestId('voice-catalog-actions')).toContainElement(
+      screen.getByRole('button', { name: /add new credential/i }),
+    );
+    expect(screen.getByTestId('add-icon')).toBeInTheDocument();
     expect(screen.getByTestId('add-icon')).not.toHaveAttribute(
       'data-stroke-width',
     );
 
     await waitFor(() =>
-      expect(screen.getByTestId('status-icon')).toHaveClass('bg-blue-500'),
-    );
-    expect(screen.getByTestId('status-icon')).not.toHaveAttribute(
-      'data-stroke-width',
+      expect(screen.getByText('Connected')).toBeInTheDocument(),
     );
   });
 
-  it('filters voices from the query string while keeping page actions visible', () => {
-    renderPage('/providers/cartesia?query=beta');
+  it('maps provider voices while keeping page actions visible', () => {
+    renderPage('/providers/cartesia');
 
     expect(screen.getByText('Beta')).toBeInTheDocument();
-    expect(screen.queryByText('Alpha')).not.toBeInTheDocument();
+    expect(screen.getByText('Alpha')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /add new credential/i }));
+  });
+
+  it('shows a deterministic fallback when the provider logo fails', () => {
+    renderPage();
+
+    const logo = screen.getByRole('img', { name: 'Cartesia logo' });
+    fireEvent.error(logo);
+
+    expect(screen.getByTestId('provider-logo-fallback')).toBeInTheDocument();
   });
 });

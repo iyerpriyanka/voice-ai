@@ -1,9 +1,7 @@
 import { Metric } from '@rapidaai/react';
-import { PlainWrapper } from '@/app/components/layout/wrapper/alert-wrapper';
 import { cn } from '@/utils';
-import { Loading } from '@carbon/react';
-import { Checkmark, Play, WarningAlt } from '@carbon/icons-react';
-import React, { FC } from 'react';
+import { InlineLoading, InlineNotification } from '@carbon/react';
+import { FC } from 'react';
 import { FieldErrors } from 'react-hook-form';
 
 export const ExecuteMessage: FC<{
@@ -13,47 +11,77 @@ export const ExecuteMessage: FC<{
   metrics: Array<Metric>;
   className?: string;
 }> = ({ apiError, loading, formError, className, metrics }) => {
+  const messageClassName = cn('!m-0 !max-w-full', className);
+
   if (loading) {
     return (
-      <PlainWrapper className={cn(className, 'flex items-center')}>
-        <Loading description="Executing endpoint" withOverlay={false} small />
-        <div className="text-sm">Executing your endpoint.</div>
-      </PlainWrapper>
+      <div
+        className={cn(
+          'flex min-h-12 items-center border-b border-[var(--cds-border-subtle-01)] bg-[var(--cds-layer-01)] px-4',
+          className,
+        )}
+      >
+        <InlineLoading
+          status="active"
+          iconDescription="Executing endpoint"
+          description="Executing your endpoint."
+        />
+      </div>
     );
   }
-  if (apiError)
-    return (
-      <PlainWrapper className={className}>
-        <WarningAlt className="w-5 h-5 text-red-600 dark:text-red-700" />
-        <div className="text-sm text-red-600">{apiError}</div>
-      </PlainWrapper>
-    );
 
-  if (formError && Object.entries(formError).length > 0)
+  if (apiError) {
     return (
-      <PlainWrapper className={className}>
-        <WarningAlt className="w-5 h-5 text-red-600 dark:text-red-700" />
-        <ul className="text-sm text-red-600">
-          {Object.entries(formError).map(([key, error]) => (
-            <li key={key}>{error?.message?.toString()}</li>
-          ))}
-        </ul>
-      </PlainWrapper>
+      <InlineNotification
+        className={messageClassName}
+        kind="error"
+        lowContrast
+        hideCloseButton
+        role="alert"
+        title="Endpoint execution failed"
+        subtitle={apiError}
+      />
     );
+  }
+
+  const formErrors = Object.values(formError ?? {})
+    .map(error => error?.message?.toString())
+    .filter((message): message is string => Boolean(message));
+
+  if (formErrors.length > 0) {
+    return (
+      <InlineNotification
+        className={messageClassName}
+        kind="warning"
+        lowContrast
+        hideCloseButton
+        title="Check the endpoint arguments"
+        subtitle={formErrors.join(' ')}
+      />
+    );
+  }
+
   if (metrics.length > 0) {
     return (
-      <PlainWrapper className={className}>
-        <Checkmark className="w-5 h-5 text-green-600 dark:text-green-700" />
-        <div className="text-sm font-medium">Executed successfully.</div>
-      </PlainWrapper>
+      <InlineNotification
+        className={messageClassName}
+        kind="success"
+        lowContrast
+        hideCloseButton
+        title="Endpoint executed"
+        subtitle="The response and execution details are ready below."
+      />
     );
   }
+
   return (
-    <PlainWrapper>
-      <Play className="w-5 h-5 text-blue-600 dark:text-blue-700" />
-      <div className="text-sm font-medium">
-        Click on the button to execute endpoint.
-      </div>
-    </PlainWrapper>
+    <InlineNotification
+      className={messageClassName}
+      kind="info"
+      lowContrast
+      hideCloseButton
+      title="Ready to run"
+      subtitle="Run the endpoint to view its output, metadata, and metrics."
+    />
   );
 };

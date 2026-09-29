@@ -176,6 +176,23 @@ describe('useAssistantPageStore', () => {
     ]);
   });
 
+  it('does not publish unchanged first-page criteria but resets later pages', () => {
+    const listener = jest.fn();
+    const unsubscribe = useAssistantPageStore.subscribe(listener);
+
+    useAssistantPageStore.getState().setCriterias([]);
+
+    expect(listener).not.toHaveBeenCalled();
+
+    useAssistantPageStore.getState().setPage(2);
+    listener.mockClear();
+    useAssistantPageStore.getState().setCriterias([]);
+
+    expect(useAssistantPageStore.getState().page).toBe(1);
+    expect(listener).toHaveBeenCalledTimes(1);
+    unsubscribe();
+  });
+
   it('handles successful onGetAllAssistant response', async () => {
     const assistant = makeAssistant('a-1');
     const onSuccess = jest.fn();

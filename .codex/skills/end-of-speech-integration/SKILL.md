@@ -16,7 +16,7 @@ In scope:
 - `api/assistant-api/internal/end_of_speech/end_of_speech.go`
 - `api/assistant-api/internal/type/executor.go` and packet compatibility only if required
 - `ui/src/providers/<provider>/eos.json` and optional `model-options.json`
-- `ui/src/app/components/providers/end-of-speech/`
+- `ui/src/app/components/domain/providers/end-of-speech/`
 
 Out of scope:
 - `api/assistant-api/internal/vad/internal/...`

@@ -1,17 +1,4 @@
-const shellKnownViolations = [
-  {
-    id: 'button-name',
-    target: /#downshift-.*-toggle-button/,
-    maxNodes: 1,
-    reason: 'The shell theme selector renders an unnamed Downshift toggle.',
-  },
-  {
-    id: 'list',
-    target: 'nav > ul',
-    maxNodes: 1,
-    reason: 'The sidebar navigation currently renders section labels in a ul.',
-  },
-];
+const shellKnownViolations = [];
 
 const authenticatedShellJourneys = [
   'dashboard.home',
@@ -56,23 +43,6 @@ const journeyKnownViolations = {
   ],
   'dashboard.home': [
     ...shellKnownViolations,
-    {
-      id: 'color-contrast',
-      target: '.cds--btn--secondary',
-      maxNodes: 1,
-      reason:
-        'The dashboard secondary action has insufficient contrast in dark mode.',
-    },
-  ],
-  'deployment.assistant': [
-    ...shellKnownViolations,
-    {
-      id: 'color-contrast',
-      target: '.tabular-nums',
-      maxNodes: 1,
-      reason:
-        'Assistant count text uses the current low-contrast secondary color.',
-    },
   ],
   'deployment.endpoint': [
     ...shellKnownViolations,

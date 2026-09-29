@@ -15,6 +15,7 @@ type DropdownDirection = 'top' | 'bottom';
 
 export interface CarbonDropdownProps<T> {
   id: string;
+  'aria-label'?: string;
   titleText: ReactNode;
   label: string;
   items: T[];
@@ -40,6 +41,7 @@ export interface CarbonDropdownProps<T> {
 /** Carbon Dropdown: single-select dropdown list. */
 export function Dropdown<T>({
   id,
+  'aria-label': ariaLabel,
   titleText,
   label,
   items,
@@ -72,6 +74,7 @@ export function Dropdown<T>({
   return (
     <CarbonDropdown
       id={id}
+      aria-label={ariaLabel}
       titleText={titleText}
       label={label}
       items={items}

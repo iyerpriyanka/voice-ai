@@ -8,6 +8,7 @@ import { MarkdownViewer } from '../markdown-viewer';
 
 const mockEditorDisposables: Array<() => void> = [];
 const mockUpdateOptions = jest.fn();
+const mockAddContentWidget = jest.fn();
 
 jest.mock('@/theme/theme-provider', () => ({
   useTheme: () => ({ resolvedMode: 'dark' }),
@@ -94,7 +95,7 @@ jest.mock('@monaco-editor/react', () => {
     React.useEffect(() => {
       let currentValue = value;
       const editor = {
-        addContentWidget: jest.fn(),
+        addContentWidget: mockAddContentWidget,
         focus: jest.fn(),
         getModel: () => ({ uri: { toString: () => 'test://model.json' } }),
         getValue: () => currentValue,
@@ -145,6 +146,7 @@ describe('editor components', () => {
       },
     });
     mockUpdateOptions.mockClear();
+    mockAddContentWidget.mockClear();
     mockEditorDisposables.length = 0;
   });
 
@@ -158,7 +160,7 @@ describe('editor components', () => {
 
     const { unmount } = render(
       <JsonEditor
-        value='{"a":1}'
+        value=""
         placeholder="Enter JSON"
         onChange={onChange}
         configureEditor={() => ({ dispose })}
@@ -167,6 +169,10 @@ describe('editor components', () => {
 
     const editor = screen.getByLabelText('json-editor');
     expect(editor).toHaveAttribute('data-theme', 'vs-dark');
+    const placeholderWidget = mockAddContentWidget.mock.calls[0][0];
+    expect(placeholderWidget.getDomNode()).toHaveStyle({
+      color: 'var(--cds-text-secondary)',
+    });
 
     fireEvent.change(editor, { target: { value: '{"a":2}' } });
     expect(onChange).toHaveBeenCalledWith('{"a":2}');

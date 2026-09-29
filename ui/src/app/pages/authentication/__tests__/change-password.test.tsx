@@ -64,13 +64,17 @@ describe('ChangePasswordPage', () => {
   it('shows token expiry error when token is missing', async () => {
     render(<ChangePasswordPage />);
 
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Set a new password' }),
+    ).toBeInTheDocument();
+
     fireEvent.change(screen.getAllByPlaceholderText('********')[0], {
       target: { value: 'secret' },
     });
     fireEvent.change(screen.getAllByPlaceholderText('********')[1], {
       target: { value: 'secret' },
     });
-    fireEvent.click(screen.getByRole('button', { name: 'Change Password' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Save new password' }));
 
     expect(
       await screen.findByText(
@@ -91,7 +95,7 @@ describe('ChangePasswordPage', () => {
     fireEvent.change(screen.getAllByPlaceholderText('********')[1], {
       target: { value: 'secret-2' },
     });
-    fireEvent.click(screen.getByRole('button', { name: 'Change Password' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Save new password' }));
 
     expect(
       await screen.findByText(
@@ -117,7 +121,7 @@ describe('ChangePasswordPage', () => {
     fireEvent.change(screen.getAllByPlaceholderText('********')[1], {
       target: { value: 'secret' },
     });
-    fireEvent.click(screen.getByRole('button', { name: 'Change Password' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Save new password' }));
 
     await waitFor(() => {
       expect(CreatePassword).toHaveBeenCalled();
@@ -143,7 +147,7 @@ describe('ChangePasswordPage', () => {
     fireEvent.change(screen.getAllByPlaceholderText('********')[1], {
       target: { value: 'secret' },
     });
-    fireEvent.click(screen.getByRole('button', { name: 'Change Password' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Save new password' }));
 
     expect(
       await screen.findByText(
@@ -172,7 +176,7 @@ describe('ChangePasswordPage', () => {
     fireEvent.change(screen.getAllByPlaceholderText('********')[1], {
       target: { value: 'secret' },
     });
-    fireEvent.click(screen.getByRole('button', { name: 'Change Password' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Save new password' }));
 
     expect(await screen.findByText('Token invalid')).toBeInTheDocument();
   });
@@ -196,7 +200,7 @@ describe('ChangePasswordPage', () => {
     fireEvent.change(screen.getAllByPlaceholderText('********')[1], {
       target: { value: 'secret' },
     });
-    fireEvent.click(screen.getByRole('button', { name: 'Change Password' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Save new password' }));
 
     expect(
       await screen.findByText(

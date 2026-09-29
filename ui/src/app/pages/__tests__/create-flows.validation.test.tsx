@@ -394,10 +394,19 @@ describe('Requested create/update flow pages', () => {
     });
 
     renderWithTheme(<ForgotPasswordPage />);
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Reset your password' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('Enter your email and we will send you a reset link.'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: 'Back to sign in' }),
+    ).toHaveAttribute('href', '/auth/signin');
     fireEvent.change(screen.getByPlaceholderText('eg: john@example.com'), {
       target: { value: 'user@x.com' },
     });
-    fireEvent.click(screen.getByRole('button', { name: 'Send Email' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Send reset link' }));
 
     expect(
       await screen.findByText(/Thanks! An email was sent/i),

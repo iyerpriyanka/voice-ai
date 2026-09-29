@@ -321,13 +321,13 @@ export function CreateEndpointPage() {
                   {/* Corner accent brackets */}
                   <CornerBorderOverlay />
                   <div className="flex flex-col gap-1 min-w-0">
-                    <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-gray-500 dark:text-gray-400">
+                    <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-[var(--cds-text-secondary)]">
                       Quick start
                     </span>
                     <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                       Usecase Template
                     </span>
-                    <span className="text-xs text-gray-500 dark:text-gray-500 leading-relaxed">
+                    <span className="text-xs text-[var(--cds-text-secondary)] leading-relaxed">
                       Browse pre-configured templates and auto-fill your form.
                     </span>
                   </div>

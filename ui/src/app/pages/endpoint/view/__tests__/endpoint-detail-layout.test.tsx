@@ -2,42 +2,52 @@ import React from 'react';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import { EndpointSideNav } from '@/app/pages/endpoint/view/endpoint-side-nav';
 import { ViewEndpointPage } from '@/app/pages/endpoint/view';
 import { EndpointViewLayout } from '@/app/pages/endpoint/view/endpoint-view.layout';
 import { useEndpointPageStore } from '@/stores/endpoint';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
-const mockNavigate = jest.fn();
 const mockShowLoader = jest.fn();
 const mockHideLoader = jest.fn();
 const mockOnGetEndpoint = jest.fn();
-const mockOnShowInstruction = jest.fn();
-const mockOnShowUpdateDetailVisible = jest.fn();
-const mockOnShowEditTagVisible = jest.fn();
-const mockWriteText = jest.fn();
-
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useNavigate: () => mockNavigate,
-}));
 
 jest.mock('@carbon/icons-react', () => ({
+  Activity: ({ size }: any) => (
+    <span aria-hidden="true" data-icon-size={size}>
+      activity
+    </span>
+  ),
   Application: ({ size }: any) => (
     <span data-icon-size={size}>application</span>
   ),
   Checkmark: ({ size }: any) => <span data-icon-size={size}>checkmark</span>,
   Code: ({ size }: any) => <span data-icon-size={size}>code</span>,
   Copy: ({ size }: any) => <span data-icon-size={size}>copy</span>,
-  Debug: ({ size }: any) => <span data-icon-size={size}>debug</span>,
+  Dashboard: ({ size }: any) => (
+    <span aria-hidden="true" data-icon-size={size}>
+      dashboard
+    </span>
+  ),
+  Debug: ({ size }: any) => (
+    <span aria-hidden="true" data-icon-size={size}>
+      debug
+    </span>
+  ),
   Edit: ({ size }: any) => <span data-icon-size={size}>edit</span>,
   Globe: ({ size }: any) => <span data-icon-size={size}>globe</span>,
   Information: ({ size }: any) => <span data-icon-size={size}>info</span>,
   LogoPython: ({ size }: any) => <span data-icon-size={size}>python</span>,
   LogoReact: ({ size }: any) => <span data-icon-size={size}>react</span>,
   Phone: ({ size }: any) => <span data-icon-size={size}>phone</span>,
+  Play: ({ size }: any) => (
+    <span aria-hidden="true" data-icon-size={size}>
+      play
+    </span>
+  ),
   SourceControl: ({ size }: any) => (
-    <span data-icon-size={size}>source-control</span>
+    <span aria-hidden="true" data-icon-size={size}>
+      source-control
+    </span>
   ),
   Tag: ({ size }: any) => <span data-icon-size={size}>tag</span>,
   SidePanelClose: () => <span>close panel</span>,
@@ -69,6 +79,36 @@ jest.mock('@carbon/react', () => ({
       {children}
     </button>
   ),
+  Button: ({
+    children,
+    className,
+    kind,
+    renderIcon: Icon,
+    size,
+    ...props
+  }: any) => (
+    <button className={className} data-kind={kind} data-size={size} {...props}>
+      {Icon ? <Icon size={16} /> : null}
+      {children}
+    </button>
+  ),
+  Tabs: ({ children, selectedIndex }: any) => (
+    <div data-testid="endpoint-tabs" data-selected-index={selectedIndex}>
+      {children}
+    </div>
+  ),
+  TabList: ({ children, 'aria-label': ariaLabel, fullWidth }: any) => (
+    <div
+      role="tablist"
+      aria-label={ariaLabel}
+      data-full-width={String(Boolean(fullWidth))}
+    >
+      {children}
+    </div>
+  ),
+  Tab: ({ children }: any) => <button role="tab">{children}</button>,
+  TabPanels: ({ children }: any) => <div>{children}</div>,
+  TabPanel: ({ children }: any) => <div role="tabpanel">{children}</div>,
   SideNav: ({ children, expanded, isRail, className, ...props }: any) => (
     <aside
       className={className}
@@ -81,10 +121,16 @@ jest.mock('@carbon/react', () => ({
   ),
   SideNavItems: ({ children }: any) => <ul>{children}</ul>,
   SideNavLink: ({ children, isActive, href, renderIcon: Icon }: any) => (
-    <a data-active={isActive} href={href}>
-      {Icon ? <Icon size={16} /> : null}
-      {children}
-    </a>
+    <li>
+      <a
+        className={isActive ? 'cds--side-nav__link--current' : undefined}
+        data-active={isActive}
+        href={href}
+      >
+        {Icon ? <Icon size={16} /> : null}
+        {children}
+      </a>
+    </li>
   ),
   SideNavMenu: ({
     children,
@@ -100,7 +146,11 @@ jest.mock('@carbon/react', () => ({
     </li>
   ),
   SideNavMenuItem: ({ children, isActive, href }: any) => (
-    <a data-active={isActive} href={href}>
+    <a
+      className={isActive ? 'cds--side-nav__link--current' : undefined}
+      data-active={isActive}
+      href={href}
+    >
       {children}
     </a>
   ),
@@ -111,12 +161,20 @@ jest.mock('@/app/pages/endpoint/view/try-playground', () => ({
   Playground: () => <section>Endpoint playground</section>,
 }));
 
+jest.mock('@/app/pages/endpoint/view/pages/overview-page', () => ({
+  EndpointOverviewPage: () => <section>Endpoint summary</section>,
+}));
+
 jest.mock('@/app/pages/endpoint/view/traces', () => ({
   EndpointTraces: () => <section>Endpoint logs</section>,
 }));
 
 jest.mock('@/app/pages/endpoint/view/version-list', () => ({
   Version: () => <section>Endpoint versions</section>,
+}));
+
+jest.mock('@/app/pages/endpoint/view/pages/settings-page', () => ({
+  EndpointSettingsPage: () => <section>Endpoint settings</section>,
 }));
 
 jest.mock(
@@ -183,10 +241,6 @@ const renderEndpointDetailRoute = (
 describe('Endpoint detail layout', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    Object.defineProperty(navigator, 'clipboard', {
-      configurable: true,
-      value: { writeText: mockWriteText },
-    });
     useEndpointPageStore.setState({
       currentEndpoint: makeEndpoint(),
       currentEndpointProviderModel: {
@@ -196,9 +250,6 @@ describe('Endpoint detail layout', () => {
       editTagVisible: false,
       updateDetailVisible: false,
       onGetEndpoint: mockOnGetEndpoint,
-      onShowInstruction: mockOnShowInstruction,
-      onShowUpdateDetailVisible: mockOnShowUpdateDetailVisible,
-      onShowEditTagVisible: mockOnShowEditTagVisible,
     } as any);
     mockOnGetEndpoint.mockImplementation(
       (
@@ -215,150 +266,69 @@ describe('Endpoint detail layout', () => {
     );
   });
 
-  it('matches assistant side nav behavior for collapse and loading states', () => {
-    const onToggle = jest.fn();
-    const { rerender, container } = render(
-      <MemoryRouter
-        initialEntries={['/deployment/endpoint/endpoint-1/overview']}
-      >
-        <EndpointSideNav
-          endpointId="endpoint-1"
-          endpoint={makeEndpoint()}
-          expanded
-          onToggle={onToggle}
-        />
-      </MemoryRouter>,
-    );
-
-    expect(screen.getByLabelText('Endpoint actions')).toHaveAttribute(
-      'data-expanded',
-      'true',
-    );
-    expect(container.firstElementChild).toHaveClass('w-56');
-    expect(screen.getByText('Logs')).toHaveAttribute(
-      'href',
-      '/deployment/endpoint/endpoint-1/logs',
-    );
-    expect(screen.getByText('source-control')).toHaveAttribute(
-      'data-icon-size',
-      '16',
-    );
-    expect(screen.getByText('Overview')).toHaveAttribute('data-active', 'true');
-
-    rerender(
-      <MemoryRouter initialEntries={['/deployment/endpoint/endpoint-1/logs']}>
-        <EndpointSideNav
-          endpointId="endpoint-1"
-          endpoint={makeEndpoint()}
-          expanded={false}
-          onToggle={onToggle}
-        />
-      </MemoryRouter>,
-    );
-    expect(container.firstElementChild).toHaveClass('w-12');
-
-    rerender(
-      <MemoryRouter
-        initialEntries={['/deployment/endpoint/endpoint-1/overview']}
-      >
-        <EndpointSideNav
-          endpointId="endpoint-1"
-          endpoint={null}
-          expanded
-          onToggle={onToggle}
-        />
-      </MemoryRouter>,
-    );
-    expect(screen.getAllByText('Loading nav item').length).toBeGreaterThan(0);
-  });
-
-  it('keeps endpoint header and side nav visible on overview and logs URLs', () => {
+  it('uses the same collapsible Carbon side navigation as assistant details', () => {
     const overviewRender = renderEndpointDetailRoute(
       '/deployment/endpoint/endpoint-1/overview',
     );
-    expect(screen.getByText('Production endpoint')).toBeInTheDocument();
-    expect(screen.getByText('Endpoint playground')).toBeInTheDocument();
-    expect(screen.getByText('Logs')).toHaveAttribute(
+    expect(screen.getByText('Endpoint summary')).toBeInTheDocument();
+    const endpointNav = screen.getByRole('complementary', {
+      name: 'Endpoint actions',
+    });
+    expect(
+      Array.from(within(endpointNav).getByRole('list').children).every(
+        child => child.tagName === 'LI',
+      ),
+    ).toBe(true);
+    expect(endpointNav).toHaveAttribute('data-expanded', 'true');
+    expect(
+      within(endpointNav).getByRole('link', { name: 'Overview' }),
+    ).toHaveClass('cds--side-nav__link--current');
+    expect(within(endpointNav).getByText('Versions')).toBeInTheDocument();
+    expect(
+      within(endpointNav).getByRole('link', { name: 'View all' }),
+    ).toHaveAttribute('href', '/deployment/endpoint/endpoint-1/versions');
+    expect(
+      within(endpointNav).getByRole('link', { name: 'Add new version' }),
+    ).toHaveAttribute(
       'href',
-      '/deployment/endpoint/endpoint-1/logs',
+      '/deployment/endpoint/endpoint-1/create-endpoint-version',
     );
+    expect(
+      within(endpointNav).getByRole('link', { name: 'Logs' }),
+    ).toBeInTheDocument();
+    expect(within(endpointNav).getByText('Settings')).toBeInTheDocument();
+    expect(
+      within(endpointNav).getByRole('link', { name: 'General' }),
+    ).toHaveAttribute('href', '/deployment/endpoint/endpoint-1/settings');
+    expect(within(endpointNav).getByText('Playground')).toBeInTheDocument();
+    expect(
+      within(endpointNav).getByRole('link', { name: 'Open playground' }),
+    ).toHaveAttribute('href', '/deployment/endpoint/endpoint-1/playground');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Collapse nav' }));
+    expect(endpointNav).toHaveAttribute('data-expanded', 'false');
+    expect(
+      screen.getByRole('button', { name: 'Expand nav' }),
+    ).toBeInTheDocument();
 
     overviewRender.unmount();
     renderEndpointDetailRoute('/deployment/endpoint/endpoint-1/logs');
 
-    expect(screen.getByText('Production endpoint')).toBeInTheDocument();
     expect(screen.getByText('Endpoint logs')).toBeInTheDocument();
     expect(screen.queryByText('Endpoint playground')).not.toBeInTheDocument();
   });
 
-  it('keeps endpoint side nav visible on create version URL', () => {
+  it('keeps endpoint navigation visible and marks versions on the create version URL', () => {
     renderEndpointDetailRoute(
       '/deployment/endpoint/endpoint-1/create-endpoint-version',
     );
 
-    expect(screen.getByLabelText('Endpoint actions')).toBeInTheDocument();
-    expect(screen.getByText('Create endpoint version')).toBeInTheDocument();
-    expect(screen.getByText('Add new version')).toHaveAttribute(
-      'href',
-      '/deployment/endpoint/endpoint-1/create-endpoint-version',
-    );
-  });
-
-  it('uses a Carbon shell header with right-side global actions', () => {
-    renderEndpointDetailRoute();
-
-    const toolbar = screen.getByRole('toolbar', {
-      name: 'Endpoint header actions',
+    const endpointNav = screen.getByRole('complementary', {
+      name: 'Endpoint actions',
     });
-    expect(toolbar).toBeInTheDocument();
+    expect(screen.getByText('Create endpoint version')).toBeInTheDocument();
     expect(
-      within(toolbar)
-        .getAllByText(/source-control|info|edit|tag|copy/)
-        .map(icon => icon),
-    ).toHaveLength(5);
-    within(toolbar)
-      .getAllByText(/source-control|info|edit|tag|copy/)
-      .forEach(icon => expect(icon).toHaveAttribute('data-icon-size', '16'));
-    expect(screen.getByText('Endpoints')).toBeInTheDocument();
-    expect(screen.getByText('Production endpoint')).toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole('button', { name: 'Create new version' }));
-    expect(mockNavigate).toHaveBeenCalledWith(
-      '/deployment/endpoint/endpoint-1/create-endpoint-version',
-    );
-    expect(
-      screen.getByRole('button', { name: 'Create new version' }),
-    ).toHaveAttribute('data-tooltip-alignment', 'end');
-
-    fireEvent.click(screen.getByRole('button', { name: 'View instructions' }));
-    expect(mockOnShowInstruction).toHaveBeenCalledTimes(1);
-    expect(
-      screen.getByRole('button', { name: 'View instructions' }),
-    ).toHaveAttribute('data-tooltip-alignment', 'end');
-
-    fireEvent.click(screen.getByRole('button', { name: 'Edit details' }));
-    expect(mockOnShowUpdateDetailVisible).toHaveBeenCalledWith(
-      expect.objectContaining({
-        getId: expect.any(Function),
-      }),
-    );
-    expect(
-      screen.getByRole('button', { name: 'Edit details' }),
-    ).toHaveAttribute('data-tooltip-alignment', 'end');
-
-    fireEvent.click(screen.getByRole('button', { name: 'Edit tags' }));
-    expect(mockOnShowEditTagVisible).toHaveBeenCalledWith(
-      expect.objectContaining({
-        getId: expect.any(Function),
-      }),
-    );
-
-    expect(screen.getByRole('button', { name: 'Edit tags' })).toHaveAttribute(
-      'data-tooltip-alignment',
-      'end',
-    );
-    fireEvent.click(screen.getByRole('button', { name: 'Copy endpoint ID' }));
-    expect(mockWriteText).toHaveBeenCalledWith('endpoint-1');
-    expect(screen.getByRole('button', { name: 'Copied' })).toBeInTheDocument();
+      within(endpointNav).getByRole('link', { name: 'Add new version' }),
+    ).toHaveClass('cds--side-nav__link--current');
   });
 });

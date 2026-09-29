@@ -1,6 +1,32 @@
-const path = require('path');
 const { test: base, expect } = require('@playwright/test');
 const { evaluateA11yViolations } = require('./a11y-baseline');
+const { installGrpcWebPreflightMock } = require('./mocks/grpc-web');
+const {
+  ASSISTANT_LIST_PATH,
+  installAssistantClientMock,
+} = require('./mocks/clients/assistant');
+const {
+  AUTHENTICATION_PATHS,
+  installAuthenticationClientMock,
+  mockAuthenticationOperation,
+} = require('./mocks/clients/authentication');
+const {
+  ENDPOINT_LIST_PATH,
+  installEndpointClientMock,
+} = require('./mocks/clients/endpoint');
+const {
+  ACTIVITY_LIST_PATHS,
+  installActivityClientMock,
+} = require('./mocks/clients/activity');
+const {
+  CREDENTIAL_LIST_PATH,
+  installCredentialClientMock,
+} = require('./mocks/clients/credential');
+const {
+  ORGANIZATION_PATH,
+  WORKSPACE_LIST_PATHS,
+  installWorkspaceClientMock,
+} = require('./mocks/clients/workspace');
 
 const COLOR_MODES = ['light', 'dark'];
 
@@ -92,7 +118,7 @@ const dashboardDesign = {
 const authState = {
   state: {
     currentUser: {
-      id: 'user-e2e',
+      id: '101',
       name: 'E2E User',
       email: 'e2e@example.test',
     },
@@ -100,20 +126,20 @@ const authState = {
       token: 'token-e2e',
     },
     organizationRole: {
-      id: 'organization-role-e2e',
-      organizationid: 'organization-e2e',
+      id: '201',
+      organizationid: '202',
       role: 'admin',
     },
     projectRoles: [
       {
-        id: 'project-role-e2e',
-        projectid: 'project-e2e',
+        id: '301',
+        projectid: '302',
         role: 'admin',
       },
     ],
     currentProjectRole: {
-      id: 'project-role-e2e',
-      projectid: 'project-e2e',
+      id: '301',
+      projectid: '302',
       role: 'admin',
     },
     featurePermissions: [],
@@ -136,6 +162,13 @@ async function installBrowserFixtures(page) {
   );
   await page.route('http://localhost:8080/**', route => route.abort('failed'));
   await page.route('http://127.0.0.1:8080/**', route => route.abort('failed'));
+  await installAssistantClientMock(page);
+  await installAuthenticationClientMock(page);
+  await installEndpointClientMock(page);
+  await installActivityClientMock(page);
+  await installCredentialClientMock(page);
+  await installWorkspaceClientMock(page);
+  await installGrpcWebPreflightMock(page);
 }
 
 async function gotoJourney(page, journey) {
@@ -181,18 +214,23 @@ async function checkA11y(page, journey) {
   expect(assessment).toEqual({ unapprovedViolations: [], overages: [] });
 }
 
-function screenshotPath(journey, colorMode) {
-  const fileName = journey.id.replace(/[^a-z0-9]+/gi, '-').toLowerCase();
-  return path.join(
-    'e2e-artifacts',
-    'screenshots',
-    `${fileName}-${colorMode}.png`,
-  );
+function toScreenshotSlug(value) {
+  return value
+    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+    .replace(/[^a-z0-9]+/gi, '-')
+    .toLowerCase();
 }
 
-function screenshotName(journey, colorMode) {
-  const fileName = journey.id.replace(/[^a-z0-9]+/gi, '-').toLowerCase();
-  return `${fileName}${colorMode === 'dark' ? '-dark' : ''}.png`;
+function screenshotFileParts(journey, colorMode) {
+  const [routeArea, ...journeyName] = journey.id.split('.');
+  return [
+    toScreenshotSlug(routeArea),
+    `${toScreenshotSlug(journeyName.join('-'))}-${colorMode}.png`,
+  ];
+}
+
+function screenshotBaselinePath(journey, colorMode) {
+  return screenshotFileParts(journey, colorMode);
 }
 
 const test = base.extend({
@@ -206,9 +244,16 @@ module.exports = {
   test,
   expect,
   COLOR_MODES,
+  ASSISTANT_LIST_PATH,
+  ACTIVITY_LIST_PATHS,
+  AUTHENTICATION_PATHS,
+  CREDENTIAL_LIST_PATH,
+  ENDPOINT_LIST_PATH,
+  ORGANIZATION_PATH,
+  WORKSPACE_LIST_PATHS,
   checkA11y,
   gotoJourney,
+  mockAuthenticationOperation,
   setColorMode,
-  screenshotName,
-  screenshotPath,
+  screenshotBaselinePath,
 };

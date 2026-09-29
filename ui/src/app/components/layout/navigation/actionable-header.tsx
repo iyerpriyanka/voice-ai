@@ -87,6 +87,7 @@ export function CustomerOptions({
       {showProjectSelector && projectRoles && setCurrentProjectRole && (
         <Dropdown
           id="project-selector"
+          aria-label="Select project"
           titleText=""
           hideLabel
           label="Select a Project"

@@ -30,11 +30,11 @@ export function TabForm({
     <section className="flex flex-1 min-h-0 overflow-hidden">
       <aside className="w-80 hidden md:flex flex-col shrink-0 border-r border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950">
         <div className="px-6 pt-6 pb-5 border-b border-gray-200 dark:border-gray-800">
-          <p className="text-[10px] font-semibold tracking-[0.12em] uppercase text-gray-500 dark:text-gray-400 mb-1.5">
+          <p className="text-[10px] font-semibold tracking-[0.12em] uppercase text-[var(--cds-text-secondary)] mb-1.5">
             Setup Progress
           </p>
           {formHeading && (
-            <p className="text-xs text-gray-500 dark:text-gray-500 leading-relaxed">
+            <p className="text-xs text-[var(--cds-text-secondary)] leading-relaxed">
               {formHeading}
             </p>
           )}
@@ -53,13 +53,14 @@ export function TabForm({
                     <span
                       className={cn(
                         'flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full text-xs font-semibold transition-colors duration-150',
-                        isCompleted && 'bg-primary text-white',
+                        isCompleted &&
+                          'bg-primary text-[var(--brand-on-primary)]',
                         isActive &&
                           !isCompleted &&
-                          'bg-primary text-white ring-4 ring-primary/10',
+                          'bg-primary text-[var(--brand-on-primary)] ring-4 ring-primary/10',
                         !isActive &&
                           !isCompleted &&
-                          'bg-white dark:bg-gray-900 border-2 border-gray-300 dark:border-gray-700 text-gray-500 dark:text-gray-400',
+                          'bg-white dark:bg-gray-900 border-2 border-gray-300 dark:border-gray-700 text-[var(--cds-text-secondary)]',
                       )}
                     >
                       {isCompleted ? (
@@ -93,7 +94,7 @@ export function TabForm({
                         'text-[10px] font-semibold tracking-[0.1em] uppercase mb-0.5',
                         isActive
                           ? 'text-primary'
-                          : 'text-gray-500 dark:text-gray-400',
+                          : 'text-[var(--cds-text-secondary)]',
                       )}
                     >
                       Step {index + 1}
@@ -104,14 +105,14 @@ export function TabForm({
                         isActive
                           ? 'text-gray-900 dark:text-gray-100'
                           : isCompleted
-                            ? 'text-gray-500 dark:text-gray-400'
-                            : 'text-gray-500 dark:text-gray-400',
+                            ? 'text-[var(--cds-text-secondary)]'
+                            : 'text-[var(--cds-text-secondary)]',
                       )}
                     >
                       {item.name}
                     </span>
                     {item.description && (
-                      <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
+                      <span className="text-xs text-[var(--cds-text-secondary)] mt-1 leading-relaxed">
                         {item.description}
                       </span>
                     )}
@@ -134,14 +135,14 @@ export function TabForm({
                   className="flex flex-col flex-1"
                 >
                   <header className="px-4 pt-8 pb-6 border-b border-gray-200 dark:border-gray-800">
-                    <p className="text-[10px] font-semibold tracking-[0.12em] uppercase text-gray-500 dark:text-gray-400 mb-1.5">
+                    <p className="text-[10px] font-semibold tracking-[0.12em] uppercase text-[var(--cds-text-secondary)] mb-1.5">
                       Step {activeIndex + 1} of {form.length}
                     </p>
                     <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100 leading-tight">
                       {item.name}
                     </h1>
                     {item.description && (
-                      <p className="text-sm text-gray-500 dark:text-gray-500 mt-1.5 leading-relaxed">
+                      <p className="text-sm text-[var(--cds-text-secondary)] mt-1.5 leading-relaxed">
                         {item.description}
                       </p>
                     )}

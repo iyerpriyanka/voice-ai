@@ -87,6 +87,8 @@ function AdvancedPromptInput({
           <div className="flex shrink-0 items-stretch">
             {canDelete && (
               <GhostButton
+                hasIconOnly
+                iconDescription="Delete prompt message"
                 size="md"
                 onClick={onDelete}
                 tabIndex={-1}
@@ -96,6 +98,8 @@ function AdvancedPromptInput({
               </GhostButton>
             )}
             <GhostButton
+              hasIconOnly
+              iconDescription={isChecked ? 'Prompt copied' : 'Copy prompt'}
               size="md"
               tabIndex={-1}
               onClick={() => {
@@ -110,6 +114,8 @@ function AdvancedPromptInput({
               )}
             </GhostButton>
             <GhostButton
+              hasIconOnly
+              iconDescription={isExpand ? 'Collapse prompt' : 'Expand prompt'}
               size="md"
               tabIndex={-1}
               onClick={() => {
