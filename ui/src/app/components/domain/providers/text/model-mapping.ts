@@ -89,7 +89,7 @@ const findByToken = (
   );
 };
 
-export const NormalizeTextProviderModelSelection = (
+export const MapTextProviderModelSelection = (
   provider: string,
   parameters: Metadata[],
 ): Metadata[] => {

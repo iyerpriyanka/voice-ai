@@ -175,7 +175,7 @@ export const LATENCY_STACK_ORDER: LatencyMetricName[] = [
   'tts.latency_ms',
 ];
 
-export const normalizeComponentType = (nameKey: string): string =>
+export const mapComponentType = (nameKey: string): string =>
   nameKey === 'sip' ? 'telephony' : nameKey;
 
 const mapToObject = (map: {
@@ -414,7 +414,7 @@ export function getTelemetrySearchDocument(
     const eventJson = json as EventTelemetryJson;
     return {
       kind: 'event',
-      componentType: normalizeComponentType(
+      componentType: mapComponentType(
         row.record.getComponent() || row.record.getEvent().split('.')[0],
       ),
       typeLabel,
@@ -446,7 +446,7 @@ export function getTelemetrySearchDocument(
 export function getTelemetryRowData(row: TelemetryRow): TelemetryRowData {
   if (row.kind === 'event') {
     const eventName = row.record.getEvent();
-    const nameKey = normalizeComponentType(
+    const nameKey = mapComponentType(
       row.record.getComponent() || eventName.split('.')[0],
     );
     return {

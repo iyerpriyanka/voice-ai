@@ -8,7 +8,7 @@ import { ConfigRenderer } from '@/app/components/domain/providers/config-rendere
 import { useCallback, useMemo } from 'react';
 import { CredentialDropdown } from '@/app/components/domain/dropdowns/credential-dropdown';
 import { TEXT_PROVIDERS } from '@/providers';
-import { NormalizeTextProviderModelSelection } from './text/model-normalization';
+import { MapTextProviderModelSelection } from './text/model-mapping';
 import { Dropdown, Stack } from '@carbon/react';
 import { HelpToggletip } from '@/app/components/domain/providers/help-label';
 import type { VaultCredential } from '@rapidaai/react';
@@ -24,11 +24,8 @@ export const GetDefaultTextProviderConfigIfInvalid = (
 ): Metadata[] => {
   const config = loadProviderConfig(provider);
   if (!config?.text) return parameters;
-  const normalizedParameters = NormalizeTextProviderModelSelection(
-    provider,
-    parameters,
-  );
-  return getDefaultsFromConfig(config, 'text', normalizedParameters, provider);
+  const mappedParameters = MapTextProviderModelSelection(provider, parameters);
+  return getDefaultsFromConfig(config, 'text', mappedParameters, provider);
 };
 
 export const GetDefaultTextProviderConfigOnProviderSwitch = (
@@ -50,20 +47,17 @@ export const ValidateTextProviderDefaultOptions = (
 ): string | undefined => {
   const config = loadProviderConfig(provider);
   if (!config?.text) return 'Please select a valid model and provider.';
-  const normalizedParameters = NormalizeTextProviderModelSelection(
-    provider,
-    parameters,
-  );
+  const mappedParameters = MapTextProviderModelSelection(provider, parameters);
   const validationError = validateFromConfig(
     config,
     'text',
     provider,
-    normalizedParameters,
+    mappedParameters,
   );
   if (validationError) return validationError;
 
   if (!providerCredentialIds) return undefined;
-  const credentialID = normalizedParameters
+  const credentialID = mappedParameters
     .find(opt => opt.getKey() === 'rapida.credential_id')
     ?.getValue();
   if (!credentialID) return `Please provide a valid ${provider} credential.`;
